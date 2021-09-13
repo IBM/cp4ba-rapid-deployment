@@ -169,7 +169,9 @@
    All changes got applied. Exiting...
    ```
 
-7. Wait untill all Operators are installed, this might take a while (you need to see now 21 pods in \<your-ibm-cp4ba-project\> - all Running and Ready 1/1 - plus a couple of Completed pods, and 34 pods in ibm-common-services project - all Running and Ready 1/1, 2/2 or 4/4 - plus a couple of Completed pods)
+7. Wait untill all Operators are installed, this might take a while (you need to see now 20 pods in \<your-ibm-cp4ba-project\> - all Running and Ready 1/1 - plus a couple of Completed pods, and 32 pods in ibm-common-services project - all Running and Ready 1/1, 2/2 or 4/4 - plus a couple of Completed pods)
+   
+   **Note:** The number of pods can vary based on when you install and what version of the Operators is installed.
 
 8. Run script **07-createCp4baDeployment.sh**
    
