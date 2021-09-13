@@ -148,6 +148,8 @@
    Sample script output
    
    ```
+   cd /cp4ba/cp4ba-rapid-deployment/cp4ba-21-0-1/mycluster/deployment-db2-cp4ba
+   
    ./06-prepareCp4baDeployment.sh 
    
    Found 05-parametersForCp4ba.sh.  Reading in variables from that script.
