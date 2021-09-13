@@ -10,9 +10,11 @@
    
    ```
    cp /cp4ba/cp4ba-rapid-deployment/cp4ba-21-0-1/mycluster/deployment-db2-cp4ba/cp4a-*-storage-class.yaml /cp4ba/cert-kubernetes-21.0.1/descriptors/
+   ```
    
-   for example:
+   For example:
    
+   ```
    cp /cp4ba/cp4ba-rapid-deployment/cp4ba-21-0-1/mycluster/deployment-db2-cp4ba/cp4a-*-storage-class.yaml /cp4ba/cert-kubernetes-21.0.1/descriptors/
    cp: overwrite ‘cp4ba/cert-kubernetes-21.0.1/descriptors/cp4a-bronze-storage-class.yaml’? y
    cp: overwrite ‘cp4ba/cert-kubernetes-21.0.1/descriptors/cp4a-gold-storage-class.yaml’? y
