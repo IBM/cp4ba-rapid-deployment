@@ -1,0 +1,12 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: postgres
+spec:
+  storageClassName: :STORAGE-CLASS:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: :POSTGRES-STORAGE:
+

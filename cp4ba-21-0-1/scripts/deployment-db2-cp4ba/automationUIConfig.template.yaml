@@ -1,0 +1,23 @@
+###############################################################################
+#
+# Licensed Materials - Property of IBM
+#
+# (C) Copyright IBM Corp. 2021. All Rights Reserved.
+#
+# US Government Users Restricted Rights - Use, duplication or
+# disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+#
+###############################################################################
+apiVersion: core.automation.ibm.com/v1beta1
+kind: AutomationUIConfig
+metadata:
+  namespace: cp4baProjectName
+  name:  iaf-system
+spec:
+  description: automation-ui-config for CP4BA Cartridge
+  license:
+    accept: true
+  version: 1.0.0
+  tls: {}
+  storage:
+    class: cp4baScFast

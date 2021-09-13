@@ -1,0 +1,325 @@
+###############################################################################
+#
+# Licensed Materials - Property of IBM
+#
+# (C) Copyright IBM Corp. 2021. All Rights Reserved.
+#
+# US Government Users Restricted Rights - Use, duplication or
+# disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+#
+###############################################################################
+apiVersion: icp4a.ibm.com/v1
+kind: ICP4ACluster
+metadata:
+  name: icp4adeploy
+  labels:
+    app.kubernetes.io/instance: ibm-dba
+    app.kubernetes.io/managed-by: ibm-dba
+    app.kubernetes.io/name: ibm-dba
+    release: 21.0.1
+
+spec:
+  appVersion: 21.0.1
+  ibm_license: accept
+
+  shared_configuration:
+    show_sensitive_log: true
+    no_log: false
+
+    sc_deployment_fncm_license: "non-production"
+    sc_deployment_baw_license: "non-production"
+    sc_deployment_license: "non-production"
+
+    sc_image_repository: cp.icr.io
+    root_ca_secret: icp4a-root-ca
+
+    sc_deployment_patterns: "foundation"
+    sc_optional_components: ""
+
+    sc_deployment_type: "enterprise"
+    sc_deployment_platform: "cp4baDeploymentPlatform"
+    sc_deployment_hostname_suffix: "{{ meta.namespace }}.cp4baOcpHostname"
+
+    sc_ingress_enable: false
+    sc_ingress_tls_secret_name: tlsSecretName
+    trusted_certificate_list:
+      trustedCertificateList
+
+    storage_configuration:
+      sc_slow_file_storage_classname: cp4baScSlow
+      sc_medium_file_storage_classname: cp4baScMedium
+      sc_fast_file_storage_classname: cp4baScFast
+
+    sc_cpe_limited_storage: false
+    sc_run_as_user:
+
+    images:
+      keytool_job_container:
+        repository: cp.icr.io/cp/cp4a/ums/dba-keytool-jobcontainer
+        tag: 21.0.1
+      dbcompatibility_init_container:
+        repository: cp.icr.io/cp/cp4a/aae/dba-dbcompatibility-initcontainer
+        tag: 21.0.1
+      keytool_init_container:
+        repository: cp.icr.io/cp/cp4a/ums/dba-keytool-initcontainer
+        tag: 21.0.1
+      umsregistration_initjob:
+        repository: cp.icr.io/cp/cp4a/aae/dba-umsregistration-initjob
+        tag: 21.0.1
+      pull_policy: IfNotPresent
+
+    encryption_key_secret: icp4a-shared-encryption-key
+
+    sc_content_initialization: false
+    sc_content_verification: false
+
+    image_pull_secrets:
+      - admin.registrykey
+
+  ldap_configuration:
+    lc_selected_ldap_type: "ldapType"
+    lc_ldap_server: "ldapServer"
+    lc_ldap_port: "ldapPort"
+    lc_bind_secret: ldap-bind-secret
+    lc_ldap_base_dn: "ldapBaseDn"
+    lc_ldap_ssl_enabled: false
+    lc_ldap_user_name_attribute: "ldapUserNameAttribute"
+    lc_ldap_user_display_name_attr: "ldapUserDisplayNameAttr"
+    lc_ldap_group_base_dn: "ldapGroupBaseDn"
+    lc_ldap_group_name_attribute: "ldapGroupNameAttribute"
+    lc_ldap_group_display_name_attr: "ldapGroupDisplayNameAttr"
+    lc_ldap_group_membership_search_filter: "ldapGroupMembershipSearchFilter"
+    lc_ldap_group_member_id_map: "ldapGroupMemberIdMap"
+    lc_ldap_recursive_search: false
+    lc_ldap_max_search_results: 4500
+    tds:
+      lc_user_filter: "ldapTdsUserFilter"
+      lc_group_filter: "ldapTdsGroupFilter"
+
+  datasource_configuration:
+    dc_ssl_enabled: false
+
+    dc_ums_datasource:
+      dc_ums_oauth_type: "db2"
+      dc_ums_oauth_host: "db2HostName"
+      dc_ums_oauth_port: "db2PortNumber"
+      dc_ums_oauth_name: "db2UmsdbName"
+      dc_ums_oauth_schema: OAuthDBSchema
+      dc_ums_oauth_ssl: false
+
+      dc_ums_teamserver_type: "db2"
+      dc_ums_teamserver_host: "db2HostName"
+      dc_ums_teamserver_port: "db2PortNumber"
+      dc_ums_teamserver_name: "db2UmsdbName"
+      dc_ums_teamserver_ssl: false
+
+    dc_icn_datasource:
+      dc_database_type: "db2"
+      dc_common_icn_datasource_name: "ECMClientDS"
+      database_servername: "db2HostName"
+      database_port: "db2PortNumber"
+      database_name: "db2IcndbName"
+
+  ##################################################################
+  ########   Resource Registry configuration                ########
+  ##################################################################
+  resource_registry_configuration:
+#    hostname: "rr-{{ shared_configuration.sc_deployment_hostname_suffix }}"
+#    port: 443
+    images:
+      pull_policy: IfNotPresent
+      resource_registry:
+        repository: cp.icr.io/cp/cp4a/aae/dba-etcd
+        tag: 21.0.1
+    admin_secret_name: resource-registry-admin-secret
+    replica_size: 3
+    probe:
+      liveness:
+        initial_delay_seconds: 60
+        period_seconds: 10
+        timeout_seconds: 5
+        success_threshold: 1
+        failure_threshold: 3
+      readiness:
+        initial_delay_seconds: 10
+        period_seconds: 10
+        timeout_seconds: 5
+        success_threshold: 1
+        failure_threshold: 3
+    resource:
+      limits:
+        cpu: "500m"
+        memory: "512Mi"
+      requests:
+        cpu: "100m"
+        memory: "256Mi"
+    auto_backup:
+      enable: true
+      minimal_time_interval: 300
+      pvc_name: "{{ meta.name }}-dba-rr-pvc"
+      log_pvc_name: 'cp4a-shared-log-pvc'
+      dynamic_provision:
+        enable: true
+        size: 3Gi
+        size_for_logstore:
+        storage_class: "{{ shared_configuration.storage_configuration.sc_fast_file_storage_classname }}"
+
+  ########################################################################
+  ########   IBM User and Group Management Service configuration  ########
+  ########################################################################
+  ums_configuration:
+#    existing_claim_name: 
+    dedicated_pods: true
+    service_type: Route
+#    routes_ingress_annotations: 
+
+#    hostname: 
+#    port: 443
+
+    images:
+      ums:
+        repository: cp.icr.io/cp/cp4a/ums/ums
+        tag: 21.0.1
+
+    admin_secret_name: ibm-dba-ums-secret
+    external_tls_secret_name: tlsSecretName
+#    external_tls_ca_secret_name: 
+#    external_tls_teams_secret_name: 
+#    external_tls_scim_secret_name: 
+#    external_tls_sso_secret_name: 
+
+    use_custom_jdbc_drivers: false
+    use_custom_binaries: false
+#    custom_secret_name: 
+
+#    oauth:
+#      client_manager_group: 
+#      token_manager_group: 
+#      access_token_lifetime: 
+#      app_token_lifetime: 
+#      app_password_lifetime: 
+#      app_token_or_password_limit: 
+#      client_secret_encoding: 
+
+    sso:
+      replica_count: cp4baReplicaCount
+      resources:
+        limits:
+          cpu: 500m
+          memory: 512Mi
+        requests:
+          cpu: 200m
+          memory: 256Mi
+      autoscaling:
+        enabled: false
+        minReplicas: 2
+        maxReplicas: 2
+        targetAverageUtilization: 98
+      custom_xml:
+      logs:
+        traceSpecification: "*=info"
+
+    scim:
+      replica_count: cp4baReplicaCount
+      resources:
+        limits:
+          cpu: 500m
+          memory: 512Mi
+        requests:
+          cpu: 200m
+          memory: 256Mi
+      autoscaling:
+        enabled: false
+        minReplicas: 2
+        maxReplicas: 2
+        targetAverageUtilization: 98
+      custom_xml:
+      logs:
+        traceSpecification: "*=info"
+
+    teamserver:
+      admingroup: "cp4baUmsAdminGroup"
+      replica_count: cp4baReplicaCount
+      resources:
+        limits:
+          cpu: 500m
+          memory: 512Mi
+        requests:
+          cpu: 200m
+          memory: 256Mi
+      autoscaling:
+        enabled: false
+        minReplicas: 2
+        maxReplicas: 2
+        targetAverageUtilization: 98
+      custom_xml:
+      logs:
+        traceSpecification: "*=info"
+
+  ########################################################################
+  ########   IBM Business Automation Navigator configuration      ########
+  ########################################################################
+  navigator_configuration:
+    ban_secret_name: ibm-ban-secret
+
+    arch:
+      amd64: "3 - Most preferred"
+
+    replica_count: cp4baReplicaCount
+
+    image:
+      repository: cp.icr.io/cp/cp4a/ban/navigator-sso
+      tag: ga-309-icn-if002
+      pull_policy: IfNotPresent
+
+    log:
+      format: json
+
+    resources:
+      requests:
+        cpu: 500m
+        memory: 512Mi
+      limits:
+        cpu: 1
+        memory: 1536Mi
+
+    auto_scaling:
+      enabled: false
+      max_replicas: 2
+      min_replicas: 2
+      target_cpu_utilization_percentage: 80
+
+    icn_production_setting:
+      timezone: Etc/UTC
+      jvm_initial_heap_percentage: 40
+      jvm_max_heap_percentage: 66
+
+      jvm_customize_options:
+
+      icn_jndids_name: ECMClientDS
+      icn_schema: db2IcndbName
+      icn_table_space: db2IcndbName
+      allow_remote_plugins_via_http: false
+
+    monitor_enabled: false
+    logging_enabled: false
+
+    datavolume:
+      existing_pvc_for_icn_cfgstore: "icn-cfgstore"
+      existing_pvc_for_icn_logstore: "icn-logstore"
+      existing_pvc_for_icn_pluginstore: "icn-pluginstore"
+      existing_pvc_for_icnvw_cachestore: "icn-vw-cachestore"
+      existing_pvc_for_icnvw_logstore: "icn-vw-logstore"
+      existing_pvc_for_icn_aspera: "icn-asperastore"
+
+    probe:
+      readiness:
+        initial_delay_seconds: 120
+        period_seconds: 5
+        timeout_seconds: 10
+        failure_threshold: 6
+      liveness:
+        initial_delay_seconds: 600
+        period_seconds: 5
+        timeout_seconds: 5
+        failure_threshold: 6

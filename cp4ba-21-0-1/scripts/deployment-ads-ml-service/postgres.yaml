@@ -1,0 +1,83 @@
+# This deployment of Postgres cannot be scaled. For being able to scale postgres, need to
+# use a Stateful Set and need to configure the Persistent Volume Claim in a different mode
+# (probably need more than that)
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+  labels:
+    app: postgres
+spec:
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      imagePullSecrets:
+      - name: docker.registrykey
+      containers:
+      - name: postgres
+        image: postgres:11.8
+        ports:
+        - containerPort: 5432
+        env:
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: postgres-user
+        - name: PGUSER
+          valueFrom:          
+            secretKeyRef:
+              name: postgres-secret
+              key: pguser
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: postgres-password
+        - name: PGBENCH_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: pgbench-password
+        - name: PGDATA
+          value: /var/lib/postgresql/data/pgdata
+        volumeMounts:
+        - mountPath: /var/lib/postgresql/data
+          name: postgres
+          subPath: config
+        - mountPath: /mnt
+          name: postgres
+          subPath: data
+      serviceAccount: postgres
+      serviceAccountName: postgres
+      volumes:
+      - name: postgres
+        persistentVolumeClaim:
+          claimName: postgres
+
+---          
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  labels:
+    app: postgres
+spec:
+  ports:
+  - port: 5432
+    protocol: TCP
+    targetPort: 5432
+  selector:
+    app: postgres
