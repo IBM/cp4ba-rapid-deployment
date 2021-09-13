@@ -66,7 +66,15 @@
 
    Also review the other properties, in case changes are needed, e.g., if you are not deploying on ROKS, specify `cp4baDeploymentPlatform=OCP` and also provide the `db2OnOcpStorageClassName` available on your own OpenShift cluster (must be RWX). For ROKS a `db2StorageSize` of `500Gi` is optimal as the size also defines the IOPS. If you are not deploying on ROKS and your storage provider gives you good IO speed with smaller storage size, you can reduce that value to `150Gi`.
 
-4. Run script **02-createDb2OnOCP.sh**.  This script will install and configure DB2 for you.  If the script displays the following banner **all** DB2 components have been deployed and configured properly.
+4. Login to your OCP cluster through OC CLI, for example:
+   
+   ```
+   oc login --token=<your-token> --server=https://<your-server>:<your-port>
+   ```
+   
+   **Note:** You can copy the login command from the OCP Web console.
+
+5. Run script **02-createDb2OnOCP.sh**.  This script will install and configure DB2 for you.  If the script displays the following banner **all** DB2 components have been deployed and configured properly.
 
    ```bash
    *********************************************************************************
@@ -82,7 +90,7 @@
    - This script will exit if errors are hit during the installation.
    - This script is idempotent.
 
-5. Take a note of the hostname (or IP address) provided in the previous step as well as the port number for the DB2 installation and enter values in **01-parametersForDb2OnOCP.sh**.  The properties to modify are as follow:
+6. Take a note of the hostname (or IP address) provided in the previous step as well as the port number for the DB2 installation and enter values in **01-parametersForDb2OnOCP.sh**.  The properties to modify are as follow:
 
    - `db2HostName` -  Hostname or IP to access DB2 instance as provided by output of **02-createDb2OnOCP.sh** script
    - `db2PortNumber` - Port number to access DB2 instance as provided by output of **02-createDb2OnOCP.sh** script
@@ -90,7 +98,7 @@
    **Notes:**
    - If needed, you can run the **97-retrieveDB2HostDetails.sh** to display the DB2 host information once again.
 
-6. Run script **03-createCp4baDBs4Db2OnOCP.sh** to create the databases needed for the CP4BA template that you selected
+7. Run script **03-createCp4baDBs4Db2OnOCP.sh** to create the databases needed for the CP4BA template that you selected
 
    **Note:** In case you got errors **creating** DBs, please use script **99-dropCp4baDBs4Db2OnOCP.sh** to drop all DBs - then re-run script **03-createCp4baDBs4Db2OnOCP.sh**
 
@@ -98,7 +106,7 @@
 
    **Note:** In case you are not using the DB2 Standard Edition license or have assigned less memory to DB2 than specified for the selected CP4BA template, it might happen that not all databases got activated which might lead to other issues later while the deployment of CP4BA
 
-7. Review the output of the script and make sure there were no errors, all databases got created and activated
+8. Review the output of the script and make sure there were no errors, all databases got created and activated
 
 ## What to do next
 
