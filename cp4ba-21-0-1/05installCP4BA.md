@@ -127,7 +127,9 @@
    <your-hostname>
    ```
 
-4. Wait untill all Operators are installed, this might take a while (you need to see 8 pods in \<your-ibm-cp4ba-project\>, 12 pods in ibm-common-services project, all Running and Ready 1/1)
+4. Wait untill all Operators are installed, this might take a while (you need to see e.g. 7 pods in \<your-ibm-cp4ba-project\>, 12 pods in ibm-common-services project, all Running and Ready 1/1)
+   
+   **Note:** The number of pods can vary based on when you install and what version of the Operators is installed.
 
 5. In folder **deployment-db2-cp4ba** update the properties file for CP4BA **05-parametersForCp4ba.sh**, provide the following properties:
 
