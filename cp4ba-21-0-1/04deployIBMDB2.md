@@ -99,7 +99,23 @@
    - If needed, you can run the **97-retrieveDB2HostDetails.sh** to display the DB2 host information once again.
 
 7. Run script **03-createCp4baDBs4Db2OnOCP.sh** to create the databases needed for the CP4BA template that you selected
-
+   
+   **Note:** You can ignore the following errors / warnings:
+   ```
+   DB21034E  The command was processed as an SQL statement because it was not a
+   valid Command Line Processor command.  During SQL processing it returned:
+   SQL0554N  An authorization ID cannot grant a privilege or authority to itself.
+   SQLSTATE=42502
+   ```
+   
+   and
+   ```
+   SQL1363W  One or more of the parameters submitted for immediate modification
+   were not changed dynamically. For these configuration parameters, the database
+   must be shutdown and reactivated before the configuration parameter changes
+   become effective.
+   ```
+   
    **Note:** In case you got errors **creating** DBs, please use script **99-dropCp4baDBs4Db2OnOCP.sh** to drop all DBs - then re-run script **03-createCp4baDBs4Db2OnOCP.sh**
 
    **Note:** In case you got errors **activating** DBs, please use script **04-activateDBs.sh** to try to activate them again - if your DB2 pod got enough memory assigned (e.g., `110Gi` for the Client Onboarding template) and you are using a DB2 Standard Edition license, activation of all DBs should be successful
