@@ -56,7 +56,7 @@ echo "* Configuring Postgres service account to with anyuid Role Binding"
 oc adm policy add-scc-to-user anyuid -z $pgServiceAccount
 
 echo
-postgresSecretJson=$(oc create secret generic postgres-secret --from-literal postgres-password=$pgAdminPassword --from-literal postgres-user=pgadmin --from-literal pguser=pgadmin --from-literal pgbench-password=$pgAdminPassword --dry-run=client -o json)
+postgresSecretJson=$(oc create secret generic postgres-secret --from-literal postgres-password=$pgAdminPassword --from-literal postgres-user=pgadmin --from-literal pguser=pgadmin --from-literal pgbench-password=$pgAdminPassword --dry-run=true -o json)
 
 if oc get secret postgres-secret > /dev/null 2>&1; then
     echo "* Secret already exists, updating it"
