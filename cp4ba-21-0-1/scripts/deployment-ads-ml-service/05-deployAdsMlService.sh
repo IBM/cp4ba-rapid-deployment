@@ -51,9 +51,9 @@ oc apply -f configMap.yaml
 echo
 echo "Deploying the ads ml service deployment..."
 cp adsMlServiceDeployment.template.yaml adsMlServiceDeployment.yaml
-sed -i "s|adsMlServiceReplicaCount|$adsMlServiceReplicaCount|g" adsMlServiceDeployment.yaml
-sed -i "s|pgAdminPassword|$pgAdminPassword|g" adsMlServiceDeployment.yaml
-sed -i "s|adsMlServiceProjectName|$adsMlServiceProjectName|g" adsMlServiceDeployment.yaml
+sed -i.bak "s|adsMlServiceReplicaCount|$adsMlServiceReplicaCount|g" adsMlServiceDeployment.yaml
+sed -i.bak "s|pgAdminPassword|$pgAdminPassword|g" adsMlServiceDeployment.yaml
+sed -i.bak "s|adsMlServiceProjectName|$adsMlServiceProjectName|g" adsMlServiceDeployment.yaml
 oc apply -f adsMlServiceDeployment.yaml
 
 echo
