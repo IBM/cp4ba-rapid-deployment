@@ -391,7 +391,8 @@
     
     ```
     oc -n ibm-common-services get secret platform-auth-idp-credentials -o jsonpath='{.data.admin_username}' | base64 -d && echo
-    
+    ```
+    ```
     oc -n ibm-common-services get secret platform-auth-idp-credentials -o jsonpath='{.data.admin_password}' | base64 -d
     ```
     
@@ -460,7 +461,7 @@
 
 32. On the users page select **Identity provider groups**, search for **cp4bausers**, select it and click **Next**
 
-33. On the Roles page select role **Automation Developer** and click **Next**
+33. On the Roles page select role **Automation Developer** and **User**, then click **Next**
 
 34. On **Summary** page review the selections and click **Create**
 
