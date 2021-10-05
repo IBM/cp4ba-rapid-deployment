@@ -263,7 +263,9 @@
    
    **Note:** In case you have not used a DB2 Standard Edition license key or enough memory for the DB2, closely monitor the operator logs. This configuration might result in issues when deploying CP4BA, as it might happen that the CPE Object Stores can't be automatically initialized while the deployment as the DB connections might not be able to be created. In that case, scale down the operator to zero after the Object Store initialization failed and create the missing DB connections manually. Then, scale up the operator to one and it will usually initialze the Object Stores.
 
-10. The CP4BA deployment of the Client Onboarding template is complete when you have 73 Running and Ready pods, and 40 Completed pods, but no Pending / CrashLoopBackOff pods. It might be that some pods are in Failed state, for those make sure there is another instance of that pod in Completed state. If this is the case, you can delete the Failed pods.
+10. The CP4BA deployment of the Client Onboarding template is complete when you see about 72 Running and Ready pods, and 40 Completed pods, but no Pending / CrashLoopBackOff pods in your project. It might be that some pods are in Failed state, for those make sure there is another instance of that pod in Completed state. If this is the case, you can delete the Failed pods.
+    
+    **Note:** It might be that going forward the number of pods mentioned here (72 Running and Ready, 40 Completed) does change, as with every new installation latest versions of ibm-common-services and IBM Automation Foundation are installed and those latest versions might come with a different number of Running and / or Completed pods. The most important point here is that you don't see pods in any other state.
     
     **Note:** If you selected another CP4BA template, the number of pods will be different.
     
