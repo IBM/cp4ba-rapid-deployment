@@ -8,7 +8,7 @@ These scripts can be used to set-up the infrastructure needed for the **IBM Auto
 
 **IMPORTANT:** Opening a Case against official IBM Support due to issues with these scripts or issues with the results of these scripts is not supported.
 
-Scrips are available for the following CP4BA versions (more to be added going forward):
+Scripts are available for the following CP4BA versions (more to be added going forward):
 
 - **[CP4BA v21.0.1](cp4ba-21-0-1/Readme.md)**
 
