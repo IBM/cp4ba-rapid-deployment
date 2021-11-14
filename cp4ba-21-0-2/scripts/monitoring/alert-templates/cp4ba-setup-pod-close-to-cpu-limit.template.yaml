@@ -1,0 +1,18 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: cp4basetup-podclosetocpulimit
+  namespace: paramNamespace 
+spec:
+  groups:
+  - name: cp4basetup
+    rules:
+      - alert: Cp4baSetup-PodCloseToCpuLimit
+        expr: ((sum(irate(container_cpu_usage_seconds_total{image!="",container!="POD", namespace!="kube-system"}[30s])) by (namespace,container,pod) / sum(container_spec_cpu_quota{image!="",container!="POD", namespace!="kube-system"} / container_spec_cpu_period{image!="",container!="POD", namespace!="kube-system"}) by (namespace,container,pod) ) * 100)  > 90
+        for: 15m
+        labels:
+          severity: warning 
+          group: cp4basetup
+          cluster: paramClusterName
+        annotations:
+          message: Pod {{ $labels.namespace }}/{{ $labels.pod }} ({{ $labels.container }}) CPU utilization is above 90% of it's limit.

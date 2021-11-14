@@ -1,0 +1,25 @@
+[
+    {
+        "comment": "Snoozed by configure-monitoring.sh script for a year. Service is not used frequently.",
+        "createdBy": "paramCreatedBy",
+        "endsAt": "paramTargetYear-paramMonth-paramDayT00:00",
+        "matchers": [
+            {
+                "isRegex": false,
+                "name": "alertname",
+                "value": "Cp4baSetup-PodCloseToMemLimit"
+            },
+            {
+                "isRegex": false,
+                "name": "container",
+                "value": "bai-management"
+            },
+            {
+                "isRegex": false,
+                "name": "group",
+                "value": "cp4basetup"
+            }
+        ],
+        "startsAt": "paramYear-paramMonth-paramDayT00:00"
+    }
+]

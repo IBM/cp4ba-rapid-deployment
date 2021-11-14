@@ -1,0 +1,44 @@
+apiVersion: processmining.ibm.com/v1beta1
+kind: ProcessMining
+metadata:
+  name: processmining
+  namespace: cp4baProjectName
+spec:
+  license:
+    accept: true
+    cloudPak: IBM Cloud Pak for Business Automation
+  processmining:
+    storage:
+      database:
+        create: true
+        name: processmining-mongo
+        size: '10'
+      events:
+        create: true
+        name: processmining-repository
+        size: '50'
+    replicas:
+      nginx: cp4baReplicaCount
+      discovery: cp4baReplicaCount
+      analytics: cp4baReplicaCount
+      bpa: cp4baReplicaCount
+      dr: cp4baReplicaCount
+      usermanagement: cp4baReplicaCount
+  taskmining:
+    install: true
+    storage:
+      database:
+        create: true
+        name: taskmining-mysql
+        size: '10'
+      events:
+        create: true
+        name: taskmining-data
+        size: '100'
+    replicas:
+      nginx: cp4baReplicaCount
+      webapp: cp4baReplicaCount
+      taskbuilder: cp4baReplicaCount
+      taskprocessor: cp4baReplicaCount
+  version: 1.11.1
+

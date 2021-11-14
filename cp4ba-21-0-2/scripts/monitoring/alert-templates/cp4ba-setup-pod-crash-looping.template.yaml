@@ -1,0 +1,18 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: cp4basetup-podcrashlooping
+  namespace: paramNamespace 
+spec:
+  groups:
+  - name: cp4basetup
+    rules:
+      - alert: Cp4baSetup-PodCrashLooping
+        expr: rate(kube_pod_container_status_restarts_total{job="kube-state-metrics",namespace=~"(openshift-.*|kube-.*|default|logging)"}[5m]) * 60 * 5 > 0 
+        for: 5m
+        labels:
+          severity: critical
+          group: cp4basetup
+          cluster: paramClusterName
+        annotations:
+          message: Pod {{ $labels.namespace }}/{{ $labels.pod }} ({{ $labels.container }}) is restarting {{ printf "%.2f" $value }} times / 5 minutes. 

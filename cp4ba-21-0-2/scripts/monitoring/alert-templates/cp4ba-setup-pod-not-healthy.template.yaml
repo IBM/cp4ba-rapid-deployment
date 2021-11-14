@@ -1,0 +1,18 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: cp4basetup-podnothealthy
+  namespace: paramNamespace 
+spec:
+  groups:
+  - name: cp4basetup
+    rules:
+      - alert: Cp4baSetup-PodNotHealthy
+        expr: min_over_time(sum by (namespace, pod) (kube_pod_status_phase{phase=~"Pending|Unknown|Failed"})[10m:1m]) > 0 
+        for: 10m
+        labels:
+          severity: critical
+          group: cp4basetup
+          cluster: paramClusterName
+        annotations:
+          message: Pod {{ $labels.namespace }}/{{ $labels.pod }} ({{ $labels.container }}) has been in non-ready state for longer than 10 minutes.

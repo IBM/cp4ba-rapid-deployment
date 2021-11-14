@@ -1,0 +1,25 @@
+###############################################################################
+#
+# Licensed Materials - Property of IBM
+#
+# (C) Copyright IBM Corp. 2021. All Rights Reserved.
+#
+# US Government Users Restricted Rights - Use, duplication or
+# disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+#
+###############################################################################
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: ads-ml-service-policy
+spec:
+  ingress:
+  - from:
+    ports:
+    - protocol: TCP
+      port: 8080
+  podSelector:
+    matchLabels:
+      app: open-prediction
+  policyTypes:
+  - Ingress

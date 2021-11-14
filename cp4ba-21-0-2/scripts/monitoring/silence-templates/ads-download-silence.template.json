@@ -1,0 +1,25 @@
+[
+    {
+        "comment": "Snoozed by configure-monitoring.sh script for a year. Garbage collector automatically cleans up this issue.",
+        "createdBy": "paramCreatedBy",
+        "endsAt": "paramTargetYear-paramMonth-paramDayT00:00",
+        "matchers": [
+            {
+                "isRegex": false,
+                "name": "alertname",
+                "value": "Cp4baSetup-PodCloseToMemLimit"
+            },
+            {
+                "isRegex": false,
+                "name": "container",
+                "value": "download-service"
+            },
+            {   
+                "isRegex": false,
+                "name": "group",
+                "value": "cp4basetup"
+            }
+        ],
+        "startsAt": "paramYear-paramMonth-paramDayT00:00:00"
+    }
+]

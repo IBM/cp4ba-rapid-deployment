@@ -1,0 +1,59 @@
+apiVersion: "logging.openshift.io/v1"
+kind: "ClusterLogging"
+metadata:
+  name: "instance" 
+  namespace: "openshift-logging"
+spec:
+  managementState: "Managed"  
+  logStore:
+    type: "elasticsearch"  
+    retentionPolicy: 
+      application:
+        maxAge: 2d
+      infra:
+        maxAge: 3d
+      audit:
+        maxAge: 3d
+    elasticsearch:
+      nodeCount: paramElasticSearchNodeCount 
+      storage:
+        storageClassName: paramClusterLoggingStorageClass 
+        size: 500G
+      resources: 
+        requests:
+          memory: "5Gi"
+          cpu: 500m
+        limits:
+          memory: "16Gi"
+          cpu: 1
+      proxy: 
+        resources:
+          limits:
+            memory: 256Mi
+          requests:
+             memory: 256Mi
+      redundancyPolicy: "ZeroRedundancy"
+  visualization:
+    type: "kibana"  
+    kibana:
+      replicas: 1
+  curation:
+    type: "curator"
+    curator:
+      schedule: "30 3 * * *" 
+  collection:
+    logs:
+      type: "fluentd"  
+      fluentd:
+        resources:
+          limits:
+            cpu: 1
+            memory: "1Gi"
+          requests:
+            cpu: 500m
+            memory: ".5Gi"
+  forwarder:
+    fluentd:
+      buffer:
+        totalLimitSize: paramFluentdBufferTotalLimitSize 
+        flushThreadCount: paramFluentDBufferFlushThreadCount 
