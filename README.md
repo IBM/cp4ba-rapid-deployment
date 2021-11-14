@@ -10,7 +10,7 @@ These scripts can be used to set-up the infrastructure needed for the **IBM Auto
 
 Scripts are available for the following CP4BA versions (more to be added going forward):
 
-- **[CP4BA v21.0.1](cp4ba-21-0-1/Readme.md)**
+- **[CP4BA v21.0.1](cp4ba-21-0-1)**
 
 Issues or questions? IBMers can use this IBM internal Slack channel: **#dba-swat-asset-qna** (**https://ibm-cloud.slack.com/archives/C026TD1SGCA**)
 
