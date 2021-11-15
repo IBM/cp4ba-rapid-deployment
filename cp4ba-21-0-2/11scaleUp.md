@@ -16,9 +16,15 @@ In case High-Availability of the deployment is needed and you initially deployed
    - In case for some pods a higher replica size is needed, change that in the generated CR YAML manually (for example increase the parameter `replicas` inside `workflow_authoring_configuration` to e.g. `3`)
    - Update CP4BA deployment by running command `oc apply -f ibm_cp4a_cr_final.yaml --overwrite=true`
 
-5. ADS ML Service: Scale up to `2` replicas through OCP Web Console (increase the amout of pods of deployment `ads-ml-service-deployment`)
+5. Process Mining: Scale up by using the scripts
 
-6. RPA: No scale up needed for Demo & Lab purposes
+   - Switch to folder deployment-db2-cp4ba
+   - Update properties file `05-parametersForCp4ba.sh` (set parameters cp4baReplicaCount to e.g. `2`)
+   - Run script `22-deployProcessMining.sh` to scale it up.
+
+6. ADS ML Service: Scale up to `2` replicas through OCP Web Console (increase the amout of pods of deployment `ads-ml-service-deployment`)
+
+7. RPA: No scale up needed for Demo & Lab purposes
 
 With that, you have successfully set up your own infrastructure. Congratulations!
 
