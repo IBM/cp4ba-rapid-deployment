@@ -141,7 +141,7 @@
    - `cp4baOcpHostname` - see output of script cp4a-clusteradmin-setup.sh
    - `cp4baTlsSecretName` - see also secret name in project ibm-cert-store on ROKS, if you are not deploying on ROKS leave empty
    - `cp4baAdminPassword`, e.g., `passw0rd` - use the password for user cp4badmin in the generated .ldif file when setting up LDAP
-   - `cp4baUmsAdminPassword`, e.g., `passw0rd` - here you can specify any password here
+   - `cp4baUmsAdminPassword`, e.g., `passw0rd` - here you can specify any password
    - `ldapAdminPassword`, e.g., `passw0rd` - use the password that you specified for cn=root when setting up LDAP
    - `ldapServer`, e.g., `123.456.679.012` - the hostname or IP of the previously installed LDAP server
    
