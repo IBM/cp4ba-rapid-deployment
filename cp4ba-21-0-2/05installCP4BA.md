@@ -451,7 +451,7 @@
 
 39. Verify that cp4admin now has full administatative access to zen
 
-**Note:** The remaining post-deployment steps are only needed if you want to access the system with one of the usr*** IDs.
+**Note:** The remaining post-deployment steps are only needed if you want to access the system with one of the usr*** IDs and when you selected a template that deploys these capabilities, for example Workflow.
 
 40. Fourth post-deployment step is to allow users from LDAP to author Process Applications. For this, open the **icp4adeploy-workflow-authoring-baw-server** route, accept the risk as there are still self-signed certificates used for the UMS SSO route
 
