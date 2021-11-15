@@ -57,7 +57,7 @@ All these templates are tested on IBM Cloud / ROKS. In addition, you can create 
   - Three worker nodes with 32 CPUs and 64Gi RAM (e.g., flavor c3c.32x64 on ROKS)
   - One db2 worker node with 32 CPUs and 128Gi RAM (e.g., flavor b3c.32x128 on ROKS)
 - Configuration used while CP4BA Tech Jams (replica size of 2, e.g., for > 50 participants)
-  - Five worker nodes with 32 CPUs and 64Gi RAM (e.g., flavor c3c.32x64 on ROKS)
+  - Four worker nodes with 32 CPUs and 64Gi RAM (e.g., flavor c3c.32x64 on ROKS)
   - One db2 worker node with 32 CPUs and 128Gi RAM (e.g., flavor b3c.32x128 on ROKS)
 
 **[What to do next](#what-to-do-next)**
