@@ -8,6 +8,8 @@
 # disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
 #
 ###############################################################################
+# Needed DBs: UMS ICN
+
 apiVersion: icp4a.ibm.com/v1
 kind: ICP4ACluster
 metadata:

@@ -8,6 +8,8 @@
 # disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
 #
 ###############################################################################
+# Needed DBs: UMS ICN GCD DEVOS1 AEOS BAWDOCS BAWTOS BAWDOS BAW APP AE BAS
+
 apiVersion: icp4a.ibm.com/v1
 kind: ICP4ACluster
 metadata:
@@ -275,7 +277,7 @@ spec:
         targetAverageUtilization: 98
       custom_xml:
       logs:
-        traceSpecification: "*=info"
+        traceSpecification: "*=warning"
 
     scim:
       replica_count: cp4baReplicaCount
@@ -293,7 +295,7 @@ spec:
         targetAverageUtilization: 98
       custom_xml:
       logs:
-        traceSpecification: "*=info"
+        traceSpecification: "*=warning"
 
     teamserver:
       admingroup: "cp4baUmsAdminGroup"
@@ -312,7 +314,7 @@ spec:
         targetAverageUtilization: 98
       custom_xml:
       logs:
-        traceSpecification: "*=info"
+        traceSpecification: "*=warning"
 
   ########################################################################
   ########   IBM Business Automation Navigator configuration      ########
@@ -773,10 +775,10 @@ spec:
 
     logs:
       consoleFormat: 'json'
-      consoleLogLevel: 'INFO'
+      consoleLogLevel: 'WARNING'
       consoleSource: 'message,trace,accessLog,ffdc,audit'
       traceFormat: 'ENHANCED'
-      traceSpecification: '*=info'
+      traceSpecification: '*=warning'
       messageFormat: 'SIMPLE'
 
 #    tls:
@@ -897,7 +899,7 @@ spec:
         custom_jdbc_pvc:
 
       log_level:
-        node: info
+        node: warn
         browser: 2
 
       content_security_policy:
@@ -1037,7 +1039,7 @@ spec:
         custom_jdbc_pvc:
 
       log_level:
-        node: info
+        node: warn
         browser: 2
 
       content_security_policy:
@@ -1133,6 +1135,7 @@ spec:
 #        tls_secret_name: ibm-dba-ads-designer-tls-cert
         tls_secret_name: tlsSecretName
 #        tls_ca_secret_name: 
+      log_trace_specification: "*=warning"
 
       embedded_build_and_run:
         enabled: true
@@ -1142,6 +1145,7 @@ spec:
 #            tls_secret_name: ibm-dba-ads-designer-embedded-runtime-tls-cert
             tls_secret_name: tlsSecretName
 #            tls_ca_secret_name: 
+        log_trace_specification: "*=warning"
 
         decision_archive_repo:
           persistence:
@@ -1154,6 +1158,7 @@ spec:
     decision_runtime:
       enabled: true
       authentication_mode: "ums_and_basic"
+      log_trace_specification: "*=warning"
 
       ingress:
         hostname: "{{ 'runtime-ads-' + shared_configuration.sc_deployment_hostname_suffix }}"
@@ -1202,6 +1207,7 @@ spec:
         repository: cp.icr.io/cp/cp4a/ads/ads-front
         tag: 21.0.2
 
+      log_trace_specification: "*=warning"
       replica_count: cp4baReplicaCount
       resources:
         requests:
@@ -1215,6 +1221,7 @@ spec:
       image:
         repository: cp.icr.io/cp/cp4a/ads/ads-download
         tag: 21.0.2
+      log_trace_specification: "*=warning"
 
       replica_count: cp4baReplicaCount
       resources:
@@ -1230,6 +1237,7 @@ spec:
         repository: cp.icr.io/cp/cp4a/ads/ads-restapi
         tag: 21.0.2
       replica_count: cp4baReplicaCount
+      log_trace_specification: "*=warning"
 
       resources:
         requests:
@@ -1244,6 +1252,7 @@ spec:
         repository: cp.icr.io/cp/cp4a/ads/ads-credentials
         tag: 21.0.2
       replica_count: cp4baReplicaCount
+      log_trace_specification: "*=warning"
 
       resources:
         requests:
@@ -1258,6 +1267,7 @@ spec:
         repository: cp.icr.io/cp/cp4a/ads/ads-gitservice
         tag: 21.0.2
       replica_count: cp4baReplicaCount
+      log_trace_specification: "*=warning"
 
       persistence:
         use_dynamic_provisioning: true
@@ -1279,6 +1289,7 @@ spec:
         repository: cp.icr.io/cp/cp4a/ads/ads-parsing
         tag: 21.0.2
       replica_count: cp4baReplicaCount
+      log_trace_specification: "*=warning"
 
       resources:
         requests:
@@ -1293,6 +1304,7 @@ spec:
         repository: cp.icr.io/cp/cp4a/ads/ads-run
         tag: 21.0.2
       replica_count: cp4baReplicaCount
+      log_trace_specification: "*=warning"
 
       resources:
         requests:
@@ -1307,6 +1319,7 @@ spec:
         repository: cp.icr.io/cp/cp4a/ads/ads-build
         tag: 21.0.2
       replica_count: cp4baReplicaCount
+      log_trace_specification: "*=warning"
 
       persistence:
         use_dynamic_provisioning: true
@@ -1328,6 +1341,7 @@ spec:
         repository: cp.icr.io/cp/cp4a/ads/ads-runtime
         tag: 21.0.2
       replica_count: cp4baReplicaCount
+      log_trace_specification: "*=warning"
 
       stack_trace_enabled: false
 
@@ -1350,6 +1364,7 @@ spec:
         repository: cp.icr.io/cp/cp4a/ads/ads-runtime
         tag: 21.0.2
       replica_count: cp4baReplicaCount
+      log_trace_specification: "*=warning"
 
       stack_trace_enabled: false
 
@@ -1547,11 +1562,11 @@ spec:
 
     logs:
       console_format: "json"
-      console_log_level: "INFO"
+      console_log_level: "WARNING"
       console_source: "message,trace,accessLog,ffdc,audit"
       message_format: "SIMPLE"
       trace_format: "ENHANCED"
-      trace_specification: "*=info"
+      trace_specification: "*=warning"
       max_files: 10
       max_filesize: 50
 
@@ -1745,11 +1760,11 @@ spec:
 
     logs:
       console_format: "json"
-      console_log_level: "INFO"
+      console_log_level: "WARNING"
       console_source: "message,trace,accessLog,ffdc,audit"
       message_format: "SIMPLE"
       trace_format: "ENHANCED"
-      trace_specification: "*=info"
+      trace_specification: "*=warning"
       storage:
         use_dynamic_provisioning: true
         size: 5Gi
@@ -1890,7 +1905,7 @@ spec:
 #      existing_claim_name: ""
 
     flink:
-      log_level: 'info'
+      log_level: 'warning'
       task_manager_memory: 1728mb
       job_checkpointing_interval: 5000
 #      rocks_db_properties_config_map: ""

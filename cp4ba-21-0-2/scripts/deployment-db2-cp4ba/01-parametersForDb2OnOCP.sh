@@ -99,6 +99,10 @@ db2OnOcpStorageClassName=cp4a-file-delete-gold-gid
 # Size of the PVC for DB2 (on ROKS: the larger the faster, good performance with 500Gi)
 db2StorageSize=500Gi
 
+# Database activation delay. Scripts will wait this time in seconds between activating databases.
+# With problems on activation, or if on slow environments, try to increase this delay
+db2ActivationDelay=5
+
 # CP4BA Database Name information
 db2UmsdbName=UMSDB
 db2IcndbName=ICNDB
