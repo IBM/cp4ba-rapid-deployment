@@ -1,6 +1,6 @@
 # Step 10: Optional: Create new VM for RPA & install IBM RPA
 
-![Overview](images/overview07.jpg "Overview")
+![Overview](images/overview10.jpg "Overview")
 
 1. Follow **[Create new VM for LDAP  &  install IBM SDS  &  import ldif file with users and groups](03createVMForLDAP.md)** to request a new VM. Please note the following differences:
    

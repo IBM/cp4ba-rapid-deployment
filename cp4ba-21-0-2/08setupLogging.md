@@ -1,5 +1,7 @@
 # Step 8: Optional: Setup OpenShift Logging Stack
 
+![Overview](images/overview08.jpg "Overview")
+
 ## Introduction
 
 The OpenShift Logging Stack provides a scalable enterprise ready mechanism to collect, manage and visualize logs across all services deployed in a Kubernetes cluster.  It enables better serviceability and operational visibility by allowing cluster administrators to easily query, parse and correlate logs collected from containers, nodes and the Kubernetes management plane itself.

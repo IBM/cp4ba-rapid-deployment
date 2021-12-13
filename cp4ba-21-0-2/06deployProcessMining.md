@@ -1,5 +1,7 @@
 # Step 6: Optional: Install the Process Mining Operator & deploy Process Mining
 
+![Overview](images/overview06.jpg "Overview")
+
 1. Switch to the directory with the deployment scripts for CP4BA and DB2.
 
    ```

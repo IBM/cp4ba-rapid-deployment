@@ -1,6 +1,6 @@
 # Step 7: Optional: Deploy Machine Learning Service for ADS
 
-![Overview](images/overview06.jpg "Overview")
+![Overview](images/overview07.jpg "Overview")
 
 1. Get access to the ml service image, e.g. by building it as documented here: **https://github.com/IBM/open-prediction-service-hub/tree/main/ops-implementations/ads-ml-service**
 

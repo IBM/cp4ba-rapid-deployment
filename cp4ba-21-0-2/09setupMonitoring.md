@@ -1,5 +1,7 @@
 # Step 9: Optional: Setup OpenShift Monitoring Stack
 
+![Overview](images/overview09.jpg "Overview")
+
 ## Introduction
 
 The OpenShift monitoring stack provides monitoring capabilities for core platform components and user defined projects.  By default the out-of-the-box deployment, found under the openshift-monitoring project, only monitors core OpenShift Container Platform systems and other essential kubernetes services but it can be configured to monitor custom deployments.
