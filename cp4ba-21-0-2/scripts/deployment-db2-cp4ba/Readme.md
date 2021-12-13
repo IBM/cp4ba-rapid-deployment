@@ -1,4 +1,4 @@
-# Scripts for DB2 and CP4BA Deployment
+# Scripts for DB2, CP4BA and Process Mining Deployment
 
 For the deployment, refer to:
   - **[the DB2 doc](../../04deployIBMDB2.md)**,
