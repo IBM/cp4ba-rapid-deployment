@@ -1,4 +1,4 @@
-# Setting up the Tech Jam Infrastructure
+# Setting up the Tech Jam Infrastructure (CP4BA v21.0.1)
 
 This github project provides you a bunch of sample scripts and sample template files to set up the IBM Automation SWAT Client Onboarding Demo on your own environment. Other deployments are also supported.
 
