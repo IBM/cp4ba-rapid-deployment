@@ -1,13 +1,13 @@
 # Setting up the Tech Jam Infrastructure
 
-This github project provides you a bunch of sample scripts and template files to set up the IBM Automation SWAT Client Onboarding Demo on your own environment. Other deployments are also supported.
+This github project provides you a bunch of sample scripts and sample template files to set up the IBM Automation SWAT Client Onboarding Demo on your own environment. Other deployments are also supported.
 
 **IMPORTANT:** The primary use for those scripts and templates is for rapid set-up of CP4BA DEMO and ENABLEMENT environments, for example to host the Client Onboarding Demo. Those scripts and templates shoud not be used to set-up customer environments for development, test, pre-production or production as they might have for example stronger security requirements. For such deployments, pls. use the official CP4BA documentation that can be found here: **https://www.ibm.com/docs/en/cloud-paks/cp-biz-automation**
 
-**IMPORTANT:** Opening a Case against official IBM Support due to issues with these scripts or issues with the results of these scripts is not supported.
+**IMPORTANT:** Opening a Case against official IBM Support due to issues with these scripts or issues with the results of these scripts is not supported. Instead, IBMers can use this IBM internal Slack channel: **#dba-swat-asset-qna** (**https://ibm-cloud.slack.com/archives/C026TD1SGCA**), everyone else can open a new issue in this github.
 
 This doc provides you step-by-step instructions to set up the needed infrastructure for the Demo or your deployment, this is:
-- Install IBM Cloud Pak for Business Automation version 21.0.1 (enterprise deployment, support for newer versions will be added moving forward)
+- Install IBM Cloud Pak for Business Automation version 21.0.1 (enterprise deployment)
 - Get the required infrastructure on IBM Cloud (OpenShift cluster, VM for LDAP and optionally VM for RPA)
 - Installing all the prerequisite software of CP4BA (LDAP and DB2)
 - Optional: Install all other components needed by the Client Onboarding Demo (Machine Learning Service needed by ADS and optionally RPA to execute some tasks by robots)

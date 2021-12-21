@@ -2,7 +2,7 @@
 
 ![Overview](images/overview04.jpg "Overview")
 
-1. Clone this git repository and copy the deployment files. As part of this doc, it is assumed that you clone into directory `/cp4ba`. If you select a different directory, you have to change the commands accordingly. It is also assumed that you use cluster name `mycluster`. If you select a different cluster name, you have to change the commands accordingly.
+1. Clone this git repository onto your bastion host and copy the deployment files. As part of this doc, it is assumed that you clone into directory `/cp4ba`. If you select a different directory, you have to change the commands accordingly. It is also assumed that you use cluster name `mycluster`. If you select a different cluster name, you have to change the commands accordingly.
 
    ```bash
    mkdir /cp4ba

@@ -15,6 +15,8 @@
 4. Optional: Complete your profile for your own account if needed
 
 5. Optional: In case you plan to run the Infrastructure under another account, swicht to that account
+   
+   ![Select Account](images/selectAccount.jpg "Select Account")
 
 6. Assign your entitlement key for discount on the OCP cluster (CP4BA license includes a license for OCP)
    - On the top, click **Manage -> Account**
