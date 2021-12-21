@@ -1,13 +1,13 @@
-# Step 10: Optional: Create new VM for RPA & install IBM RPA
+# Step 10: Optional: Create new VSI for RPA & install IBM RPA
 
 ![Overview](images/overview10.jpg "Overview")
 
-1. Follow **[Create new VM for LDAP  &  install IBM SDS  &  import ldif file with users and groups](03createVMForLDAP.md)** to request a new VM. Please note the following differences:
+1. Follow **[Step 3: Create new VSI for LDAP, install IBM SDS & import ldif files with users and groups](03createVMForLDAP.md)** to request a new VSI. Please note the following differences:
    
-   - OS: should use Windows Server 2012 or Windows Server 2016
+   - OS: use Windows Server 2012 or Windows Server 2016
    - Private Security Group and Public Security Group: do NOT select anything, or the password of administrative user will not be created
    
-   After the VM is created, you can add "allow_all" to both security groups
+   After the VSI is created, you can add "allow_all" to both security groups
 
 2. Follow **[IBM RPA SaaS client installation document](https://www.ibm.com/docs/en/rpa/20.12?topic=installation-saas-client)** to install RPA SaaS client
 
