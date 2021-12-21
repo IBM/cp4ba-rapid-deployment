@@ -5,6 +5,8 @@
 1. Access **https://cloud.ibm.com** with your IBM ID
 
 2. Select the account under which to create the new RedHat OpenShift Cluster
+   
+   ![Select Account](images/selectAccount.jpg "Select Account")
 
 3. In the top-left corner, click on the **Navigation Menu** icon
    
