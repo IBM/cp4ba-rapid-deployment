@@ -41,7 +41,7 @@ Follow these nine steps to set-up the Tech Jam Infrastructure:
 
 2. **[Create new RedHat OpenShift Cluster](02createRedHatOpenShiftCluster.md)**
 
-3. **[Create new VM for LDAP  &  install IBM SDS  &  import ldif file with users and groups](03createVMForLDAP.md)**
+3. **[Create new VSI for LDAP, install IBM SDS & import ldif files with users and groups](03createVMForLDAP.md)**
 
 4. **[Deploy IBM DB2 Containers  &  create needed databases](04deployIBMDB2.md)**
 
