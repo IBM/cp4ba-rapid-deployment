@@ -157,8 +157,8 @@ Please also refer to **https://cloud.ibm.com/docs/virtual-servers?topic=virtual-
   ssh xxx.xxx.xxx.xxx -l root
   root@xxx.xxx.xxx.xxx's password:
   Last login: Wed Dec  1 01:01:01 2021 from xxx.xxx.xxx.xxx
-  [root@tech-jam-xxxx ~]# mkdir /root/install
-  [root@tech-jam-xxxx ~]# exit
+  [root@ldap-tech-jam-xxxx ~]# mkdir /root/install
+  [root@ldap-tech-jam-xxxx ~]# exit
   logout
   Connection to xxx.xxx.xxx.xxx closed.
   ```
@@ -244,13 +244,13 @@ Follow these steps to install SDS:
 
    Sample output:
    ```
-   [root@tech-jam-xxxx ~]# cd /root/install
-   [root@tech-jam-xxxx install]# rpm -ivh ksh-20120801-142.el7.x86_64.rpm
+   [root@ldap-tech-jam-xxxx ~]# cd /root/install
+   [root@ldap-tech-jam-xxxx install]# rpm -ivh ksh-20120801-142.el7.x86_64.rpm
    warning: ksh-20120801-142.el7.x86_64.rpm: Header V3 RSA/SHA256 Signature, key ID f4a80eb5: NOKEY
    Preparing...                          ################################# [100%]
    Updating / installing...
       1:ksh-20120801-142.el7             ################################# [100%]
-   [root@tech-jam-xxxx install]# rpm -ivh libaio-0.3.109-13.el7.x86_64.rpm
+   [root@ldap-tech-jam-xxxx install]# rpm -ivh libaio-0.3.109-13.el7.x86_64.rpm
    warning: libaio-0.3.109-13.el7.x86_64.rpm: Header V3 RSA/SHA256 Signature, key ID f4a80eb5: NOKEY
    Preparing...                          ################################# [100%]
    Updating / installing...
@@ -269,8 +269,8 @@ Follow these steps to install SDS:
 
    Sample output:
    ```
-   [root@tech-jam-xxxx install]# mkdir /media/sds
-   [root@tech-jam-xxxx install]# mount -o loop /root/install/sds64-linux-x86-64.iso /media/sds
+   [root@ldap-tech-jam-xxxx install]# mkdir /media/sds
+   [root@ldap-tech-jam-xxxx install]# mount -o loop /root/install/sds64-linux-x86-64.iso /media/sds
    mount: /dev/loop0 is write-protected, mounting read-only
    ```
    
@@ -282,7 +282,7 @@ Follow these steps to install SDS:
 
    Sample output:
    ```
-   [root@tech-jam-xxxx install]# /media/sds/ibm_im_64bit/installc -log /root/install/im_install_log.txt -acceptLicense -installationDirectory /opt/IBM/InstallationManager -showProgress
+   [root@ldap-tech-jam-xxxx install]# /media/sds/ibm_im_64bit/installc -log /root/install/im_install_log.txt -acceptLicense -installationDirectory /opt/IBM/InstallationManager -showProgress
                     25%                50%                75%                100%
    ------------------|------------------|------------------|------------------|
    ............................................................................
@@ -301,11 +301,11 @@ Follow these steps to install SDS:
 
    Sample output:
    ```
-   [root@tech-jam-xxxx install]# rpm -ivh /media/sds/ibm_gskit/gskcrypt64-8.0.50.34.linux.x86_64.rpm
+   [root@ldap-tech-jam-xxxx install]# rpm -ivh /media/sds/ibm_gskit/gskcrypt64-8.0.50.34.linux.x86_64.rpm
    Preparing...                          ################################# [100%]
    Updating / installing...
       1:gskcrypt64-8.0-50.34             ################################# [100%]
-   [root@tech-jam-xxxx install]# rpm -ivh /media/sds/ibm_gskit/gskssl64-8.0.50.34.linux.x86_64.rpm
+   [root@ldap-tech-jam-xxxx install]# rpm -ivh /media/sds/ibm_gskit/gskssl64-8.0.50.34.linux.x86_64.rpm
    Preparing...                          ################################# [100%]
    Updating / installing...
       1:gskssl64-8.0-50.34               ################################# [100%]
@@ -347,7 +347,7 @@ Follow these steps to install SDS:
 
     Sample output:
     ```
-    [root@tech-jam-xxxx install]# /opt/IBM/InstallationManager/eclipse/tools/imcl input /root/install/sds_silent_install_response.xml -acceptLicense -showProgress
+    [root@ldap-tech-jam-xxxx install]# /opt/IBM/InstallationManager/eclipse/tools/imcl input /root/install/sds_silent_install_response.xml -acceptLicense -showProgress
                      25%                50%                75%                100%
     ------------------|------------------|------------------|------------------|
     ............................................................................
@@ -389,7 +389,7 @@ Follow these steps to configure and start SDS:
 
    Sample output:
    ```
-   [root@tech-jam-xxxx install]# /opt/ibm/ldap/V6.4/sbin/idsicrt -I ldap1 -p 389 -s 636 -e mysecretkey! -G idsldap -w passw0rd
+   [root@ldap-tech-jam-xxxx install]# /opt/ibm/ldap/V6.4/sbin/idsicrt -I ldap1 -p 389 -s 636 -e mysecretkey! -G idsldap -w passw0rd
    GLPWRP123I The program '/opt/ibm/ldap/V6.4/sbin/64/idsadduser' is used with the following arguments '-u ldap1 -g idsldap -w *****'.
 
 
@@ -490,7 +490,7 @@ Follow these steps to configure and start SDS:
    
    Sample output:
    ```
-   [root@tech-jam-xxxx install]# /opt/ibm/ldap/V6.4/sbin/idsdnpw -I ldap1 -u cn=root -p passw0rd
+   [root@ldap-tech-jam-xxxx install]# /opt/ibm/ldap/V6.4/sbin/idsdnpw -I ldap1 -u cn=root -p passw0rd
    GLPWRP123I The program '/opt/ibm/ldap/V6.4/sbin/64/idsdnpw' is used with the following arguments '-I ldap1 -u cn=root -p *****'.
    You have chosen to perform the following actions:
 
@@ -524,7 +524,7 @@ Follow these steps to configure and start SDS:
 
    Sample output:
    ```
-   [root@tech-jam-xxxx install]# /opt/ibm/ldap/V6.4/sbin/idscfgdb -I ldap1 -a ldap1 -t ldap1 -l /home/ldap1 -w passw0rd
+   [root@ldap-tech-jam-xxxx install]# /opt/ibm/ldap/V6.4/sbin/idscfgdb -I ldap1 -a ldap1 -t ldap1 -l /home/ldap1 -w passw0rd
    GLPWRP123I The program '/opt/ibm/ldap/V6.4/sbin/64/idscfgdb' is used with the following arguments '-I ldap1 -a ldap1 -t ldap1 -l /home/ldap1 -w *****'.
    You have chosen to perform the following actions:
 
@@ -568,7 +568,7 @@ Follow these steps to configure and start SDS:
 
    Sample output:
    ```
-   [root@tech-jam-xxxx install]# /opt/ibm/ldap/V6.4/sbin/idscfgsuf -I ldap1 -s "dc=example,dc=com"
+   [root@ldap-tech-jam-xxxx install]# /opt/ibm/ldap/V6.4/sbin/idscfgsuf -I ldap1 -s "dc=example,dc=com"
    GLPWRP123I The program '/opt/ibm/ldap/V6.4/sbin/64/idscfgsuf' is used with the following arguments '-I ldap1 -s dc=example,dc=com'.
    You have chosen to perform the following actions:
 
@@ -595,7 +595,7 @@ Follow these steps to configure and start SDS:
 
    Sample output:
    ```
-   [root@tech-jam-xxxx install]# /opt/ibm/ldap/V6.4/sbin/ldif2db -i /root/install/cp4ba.ldif -I ldap1
+   [root@ldap-tech-jam-xxxx install]# /opt/ibm/ldap/V6.4/sbin/ldif2db -i /root/install/cp4ba.ldif -I ldap1
    GLPCTL113I Largest core file size creation limit for the process (in bytes): '0'(Soft limit) and '-1'(Hard limit).
    GLPCTL119I Maximum Data Segment(Kbytes) soft ulimit for the process is -1 and the prescribed minimum is 262144.
    GLPCTL119I Maximum File Size(512 bytes block) soft ulimit for the process is -1 and the prescribed minimum is 2097152.
@@ -609,7 +609,7 @@ Follow these steps to configure and start SDS:
    GLPRDB107I The suffix entry DC=EXAMPLE,DC=COM has been created.
    GLPL2D003I ldif2db: 100 entries have been processed.
    GLPRDB002W ldif2db: 200 entries have been successfully added out of 200 attempted.
-   [root@tech-jam-xxxx install]# /opt/ibm/ldap/V6.4/sbin/ldif2db -i /root/install/predefined.ldif -I ldap1
+   [root@ldap-tech-jam-xxxx install]# /opt/ibm/ldap/V6.4/sbin/ldif2db -i /root/install/predefined.ldif -I ldap1
    GLPCTL113I Largest core file size creation limit for the process (in bytes): '0'(Soft limit) and '-1'(Hard limit).
    GLPCTL119I Maximum Data Segment(Kbytes) soft ulimit for the process is -1 and the prescribed minimum is 262144.
    GLPCTL119I Maximum File Size(512 bytes block) soft ulimit for the process is -1 and the prescribed minimum is 2097152.
@@ -631,7 +631,7 @@ Follow these steps to configure and start SDS:
 
    Sample output:
    ```
-   [root@tech-jam-xxxx install]# /opt/ibm/ldap/V6.4/sbin/idsslapd -I ldap1
+   [root@ldap-tech-jam-xxxx install]# /opt/ibm/ldap/V6.4/sbin/idsslapd -I ldap1
    GLPSRV041I Server starting.
    GLPSRV236W Premium feature activation code could not be loaded. Some features are not available.
    GLPCTL113I Largest core file size creation limit for the process (in bytes): '0'(Soft limit) and '-1'(Hard limit).
