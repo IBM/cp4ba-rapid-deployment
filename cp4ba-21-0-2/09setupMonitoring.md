@@ -132,7 +132,7 @@ The `configure-monitoring.sh` changes the following resources in your Openshift 
 
 ## What to do next
 
-- Optionally, you can complete **[Step 10: Optional: Create new VM for RPA  &  install IBM RPA](10createVMForRPA.md)**
+- Optionally, you can complete **[Step 10: Optional: Create new VSI for RPA & install IBM RPA](10createVMForRPA.md)**
 - Optionally, you can complete **[Step 11: Optional: Scale up the deployment](11scaleUp.md)**
 - **[Here](Readme.md)** you can get back to the overview page
 
