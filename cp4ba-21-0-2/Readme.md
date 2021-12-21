@@ -8,7 +8,7 @@ This github project provides you a bunch of sample scripts and sample template f
 
 This doc provides you step-by-step instructions to set up the needed infrastructure for the Demo or your deployment, this is:
 - Install IBM Cloud Pak for Business Automation version 21.0.2 (enterprise deployment)
-- Get the required infrastructure on IBM Cloud (OpenShift cluster, VM for LDAP and optionally VM for RPA)
+- Get the required infrastructure on IBM Cloud (OpenShift cluster, VSI for LDAP and optionally VSI for RPA)
 - Installing all the prerequisite software of CP4BA (LDAP and DB2)
 - Optional: Install all other components needed by the Client Onboarding Demo (Machine Learning Service needed by ADS, optionally RPA to execute some tasks by robots, Process Mining)
 
@@ -55,7 +55,7 @@ Follow these nine steps to set-up the Tech Jam Infrastructure:
 
 9. **[Optional: Setup OpenShift Monitoring Stack](09setupMonitoring.md)**
 
-10. **[Optional: Create new VM for RPA  &  install IBM RPA](10createVMForRPA.md)**
+10. **[Optional: Create new VSI for RPA & install IBM RPA](10createVMForRPA.md)**
 
 11. **[Optional: Scale up the deployment](11scaleUp.md)**
 
