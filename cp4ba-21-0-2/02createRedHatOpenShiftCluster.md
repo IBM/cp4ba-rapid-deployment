@@ -80,7 +80,7 @@
 
 ## What to do next
 
-Once the ROKS cluster is created, you can proceed with the next step: **[Step 3: Create new VM for LDAP & install IBM SDS & import ldif file with users and groups](03createVMForLDAP.md)**
+Once the ROKS cluster is created, you can proceed with the next step: **[Step 3: Create new VSI for LDAP, install IBM SDS & import ldif files with users and groups](03createVMForLDAP.md)**
 
 **[Here](Readme.md)** you can get back to the overview page
 
