@@ -79,18 +79,19 @@ Please also refer to **https://cloud.ibm.com/docs/virtual-servers?topic=virtual-
 - IBM SDS 6.4 installation image (sds64-linux-x86-64.iso, part number: CN487ML, needs to be downloaded from IBM Passport Advantage, or internally from IBM Internal DSW Downloads/XL Software)
 - KornShell (ksh-20120801-142.el7.x86_64.rpm, download it from http://mirror.centos.org/centos/7/os/x86_64/Packages/ksh-20120801-142.el7.x86_64.rpm, more info under https://centos.pkgs.org/7/centos-x86_64/ksh-20120801-142.el7.x86_64.rpm.html)
 - libaio (libaio-0.3.109-13.el7.x86_64.rpm, download it from http://mirror.centos.org/centos/7/os/x86_64/Packages/libaio-0.3.109-13.el7.x86_64.rpm, more info under https://centos.pkgs.org/7/centos-x86_64/libaio-0.3.109-13.el7.x86_64.rpm.html)
-- predefined.ldif - defines user `cp4badmin` and two groups, `cp4bausers` and `cp4badmins` (download it from https://github.com/IBM/cp4ba-rapid-deployment/blob/main/cp4ba-21-0-3/scripts/predefined.ldif)
+- predefined.ldif - defines two users, `cp4badmin` and `Maureen`, and two groups, `cp4bausers` and `cp4badmins` (download it from https://github.com/IBM/cp4ba-rapid-deployment/blob/main/cp4ba-21-0-3/scripts/predefined.ldif)
 
-  **Note:** By default the password for user `cp4badmin` is `passw0rd` - if you like to modify that password, it's now the right time to do that: For that, open predefined.ldif with an editor of your choice, change the password and save your changes before uploading that file to the VM - make sure to note it down and use that while the CP4BA deployment
+  **Note:** By default the password for users `cp4badmin` and `Maureen` is `passw0rd` - if you like to modify those passwords, it's now the right time to do that: For that, open predefined.ldif with an editor of your choice, change the password and save your changes before uploading that file to the VM - make sure to note them down and use them while the CP4BA deployment and when using the components
   
   **Note:** In this scenario there are the following users and groups:
   - cp4badmin: the administrator for everything in CP4BA (see predefined.ldif)
   - cp4badmins: the administrative group, contains only cp4badmin user (see predefined.ldif)
   - usr001-usr200: common users for CP4BA (see cp4ba.ldif)
-  - cp4bausers: the group of common users, contains usr001-usr200 and cp4badmin (see predefined.ldif)
+  - Maureen: common user for CP4BA (see predefined.ldif)
+  - cp4bausers: the group of common users, contains usr001-usr200, Maureen and cp4badmin (see predefined.ldif)
 
 - cp4ba.ldif - defines users `usr001` - `usr200`. Here you have two options:
-  - Option 1: Use cp4ba.ldif with default passwords - in this case download it from https://github.com/IBM/cp4ba-rapid-deployment/blob/main/cp4ba-21-0-2/scripts/cp4ba.ldif
+  - Option 1: Use cp4ba.ldif with default passwords - in this case download it from https://github.com/IBM/cp4ba-rapid-deployment/blob/main/cp4ba-21-0-3/scripts/cp4ba.ldif
   - Option 2: Generate your own cp4ba.ldif with custom randomly generated passwords - in this case:
     - Download pwgen (pwgen-2.08-1.el7.x86_64.rpm, download it from https://download-ib01.fedoraproject.org/pub/epel/7/x86_64/Packages/p/pwgen-2.08-1.el7.x86_64.rpm, more info under https://centos.pkgs.org/7/epel-x86_64/pwgen-2.08-1.el7.x86_64.rpm.html)
     - Install pwgen onto your bastion host
@@ -99,11 +100,11 @@ Please also refer to **https://cloud.ibm.com/docs/virtual-servers?topic=virtual-
       rpm -ivh pwgen-2.08-1.el7.x86_64.rpm
       ```
       
-    - Download script to generate your own cp4ba.ldif (generateLDIF.sh, download it from https://github.com/IBM/cp4ba-rapid-deployment/blob/main/cp4ba-21-0-2/scripts/generateLDIF.sh)
+    - Download script to generate your own cp4ba.ldif (generateLDIF.sh, download it from https://github.com/IBM/cp4ba-rapid-deployment/blob/main/cp4ba-21-0-3/scripts/generateLDIF.sh)
     - Allow script to be executed
       
       ```
-      chmod 777 generateLDIF.sh
+      chmod 755 generateLDIF.sh
       ```
       
     - Run the script to generate cp4ba.ldif
