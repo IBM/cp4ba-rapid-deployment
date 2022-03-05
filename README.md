@@ -10,6 +10,7 @@ These scripts can be used to set-up the infrastructure needed for the **IBM Auto
 
 Scripts are available for the following CP4BA versions:
 
+- **[CP4BA v21.0.3 IF005 (March 2022)](cp4ba-21-0-3)**
 - **[CP4BA v21.0.2 (June 2021)](cp4ba-21-0-2)**
 - **[CP4BA v21.0.1 (March 2021)](cp4ba-21-0-1)**
 
