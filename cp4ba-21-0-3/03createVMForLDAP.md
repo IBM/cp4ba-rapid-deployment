@@ -1,14 +1,14 @@
-# Step 3: Create new VSI for LDAP, install IBM SDS & import ldif files with users and groups
+# Step 3: Create new VM for LDAP, install IBM SDS & import ldif files with users and groups
 
 ![Overview](images/overview03.jpg "Overview")
 
-## Create new VSI for LDAP
+## Create new VM for LDAP
 
 Please also refer to **https://cloud.ibm.com/docs/virtual-servers?topic=virtual-servers-ordering-vs-public**
 
 1. Log-in to **https://cloud.ibm.com**
 
-2. Select the **account** under which to create the new VSI for LDAP
+2. Select the **account** under which to create the new VM for LDAP
    
    ![Select Account](images/selectAccount.jpg "Select Account")
 
@@ -22,7 +22,7 @@ Please also refer to **https://cloud.ibm.com/docs/virtual-servers?topic=virtual-
 
 5. Select **Virtual Server for Classic**
 
-   ![VSI](images/requestNewVSI03.jpg)
+   ![Virtual Server for Classic](images/requestNewVSI03.jpg)
 
 6. Select the following configuration:
 
@@ -55,13 +55,13 @@ Please also refer to **https://cloud.ibm.com/docs/virtual-servers?topic=virtual-
 
    - Optionally select any needed Add-ons
    
-7. Review the Summary, accept the agreement and click **Create** to order the VSI
+7. Review the Summary, accept the agreement and click **Create** to order the VM
 
      ![config5](images/requestNewVSI08.jpg)
 
-8. After a while you can see the new VSI in your device list: **https://cloud.ibm.com/gen1/infrastructure/devices**
+8. After a while you can see the new VM in your device list: **https://cloud.ibm.com/gen1/infrastructure/devices**
    
-9. Once it's powered on, click on the VSI. On the **Overview** tab you can find the **public IP address**:
+9. Once it's powered on, click on the VM. On the **Overview** tab you can find the **public IP address**:
 
    ![details](images/requestNewVSI10.jpg)
 
@@ -73,7 +73,7 @@ Please also refer to **https://cloud.ibm.com/docs/virtual-servers?topic=virtual-
     
     **Note:** Note down the LDAP public IP address and use that while the CP4BA deployment
 
-## Download required installation files to your bastion host and upload them to the VSI
+## Download required installation files to your bastion host and upload them to the VM
 
 **Download/create the following files onto/on your bastion host:**
 - IBM SDS 6.4 installation image (sds64-linux-x86-64.iso, part number: CN487ML, needs to be downloaded from IBM Passport Advantage, or internally from IBM Internal DSW Downloads/XL Software)
@@ -81,7 +81,7 @@ Please also refer to **https://cloud.ibm.com/docs/virtual-servers?topic=virtual-
 - libaio (libaio-0.3.109-13.el7.x86_64.rpm, download it from http://mirror.centos.org/centos/7/os/x86_64/Packages/libaio-0.3.109-13.el7.x86_64.rpm, more info under https://centos.pkgs.org/7/centos-x86_64/libaio-0.3.109-13.el7.x86_64.rpm.html)
 - predefined.ldif - defines user `cp4badmin` and two groups, `cp4bausers` and `cp4badmins` (download it from https://github.com/IBM/cp4ba-rapid-deployment/blob/main/cp4ba-21-0-2/scripts/predefined.ldif)
 
-  **Note:** By default the password for user `cp4badmin` is `passw0rd` - if you like to modify that password, it's now the right time to do that: For that, open predefined.ldif with an editor of your choice, change the password and save your changes before uploading that file to the VSI - make sure to note it down and use that while the CP4BA deployment
+  **Note:** By default the password for user `cp4badmin` is `passw0rd` - if you like to modify that password, it's now the right time to do that: For that, open predefined.ldif with an editor of your choice, change the password and save your changes before uploading that file to the VM - make sure to note it down and use that while the CP4BA deployment
   
   **Note:** In this scenario there are the following users and groups:
   - cp4badmin: the administrator for everything in CP4BA (see predefined.ldif)
@@ -130,14 +130,14 @@ Please also refer to **https://cloud.ibm.com/docs/virtual-servers?topic=virtual-
         githubpwd.txt to update passwords on Github.
       ```
 
-**Create on the VSI a new directory for the installation files:**
-- SSH to your VSI
+**Create on the VM a new directory for the installation files:**
+- SSH to your VM
   
   ```
-  ssh <vsi-public-ip-address> -l root
+  ssh <vm-public-ip-address> -l root
   ```
 
-  **Note:** The SSH service is started by default for the VSI, listens on port 22 - connect to it using any SSH software
+  **Note:** The SSH service is started by default for the VM, listens on port 22 - connect to it using any SSH software
 
 - Enter the root password
 - Create new directory
@@ -163,30 +163,30 @@ Please also refer to **https://cloud.ibm.com/docs/virtual-servers?topic=virtual-
   Connection to xxx.xxx.xxx.xxx closed.
   ```
 
-**Upload the files onto your VSI:**
+**Upload the files onto your VM:**
 
-To upload the files from the bastion host to the VSI you can use linux scp command, WinSCP, FileZilla or any software that suppports SFTP protocol
+To upload the files from the bastion host to the VM you can use linux scp command, WinSCP, FileZilla or any software that suppports SFTP protocol
 
 SCP command examples:
 
 ```
-scp ksh-20120801-142.el7.x86_64.rpm root@<vsi-public-ip-address>:/root/install/ksh-20120801-142.el7.x86_64.rpm
+scp ksh-20120801-142.el7.x86_64.rpm root@<vm-public-ip-address>:/root/install/ksh-20120801-142.el7.x86_64.rpm
 ```
 
 ```
-scp libaio-0.3.109-13.el7.x86_64.rpm root@<vsi-public-ip-address>:/root/install/libaio-0.3.109-13.el7.x86_64.rpm
+scp libaio-0.3.109-13.el7.x86_64.rpm root@<vm-public-ip-address>:/root/install/libaio-0.3.109-13.el7.x86_64.rpm
 ```
 
 ```
-scp cp4ba.ldif root@<vsi-public-ip-address>:/root/install/cp4ba.ldif
+scp cp4ba.ldif root@<vm-public-ip-address>:/root/install/cp4ba.ldif
 ```
 
 ```
-scp predefined.ldif root@<vsi-public-ip-address>:/root/install/predefined.ldif
+scp predefined.ldif root@<vm-public-ip-address>:/root/install/predefined.ldif
 ```
 
 ```
-scp sds64-linux-x86-64.iso root@<vsi-public-ip-address>:/root/install/sds64-linux-x86-64.iso
+scp sds64-linux-x86-64.iso root@<vm-public-ip-address>:/root/install/sds64-linux-x86-64.iso
 ```
 
 Sample output:
@@ -216,13 +216,13 @@ sds64-linux-x86-64.iso                                                          
 
 Follow these steps to install SDS:
 
-1. SSH to your VSI
+1. SSH to your VM
    
    ```
-   ssh <vsi-public-ip-address> -l root
+   ssh <vm-public-ip-address> -l root
    ```
 
-   **Note:** The SSH service is started by default for the VSI, listens on port 22 - connect to it using any SSH software
+   **Note:** The SSH service is started by default for the VM, listens on port 22 - connect to it using any SSH software
 
 2. Enter the root password
 
