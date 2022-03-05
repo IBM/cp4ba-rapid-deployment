@@ -1,0 +1,26 @@
+###############################################################################
+#
+# Licensed Materials - Property of IBM
+#
+# (C) Copyright IBM Corp. 2022. All Rights Reserved.
+#
+# US Government Users Restricted Rights - Use, duplication or
+# disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+#
+###############################################################################
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: cp4ba-ecm-cmis-monitor 
+  namespace: paramNamespace 
+  labels:
+    component: ecm
+    group: cp4basetup
+spec:
+  endpoints:
+  - interval: 30s
+    port: metrics 
+    scheme: http
+  selector:
+    matchLabels:
+      servicename: icp4adeploy-cmis-svc 

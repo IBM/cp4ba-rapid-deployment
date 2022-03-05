@@ -1,0 +1,93 @@
+###############################################################################
+#
+# Licensed Materials - Property of IBM
+#
+# (C) Copyright IBM Corp. 2022. All Rights Reserved.
+#
+# US Government Users Restricted Rights - Use, duplication or
+# disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+#
+###############################################################################
+## AlertManager configuration template.   
+## The name of all parameters in this template start with the param prefix.  For example paramDefaultReceiver, paramSlackApiUrlJAM 
+
+## The global configuration specifies parameters that are valid in all other configuration contexts 
+global:
+  # ResolveTimeout is the default value used by alertmanager if the alert does
+  # not include EndsAt, after this time passes it can declare the alert as resolved if it has not been updated.
+  # This has no impact on alerts from Prometheus, as they always include EndsAt.
+  resolve_timeout: 5m
+
+## Default configuration receiver
+receivers:
+  # Default receiver configured by Openshift
+  - name: Default
+
+  # Watchdog receiver configured by Openshift
+  - name: Watchdog  
+  
+  # Receiver to catch all alerts for the Platform 
+  - name: Platform 
+
+  # CP4BASetup Receiver based on Slack
+  - name: CP4BASetup 
+
+## The root route on which each incoming alert enters.
+route:
+  # The labels by which incoming alerts are grouped together. For example,
+  # multiple alerts coming in for cluster=A and alertname=LatencyHigh would
+  # be batched into a single group.
+  group_by: [namespace]
+
+  # When the first notification was sent, wait 'group_interval' to send a batch
+  # of new alerts that started firing for that group.
+  group_interval: 5m
+
+  # When a new group of alerts is created by an incoming alert, wait at
+  # least 'group_wait' to send the initial notification.
+  # This way ensures that you get multiple alerts for the same group that start
+  # firing shortly after another are batched together on the first
+  # notification.
+  group_wait: 1m 
+
+  # Default receiver for routes
+  receiver: paramDefaultReceiver 
+
+  # If an alert has successfully been sent, wait 'repeat_interval' to
+  # resend them.
+  repeat_interval: paramRepeatInterval
+
+  # The child route trees.
+  routes:
+    - match:
+        alertname: Watchdog
+      receiver: Watchdog
+    - match:
+        group: cp4basetup
+      receiver: CP4BASetup 
+      group_by: [group]
+    - match:
+        prometheus: openshift-monitoring/k8s
+      receiver: Platform
+      group_by: [prometheus]
+       
+
+## Inhibition rules allow to mute a set of alerts given that another alert is
+## firing.
+## We use this to mute any warning-level notifications if the same alert is
+## already critical.
+inhibit_rules:
+  - equal:
+      - namespace
+      - alertname
+    source_match:
+      severity: critical
+    target_match_re:
+      severity: warning|info
+  - equal:
+      - namespace
+      - alertname
+    source_match:
+      severity: warning
+    target_match_re:
+      severity: info

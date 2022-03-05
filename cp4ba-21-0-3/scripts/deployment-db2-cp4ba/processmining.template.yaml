@@ -1,0 +1,54 @@
+###############################################################################
+#
+# Licensed Materials - Property of IBM
+#
+# (C) Copyright IBM Corp. 2022. All Rights Reserved.
+#
+# US Government Users Restricted Rights - Use, duplication or
+# disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+#
+###############################################################################
+apiVersion: processmining.ibm.com/v1beta1
+kind: ProcessMining
+metadata:
+  name: processmining
+  namespace: cp4baProjectName
+spec:
+  license:
+    accept: true
+    cloudPak: IBM Cloud Pak for Business Automation
+  version: 1.12.0.3
+  defaultStorageClassName: cp4baScFast
+  loglevel: INFO
+  processmining:
+    images:
+      imagepullpolicy: Always
+    storage:
+      database:
+        create: true
+        name: processmining-mongo
+        size: '10'
+      events:
+        create: true
+        name: processmining-repository
+        size: '50'
+    replicas:
+      nginx: cp4baReplicaCount
+      discovery: cp4baReplicaCount
+      analytics: cp4baReplicaCount
+      bpa: cp4baReplicaCount
+      dr: cp4baReplicaCount
+      usermanagement: cp4baReplicaCount
+  taskmining:
+    images:
+      imagepullpolicy: Always
+    install: false
+    storage:
+      database:
+        create: false
+        dbtype: db2
+        size: '100'
+      events:
+        create: false
+        name: taskmining-data
+        size: '100'

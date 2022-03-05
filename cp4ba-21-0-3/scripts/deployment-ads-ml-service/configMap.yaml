@@ -1,0 +1,25 @@
+###############################################################################
+#
+# Licensed Materials - Property of IBM
+#
+# (C) Copyright IBM Corp. 2022. All Rights Reserved.
+#
+# US Government Users Restricted Rights - Use, duplication or
+# disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+#
+###############################################################################
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: ads-ml-service-model-conf
+data:
+  preload-conf.yaml: |
+    models:
+        #  - examples/model_training_and_deployment/classification/miniloan_linear_svc
+        #  - examples/model_training_and_deployment/classification/miniloan_xgb
+        #  - examples/model_training_and_deployment/regression/miniloan_rfr
+        #  - examples/model_training_and_deployment/classification_with_probabilities/miniloan_rfc
+        #  - examples/model_training_and_deployment/ads-samples
+        #  - examples/model_training_and_deployment/pipeline
+        #  - examples/model_training_and_deployment/classification/iris_svc
+        #  - examples/model_training_and_deployment/custom_predictor

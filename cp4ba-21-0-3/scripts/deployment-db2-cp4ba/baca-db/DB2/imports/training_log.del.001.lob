@@ -1,0 +1,1259 @@
+{"NoOfDocuments": 77, "NoOfDocumentsUsedForTraining": 77, "TotalPagesUsedForTraining": 78, "TotalPages": 78, "NoOfDocumentClasses": 3, "AverageDocumentsByClasses": 25, "AveragePagesByDocumentInClasses": 1, "DocumentClassAndDocuments": [{"DocumentClassID": "63842cbd-c858-4a5d-955c-7825edb7da25", "DocumentClass": "Bill of Lading", "AveragePages": 1, "TotalPages": 21, "NoOfDocuments": 21, "AveragePagesUsedForTraining": 1, "TotalPagesUsedForTraining": 21, "NoOfDocumentsUsedForTraining": 21, "Documents": [{"DocumentID": "fb87d690-daee-43aa-86ec-dc990109d433", "DocumentName": "BOL_005.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "c4632c7c-42ac-4c6c-992a-4611a94a7d5f", "DocumentName": "BOL_002.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "f29b203a-1038-45cc-b03d-0ce5d0f8ad24", "DocumentName": "BOL_003.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "b52505d1-dcf9-4452-ac9e-1bda5bfceff5", "DocumentName": "BOL_015.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "e2ccc7ce-ab04-4bee-b012-d3597c268e73", "DocumentName": "BOL_041.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "40a8f5f8-8dc7-4c5e-aa42-8387f4da6829", "DocumentName": "BOL_073.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "d2376f0d-4358-4333-b6d3-bad8bb08f269", "DocumentName": "BOL_072.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "7d1f6b6b-aa5c-4e52-9f7b-782c6eddf642", "DocumentName": "BOL_077.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "86871da5-8d7f-4213-b0d2-dcab5b517336", "DocumentName": "BOL_081.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "3bdec311-dae6-4cd2-a230-fd52330b463d", "DocumentName": "BOL_095.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "683736e5-1a73-4f2c-b517-d53c937f751a", "DocumentName": "BOL_092.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "fbc99eea-2799-4027-b281-017dbcd731d1", "DocumentName": "BOL_100.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "6ac759f4-cad2-4378-8af3-bf6f9edf1ad7", "DocumentName": "BOL_099.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "bf51cb2a-e0eb-4ff6-b9db-8e24ec49eadb", "DocumentName": "BOL_200.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "20ed461e-f4ac-45be-8689-d8751991bf38", "DocumentName": "BOL_201.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "b131ae25-481d-4f66-a100-97333822edbe", "DocumentName": "BOL_007.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "5c743a81-a11d-4f2e-b322-95ca5d30ac1e", "DocumentName": "BOL_009.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "7b3e782a-4624-48da-8d89-8acccfcf8d5f", "DocumentName": "BOL_019.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "6f48bde2-02d8-4536-b3b4-b9777109640c", "DocumentName": "BOL_031.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "e33535ce-008d-4ad0-8546-75371028a17d", "DocumentName": "BOL_027.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "557c879d-6586-47c3-8903-366077caeadc", "DocumentName": "BOL_075.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}], "Features": [{"Name": "accent", "Flags": 1, "Rank": 0.07}, {"Name": "accept", "Flags": 1, "Rank": 0.07}, {"Name": "acceptable", "Flags": 1, "Rank": 0.12}, {"Name": "acceptance", "Flags": 1, "Rank": 0.06}, {"Name": "accepting", "Flags": 1, "Rank": 0.13}, {"Name": "accepts", "Flags": 1, "Rank": 0.06}, {"Name": "accomplished", "Flags": 1, "Rank": 0.06}, {"Name": "according", "Flags": 1, "Rank": 0.05}, {"Name": "accprding", "Flags": 1, "Rank": 0.05}, {"Name": "acct", "Flags": 1, "Rank": 0.07}, {"Name": "accurately", "Flags": 1, "Rank": 0.06}, {"Name": "acid", "Flags": 1, "Rank": 0.06}, {"Name": "act", "Flags": 1, "Rank": 0.06}, {"Name": "active", "Flags": 1, "Rank": 0.07}, {"Name": "adam", "Flags": 1, "Rank": 0.07}, {"Name": "address", "Flags": 1, "Rank": 0.74}, {"Name": "adjustable", "Flags": 1, "Rank": 0.06}, {"Name": "afeher", "Flags": 1, "Rank": 0.06}, {"Name": "agent", "Flags": 1, "Rank": 0.38}, {"Name": "agree", "Flags": 1, "Rank": 0.06}, {"Name": "agreed", "Flags": 1, "Rank": 0.87}, {"Name": "agreement", "Flags": 1, "Rank": 0.13}, {"Name": "agrees", "Flags": 1, "Rank": 0.16999999999999998}, {"Name": "aiii", "Flags": 1, "Rank": 0.13}, {"Name": "air", "Flags": 1, "Rank": 0.15}, {"Name": "aisle", "Flags": 1, "Rank": 0.11}, {"Name": "alcohol", "Flags": 1, "Rank": 0.06}, {"Name": "alienware", "Flags": 1, "Rank": 0.08}, {"Name": "alladin", "Flags": 1, "Rank": 0.06}, {"Name": "also", "Flags": 1, "Rank": 0.11}, {"Name": "always", "Flags": 1, "Rank": 0.11}, {"Name": "amazing", "Flags": 1, "Rank": 0.11}, {"Name": "amd", "Flags": 1, "Rank": 0.08}, {"Name": "amended", "Flags": 1, "Rank": 0.06}, {"Name": "amt", "Flags": 1, "Rank": 0.06}, {"Name": "andor", "Flags": 1, "Rank": 0.13}, {"Name": "annette", "Flags": 1, "Rank": 0.06}, {"Name": "another", "Flags": 1, "Rank": 0.05}, {"Name": "aothe", "Flags": 1, "Rank": 0.05}, {"Name": "apparent", "Flags": 1, "Rank": 0.05}, {"Name": "applicable", "Flags": 1, "Rank": 0.52}, {"Name": "appropriate", "Flags": 1, "Rank": 0.05}, {"Name": "arabica", "Flags": 1, "Rank": 0.06}, {"Name": "arah", "Flags": 1, "Rank": 0.05}, {"Name": "arch", "Flags": 1, "Rank": 0.07}, {"Name": "area", "Flags": 1, "Rank": 0.07}, {"Name": "armourwood", "Flags": 1, "Rank": 0.05}, {"Name": "armrest", "Flags": 1, "Rank": 0.1}, {"Name": "arrangement", "Flags": 1, "Rank": 0.06}, {"Name": "arrival", "Flags": 1, "Rank": 0.13}, {"Name": "ashley", "Flags": 1, "Rank": 0.06}, {"Name": "ashton", "Flags": 1, "Rank": 0.14}, {"Name": "asp", "Flags": 1, "Rank": 0.05}, {"Name": "asphalt", "Flags": 1, "Rank": 0.05}, {"Name": "attn", "Flags": 1, "Rank": 0.13}, {"Name": "aug", "Flags": 1, "Rank": 0.13}, {"Name": "august", "Flags": 1, "Rank": 0.11}, {"Name": "aurora", "Flags": 1, "Rank": 0.08}, {"Name": "australia", "Flags": 1, "Rank": 0.07}, {"Name": "authorization", "Flags": 1, "Rank": 0.13}, {"Name": "auto", "Flags": 1, "Rank": 0.27}, {"Name": "automatic", "Flags": 1, "Rank": 0.05}, {"Name": "available", "Flags": 1, "Rank": 0.19}, {"Name": "avenue", "Flags": 1, "Rank": 0.05}, {"Name": "avroh", "Flags": 1, "Rank": 0.05}, {"Name": "aware", "Flags": 1, "Rank": 0.07}, {"Name": "axels", "Flags": 1, "Rank": 0.07}, {"Name": "back", "Flags": 1, "Rank": 0.16}, {"Name": "barton", "Flags": 1, "Rank": 0.07}, {"Name": "basement", "Flags": 1, "Rank": 0.06}, {"Name": "bay", "Flags": 1, "Rank": 0.16}, {"Name": "bayonne", "Flags": 1, "Rank": 0.16}, {"Name": "bean", "Flags": 1, "Rank": 0.06}, {"Name": "beaumont", "Flags": 1, "Rank": 0.06}, {"Name": "bedroom", "Flags": 1, "Rank": 0.07}, {"Name": "best", "Flags": 1, "Rank": 0.09}, {"Name": "bhoola", "Flags": 1, "Rank": 0.13}, {"Name": "bill", "Flags": 1, "Rank": 0.9700000000000002}, {"Name": "bird", "Flags": 1, "Rank": 0.09}, {"Name": "bit", "Flags": 1, "Rank": 0.12}, {"Name": "bkng", "Flags": 1, "Rank": 0.06}, {"Name": "blind", "Flags": 1, "Rank": 0.07}, {"Name": "blp", "Flags": 1, "Rank": 0.09}, {"Name": "blue", "Flags": 1, "Rank": 0.06}, {"Name": "board", "Flags": 1, "Rank": 0.06}, {"Name": "bol", "Flags": 1, "Rank": 0.24}, {"Name": "bol number", "Flags": 1, "Rank": 0.19}, {"Name": "bookcase", "Flags": 1, "Rank": 0.06}, {"Name": "booking", "Flags": 1, "Rank": 0.22999999999999998}, {"Name": "bootham", "Flags": 1, "Rank": 0.11}, {"Name": "boulevard", "Flags": 1, "Rank": 0.16999999999999998}, {"Name": "bowl", "Flags": 1, "Rank": 0.1}, {"Name": "box", "Flags": 1, "Rank": 0.18}, {"Name": "brand", "Flags": 1, "Rank": 0.11}, {"Name": "bread", "Flags": 1, "Rank": 0.07}, {"Name": "breakdown", "Flags": 1, "Rank": 0.06}, {"Name": "brewing", "Flags": 1, "Rank": 0.07}, {"Name": "brookview", "Flags": 1, "Rank": 0.06}, {"Name": "brother", "Flags": 1, "Rank": 0.19}, {"Name": "bud", "Flags": 1, "Rank": 0.09}]}, {"DocumentClassID": "a2827178-33da-403b-aaa8-b0bb3b820959", "DocumentClass": "Utility Bill", "AveragePages": 1, "TotalPages": 26, "NoOfDocuments": 25, "AveragePagesUsedForTraining": 1, "TotalPagesUsedForTraining": 26, "NoOfDocumentsUsedForTraining": 25, "Documents": [{"DocumentID": "28050e58-323a-4fe1-b2aa-7840ad4f2b5f", "DocumentName": "UBILL_007.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "bda2f394-94a4-4edc-ba83-ac481c950bc2", "DocumentName": "UBILL_016.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "83c67c0c-226b-49dd-8cf2-b4af00f13151", "DocumentName": "UBILL_020.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "70d67835-a9fd-4772-816b-b8d1d6649ce8", "DocumentName": "UBILL_021.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "9dfb5563-eaaf-4eda-83bd-1a68c0a64309", "DocumentName": "UBILL_038.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "ec3ab8a2-6869-47ef-97ea-94b0bcea4cb3", "DocumentName": "UBILL_041.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "b7b661be-b5f8-4448-9097-522567da8255", "DocumentName": "UBILL_056.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "95c98185-cc85-414f-8eb6-6ce08e544bb8", "DocumentName": "UBILL_058.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "276fcfc9-9aab-46e4-a42b-dd236103f55b", "DocumentName": "UBILL_061.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "33dddac5-57e6-47e1-9766-04c498be0bca", "DocumentName": "UBILL_073.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "34511fa3-5be9-42b9-95e8-281e29303f3e", "DocumentName": "UBILL_049.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "8a4c0036-b897-436a-8e06-ef6472293ae9", "DocumentName": "UBILL_075.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "7ab7c937-499b-4e22-bfaf-d1bde29c3799", "DocumentName": "UBILL_076.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "6afa9fd8-d3ff-4c5d-a893-d08d68ed1073", "DocumentName": "UBILL_079.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "64eb157a-e623-4d16-9b78-e5f5c06c2b5c", "DocumentName": "UBILL_081.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "5a32b0df-c2e5-48a8-8cbe-2ff2179fddee", "DocumentName": "UBILL_083.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "b098f8ae-ff97-4c00-9352-393c32fbb2e3", "DocumentName": "UBILL_085.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "f403e1ad-39f0-4159-b529-6ae8484bf76c", "DocumentName": "UBILL_201.pdf", "DocumentNumPages": 2, "DocumentStatus": 4}, {"DocumentID": "d952ef43-a138-402b-a93c-ec76a8a9bcfb", "DocumentName": "UBILL_202.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "cd8f271c-05da-4569-8075-bb86bd02e831", "DocumentName": "UBILL_001.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "bb867d4f-4314-445f-b28b-f7d43c04f49d", "DocumentName": "UBILL_003.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "7382048a-8369-4ae6-b2c6-16b06404f7f2", "DocumentName": "UBILL_057.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "679b4f5e-68a1-4a3c-aeb7-43752af81509", "DocumentName": "UBILL_074.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "932cfc8c-4f82-42fc-b831-a4e0f898214d", "DocumentName": "UBILL_078.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "c58a7ead-1500-407f-8b41-8bd1bc406feb", "DocumentName": "UBILL_082.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}], "Features": [{"Name": "abbf", "Flags": 1, "Rank": 0.11}, {"Name": "account", "Flags": 1, "Rank": 1.7900000000000005}, {"Name": "account number", "Flags": 1, "Rank": 0.7400000000000001}, {"Name": "account owner", "Flags": 1, "Rank": 0.1}, {"Name": "accourt", "Flags": 1, "Rank": 0.09}, {"Name": "acct", "Flags": 1, "Rank": 0.07}, {"Name": "activity", "Flags": 1, "Rank": 0.09}, {"Name": "actual", "Flags": 1, "Rank": 0.13}, {"Name": "additional", "Flags": 1, "Rank": 0.09}, {"Name": "address", "Flags": 1, "Rank": 0.15000000000000002}, {"Name": "adj", "Flags": 1, "Rank": 0.14}, {"Name": "adjusted", "Flags": 1, "Rank": 0.24}, {"Name": "adjustment", "Flags": 1, "Rank": 0.37}, {"Name": "administrative", "Flags": 1, "Rank": 0.1}, {"Name": "advance", "Flags": 1, "Rank": 0.1}, {"Name": "afternoon", "Flags": 1, "Rank": 0.11}, {"Name": "agreement", "Flags": 1, "Rank": 0.06}, {"Name": "albwance", "Flags": 1, "Rank": 0.09}, {"Name": "allowance", "Flags": 1, "Rank": 0.08}, {"Name": "allows", "Flags": 1, "Rank": 0.1}, {"Name": "along", "Flags": 1, "Rank": 0.09}, {"Name": "alpire", "Flags": 1, "Rank": 0.07}, {"Name": "also", "Flags": 1, "Rank": 0.05}, {"Name": "always", "Flags": 1, "Rank": 0.07}, {"Name": "amiss", "Flags": 1, "Rank": 0.08}, {"Name": "amount", "Flags": 1, "Rank": 1.6600000000000006}, {"Name": "amount due", "Flags": 1, "Rank": 1.5800000000000003}, {"Name": "andreas", "Flags": 1, "Rank": 0.18}, {"Name": "android", "Flags": 1, "Rank": 0.19}, {"Name": "androidios", "Flags": 1, "Rank": 0.09}, {"Name": "annual", "Flags": 1, "Rank": 0.09}, {"Name": "app", "Flags": 1, "Rank": 0.26}, {"Name": "appliance", "Flags": 1, "Rank": 0.08}, {"Name": "apply", "Flags": 1, "Rank": 0.08}, {"Name": "approved", "Flags": 1, "Rank": 0.07}, {"Name": "apr", "Flags": 1, "Rank": 0.19}, {"Name": "april", "Flags": 1, "Rank": 0.63}, {"Name": "aquoza", "Flags": 1, "Rank": 0.19}, {"Name": "ard", "Flags": 1, "Rank": 0.18}, {"Name": "arlington", "Flags": 1, "Rank": 0.09}, {"Name": "around", "Flags": 1, "Rank": 0.08}, {"Name": "ashen", "Flags": 1, "Rank": 0.08}, {"Name": "atm", "Flags": 1, "Rank": 0.08}, {"Name": "aug", "Flags": 1, "Rank": 0.12000000000000001}, {"Name": "authorize", "Flags": 1, "Rank": 0.05}, {"Name": "auto", "Flags": 1, "Rank": 0.1}, {"Name": "automatic", "Flags": 1, "Rank": 0.35}, {"Name": "availability", "Flags": 1, "Rank": 0.07}, {"Name": "available", "Flags": 1, "Rank": 0.12000000000000001}, {"Name": "ave", "Flags": 1, "Rank": 0.08}, {"Name": "avenue", "Flags": 1, "Rank": 0.2}, {"Name": "average", "Flags": 1, "Rank": 0.08}, {"Name": "avg", "Flags": 1, "Rank": 0.31}, {"Name": "avoid", "Flags": 1, "Rank": 0.39}, {"Name": "back", "Flags": 1, "Rank": 0.09}, {"Name": "balance", "Flags": 1, "Rank": 1.6199999999999999}, {"Name": "balance due", "Flags": 1, "Rank": 0.39}, {"Name": "balance forward", "Flags": 1, "Rank": 0.48}, {"Name": "bancirvith", "Flags": 1, "Rank": 0.08}, {"Name": "band", "Flags": 1, "Rank": 0.23}, {"Name": "bandirtnolicb", "Flags": 1, "Rank": 0.12}, {"Name": "bank", "Flags": 1, "Rank": 0.07}, {"Name": "base", "Flags": 1, "Rank": 0.19}, {"Name": "bastin", "Flags": 1, "Rank": 0.27}, {"Name": "baton", "Flags": 1, "Rank": 0.21}, {"Name": "bay", "Flags": 1, "Rank": 0.06}, {"Name": "beaumont", "Flags": 1, "Rank": 0.15}, {"Name": "becker", "Flags": 1, "Rank": 0.18}, {"Name": "bentley", "Flags": 1, "Rank": 0.23}, {"Name": "berkshire", "Flags": 1, "Rank": 0.17}, {"Name": "better", "Flags": 1, "Rank": 0.15000000000000002}, {"Name": "bianca", "Flags": 1, "Rank": 0.08}, {"Name": "biancacampbell", "Flags": 1, "Rank": 0.08}, {"Name": "biling", "Flags": 1, "Rank": 0.11}, {"Name": "bill", "Flags": 1, "Rank": 1.37}, {"Name": "bill amount due", "Flags": 1, "Rank": 0.07}, {"Name": "bill date", "Flags": 1, "Rank": 0.42000000000000004}, {"Name": "bill issue date", "Flags": 1, "Rank": 0.14}, {"Name": "billed", "Flags": 1, "Rank": 0.06}, {"Name": "billinct", "Flags": 1, "Rank": 0.13}, {"Name": "billing", "Flags": 1, "Rank": 0.79}, {"Name": "billing date", "Flags": 1, "Rank": 0.36}, {"Name": "billing number", "Flags": 1, "Rank": 0.08}, {"Name": "billingalphireenergyca", "Flags": 1, "Rank": 0.07}, {"Name": "billingcostumer", "Flags": 1, "Rank": 0.09}, {"Name": "billingheloisgasdepotnet", "Flags": 1, "Rank": 0.07}, {"Name": "billirg", "Flags": 1, "Rank": 0.08}, {"Name": "bin", "Flags": 1, "Rank": 0.12}, {"Name": "birdingbury", "Flags": 1, "Rank": 0.14}, {"Name": "bit", "Flags": 1, "Rank": 0.06}, {"Name": "blizzard", "Flags": 1, "Rank": 0.1}, {"Name": "board", "Flags": 1, "Rank": 0.16999999999999998}, {"Name": "boo", "Flags": 1, "Rank": 0.08}, {"Name": "bottom", "Flags": 1, "Rank": 0.06}, {"Name": "box", "Flags": 1, "Rank": 0.25}, {"Name": "bra", "Flags": 1, "Rank": 0.06}, {"Name": "brand", "Flags": 1, "Rank": 0.05}, {"Name": "breakdown", "Flags": 1, "Rank": 0.08}, {"Name": "bringing", "Flags": 1, "Rank": 0.05}, {"Name": "brng", "Flags": 1, "Rank": 0.06}]}, {"DocumentClassID": "b65d6596-71e0-4def-92e4-fc5e04ff4e66", "DocumentClass": "Invoice", "AveragePages": 1, "TotalPages": 31, "NoOfDocuments": 31, "AveragePagesUsedForTraining": 1, "TotalPagesUsedForTraining": 31, "NoOfDocumentsUsedForTraining": 31, "Documents": [{"DocumentID": "7ada9445-fe9e-4450-a1f9-d06a7cc4c7f0", "DocumentName": "INV_008.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "8d2d4856-6f6d-4c3b-b5eb-d22b77d9b6d1", "DocumentName": "INV_010.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "5353df4d-f134-4355-9b21-1183e0961126", "DocumentName": "INV_015.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "fde3cde8-10e9-4148-bcbd-f58c4d6cfbde", "DocumentName": "INV_017.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "60d23f07-1781-4302-a626-109c6a3a80f0", "DocumentName": "INV_020.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "6b416ca6-8caf-42f9-bf16-b5e22d804baa", "DocumentName": "INV_018.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "f4a56a59-9415-4115-b1a2-1e99f2b36dd8", "DocumentName": "INV_023_2.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "a3098d86-2c1b-42bb-91f9-f41d511031d4", "DocumentName": "INV_024.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "a3b1f38d-c265-43ee-8cbb-6ab0c6b2f722", "DocumentName": "INV_023.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "514201cd-7e4d-4466-9d29-c11fcb8d7d1d", "DocumentName": "INV_029.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "cd07d3e7-3418-4bcb-b171-bdea9180cc46", "DocumentName": "INV_030.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "dcfc981c-6565-45f7-bdea-8d8c99c55efc", "DocumentName": "INV_031.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "f8ecc4d2-e26d-46b7-9aa0-57ee39cd25d5", "DocumentName": "INV_032.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "aa8749e2-ccd8-48eb-9eb9-9c0e74ea75ce", "DocumentName": "INV_035.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "4b591783-2357-4efb-aaec-491f2f7ead30", "DocumentName": "INV_039.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "2fafae48-aa91-4ebb-9f45-554c73c56c4b", "DocumentName": "INV_041.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "489713db-59db-4a90-8f3c-a1b15d2cdd65", "DocumentName": "INV_050.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "9b5bf8e8-0916-402a-9a4c-36e4be003002", "DocumentName": "INV_046.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "0f124c64-12a8-4b32-881d-f4170f57cd62", "DocumentName": "INV_051.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "def9e7d6-1973-4ec5-aceb-ee409063e85f", "DocumentName": "INV_052.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "850c70d6-41f1-4b32-ae5f-42c2f0b8d5b2", "DocumentName": "INV_201.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "320ce639-e538-4e9f-b872-9d09c6355b79", "DocumentName": "INV_202.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "46b48775-acf2-43e5-92cf-2da18f7487b6", "DocumentName": "INV_002.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "0aca73ad-6534-4486-bed2-fd4176c59ac5", "DocumentName": "INV_028.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "3377f96b-3402-4d46-90e8-f2eca078dc1e", "DocumentName": "INV_033.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "c86eeaf3-6a27-4e22-953e-fcf9540a33e3", "DocumentName": "INV_034.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "7db03e8a-7045-4049-89ef-2e7193eb5b22", "DocumentName": "INV_036.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "706196f6-8113-4f65-9794-50178b688a05", "DocumentName": "INV_038.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "e46f6e1a-ca80-4d06-b12c-a843a8c7572d", "DocumentName": "INV_040.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "c9381f35-1912-493f-b9a9-389c8de66271", "DocumentName": "INV_045.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}, {"DocumentID": "da33c352-e509-4fc5-9d93-ceec01f37b62", "DocumentName": "INV_068.pdf", "DocumentNumPages": 1, "DocumentStatus": 4}], "Features": [{"Name": "aaa", "Flags": 1, "Rank": 0.11}, {"Name": "abasi", "Flags": 1, "Rank": 0.11}, {"Name": "ablack", "Flags": 1, "Rank": 0.12}, {"Name": "abv", "Flags": 1, "Rank": 0.26}, {"Name": "accordance", "Flags": 1, "Rank": 0.12}, {"Name": "account", "Flags": 1, "Rank": 8.09}, {"Name": "account name", "Flags": 1, "Rank": 0.17}, {"Name": "account number", "Flags": 1, "Rank": 0.16}, {"Name": "acct", "Flags": 1, "Rank": 7.52}, {"Name": "acid", "Flags": 1, "Rank": 0.21000000000000002}, {"Name": "adam", "Flags": 1, "Rank": 0.13}, {"Name": "adapt", "Flags": 1, "Rank": 0.13}, {"Name": "adaptablz", "Flags": 1, "Rank": 0.12}, {"Name": "additional", "Flags": 1, "Rank": 0.11}, {"Name": "address", "Flags": 1, "Rank": 0.38}, {"Name": "adidas", "Flags": 1, "Rank": 0.13}, {"Name": "administration", "Flags": 1, "Rank": 0.12}, {"Name": "afterburn", "Flags": 1, "Rank": 0.12}, {"Name": "aid", "Flags": 1, "Rank": 0.23}, {"Name": "aigostar", "Flags": 1, "Rank": 0.14}, {"Name": "akron", "Flags": 1, "Rank": 0.1}, {"Name": "alberta", "Flags": 1, "Rank": 0.17}, {"Name": "alcohol", "Flags": 1, "Rank": 0.11}, {"Name": "ale", "Flags": 1, "Rank": 0.17}, {"Name": "amalie", "Flags": 1, "Rank": 0.23}, {"Name": "amenia", "Flags": 1, "Rank": 0.14}, {"Name": "amount", "Flags": 1, "Rank": 7.96}, {"Name": "amount due", "Flags": 1, "Rank": 0.14}, {"Name": "angeles", "Flags": 1, "Rank": 0.17}, {"Name": "ano", "Flags": 1, "Rank": 0.14}, {"Name": "anytown", "Flags": 1, "Rank": 0.1}, {"Name": "approved", "Flags": 1, "Rank": 0.11}, {"Name": "april", "Flags": 1, "Rank": 0.12}, {"Name": "argyll", "Flags": 1, "Rank": 0.12}, {"Name": "attached", "Flags": 1, "Rank": 0.13}, {"Name": "attn", "Flags": 1, "Rank": 0.61}, {"Name": "audacity", "Flags": 1, "Rank": 0.14}, {"Name": "audio", "Flags": 1, "Rank": 0.23}, {"Name": "audioaideinrotcom", "Flags": 1, "Rank": 0.12}, {"Name": "august", "Flags": 1, "Rank": 0.39}, {"Name": "authorised", "Flags": 1, "Rank": 0.17}, {"Name": "authorised signature", "Flags": 1, "Rank": 0.17}, {"Name": "authorized", "Flags": 1, "Rank": 0.12}, {"Name": "authorized signature", "Flags": 1, "Rank": 0.12}, {"Name": "automatic", "Flags": 1, "Rank": 0.15}, {"Name": "ave", "Flags": 1, "Rank": 0.30000000000000004}, {"Name": "avenue", "Flags": 1, "Rank": 0.15000000000000002}, {"Name": "avillo", "Flags": 1, "Rank": 0.12}, {"Name": "awhite", "Flags": 1, "Rank": 0.12}, {"Name": "back", "Flags": 1, "Rank": 0.15}, {"Name": "bag", "Flags": 1, "Rank": 0.8400000000000001}, {"Name": "bain", "Flags": 1, "Rank": 0.21}, {"Name": "bakery", "Flags": 1, "Rank": 0.31}, {"Name": "balmy", "Flags": 1, "Rank": 0.14}, {"Name": "banana", "Flags": 1, "Rank": 0.17}, {"Name": "bank", "Flags": 1, "Rank": 8.93}, {"Name": "bar", "Flags": 1, "Rank": 0.29000000000000004}, {"Name": "barbara", "Flags": 1, "Rank": 0.14}, {"Name": "barn", "Flags": 1, "Rank": 0.09}, {"Name": "baseball", "Flags": 1, "Rank": 0.1}, {"Name": "basket", "Flags": 1, "Rank": 0.14}, {"Name": "baskin", "Flags": 1, "Rank": 0.1}, {"Name": "baskins", "Flags": 1, "Rank": 0.1}, {"Name": "baton", "Flags": 1, "Rank": 0.12}, {"Name": "beach", "Flags": 1, "Rank": 0.14}, {"Name": "beeghley", "Flags": 1, "Rank": 0.17}, {"Name": "beer", "Flags": 1, "Rank": 0.09}, {"Name": "bend", "Flags": 1, "Rank": 0.12}, {"Name": "benedum", "Flags": 1, "Rank": 0.14}, {"Name": "beverage", "Flags": 1, "Rank": 0.1}, {"Name": "big", "Flags": 1, "Rank": 0.22}, {"Name": "bill", "Flags": 1, "Rank": 0.1}, {"Name": "billing address", "Flags": 1, "Rank": 0.09}, {"Name": "bindloss", "Flags": 1, "Rank": 0.17}, {"Name": "bitted", "Flags": 1, "Rank": 0.14}, {"Name": "black", "Flags": 1, "Rank": 0.12}, {"Name": "blade", "Flags": 1, "Rank": 0.14}, {"Name": "block", "Flags": 1, "Rank": 0.17}, {"Name": "blue", "Flags": 1, "Rank": 0.23}, {"Name": "blueberry", "Flags": 1, "Rank": 0.12}, {"Name": "blueto", "Flags": 1, "Rank": 0.12}, {"Name": "bnkflrdass", "Flags": 1, "Rank": 0.12}, {"Name": "bombay", "Flags": 1, "Rank": 0.28}, {"Name": "boston", "Flags": 1, "Rank": 0.32}, {"Name": "bottled", "Flags": 1, "Rank": 0.17}, {"Name": "boulevard", "Flags": 1, "Rank": 0.08}, {"Name": "boulvard", "Flags": 1, "Rank": 0.1}, {"Name": "boutique", "Flags": 1, "Rank": 0.1}, {"Name": "bowl", "Flags": 1, "Rank": 0.2}, {"Name": "box", "Flags": 1, "Rank": 0.08}, {"Name": "brand", "Flags": 1, "Rank": 8.31}, {"Name": "brant", "Flags": 1, "Rank": 0.17}, {"Name": "bread", "Flags": 1, "Rank": 0.25}, {"Name": "brewer", "Flags": 1, "Rank": 0.14}, {"Name": "brewing", "Flags": 1, "Rank": 0.32}, {"Name": "british", "Flags": 1, "Rank": 0.23}, {"Name": "bugle", "Flags": 1, "Rank": 0.1}, {"Name": "builder", "Flags": 1, "Rank": 0.16}, {"Name": "burner", "Flags": 1, "Rank": 0.27}, {"Name": "bush", "Flags": 1, "Rank": 0.12}]}]}€(csklearn.feature_extraction.text
+CountVectorizer
+q )q}q(X   inputqX   contentqX   encodingqX   utf-8qX   decode_errorqX   strictqX   strip_accentsq	NX   preprocessorq
+NX	   tokenizerqNX   analyzerqX   wordqX	   lowercaseqˆX   token_patternqX   (?u)\b\w\w+\bqX
+   stop_wordsqNX   max_dfqG?ğ      X   min_dfqKX   max_featuresqNX   ngram_rangeqKK†qX
+   vocabularyqcbuiltins
+set
+q]q(X   releasedqX   consigned toqX   invoice numberqX   balance after dueqX   arahqX   depositqX   spruceq X   andreasq!X   listerq"X   b/l no.q#X   registerq$X   cimmaronq%X   authorised signatureq&X
+   technologyq'X   coolerfridgebeerq(X   invoice numq)X
+   applicableq*X   connectq+X   lastq,X   brochureq-X   doughnutq.X   presentq/X   remarkq0X   vissionq1X   transferq2X   dockq3X	   recipientq4X   sulfateq5X   roberdsq6X   woodq7X   sigurdq8X   chandaq9X
+   account idq:X
+   for po no:q;X   joseq<X
+   descriptonq=X
+   electricalq>X
+   souterheadq?X   magneticq@X   soundbarqAX   billing dateqBX   plushqCX   encloseqDX   santogaqEX   shippinghandlingqFX   progravsqGX   waterqualityqHX
+   casieuanosqIX   hhsqJX   taskqKX   pasoqLX
+   service atqMX	   frederickqNX   harqOX   mamtaqPX   straight bill of lading -qQX   order#qRX   sardisqSX   cupricqTX	   henderingqUX   seller addressqVX   notify partyqWX   mattressqXX   meteringqYX   needqZX   quartq[X   yorkq\X   paleq]X	   principalq^X	   dependantq_X   delivered byq`X   leoqaX   date issuedqbX   bowlqcX   paymentqdX   reciprocatingqeX   hrlhlllqflitlplulgalndqfX   expenseqgX	   carrier #qhX   displayqiX   wwwjewetwatercomqjX   heatingqkX   simplyqlX   tax 12%qmX   greenqnX   inv no.qoX   foundqpX   terryqqX   wwwparadeofshoescomqrX
+   issued on:qsX   drugqtX
+   framesaverquX   current service chargesqvX   purchase order #qwX   stockqxX   umberqyX   shaggyqzX   hawbq{X   osephq|X   tiffanyq}X   iiiilq~X   payment due onqX
+   specincilyq€X   plazaqX   shipping/hndlngq‚X   hereonqƒX   koganq„X   shopq…X   getq†X   stereoq‡X   wellqˆX   callq‰X   gnateqŠX   pieq‹X   outstanding balanceqŒX	   whicheverqX
+   understandqX	   blueberryqX   trailqX
+   schambeherq‘X   sustainsq’X   nurseryq“X   paradeq”X	   brookviewq•X   usualq–X   watq—X   consignee signatureq˜X	   allowanceq™X   enhancesqšX   considerq›X   refqœX   highwayqX   sectionaiiiqX	   forwardedqŸX   gerviceq X   classicq¡X   apreeaq¢X   monthlq£X   goodspersonalq¤X   total new chargesq¥X   georgeq¦X   savoryq§X   kiloq¨X   taq©X
+   regulatoryqªX   mail toq«X   carrier nameq¬X   meshq­X   date received:q®X   payment due byq¯X   deckq°X   murrayq±X   flipq²X   frdrq³X   payment due dateq´X   optionalqµX   jerseyq¶X   potatoq·X   veliq¸X   surroundq¹X   termsqºX   onlineq»X   directlyq¼X   dalhartq½X    place of delivery by on -carrierq¾X   alpireq¿X   utilityqÀX   b/l original/copy no.qÁX   alladinqÂX>   iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiqÃX   swiftqÄX   irvineqÅX   secretqÆX   totalsqÇX   mixerqÈX   tayqÉX   comfyqÊX	   hempsteadqËX   pcqÌX   visitqÍX
+   comparisonqÎX   terminalqÏX	   accprdingqĞX   carrier address:qÑX
+   limitationqÒX   undergroundqÓX   vicsqÔX   datedqÕX   sidqÖX
+   remittanceq×X   wntingqØX   basementqÙX   engineqÚX	   methyleneqÛX   lumbarqÜX   invoice balanceqİX   savannahqŞX   audacityqßX   timberbrookqàX   greatqáX   validateqâX   desktopqãX   primeqäX   ccfqåX   guitarqæX   shipping amountqçX   bandqèX   consignee name and addressqéX	   date billqêX   invoice item tableqëX   thank you for your paymentqìX   inv#qíX	   injuriousqîX   buyqïX   secqğX   approver signatureqñX   kjackzcqòX   truckqóX   providedqôX   changedqõX   merriamqöX   olivierq÷X   total amount due (incl. gst)qøX   bigqùX   herebyqúX   etcqûX   facilityqüX   firmqıX	   liverpoolqşX   consignee contact:qÿX   demandr   X   treer  X
+   multimodalr  X	   fooddoughr  X   damager  X   heliosr  X   newarkr  X   costr  X   cfr  X   headr	  X   industryr
+  X   measurer  X   heightr  X   detailr  X
+   signature:r  X   poundr  X   payment terms:r  X   definedr  X
+   wwwipcicomr  X   fridger  X   websterr  X   rigr  X   sales tax (6%)r  X   oner  X
+   decorationr  X   julyr  X   livingr  X   credit card payment -r  X   ecobillr  X   payments mader  X   teer  X   crownr  X   caror   X   draftr!  X   lauzonr"  X   mediumr#  X	   installedr$  X   tax 5%r%  X   balance forwardr&  X   albwancer'  X   diachr(  X   supponr)  X   sadr*  X   sarasotar+  X   reportr,  X   juicer-  X   bedroomr.  X   allowsr/  X   ottawar0  X.   shipper/exporter (complete name, address, zip)r1  X   etwwwwatenvardcomlfr2  X
+   consignee:r3  X   blader4  X%   payment received from previous periodr5  X   acct #r6  X   contactr7  X   stoutr8  X   juicerr9  X   arear:  X   shopperr;  X   motar<  X   riser=  X   approved byr>  X   erminr?  X   bankr@  X   imprtantrA  X   amtrB  X   addressrC  X   service accountrD  X   sparkrE  X   preyrF  X   brovangrG  X   balmyrH  X   fgtrI  X   typerJ  X   florianrK  X   goodmanrL  X   raulrM  X   gislasonrN  X   kangarO  X   datarP  X   gaylordrQ  X   tetrickrR  X   waterrS  X   cederT  X   ignitionrU  X   contentrV  X   primaryrW  X   contraryrX  X   quantityrY  X   catxerZ  X   armrestr[  X	   hazardousr\  X   topr]  X   bkngr^  X   abbfr_  X   total current chargesr`  X   publicra  X   towrb  X   reliablerc  X   voyagerd  X   minutere  X   last payment receivedrf  X   certfiedrg  X   elerrh  X   filbertri  X   tollrj  X
+   prepaymentrk  X
+   controlledrl  X   vendor namerm  X   classrn  X   shipper(full name and address):ro  X   codrp  X   confrq  X	   hopefullyrr  X   xysrvrs  X   colonialrt  X   tearu  X   homerv  X   crlrw  X	   forwarderrx  X   refrigeratorry  X   wernerrz  X   medicalr{  X   bestr|  X   haursmandayfridayr}  X   coniferr~  X   fullr  X   johnr€  X   svcsr  X(   payment(s) received since last statementr‚  X   godrejrƒ  X   heloisr„  X   aigostarr…  X   copyr†  X   labr‡  X   mooerrˆ  X   returnedr‰  X   providesrŠ  X   palmr‹  X	   initiatedrŒ  X   wwwliberalcomr  X   amazingr  X   wwwsaiaconar  X   espr  X   marr‘  X   gretschr’  X   routingr“  X	   executiver”  X   gotr•  X   noter–  X   werwwatamardromr—  X   service forr˜  X   whskr™  X   phenolrš  X   jasholskirusselr›  X   bil[ing daterœ  X   carryr  X	   subjecttor  X   torprŸ  X	   evergreenr   X   yearinr¡  X   manager¢  X   propenyr£  X   invoice number:r¤  X	   date/timer¥  X   tablr¦  X   electronicsr§  X   flintr¨  X   charesr©  X   purchase order refrª  X   po #r«  X	   polyvinylr¬  X   mallr­  X   crustr®  X   marier¯  X   detachr°  X   correctr±  X   uponr²  X   originr³  X
+   deliver tor´  X   palletrµ  X   your account number:r¶  X   street city -state -zipr·  X   rhoder¸  X
+   authorizedr¹  X   bluerº  X   wwwaudioaidcomr»  X   fluffyr¼  X   regularr½  X   firstr¾  X   pathr¿  X   quipwellrÀ  X   supplierrÁ  X   nitraterÂ  X   wichitarÃ  X   histirrÄ  X	   revolvingrÅ  X   mertzrÆ  X   bol norÇ  X   jacobrÈ  X   businessrÉ  X   makerrÊ  X
+   additionalrË  X   sussexrÌ  X
+   trailercarrÍ  X   zenonrÎ  X   fridleyrÏ  X
+   interestedrĞ  X   junerÑ  X   parkwayrÒ  X   statement summaryrÓ  X   biancarÔ  X   unpaid balance - due nowrÕ  X   payingrÖ  X   pizzeriar×  X   past due balance:rØ  X	   governingrÙ  X   locationrÚ  X   weightrÛ  X   airrÜ  X
+   disclosurerİ  X   salinarŞ  X   duerß  X   adidasrà  X   llilrá  X   chargesadjustmentsrâ  X   the carrierrã  X
+   containingrä  X   vendor emailrå  X   utility company addressræ  X   awhiterç  X   kararè  X   chimeré  X
+   determinedrê  X   bolrë  X   learnrì  X   maintainrí  X
+   distortionrî  X   empowerrï  X   subjrğ  X	   werningerrñ  X   vendor contact numberrò  X	   exemptionró  X   productrô  X   tgarõ  X   fenreykenisrö  X	   tamperingr÷  X   triplerø  X   websiterù  X   managerrú  X   drumrû  X   cherryrü  X   meaningrı  X   markedrş  X   columbiarÿ  X   ler   X   bilingr  X4   iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiir  X   frazerr  X   all new service chargesr  X   pennr  X   dialnrgr  X   unlessr  X   vixr  X   equipsr	  X   voucherr
+  X   payments receivedr  X   paidr  X   sodiumr  X   barnr  X   janr  X   minneapolisr  X   bill of lading nor  X   corr  X   personr  X   garmentr  X   invoice dater  X   total charges:r  X   theproperlyr  X	   followingr  X	   customer:r  X   freight amountr  X   lgbr  X
+   throughoulr  X   shpngr  X   moilr  X   oaklandcaliforniausr  X   account namer   X   russellr!  X   louisr"  X   balancer#  X   cod amountsr$  X   robr%  X   goodr&  X
+   perishabler'  X   breadr(  X   octr)  X"   consignee (full name and address):r*  X   sleever+  X   citricr,  X   lettucer-  X   payment received thank your.  X   snowr/  X   statedr0  X   initialr1  X   frontr2  X   pierr3  X   manufaturingr4  X   uscr5  X   gbgbr6  X   sales tax 5%r7  X   owenr8  X   mayr9  X   shipper's bill of lading #r:  X   placer;  X   ameniar<  X   total amount duer=  X   packagedr>  X   unlawfulr?  X   speedr@  X   wwwroberdsequipcomrA  X   wbtovrB  X   total due by auto payrC  X   rulerD  X#   consignee (complete name & address)rE  X   racerrF  X   baseballrG  X   arrangementrH  X   nationalrI  X   relatedrJ  X   invoice totalrK  X   waipahurL  X   driverM  X   vailrN  X   caprO  X   ensurerP  X   toallifieconditionsrQ  X   rollrR  X   telrS  X   new electric charesrT  X   batonrU  X   hilltoprV  X   anddestinedrW  X   haatajarX  X   jourrY  X
+   foundationrZ  X   due dater[  X   shirirwrr\  X	   liabilityr]  X   exportr^  X   sandrar_  X   gallonr`  X   konsilipowercomra  X   declaresrb  X   sheetrc  X   workitemrd  X	   waterdownre  X   deptrf  X   amount due onrg  X   billing ref no.rh  X   programri  X   channelrj  X   mondayrk  X   rapidrl  X   cifrm  X
+   bancirvithrn  X   stormro  X
+   bil numberrp  X   phonerq  X   bookcaserr  X   destinationrs  X	   drugstorert  X*   notify party (complete name, address, zip)ru  X	   hereunderrv  X   discountrw  X   westministerrx  X   glitzry  X4   consignee (not negotiable unless consigned to order)rz  X   exceptionsrr{  X   followsr|  X   accomplishedr}  X   speciticilyr~  X   orleanslouisianar  X   total current cable charges:r€  X   methodr  X   bananar‚  X   payment scheme:rƒ  X   you paidr„  X
+   invoice #:r…  X
+   conversionr†  X   billing numberr‡  X   lucarˆ  X   unnar‰  X   memoryrŠ  X/   foreign port of unloading (vessel and air only)r‹  X	   exceptionrŒ  X   bittedr  X   smartr  X	   - due nowr  X   port of receiptr  X,   for delivery to (complete name, address zip)r‘  X   winterr’  X
+   theshipperr“  X
+   generationr”  X   reynoldsr•  X   shortr–  X   kwhr—  X   com.an namer˜  X   furnacer™  X   beanrš  X
+   acceptabler›  X   idealrœ  X   sheeterr  X   reverbr  X   obtainrŸ  X   boor   X   requestr¡  X	   otherqiser¢  X   to:r£  X   bartonr¤  X   holderr¥  X   soundr¦  X   asphaltr§  X   boulvardr¨  X   nailr©  X   nonstickrª  X   saskatchewanr«  X   apparentr¬  X
+   classifiedr­  X   twinr®  X   woodenr¯  X   causedr°  X   signedr±  X   custodyr²  X   perfectr³  X   searsr´  X	   streamingrµ  X,   please return this portion with your paymentr¶  X   shieldr·  X   skechersr¸  X   emrgncyr¹  X   energyrº  X   biancacampbellr»  X
+   conferencer¼  X   knowr½  X   predictabler¾  X	   reportcanr¿  X0   foreign port of unloading (vessel and air only )rÀ  X   hiderÁ  X   quipwellrlxrÂ  X   surfacerÃ  X   joyrÄ  X
+   restaurantrÅ  X	   ship daterÆ  X   c.o.d. amountrÇ  X   inv daterÈ  X   britishrÉ  X	   specifiedrÊ  X   freerË  X   budgetpowercomnvaystosaverÌ  X   quipmentrÍ  X   popcornrÎ  X	   disregardrÏ  X   due on:rĞ  X   aaarÑ  X   columnrÒ  X   pennsylvaniarÓ  X   tearoomrÔ  X   coolidgerÕ  X   your account numberrÖ  X   identifictionr×  X   total balance duerØ  X   organizationrÙ  X   clgrÚ  X   distributorrÛ  X   gardenrÜ  X   previousrİ  X   kingdomrŞ  X   startrß  X   alsorà  X   cardrá  X	   handelandrâ  X   bill no.rã  X	   operationrä  X   calsonrå  X   plcræ  X   roomrç  X   hartmanrè  X   landré  X   kidrê  X   mirimumrë  X   loadedrì  X   accentrí  X   payment received from previousrî  X   othersrï  X   keeprğ  X   invoicerñ  X   your accountrò  X   digró  X   freezerrô  X	   arlingtonrõ  X   arabicarö  X   responser÷  X   payelthrø  X   itgrù  X   paaslrú  X   chooserû  X   bill of lading numberrü  X   beckerrı  X   ship to namerş  X   sneakeirÿ  X   carrier numberr   X   ridanpaar  X   cuervor  X   sanr  X   representativer  X
+   androidiosr  X   boothamr  X
+   cinderellar  X   bushr  X   fcrr	  X   pkgsr
+  X   februaryr  X   theatrer  X   rollinsr  X   unpaid balance pay immediatelyr  X   beachr  X   declarear  X   crispr  X   abasir  X   canvasr  X   accourtr  X   place of receiptr  X   missageyourr  X
+   quinnsalesr  X	   ilchesterr  X   agreer  X   shipping/handlingr  X	   effectionr  X   wildr  X   foodsoupr  X   subr  X
+   concerningr  X   please pay byr   X   markr!  X   companyr"  X   measurementr#  X   exporting carrierr$  X   beaumontr%  X   englandr&  X   facturar'  X   rlturnr(  X   mover)  X   gregoryr*  X   konsilir+  X   rockerr,  X   onwardr-  X   holidayr.  X   kohlr/  X   total chargesr0  X   plusr1  X   shipper contactr2  X   hockeyr3  X   avoidr4  X   systemr5  X
+   service tor6  X   siner7  X   nearestr8  X   properr9  X   abvr:  X   aprilr;  X   giantr<  X   balance duer=  X   historyr>  X	   greenbeltr?  X	   completedr@  X   scottrA  X   foreignrB  X   utility company namerC  X   shipping feerD  X   cust norE  X   schimmelrF  X   customer detailsrG  X   wildwoodrH  X   shallrI  X   easerJ  X   recievedrK  X   topmrL  X   payment -jan 29 - thank yourM  X   decrN  X   crazyrO  X   viewrP  X   total phone service chargesrQ  X   place of deliveryrR  X   woolfrS  X   lrryrT  X   shipper herebyrU  X   ripplerV  X   expectedrW  X   total amount due daterX  X   lanerY  X   consignee (to)rZ  X   cmnpanr[  X   threer\  X   hurryr]  X	   authorizer^  X   individuallyr_  X   changer`  X   lightara  X   p.o. #rb  X   lawfulrc  X   iqlrd  X	   net salesre  X   disconnectionrf  X   unpaid balancerg  X   westlandrh  X   bottomri  X   wpitcherrj  X   deerrk  X   noofrl  X   moderm  X   purchase orderrn  X   vendor email addressro  X   fiverp  X   snaprq  X   total due byrr  X   englishrs  X   libraryrt  X   toteru  X
+   tax (12%):rv  X   heliportrw  X   lienrx  X   environmentalry  X   deliveryrz  X   sales tax (15%)r{  X   lawfullyr|  X   choicer}  X   po nor~  X   tibbsr  X   ponyr€  X	   anypersonr  X   tner‚  X	   boulevardrƒ  X   levelr„  X   faxr…  X   intermediater†  X   mblr‡  X	   agreementrˆ  X   pacificr‰  X   eastlandrŠ  X   groupr‹  X	   occasonalrŒ  X   aepenasr  X   place of acceptancer  X   audioaideinrotcomr  X	   hydroxider  X   mwab numberr‘  X	   incurringr’  X   dater“  X   doorr”  X   ltwheyr•  X   sales tax 7%r–  X	   rooseveltr—  X	   happeningr˜  X   mader™  X   effectrš  X   payr›  X   address:rœ  X   morningr  X   current billingr  X   s&hrŸ  X   monthlyr   X   receiptr¡  X   llanidefaller¢  X	   denaturedr£  X   current chargersr¤  X   mutuallyr¥  X   enveloper¦  X   buyerr§  X   certificationr¨  X   currentr©  X   packetrª  X   total current month chargesr«  X	   scheduledr¬  X   udrigler­  X   p.o. no.r®  X
+   bol numberr¯  X   eggr°  X   reducingr±  X	   regulatesr²  X   johnsonr³  X   bill issue date:r´  X   date duerµ  X   cashmcnisacheckr¶  X   queenr·  X   letterr¸  X   account no.r¹  X   honeyrº  X	   schmakeryr»  X   ffomr¼  X   amount due by: r½  X   amendedr¾  X   deliveyr¿  X   seprÀ  X   filledrÁ  X   billinctrÂ  X   lameroorÃ  X   consolrÄ  X
+   possessionrÅ  X	   breakdownrÆ  X   clientrÇ  X   listrÈ  X   griffinrÉ  X   pagerÊ  X   fundrË  X   cyclerÌ  X   applyrÍ  X   paymentsrÎ  X   certifyrÏ  X   nbrrĞ  X   verticalrÑ  X   multifunctionalrÒ  X   sixrÓ  X   enrollrÔ  X   streetrÕ  X   statusrÖ  X   chlorater×  X   portionrØ  X   tearrÙ  X	   componentrÚ  X   ftzrÛ  X   reliabilityrÜ  X   hereinrİ  X   sendrŞ  X   sofarß  X   governmentalrà  X   fallrá  X   balance from your last tillrâ  X   helenrã  X   primedrä  X   kitchenrå  X
+   issue dateræ  X   reminderrç  X	   consigneerè  X   iiiiré  X   findrê  X   overduerë  X   reducerì  X   riotedrí  X	   invoice #rî  X   meterrï  X   sumrğ  X
+   po number:rñ  X   coffeerò  X   emilyró  X   jamierô  X	   afternoonrõ  X   identifyingrö  X   fryerr÷  X   londonrø  X   wormleyrù  X   consumptionrú  X   solutionrû  X   slipoirü  X   malerı  X   lowrş  X   port of loading /exportrÿ  X   venturar   X   oxider  e(X   identificationr  X   hazardr  X	   berkshirer  X   generalr  X   offerr  X   leastr  X   papr  X   pdcmstbr	  X   previous amount duer
+  X   tbhr  X   total shipping chargesr  X   chickenr  X   dankr  X   meter read dater  X   carriager  X   specificr  X   ofkrr  X   accountr  X   budr  X   eveningr  X   factorr  X   jerser  X   swivelr  X   lllllr  X   iantr  X   literr  X   unlimtedr  X   straight bill of ladingr  X   aroundr  X   usageinr  X   order   X   describer!  X   oliver"  X   billing addressr#  X   seattler$  X	   mapleviewr%  X   comr&  X   nitedr'  X   thowordcarrierr(  X   cementr)  X   shipr*  X
+   maximilianr+  X   oakbnclr,  X   planr-  X   gomelr.  X   pay tor/  X   registeringr0  X   baskinr1  X   notifyr2  X   enclosedr3  X   nswr4  X   paolir5  X   booking numberr6  X	   afterburnr7  X   linr8  X   showingr9  X   mccreadyr:  X   elmr;  X   highr<  X	   describedr=  X   orcorporationr>  X   hollowr?  X   lightr@  X   matthewrA  X
+   payable torB  X   taxesrC  X   ddhrD  X   greyrE  X	   sub totalrF  X   logrG  X   baserH  X   date of issue of b/lrI  X	   account #rJ  X   shipment identification no.rK  X   frirL  X   simrM  X   cakerN  X   cashrO  X
+   washingtonrP  X   shipping totalrQ  X   checkedrR  X   sulfuricrS  X   largerrT  X   loadrU  X   bandirtnolicbrV  X   montagurW  X   fomenirX  X   ashleyrY  X	   startstoprZ  X   sheeshamr[  X   aurorar\  X   sandr]  X   houser^  X	   efficientr_  X   payments with your card.r`  X   transactionra  X   point and country of originrb  X   quipwellwbtovrc  X   whetherprintedrd  X   shipment identifiction no.re  X   thankrf  X   dutyrg  X   licenserh  X   bol no.ri  X   bill of lading consigneerj  X   meatrk  X   shipper (from)rl  X   otalrm  X   axelsrn  X   roswellro  X   issued daterp  X   princerq  X   total invoice amountrr  X   couponrs  X   viewedrt  X   meter addressru  X   origrv  X   name of vendor:rw  X   witnessrx  X   packry  X   labeledrz  X   merchandiser{  X	   equipmentr|  X   materialr}  X
+   palletizedr~  X   includer  X	   twinklingr€  X   billing date:r  X   apomonar‚  X   dialingrƒ  X   fror„  X   excessr…  X   roberdsequipemailnyr†  X   ibur‡  X   kwhdayrˆ  X	   gloddaethr‰  X   fixedrŠ  X   penaltyr‹  X   termrŒ  X   limberr  X   customer number:r  X   vesselvoyager  X   looser  X   responsibilityr‘  X   redr’  X   joesr“  X   gamingr”  X   thirdr•  X   awarer–  X   total bill amount duer—  X   propertyr˜  X   islandr™  X   denisonrš  X%   notify party (full name and address):r›  X
+   contactingrœ  X	   total duer  X   illr  X   readrŸ  X   billingcostumerr   X   hydrochloricr¡  X   tel:r¢  X
+   decorativer£  X   feer¤  X   ardr¥  X   constructionr¦  X
+   recyclabler§  X   adamr¨  X   forwardr©  X   keterrª  X   shipping costr«  X   prettyr¬  X   surer­  X   modemr®  X   mzinthtr¯  X   total shipping costsr°  X	   cafeteriar±  X   possibler²  X
+   livingroomr³  X   visionr´  X   bylawrµ  X   comparer¶  X   enveiaper·  X   canadar¸  X   trafficr¹  X   asprº  X   georgiar»  X   purchase order no.r¼  X	   consignedr½  X   inlandr¾  X   kleverr¿  X   montereyrÀ  X   leerÁ  X   sentrÂ  X   hourlyrÃ  X	   containedrÄ  X   bainrÅ  X   edingtonrÆ  X   ownerrÇ  X   debitrÈ  X+   total amount due with discounts (incl. gst)rÉ  X
+   conventionrÊ  X   calledrË  X   siderÌ  X   odessarÍ  X   palacerÎ  X   filerÏ  X   myersrĞ  X   sarahrÑ  X   perinerÒ  X   eetuxrÓ  X   recordrÔ  X   receiverÕ  X   wennrÖ  X   informationr×  X   alwaysrØ  X
+   forwardersrÙ  X   turnrÚ  X   cyberpowerpcrÛ  X	   australiarÜ  X   longerrİ  X   autorŞ  X   subtotalrß  X	   net totalrà  X   declinerá  X   peckrâ  X   softwarerã  X   subtotal without taxesrä  X   catalinarå  X   clearræ  X	   total taxrç  X   valoremrè  X	   confidentré  X   hourrê  X
+   multiplierrë  X   centerrì  X   amissrí  X   bitrî  X	   conditionrï  X   augustrğ  X
+   prohibitedrñ  X   volumerò  X   customer nameró  X   caterô  X   distributionrõ  X   statement norö  X   aquozar÷  X   computerrø  X   bakeryrù  X   valeriorú  X   invoice due daterû  X
+   laboratoryrü  X   higherrı  X   shipping chargesrş  X
+   prior billrÿ  X   terms of paymentr   X   fromr  X   fullyr  X   priorr  X   tunar  X   limer  X   hebertr  X	   recyclingr  X   julr  X   doughr	  X   larsonr
+  X   resultr  X   statement dater  X   ocior  X   shipper name (from)r  X
+   individualr  X   previous bill balancer  X   earnedr  X   transparencyr  X   master bill of ladingr  X   hazelr  X   date order takenr  X   internetr  X   nmentr  X   port of discharger  X   brandr  X   oranger  X   articler  X   hillr  X   previnsr  X   mouthr  X   marylandr  X   wardr   X   balance from preyr!  X	   transportr"  X   minionr#  X   maker$  X   chagar%  X   prer&  X   teraseetsdijiteeisr'  X   ellir(  X   exactr)  X   meadowr*  X   sewerr+  X   wlightr,  X	   telephoner-  X
+   bnkflrdassr.  X   originalr/  X   tarr0  X   selfr1  X   declarer2  X   overuser3  X   jonesr4  X   harmonyhousecuvoxder5  X   valiantr6  X   purchase order numberr7  X   hawaiir8  X   cawr9  X   grader:  X   sandwichr;  X   benedumr<  X	   southlandr=  X   grossr>  X   preferar?  X	   universalr@  X   audiorA  X   billing invoice norB  X   hazardousmaterialsrC  X	   packagingrD  X   carrier no.rE  X   pkgrF  X   refrigeratedrG  X   warmerrH  X   hardwarerI  X   carpetrJ  X   thoconditionsrK  X   payment addressrL  X   shipper:rM  X   lidrN  X   cablerO  X   anotherrP  X   usarQ  X   hrrR  X   loadingrS  X
+   unsuitablerT  X   vehiclerU  X   hartmannrV  X	   raspberryrW  X   eetuarX  X   informatbnandrY  X   ivyrZ  X   lamer[  X   missourir\  X   carrier perr]  X   softr^  X   saiar_  X   numr`  X   westminsterra  X
+   convenientrb  X	   signaturerc  X   febrd  X   omeletre  X   rantrf  X   thereofrg  X   shipping & handlingrh  X   authorized signatureri  X   remindedrj  X   customerrk  X   notedrl  X   onjrm  X	   orwrittenrn  X   bostonro  X	   stevensonrp  X   refuserq  X   brewerrr  X   goingrs  X   this month's service chargesrt  X   service locationru  X	   acceptingrv  X   erifyrw  X
+   carrolltonrx  X   wwweeelectricitycomry  X   total balance due >>>rz  X   classificationr{  X   serialr|  X   undorthecontacir}  X   deluxer~  X   wwwwatercompanycomr  X
+   disruptionr€  X   garager  X$   notify party /intermediate consigneer‚  X   sendingrƒ  X   ashenr„  X   identityr…  X   sipnor†  X   wwwheliosgascocomr‡  X   customrˆ  X   concernr‰  X	   necessaryrŠ  X   tempr‹  X   lechtersrŒ  X   reviewedr  X
+   incredibler  X
+   waybill nor  X   runningr  X   ingr‘  X   josephr’  X	   zippostalr“  X   reposador”  X   albertar•  X   multir–  X	   elizabethr—  X   fridayr˜  X   gridr™  X   wantrš  X   hobokinr›  X   timerœ  X   certitfyr  X	   publishedr  X   lgdgdrŸ  X   total usage chargesr   X	   sales taxr¡  X   jerryr¢  X
+   kreminderkr£  X   ramosr¤  X   due byr¥  X   bill of lading #:r¦  X   your payment(s) - thank your§  X   nonr¨  X   eetubr©  X   wwwbudgetpowercomrª  X   subjectr«  X   _no_key_found_r¬  X   appropriater­  X   hereofr®  X   ryzenr¯  X	   saskatoonr°  X   declarationr±  X   larger²  X   helenssmithsuperritocomr³  X   shorer´  X   januaryrµ  X   jaskolskirusselr¶  X   bulkr·  X   hodedahr¸  X   duskinr¹  X   crystarº  X
+   wirelesslyr»  X   current energy chargesr¼  X	   accordingr½  X   cagr¾  X
+   recognizedr¿  X   kansarÀ  X   blindrÁ  X	   quipwellrrÂ  X   returnrÃ  X   aprrÄ  X   po no.rÅ  X   septrÆ  X   jackrÇ  X   kochrÈ  X   ltdrÉ  X	   myaccountrÊ  X   birdingburyrË  X   terrÌ  X   westervillerÍ  X   doterÎ  X   universerÏ  X   annetterĞ  X   morÑ  X   corrrÒ  X   johnstonrÓ  X   brewingrÔ  X   carrier/driverrÕ  X   foamrÖ  X   new chargesr×  X   trailerrØ  X   recourserÙ  X   gradualrÚ  X   activerÛ  X   eastrÜ  X   shipper company namerİ  X	   cambridgerŞ  X   shinglerß  X   internalrà  X   service chargesrá  X   avenuerâ  X   handyrã  X   wwwheloisgasdepotratesrä  X   meter locationrå  X   onetimeræ  X   bill issue daterç  X   failurerè  X   sessionré  X   bol #rê  X   diegorë  X   cygenrì  X   literí  X   fyirî  X   mllynrï  X   signrğ  X   salespersonrñ  X   wwwbandinnovcocomrò  X   chosenró  X   easierrô  X   optionrõ  X   local office addressrö  X   tabler÷  X   business phone numberrø  X   whetherrù  X   liferú  X   openlanerû  X   date shippedrü  X   superrı  X   calrş  X   modernrÿ  X   inverallochyr   X   marblebrewinginfocomr  X
+   heidelbergr  X	   exportingr  X   vendor phone numberr  X   qualityr  X   arrivalr  X	   collecitlr  X   remitr  X   lebelr	  X   shipperr
+  X   unpaid bill amount:r  X   deskr  X   total amount due including gstr  X   pay invoice byr  X   acctr  X   requirementr  X   aisler  X   wilsonr  X
+   scenicviewr  X   tariffr  X   account numberr  X   dropr  X	   ship fromr  X   wholer  X   ttyr  X   crescentr  X   creekr  X
+   accuratelyr  X   marchr  X   coniscliffer  X   michaelr  X   email:r   X   withoutr!  X   identifyr"  X   backr#  X   wiegandr$  X    new charges due dater%  X   mbhcsobr&  X   walnutr'  X   capacityr(  X	   unloadingr)  X   dsicr*  X   dayr+  X   letr,  X   eitherr-  X
+   negotiabler.  X   beerr/  X   powerr0  X   permitr1  X   total pricer2  X   floridar3  X   electricr4  X   overallr5  X   webr6  X   crystalr7  X   marksandr8  X   contract account no.r9  X   for purchase order nor:  X   rebater;  X   bulletinr<  X   payment from previousr=  X   eventr>  X   make all checks payable to:r?  X   invoiceer@  X
+   sub -totalrA  X   toledorB  X   mainrC  X   empyreanrD  X   huytonrE  X   nmfcrF  X   scholarshiprG  X   vneckrH  X   neitherrI  X   bayonnerJ  X   yesorK  X   frozenrL  X   logorM  X   bill previous amountrN  X   courtrO  X   shippers namerP  X   hotlinerQ  X   purchaserR  X   famliarrS  X   secondrT  X   furryrU  X   containrV  X   nullrW  X   meetzrX  X   mailedrY  X   depotrZ  X   oakr[  X   terms of trader\  X
+   californiar]  X
+   cyclerouter^  X   menr_  X   total invoice valuer`  X   amdra  X   account ownerrb  X   billingheloisgasdepotnetrc  X   service addressrd  X   rotaryre  X   remaining balancerf  X   holsteinrg  X   iorh  X   new electric chargesri  X   hmrrj  X	   surchargerk  X   finestrl  X   summerrm  X   viauern  X   southro  X   endrp  X
+   correctionrq  X   issue date:rr  X   nvoccrs  X   routinert  X   destination streetru  X   valuerv  X   specifyrw  X   cottonrx  X   curryry  X   shatrz  X   basketr{  X   govemingr|  X   billirgr}  X   glassr~  X   pievbusr  X   shipped on board dater€  X   readingr  X   rtaidr‚  X   baskinsrƒ  X   ibsr„  X   galaxyr…  X   bill amount duer†  X   balance from your last billr‡  X   incurrˆ  X   skyr‰  X
+   stormwaterrŠ  X   genuiner‹  X   activityrŒ  X   peakr  X   processr  X   wakur  X   balance from previousr  X   farmersburgr‘  X   buildingr’  X   mississippir“  X   lbr”  X   pedalr•  X   saverr–  X   filedr—  X   lawrencer˜  X	   adaptablzr™  X   pickup daterš  X   vsopr›  X   mightrœ  X	   reconnectr  X   freight chargesr  X   usdrŸ  X   karrir   X   carrier addressr¡  X   freightr¢  X   neededr£  X   lipr¤  X	   minnesotar¥  X   solicitationr¦  X   domesticr§  X   extrar¨  X   thompsonr©  X   cityrª  X   printedr«  X   cafr¬  X   instructionr­  X   marblebrewingemailcomr®  X   ppdr¯  X   androidr°  X   agreedr±  X	   donaldsonr²  X   shipper signaturer³  X
+   intereetedr´  X   sellerrµ  X   wglassesr¶  X   shipper's bol numberr·  X   customer numberr¸  X   crazyeddiearmyspycomr¹  X   rocklandrº  X   hagerupr»  X   dianner¼  X   eriksenr½  X   service acctr¾  X	   automaticr¿  X   rbmdrÀ  X   junrÁ  X   vvvvvvteamelectronicsrÂ  X   conveniencerÃ  X   business name:rÄ  X   inchrÅ  X   pistonrÆ  X   business addressrÇ  X   service related chargesrÈ  X   atmrÉ  X	   furnishedrÊ  X   phone norË  X   dartrÌ  X   dottedrÍ  X   laneyfinancerÎ  X
+   adjustablerÏ  X   kbnclrĞ  X   rightrÑ  X   setrÒ  X   new charges/adjustmentsrÓ  X   please pay invoice byrÔ  X   properlyrÕ  X   gamerrÖ  X   newsr×  X   customer idrØ  X   avgrÙ  X   torontorÚ  X   mawbrÛ  X	   otherwiserÜ  X	   problemasrİ  X   deeprŞ  X	   charletonrß  X   handrà  X   port of loadingrá  X   looprâ  X   nightrã  X   assignsrä  X   supplyrå  X   shipping/misc chargesræ  X   availabilityrç  X
+   undorstoodrè  X   itemré  X   stubrê  X   hanoverrë  X   dunrì  X   leakrí  X   packagerî  X   sequencerï  X   officalrğ  X   dbluerñ  X   texasrò  X   seriesró  X	   considersrô  X   company namerõ  X   intereströ  X
+   collectionr÷  X   featurerø  X   intelrù  X
+   whatsoeverrú  X   receivedrû  X   countedrü  X   ziprı  X   gimdrş  X   business telephonerÿ  X   chestr   X	   commodityr  X   saintr  X   please make payments tor  X   liberalcommyaccountr  X   freezingr  X   server  X   phenolphthaleinr  X   corer  X   documentr	  X   payment terms isr
+  X   guardr  X   rlxr  X   wordr  X   brar  X	   appliancer  X	   northwestr  X
+   throughoutr  X   delaneier  X   muchr  X	   statementr  X   innovr  X   willier  X   deliverr  X   unitr  X   advancedr  X   victoriar  X   order numberr  X   diir  X   prepaidr  X   millerr  X   aidr  X   licencer   X   wglassr!  X   tastingr"  X   edenr#  X
+   lproblemasr$  X   collectr%  X   quillyr&  X   roadr'  X   chemicalr(  X	   pineviller)  X   lookr*  X   residentialr+  X   acct no.r,  X   total charges duer-  X   bill issuedr.  X   past due balancer/  X   conr0  X   hereundor1  X	   territoryr2  X-   for delivery to (complete name, address, zip)r3  X   saidr4  X   signature of shipper:r5  X   amount now duer6  X   comer7  X   po#r8  X   hazmatr9  X   pleaser:  X   byer;  X   mustr<  X   reachr=  X   b/l no.*r>  X   stationr?  X   familiarr@  X   farmerrA  X   mbrB  X   bill #rC  X   provincepostalrD  X   send payment torE  X   amalierF  X   raymondrG  X   averH  X   weekrI  X   preparationrJ  X   attachedrK  X   teqrL  X   chargerM  X    place of receipt by pre -carrierrN  X   bayrO  X   carrierrP  X   on board daterQ  X   liverrR  X
+   queenslandrS  X   richardrT  X   sales tax 10%rU  X   blackrV  X   downloadrW  X   exportedrX  X   mthrY  X   last billed amountrZ  X   hangingr[  X   pllastr\  X
+   bill date:r]  X   jewelr^  X   por_  X   incr`  X   salera  X   ipciagerchemscomrb  X
+   televisionrc  X	   differentrd  X   stylere  X   timelyrf  X	   dischargerg  X
+   understoodrh  X   zenri  X   spanishrj  X   carriersrk  X   current chargesrl  X   schedulerm  X   centrn  X   invoice for po#ro  X   acceptedrp  X   microrq  X   campbellrr  X   socialrs  X	   papercopyrt  X	   alienwareru  X   showcaserv  X   platinumrw  X
+   regulationrx  X   amountry  X   dailyrz  X   devicer{  X   ovenr|  X   hayhurstr}  X
+   efficiencyr~  X
+   investmentr  X   doverr€  X   piecer  X   actual consigneer‚  X   previous unpaid balancerƒ  X   cobr„  X
+   consianortr…  X   paypalr†  X   marlor‡  X   heavyrˆ  X   exceptr‰  X   actualrŠ  X	   requestedr‹  X   statement numberrŒ  X   rentr  X   authorizationr  X   andorr  X   renzellir  X   your bill account numberr‘  X   service address:r’  X   kuvalisr“  X   printr”  X   smallr•  X   monitorr–  X   proertyr—  X   samsungr˜  X   pricer™  X   intendedrš  X   producer›  X   hawb norœ  X   vendor addressr  X   subtotal less discountr  X   transportationrŸ  X   whereofr   X   aler¡  X   ontarior¢  X   b.o.l. numberr£  X   diggingr¤  X   paulr¥  X   completer¦  X   wglassreciper§  X   anor¨  X   sectionr©  X   silverrª  X   pizzar«  X   ashtonr¬  X   invoice no:r­  X
+   certipurusr®  X&   iuliirililirlrlrlirnlliliiirlillrliirir¯  X   chilledr°  X   namedr±  X   reflectr²  X	   electromsr³  X   respectfullyr´  X   bill of lading no / po norµ  X
+   percentager¶  X   saver·  X   patriciar¸  X   wadr¹  X   avrohrº  X   lingr»  X   payments received - thank you!r¼  X   slicerr½  X	   indicatedr¾  X   incar¿  X	   potassiumrÀ  X   lbwedrÁ  X	   attentionrÂ  X   shinerÃ  X
+   housewaresrÄ  X   unknownrÅ  X   woodlandrÆ  X   cfrrÇ  X   bookingrÈ  X   vesselrÉ  X   fisherrÊ  X   fornrË  X   waverÌ  X   npwprÍ  X   prorÎ  X   arorÏ  X   consignee namerĞ  X
+   cincinnatirÑ  X   cabesterrÒ  Xc   usmutuallyagreedasroeacncarnerdralloranybrcaioproperryoverauoranyportionotsaidrouterodesnnanonandacrÓ  X
+   customer #rÔ  X   licenseerÕ  X   iparÖ  X   creditr×  X
+   petersburgrØ  X   toamrÙ  X   shipperfullrÚ  X   harterrÛ  X   budgetrÜ  X
+   particularrİ  X   sauzarŞ  X   tax:rß  X   otal amount duerà  X   beveragerá  X   wwwjaskolskirusselcomrâ  X	   fernandezrã  X   adjrä  X   shippingrå  X   boardræ  X   destination.rç  X   spacerè  X
+   combustionré  e(X	   meter no:rê  X   designrë  X   proofingrì  X
+   acceptancerí  X
+   authorisedrî  X   kindrï  X
+   laneithacarğ  X   totalrñ  X   saferò  X   sampleró  X	   converterrô  X   respectrõ  X	   drinkablerö  X   balance from last billr÷  X   date receivedrø  X   afeherrù  X   aotherú  X   servicerû  X   stoverü  X   optrı  X   emmyrş  X   portlandrÿ  X   nixonr   X   fedcor  X	   calculater  X   total amount  due dater  X   nextr  X   billingalphireenergycar  X
+   amount duer  X   customer reference numberr  X   balance after due dater  X   voidr	  X   ordinaryr
+  X   late payment penalty dater  X   total amount due byr  X   augr  X   bentleyr  X   electricityr  X   iiir  X   liabler  X   mgdr  X   bill of lading number:r  X   michiganr  X   relaxedr  X   contractr  X   current gas chargesr  X   philadelphiar  X   woodlawnr  X   waitr  X   notify party:r  X   goodyr  X   wthoutr  X	   paperlessr  X
+   recognisedr  X
+   accordancer   X   lossr!  X   stewartr"  X   mayerr#  X   wthotr$  X   familyr%  X
+   forwardingr&  X   creater'  X   marbler(  X   coolerr)  X   decemberr*  X   shipper namer+  X   polkr,  X   invoice issue dater-  X   farmr.  X   meganr/  X   order totalr0  X   nanr1  X   clauser2  X   beeghleyr3  X   lvaniar4  X   numberr5  X   labeledplacardedr6  X	   pack dater7  X   countyr8  X   goldr9  X   flatr:  X
+   nonpaymentr;  X   bendr<  X   furr=  X   jblr>  X   downbadr?  X
+   inlerestedr@  X   mailrA  X   shipper (signature required)rB  X	   logisticsrC  X   kiararD  X   customer id numberrE  X   destination cityrF  X   oliviurG  X   checkrH  X   movingrI  X   indianapolisrJ  X   neveusrK  X   longrL  X
+   adjustmentrM  X	   bill daterN  X   colorrO  X   total excluding taxrP  X   courtbrooklynrQ  X   acceptrR  X   advancerS  X   customer po #rT  X   hoodrU  X   cornerrV  X   harrisrW  X   massachusettsrX  X   rileyrY  X   incorporatedrZ  X   outager[  X   donnerr\  X   jwwaterr]  X   straightr^  X	   condtionsr_  X   archr`  X   total valuera  X	   referencerb  X   specialrc  X   builderrd  X	   milwaukeere  X   invrf  X   shipper perrg  X   ship torh  X   samri  X	   reclaimedrj  X	   nreymsniark  X   freedomrl  X	   explainedrm  X   payment - thank you!rn  X   customer account numberro  X   projectrp  X   partyrq  X   adaptrr  X   dldrs  X   participatert  X	   consignorru  X   wouldrv  X   your payment(s)rw  X	   designaterx  X	   furniturery  X   issuerz  X   barbarar{  X   lamerr|  X   floorr}  X   gomezadamsaffcomr~  X   bagr  X   coder€  X   equipr  X   postr‚  X   avillorƒ  X   sales tax 6%r„  X   argyllr…  X   ph:r†  X   shipmentr‡  X   lbcogrˆ  X   oaklandr‰  X   herndonrŠ  X   meter numberr‹  X   chargerrŒ  X   my referencer  X   driverr  X   qtyr  X
+   account nor  X   shippedr‘  X   mulbenr’  X	   householdr“  X   billingr”  X   scanr•  X   improvementr–  X   burnerr—  X   helpfulr˜  X   usager™  X	   includingrš  X
+   commissionr›  X   sightrœ  X   nor  X$   notify party !intermediate consigneer  X   delawarerŸ  X   liberalr   X   bill #:r¡  X   company name:r¢  X   mixr£  X   totarr¤  X   enterr¥  X   powderr¦  X   carrier's no.r§  X   costumer¨  X   packingr©  X   cmepwgrª  X   terms of saler«  X   waybill numberr¬  X   lamr­  X   parksaskatchewanr®  X   securer¯  X   eberr°  X   storer±  X   exceedr²  X
+   armourwoodr³  X   smithr´  X   shipped on boardrµ  X   billedr¶  X   eeelectricitycomr·  X   porflonr¸  X   commentr¹  X   ladingrº  X   machiner»  X   vendorr¼  X   novr½  X   gasr¾  X   leadr¿  X   helprÀ  X   daffodilrÁ  X   wwwcrystalwatercocomrÂ  X   tworÃ  X   transmissionrÄ  X   apprÅ  X   payablerÆ  X   issuingrÇ  X   westrÈ  X   dormrÉ  X   xxftrÊ  X   final destinationrË  X   boutiquerÌ  X	   warehouserÍ  X   shelfrÎ  X
+   identifiedrÏ  X   rielrĞ  X   turcottebahringerrÑ  X	   emergencyrÒ  X   handlingrÓ  X	   privilegerÔ  X
+   danagerousrÕ  X   to consigneerÖ  X   wayr×  X   savingrØ  X   wwwheloisgasdepotnetrÙ  X   c.o.d. amt.rÚ  X
+   wwwfrencomrÛ  X   fax: 1rÜ  X   akronrİ  X   mwabrŞ  X   ottnisrß  X   ifeadderà  X   mixedrá  X   annualrâ  X	   financialrã  X   towerrä  X   bhoolarå  X
+   focusworksræ  X   client purchase orderrç  X   villarè  X	   dependentré  X   partialrê  X   eeelectrivitycomvvaystosaverë  X   ragerì  X   metzrí  X   netrî  X	   importantrï  X   consignmentrğ  X   requiredrñ  X   omputerrò  X   colró  X   monthrô  X   ffirõ  X   agentrö  X   footr÷  X   payment duerø  X   titlerù  X   partrú  X   acceptsrû  X   taxrü  X   hoegerrı  X	   franchiserş  X   phrÿ  X   meter reading dater 	  X   chargr	  X   booking no.r	  X   qtyhrsr	  X   sapphirer	  X   for po #r	  X   springr	  X   usedr	  X   solidr	  X   moneyr		  X
+   b/l numberr
+	  X   current electric chargesr	  X   binr	  X	   hendersonr	  X   customer por	  X	   dispenserr	  X   custservbbagscomr	  X   newr	  X	   requiringr	  X   remainsr	  X   boxr	  X   hnlyyzr	  X   administrationr	  X   usingr	  X   bringingr	  X   chicr	  X   groundr	  X   eiffelr	  X   qawfulr	  X   todayr	  X   naver	  X   barcoder	  X   adjustedr 	  X   steelr!	  X   later"	  X    amount due on previous statementr#	  X   specificallyr$	  X   cabinetr%	  X   bastinr&	  X   manuelar'	  X	   deliveredr(	  X   acidr)	  X   otal amount due byr*	  X   infrastructurer+	  X   peachcor,	  X   foodr-	  X   oldr.	  X   roler/	  X   shipment tabler0	  X   grand totalr1	  X   compensationr2	  X   semir3	  X   stater4	  X   lostr5	  X   rater6	  X   pottedr7	  X
+   prescribedr8	  X   teamr9	  X   unitedr:	  X   dalmacer;	  X   givenr<	  X   kerrr=	  X   masterr>	  X   debtr?	  X   pay this amountr@	  X   gwmrA	  X   localrB	  X   corneastrC	  X   bottledrD	  X   userE	  X
+   departmentrF	  X   taylorrG	  X   condtionrH	  X   stackedrI	  X   rossrJ	  X   shipper or consignorrK	  X   nicolairL	  X   tickrM	  X   carrrier addressrN	  X   payment daterO	  X   responsiblerP	  X   iullllrQ	  X   canningrR	  X   your service addressrS	  X   shownrT	  X   yesrU	  X   importrV	  X   pastrW	  X   windsorrX	  X   libertyrY	  X   servterZ	  X   carer[	  X   everyr\	  X   rpmr]	  X   formr^	  X
+   electronicr_	  X   railroadr`	  X   lawra	  X	   reflectedrb	  X   sales tax 6.5%rc	  X   personalrd	  X   newcommercialre	  X   sliprf	  X   royalrg	  X   dated atrh	  X   invoice no.ri	  X   llhlrj	  X   oceanrk	  X   snackrl	  X   locaterm	  X
+   strawberryrn	  X   budgetpowercomro	  X   officialrp	  X   tiprq	  X   danielrr	  X   virginiars	  X   angelesrt	  X   containerizedru	  X	   performedrv	  X   dufferinrw	  X   attnrx	  X   henryry	  X   seerz	  X   betterr{	  X   roperr|	  X   provider}	  X	   valuationr~	  X   zlhector	  X   cashierr€	  X	   ergonomicr	  X   previous bill amountr‚	  X   naturalrƒ	  X   delivering carrierr„	  X   looperr…	  X   pointr†	  X   officer‡	  X   establishedrˆ	  X   schmidtr‰	  X
+   regeentacerŠ	  X&   notify party (complete name & address)r‹	  X   customer name & address:rŒ	  X   brngr	  X   jimadorr	  X   mochar	  X   nrgcompanynetr	  X   eddier‘	  X	   cablesterr’	  X   bombayr“	  X	   lancasterr”	  X   aiiir•	  X   notificationr–	  X   destinedr—	  X   circler˜	  X   make payments tor™	  X   standardrš	  X	   musiclandr›	  X   paperrœ	  X	   electricur	  X
+   ingredientr	  X   responsiblilityrŸ	  X   summaryr 	  X   birdr¡	  X   total amountr¢	  X   inquiryr£	  X   temperaturer¤	  X   descriptionr¥	  X   openr¦	  X
+   pittsburghr§	  X   pontrugr¨	  X   washburnr©	  X   rugrª	  X   lacer«	  X   router¬	  X
+   constituter­	  X   portr®	  X   copperr¯	  X   total:r°	  X   pocketr±	  X   tstutr²	  X   grandr³	  X   payment termsr´	  X   shirtrµ	  X   sacr¶	  X   jamesonr·	  X   tider¸	  X   tripr¹	  X   lionrº	  X   valleyr»	  X   from:r¼	  X   carrier name:r½	  X	   issued onr¾	  X   payment due by:r¿	  X   bydrÀ	  X   classincationsrÁ	  X   panrÂ	  X   remit torÃ	  X   yearrÄ	  X   eeelecticitycomtorÅ	  X   nameaddresstelcontactrÆ	  X   outstandingrÇ	  X   richardsrÈ	  X   customer account no:rÉ	  X	   total usdrÊ	  X   brantrË	  X   releaserÌ	  X	   mansfieldrÍ	  X   ultrarÎ	  X	   stratfordrÏ	  X   administrativerĞ	  X   shotrÑ	  X   drtverÒ	  X
+   order daterÓ	  X   amount due:rÔ	  X   marshallrÕ	  X
+   invoice norÖ	  X   hotlinesr×	  X   rdsrwrØ	  X   skurÙ	  X   service at:rÚ	  X   chequerÛ	  X(   iiiiiiuiiiiiiiuiuiirniiiluiiiiiiiiiiiiuirÜ	  X   senterİ	  X   customer name & addressrŞ	  X   approvedrß	  X   fortrà	  X   wwwalpireenergycará	  X   previous balancerâ	  X   maclarenrã	  X   messagerä	  X   expressworksrå	  X   witlessræ	  X   safetyrç	  X   wwwbudgetpowerrè	  X   orderré	  X   ewaldrê	  X   declaredrë	  X   bindlossrì	  X   withinrí	  X   xtremerî	  X   handlerï	  X   frapperğ	  X
+   cappuccinorñ	  X
+   quipwelllgrò	  X   quoteró	  X   routingexportrô	  X	   certifiesrõ	  X   mosciskirö	  X   openerr÷	  X   actrø	  X   hamiltonrù	  X	   regardingrú	  X   cargorû	  X   shipper/exporterrü	  X   gnaturı	  X   namerş	  X   appearrÿ	  X
+   indirectlyr 
+  X	   receivingr
+  X   increaser
+  X   reverser
+  X   viar
+  X   budgetpowercomwaystosaver
+  X   agreesr
+  X   averager
+  X   blizzardr
+  X	   stainlessr	
+  X	   load dater
+
+  X   williepquinnarmyspycomr
+  X	   availabler
+  X   anytownr
+  X   actually shipped.r
+  X!   shipper (complete name & address)r
+  X   naturer
+  X   questionr
+  X   forger
+  X   harmonyr
+  X   soldr
+  X   wanr
+  X   daybreakr
+  X	   destroyedr
+  X   novemberr
+  X   stowingr
+  X   total shippingr
+  X   hennessyr
+  X   periodr
+  X   liner
+  X   ebctronicallyr
+  X	   mentionedr
+  X   payment receivedr 
+  X   business phone nor!
+  X   soewor"
+  X	   grinsteadr#
+  X   monohydrater$
+  X   voicer%
+  X   sizer&
+  X	   exceedingr'
+  X   tracking numberr(
+  X   mellonr)
+  X	   louisianar*
+  X   emailr+
+  X   ducar,
+  X   federalr-
+  X   coolingr.
+  X   mawb nor/
+  X   fitr0
+  X   unpaidr1
+  X   rouger2
+  X   ewrlhrr3
+  X   barr4
+  X   correspondencer5
+  X   ginr6
+  X   fasterr7
+  X   eddyr8
+  X   reserver9
+  X   bol numr:
+  X   shipper's bill of lading no. r;
+  X   tearnelectronicssuperfitocomr<
+  X   truer=
+  X   pathosr>
+  X	   seincesour?
+  X   perr@
+  X	   maiailiikrA
+  X   billrB
+  X   shoppingrC
+  X   erreurD
+  X   alongrE
+  X   blockrF
+  X   richardgsheetseinrotcomrG
+  X   exporterrH
+  X   consignee signature:rI
+  X   vendor phonerJ
+  X   policyrK
+  X   current charge due daterL
+  X   groverM
+  X   corporationrN
+  X   procurementrO
+  X   noticerP
+  X   quickerrQ
+  X	   prestwickrR
+  X	   formalityrS
+  X   ohiorT
+  X   sealrU
+  X	   containerrV
+  X   quaysiderW
+  X   wedgerX
+  X   withotrY
+  X   ablackrZ
+  X
+   quipwellgar[
+  X	   diversionr\
+  X   storager]
+  X
+   tax amountr^
+  X   chairr_
+  X	   effectiver`
+  X   bluetora
+  X   internationalrb
+  X   brotherrc
+  X   sales totalrd
+  X   homelifere
+  X   sales tax (5%)rf
+  X   illllllllllliirg
+  X   doeobadrh
+  X   indoorri
+  X   shoerj
+  X   llcrk
+  X	   hillcrestrl
+  X   speakrm
+  X   writtenrn
+  X   remit to addressro
+  X   blprp
+  X   giovannirq
+  X	   carrier#:rr
+  X	   septemberrs
+  X]   properlydescnbedaboveisinapparentgoonordorexceptasnotedlcomentsandcondmonotcuntenrsorpacuagesrt
+  X   alcoholru
+  X   usinrv
+  X   consequencerw
+  X
+   commercialrx
+  X   margry
+  X   customer norz
+  X   writingr{
+  X   olivierdonaldsonrhytacomr|
+  X   speakerr}
+  X   shutr~
+  X	   vat salesr
+  X   bugler€
+  e…r
+  Rr‚
+  X   binaryrƒ
+  ‰X   dtyper„
+  cnumpy
+int64
+r…
+  X   fixed_vocabulary_r†
+  ˆX   vocabulary_r‡
+  }rˆ
+  (j%  K j  Kj¬  KjÑ  Kj  Kj_  KjZ
+  Kj:  Kjí  KjR  K	j›  K
+jí  Kjp  Kjv  Kjû  Kj}  Kj   Kj½  Kj  KjJ  Kh:Kj   Kj  Kj¹  Kj  Kjb  Kj  KhĞKj  Kj6  Kj,  Kj  Kj)	  K jø	  K!jÛ  K"jŒ  K#jŠ  K$j‚  K%j
+  K&j¨  K'jr  K(j™  K)jË  K*jC  K+jœ  K,jà  K-jä  K.jÏ  K/j 	  K0jM  K1j	  K2jĞ	  K3jS  K4j  K5j  K6jù  K7j7  K8jõ  K9jö  K:j  K;j±  K<jˆ  K=j
+  K>j  K?j…  K@j•	  KAjÜ  KBj  KCjİ  KDj•  KEj'  KFju
+  KGj¡  KHju  KIj  KJhÂKKh™KLj/  KMjE
+  KNh¿KOjà  KPjØ  KQjF  KRj  KSja  KTj¾  KUj<  KVjí  KWjy  KXj  KYj½  KZjg  K[j#	  K\jÔ	  K]j6  K^jB  K_jW  K`j  Kah!Kbj°  Kcj  Kdjt	  KejĞ  Kfjâ  Kgj¨  KhjP  Kij  Kjj
+  Kkjú  Klj‚  KmjÅ  Knj¬  Kojÿ	  Kpj  Kqh*KrjÍ  Ksj­  Ktjß	  Kuj>  KvhñKwjÄ  Kxh¢Kyj;  Kzj÷  K{jö  K|hK}j`  K~j¥  Kj:  K€j…  Kjõ  K‚j³  Kƒj[  K„jÏ  K…j  K†jH  K‡j  Kˆj  K‰j„  KŠjY  K‹j¬  KŒjº  Kj§  Kjä  KjÉ  KjK  K‘jÂ  K’jx	  K“hßK”jA  K•j  K–j  K—jğ  K˜j\  K™jÜ  Kšjî  K›h&Kœj  Kj^  Kj¹  KŸji  K jŞ  K¡j¿  K¢jç  K£j
+  K¤jH  K¥jâ  K¦j
+  K§jÙ  K¨jƒ  K©j4  Kªjº  K«j–  K¬jç  K­jn  K®j£  K¯h#K°j>  K±j
+	  K²hÁK³j#  K´j  KµjÅ  K¶jù  K·j#  K¸hK¹j  Kºj=  K»j&  K¼j÷  K½j  K¾j!  K¿j‡  KÀjâ  KÁjH  KÂj‚  KÃjn  KÄhèKÅjV  KÆj@  KÇj4
+  KÈj{  KÉj	  KÊj  KËj¤  KÌjH  KÍjG  KÎhÙKÏj{  KĞj1  KÑjƒ  KÒj&	  KÓjU  KÔjO  KÕjJ  KÖj  K×jš  KØj%  KÙjı  KÚj.  KÛj3  KÜj/  Kİj<  KŞj<  Kßj  Kàj  Káj|  Kâj{	  Kãjá  Käjå  KåjÔ  Kæj»  KçhùKèjp  Kéjœ  Kêj  KëjB
+  KìjC  Kíj¡  Kîj†  KïjN  Kğj]  Kñjç  Kòj´  Kój.  Kôjã  Kõj¦  Köjj  K÷j  Køjµ  Kùjü  Kúj  KûjN  Küj¶  KıjÂ  Kşj”  Kÿj#  M hBMj  MjB  Mj‡  Mjh  Mj  Mj   Mjc  Mj}  M	j	  M
+jì	  Mj¡	  MjË  Mjî  Mj  Mj^  MjV  Mj4  MjÁ  Mj
+  MjF
+  Mjp
+  Mjº  MhMja
+  Mj.  Mjæ  Mjë  Mjê  MjÇ  Mji  Mj:
+  M j¯  M!j“	  M"j   M#jr  M$jÈ  M%j	  M&j6  M'j  M(jo  M)jD	  M*ji  M+jƒ  M,j¨  M-jÌ  M.hcM/j	  M0j  M1j  M2jË	  M3j(  M4jÆ  M5jr  M6jÔ  M7j	  M8jÉ  M9j	  M:h-M;h•M<jc
+  M=jG  M>j  M?jÜ  M@jo	  MAjÌ  MBj
+  MCj€
+  MDjd  MEj’  MFj·  MGj<  MHj—  MIj  MJjÉ  MKjÇ  MLjÄ  MMj!
+  MNjø  MOjÿ  MPhïMQj§  MRjÀ	  MSj;  MTjµ  MUjÇ  MVjÚ  MWjÒ  MXj%	  MYjO  MZj’	  M[j¬  M\j±  M]j¾  M^jN  M_jş  M`j  Maj]  Mbh‰McjË  Mdjå  MejŞ  Mfjr  Mgj¸  MhjR	  Mij  MjjO  Mkj(  Mljñ	  Mmjá  Mnj[	  Mojû	  Mpj   MqjJ  Mrj  MsjP  MthhMuj¡  MvhÑMwh¬Mxj½	  MyjE  Mzj   M{j]  M|jr
+  M}j§  M~jÕ  Mjk  M€jx  MjN	  M‚j  MƒjO  M„j€	  M…j¶  M†hIM‡jå  Mˆjô  M‰jZ  MŠj°  M‹j9  MŒhåMjT  Mj)  Mjn  Mjì  M‘jg  M’j¨  M“jõ	  M”jÏ  M•j®  M–j  M—j  M˜jÇ  M™j%  Mšj_
+  M›h9Mœj`  MhõMjj  MŸj©  M j	  M¡jM  M¢jŒ  M£jâ  M¤jß  M¥jH  M¦jR  M§j(  M¨jÛ	  M©jü  Mªj   M«j	  M¬j  M­j°  M®jé  M¯j×  M°j}  M±jû  M²jó  M³jm  M´h%MµjÑ  M¶j  M·j˜	  M¸j,  M¹jª  Mºjn  M»h¡M¼j{  M½j­  M¾jÁ	  M¿j2  MÀjæ  MÁjÚ  MÂjÇ  MÃjç  MÄjª  MÅj[  MÆj„  MÇjp  MÈj$  MÉj€  MÊjò  MËjó  MÌj  MÍj%  MÎj÷  MÏjt  MĞjO  MÑjÿ  MÒjÒ  MÓj&  MÔj˜  MÕjé  MÖj7  M×hÊMØj¹  MÙjx
+  MÚj›  MÛj  MÜj"  Mİjõ  MŞj¢  Mßj¶  MàhÎMáj2	  Mâj¦  Mãj@  MäjÚ  Måjø  Mæj0  Mçj‰  Mèj  Méjï  MêjH	  Mëj_  Mìjq  Míj¼  Mîjé  Mïj~  Mğj  Mñh+Mòjw
+  Mój…  Môh›Mõjô  Möj½  M÷hMøjè  MùjE  Múj*  Mûjz  MüjZ  MıhÿMşjĞ  MÿhéM h˜MjI
+  Mj3  Mjğ  Mju  MjÄ  Mj­	  Mj¦  Mjú  M	j7  M
+jœ  MjV  MjÄ  MjV
+  Mju	  Mjä  MjV  Mj  Mj9  MjX  Mjl  MjÃ  Mjb  MjÊ  Mj†  Mjô  Mj)  Mh(MjÕ  Mj.
+  Mj¯	  Mj†  M j  M!j  M"jC	  M#jV  M$jN
+  M%jÒ  M&j±  M'jq  M(j5
+  M)j  M*j¨  M+jx  M,jü  M-j8  M.js  M/jO  M0jQ  M1jO  M2j¹  M3j'  M4j×  M5j  M6j  M7j  M8j  M9jw  M:j  M;j®  M<jº  M=j7  M>j  M?hTM@j©  MAj  MBjL
+  MCj¤  MDjl  MEj	  MFj¼  MGj  MHhvMIjy  MJjE  MKj²  MLjˆ  MMjk  MNjÔ  MOjÉ	  MPjo  MQjG  MRjØ  MSjE  MTjó  MUjŞ	  MVjŒ	  MWjz
+  MXj¸  MYj  MZj	  M[jT  M\j  M]j  M^j	  M_jÛ  M`jÌ  Maj^  Mbjì  McjÁ  Mdjz  Meh½Mfj;	  Mgj  MhjÕ  Mijr	  Mjj  MkjÌ  MljP  Mmj“  MnhêMojµ  MphbMqjI  Mrj  Msjø  Mth®Mujü  Mvj¥  MwhÕMxjh	  Myj+  Mzj
+  M{jñ  M|jD  M}jÈ  M~j?	  MjN  M€j*  Mh°M‚j±  Mƒj2  M„j  M…jë	  M†jb  M‡já  Mˆj  M‰j£  MŠjŞ  M‹jk  MŒj  Mj  MjŸ  Mj  Mj´  M‘j(	  M’h`M“j„	  M”jz  M•j¿  M–j~  M—j   M˜j£  M™jš  MšjF	  M›h_Mœjé  MhMjZ  MŸjf  M j!  M¡j=  M¢j¥	  M£h=M¤jë  M¥jx  M¦j  M§hãM¨js  M©jF  Mªju  M«jç  M¬j—	  M­j
+  M®j°  M¯j  M°jê  M±j{  M²j(  M³jƒ  M´j  Mµj¼  M¶jë  M·jd  M¸jó  M¹j¤  Mºj  M»h¼M¼jg  M½jİ  M¾jf  M¿jw  MÀj	  MÁhiMÂjÏ  MÃj€  MÄjî  MÅjõ  MÆjÛ  MÇj\
+  MÈjs  MÉh3MÊj	  MËjh
+  MÌj§  MÍj²  MÎj\  MÏj”  MĞjÉ  MÑjÎ  MÒjÍ  MÓj	  MÔh.MÕj€  MÖj?  M×jW  MØj!  MÙjö  MÚjM  MÛj  MÜj  MİjÒ	  MŞhtMßjt  Màjû  Máj*  Mâj,
+  Mãjß  Mäj¥  Måj[  MæjĞ  Mçjw	  Mèjì  Méj¹  Mêjg  Mëj  MìjJ  Míjô  MîjÜ  MïjŠ  Mğj
+  Mñj°  Mòj  Mój‘	  Môj8
+  Mõj#  MöjÆ  M÷jÅ	  Møj·  Mùjë  MújX  Mûj©  MüjÓ  Mıjš  Mşj  Mÿj`
+  M j~  Mj_  Mj°  Mj	  Mj-  Mj4  Mh>Mj  Mj	  M	j³  M
+j_	  Mj§  Mjh  Mj—  Mj(  Mj;  Mj+
+  Mj   MjÒ  Mjó  Mjş  Mjï  MjD  Mj¹  MhDMj3  Mjp  Mjº  MhÚMj&  Mjs  MhšM jÔ  M!jP  M"j¥  M#j·  M$j¦  M%jy  M&j  M'j|  M(j	  M)j	  M*jw  M+j½  M,j?  M-jD
+  M.j  M/jˆ	  M0hûM1j2  M2j  M3j>  M4j   M5j\	  M6jê	  M7j3
+  M8j)  M9j²  M:j'
+  M;j‰  M<jŒ  M=j{  M>j…  M?j”  M@jó  MAjW  MBhgMCjm  MDj^  MEjX  MFjH
+  MGj  MHj$  MIjå	  MJj¨  MKhüMLj  MMj'  MNjè  MOjá  MPj@  MQj%  MRjS  MSj.  MTjA  MUj‘  MVj7
+  MWj…  MXjÜ  MYj	  MZjø  M[jd  M\j  M]j  M^j-
+  M_j¤  M`jö  Majã  Mbjõ  Mcj¼  MdjI  Meji  MfjÏ  Mgj—  MhjÁ  MijË  Mjjã  Mkjê  Mljl  MmhıMnj¾  MojÊ  Mpj0
+  Mqjp  MrjŠ  Msj:  Mtj¨  Muh²Mvj}  MwjK  Mxj3  Myj¼  MzjÖ  M{jæ  M|j  M}j|  M~jX  Mj-	  M€j  Mj  M‚j÷  Mƒj‘  M„j3  M…j	  M†h;M‡j:  MˆjB  M‰jÀ  MŠj‹  M‹j
+  MŒj^	  MjS
+  MjË  Mjà	  Mj©  M‘hŸM’jx  M“jÙ  M”j&  M•hpM–jZ  M—huM˜jş  M™jğ	  Mšj  M›h³MœhNMjË  Mjl  MŸjô  M j  M¡j¢  M¢j  M£j  M¤jL  M¥j˜  M¦j  M§jÏ  M¨j„  M©j  Mªj¼	  M«j2  M¬jL  M­j÷  M®jÛ  M¯j  M°j  M±jË  M²j=  M³j™  M´jÊ  Mµjy  M¶jU  M·jî  M¸j…  M¹j`  MºjÖ  M»j”  M¼j  M½jÜ  M¾j  M¿j¾  MÀjQ  MÁj6  MÂj  MÃj”  MÄj‹  MÅh¦MÆj»  MÇh MÈh†MÉj<  MÊjş  MËj6
+  MÌjq
+  MÍjN  MÎj<	  MÏj~  MĞjy  MÑj‰  MÒhŠMÓjı	  MÔjƒ  MÕjs  MÖj9  M×j.  MØj~  MÙj&  MÚjL  MÛh¤MÜj  Mİj•  MŞj|  MßjÙ  Màjà  Máj:  MâjÚ  Mãj³	  Mäj1	  MåháMæhnMçu(j?  Mèj*  Méj’  MêjE  Mëj™  MìjÉ  Míj#
+  Mîj>  Mïj	  Mğj‹  MñjM
+  Mòj  MóhæMôjA	  MõjX  Möj»  M÷jù	  Møjà  Mùjâ  Mújï	  MûjÓ  Müjã  Mıj[  Mşjë  Mÿj˜  M hOMjI  Mj
+  Mj5  MjW  MjÛ  Mjè  MjV  Mj}  M	j8  M
+h{Mjœ  Mj}  Mj  Mj\  MjC  Mj  Mj9  Mj	  MhkMjˆ  Mj  Mj  Mj  Mjã  Mj³  Mj  Mjw  Mj„  MjÀ  Mj˜  MhËM hUM!j	  M"j
+  M#jy	  M$húM%jİ  M&j®  M'hƒM(jv  M)j1  M*jŠ  M+hJM,jÁ  M-j<  M.jı  M/hM0j  M1jl
+  M2jV  M3jÄ  M4j>  M5jj  M6j	  M7j›  M8j3  M9j¸  M:jı  M;j¥  M<j.  M=j?  M>jg  M?jv  M@je
+  MAjº  MBjU  MCjr  MDjQ  MEj×	  MFjê  MGjÃ  MHj^  MIj“  MJjÄ  MKjR  MLhfMMj]  MNjE  MOj¡  MPj  MQj  MRj„  MSj‡  MTjœ  MUj  MVj×  MWjÏ  MXj"  MYjö  MZj…  M[jà  M\jU  M]j  M^jé  M_j  M`hÃMajÜ	  Mbh~Mcj  Mdj  Mejg
+  MfjV	  Mgjï  Mhj–  MijA  Mjj`  Mkj¿  MljÅ  Mmj  Mnjš  MojZ  Mpj
+  Mqj  Mrjˆ  Msj’  MtjJ  Muj¾  Mvj 
+  Mwj  Mxj_  Myji
+  Mzj
+  M{jY  M|j×  M}j+	  M~j‘  Mj	  M€j1  MjŒ  M‚hîMƒj¾  M„j@  M…j  M†j£	  M‡j$  Mˆj­  M‰jù  MŠjš  M‹j´  MŒjö  MjĞ  Mj†  Mjà  Mjb
+  M‘j  M’jf  M“jÈ  M”hoM•híM–j   M—j  M˜jñ  M™jî  Mšj…  M›hİMœj  Mjû  Mjo  MŸj-  M hëM¡jÖ	  M¢ji	  M£j­  M¤h)M¥hM¦j¤  M§jK  M¨j@  M©jh  MªjÖ  M«jb  M¬jd  M­hÅM®j™  M¯jz  M°jæ  M±jr  M²jp  M³j¾	  M´hsMµjÇ  M¶jé  M·jù  M¸j¯  M¹jQ	  MºjZ  M»jÇ  M¼jÈ  M½j·	  M¾jô  M¿j  MÀjµ  MÁj›  MÂj¶  MÃj>  MÄj¢  MÅj  MÆh¶MÇj^  MÈj	  MÉj“  MÊj€  MËj³  MÌjÓ  MÍj4  MÎh<MÏj’  MĞjY  MÑjÄ  MÒj-  MÓj9  MÔj  MÕj  MÖjÁ  M×jÑ  MØj]  MÙjO  MÚjÀ  MÛjè  MÜj   MİjĞ  MŞjğ  Mßj=	  Màjª  MájD  Mâjê  Mãh¨Mäjï  MåjŞ  Mæjå  MçhòMèj¿  Méj½  MêjÈ  Mëh„Mìj/  Míj+  Mîja  Mïj£  Mğj“  Mñj—  Mòjˆ  Mój‡  Môjz  Mõj6  Möjü  M÷j«	  Møjº  Mùj­  Múj[  Mûj|  MüjÃ  Mıj”	  Mşjé  MÿjY  M jğ  MjÎ  Mj²  MjT  Mj
+  Mh,MjZ  Mjf  Mj"	  M	j  M
+j"  Mja	  Mjc  Mj|  Mj˜  Mj”  Mjˆ  MjÁ  Mj   Mj¿  Mjí  Mjì  Mj  Mj	  MjŒ  MjÁ  MhaMj,  Mj¸  Mj-  Mj„  Mj  M jŸ  M!j]  M"j  M#j   M$j  M%jY	  M&jt  M'j   M(jh  M)jÕ  M*jN  M+jx  M,jú  M-j@  M.ja  M/j  M0j  M1hÒM2j8  M3j
+  M4j»  M5jº	  M6j¤  M7jÈ  M8h"M9jí  M:j  M;jR  M<hşM=j  M>j³  M?j¢  M@jk
+  MAjj	  MBjá  MCj  MDjU  MEj
+
+  MFjì  MGjS  MHjB	  MIjö  MJjm	  MKjÚ  MLjG  MMjC  MNjM  MOjø  MPjL  MQjİ  MRj*  MSjâ  MTj…	  MUj  MVj!  MWj5	  MXj"  MYj*
+  MZjş  M[j$  M\jT  M]jÉ  M^j•  M_jˆ  M`hÜMaj4  Mbj»  Mcjã	  Mdj™  Meh@MfjA
+  MgjA  Mhh«MijY  MjjC  Mkjí  Mlj$  Mmj?  Mnj™	  MojÊ  Mpjı  Mqj­  MrhPMsj¢  Mtjú  MujÍ	  Mvj'	  Mwj4  Mxj%  Myj‘  Mzj(  M{j®  M|j  M}j  M~jy
+  Mj¯  M€j!  Mjş  M‚j8  Mƒj‡  M„jÕ	  M…j  M†jX  M‡j>	  Mˆj  M‰j}  MŠjA  M‹hXMŒjÛ  Mj/
+  Mj+  Mj9  Mj#  M‘jB  M’j&  M“j‡  M”j:  M•j*  M–jı  M—j  M˜j#  M™jk  Mšj{  M›j#  MœjX  Mj/  Mj)
+  MŸjŠ  M j_  M¡j
+  M¢j{  M£höM¤jÆ  M¥h­M¦jä	  M§jï  M¨ju  M©jå  Mªjê  M«j‹  M¬j  M­j 	  M®hYM¯j  M°hÛM±jí  M²j  M³j  M´j  Mµjq  M¶jœ  M·j  M¸je  M¹j#  Mºj  M»j¥  M¼je  M½jë  M¾j  M¿j“  MÀj\  MÁj£  MÂjá  MÃhÈMÄjï  MÅjÑ  MÆj	  MÇjm  MÈj®  MÉjÿ  MÊj  MËjk  MÌj		  MÍj–  MÎj$
+  MÏjW  MĞjÀ  MÑjô  MÒh£MÓj   MÔjˆ  MÕj  MÖjö	  M×j<  MØj  MÙj)  MÚjI  MÛjY  MÜj  Mİj’  MŞj–  MßjÒ  Màj  Májë  Mâh±Mãj›	  Mäj<  Måj¥  MæjŞ  Mçj‘  Mèj  MéjÊ  MêjĞ  Mëj¯  Mìj©  Míjş	  Mîjw  MïjÆ	  Mğj±  Mñj1  MòjI  Mójƒ	  Môj
+  Mõj	  MöjĞ  M÷j8  MøjŠ  MùhZMúj£  Mûj.  MüjI  Mıjî  Mşje  Mÿjà  M jK  Mj	  Mj×  MjÓ  MjT  Mji  Mj  Mje	  Mj×  M	j  M
+jL	  Mjã  Mj'  MjÂ  Mj   Mj  MjF  Mj  Mj¨  Mj;  Mjª  Mjl  Mj  Mj–  Mjl  MjP
+  Mj–	  Mj2  MhWMj  Mj‹	  Mju  M j›  M!j‚  M"j  M#j½  M$j
+  M%jÍ  M&jk  M'j	  M(j4  M)jW  M*j`  M+j5  M,h“M-js  M.j[  M/j,  M0j‰  M1j  M2jŸ  M3jŒ  M4jk	  M5j  M6j)  M7jÍ  M8j  M9jğ  M:j‡	  M;jp	  M<j  M=jT
+  M>j.	  M?j"  M@h÷MAj|
+  MBjG  MCje  MDjò  MEjQ  MFj  MGjæ  MHjm  MIh»MJj¢  MKj-  MLj¦	  MMj÷	  MNjû  MOjä  MPjı  MQjõ  MRhµMSj  MTj>  MUj   MVjé	  MWjÓ	  MXj  MYj0  MZhRM[j
+  M\jÙ  M]jv  M^j³  M_j/  M`j  Majn  Mbh|Mcjm  Mdjà  Mej*	  Mfj¢  Mgjï  MhjÜ  Mij0  Mjjß  Mkj[  MljÇ	  MmhŒMnj|  Moj5  Mpjë  Mqj3  Mrj8  MsjÇ  Mtj  Mujb  Mvj®  Mwjú  Mxj‰  Myjy  Mzj7  M{jî  M|j>  M}jD  M~jª  Mj©  M€jÊ  Mj  M‚jÎ  Mƒh]M„jµ  M…j~  M†j‹  M‡jÂ	  Mˆj5  M‰j  MŠjœ	  M‹jt  MŒj  Mh”Mj®  MjÒ  Mjú  M‘jê  M’jt  M“jİ  M”jq  M•hLM–jW	  M—j/  M˜jØ  M™j¿  Mšj>
+  M›j¸  Mœj¥  Mj›  Mj  MŸj@	  M j/  M¡jÆ  M¢jB  M£jø  M¤jÖ  M¥hdM¦jn  M§jM  M¨jL  M©jO	  Mªjø  M«h¯M¬j¿	  M­h´M®hM¯j=  M°j 
+  M±jî  M²j5  M³j.  M´jƒ  Mµj´	  M¶j
+  M·j  M¸j‚  M¹jÎ  Mºj  M»j  M¼j¼  M½j`  M¾j†  M¿hÌMÀj	  MÁj,	  MÂj  MÃjâ  MÄj•  MÅj‹  MÆj  MÇjÓ  MÈj@
+  MÉj¶  MÊj³  MËjv	  MÌjÒ  MÍj
+  MÎj'  MÏj1  MĞj  MÑjd	  MÒjØ  MÓjÿ  MÔj†  MÕjš  MÖj  M×j  MØjq  MÙjË  MÚjš  MÛh‹MÜj  Mİj3  MŞj  Mßj)  MàjÆ  Máj§	  Mâj«  Mãj×  MäjF  Måj
+  Mæj;  Mçj  MèjR  Méh¾Mêj  MëjN  Mìj-  Míjw  MîhMïjæ  Mğj:  Mñj  Mòj   MójÔ  Môj¶  Mõj\  Möj1  M÷hCMøj_  Mùj«  Múj~  MûjÅ  Müjñ  Mıj8  Mşj±	  Mÿj†	  M jb  MjK
+  Mj,  Mj¬  Mj¨	  Mj€  MjÎ  Mj¸  Mj®	  M	j  M
+já  Mjÿ  Mj  MjØ  Mjÿ  MjÅ  Mj²  Mj‚  MjÀ  Mh·Mj7	  Mj  Mj¦  Mj0  Mj¯  Mj&  Mj¾  Mj?  Mj  MjJ  Mjk  Mj8	  M h/M!jR
+  M"j¬  M#j  M$jİ  M%j
+  M&jâ	  M'j‚	  M(j  M)jƒ  M*jF  M+j™  M,jW  M-häM.jä  M/jq  M0h^M1j”  M2j«  M3j  M4jÿ  M5jÔ  M6jÎ  M7jİ  M8j  M9jO
+  M:j›  M;jô  M<j—  M=ji  M>hGM?jñ  M@jp  MAjì  MBj£  MCj9  MDjÕ  MEjt
+  MFj˜  MGj}	  MHhôMIjŠ  MJjD  MKja  MLj  MMjR  MNjn  MOhwMPj¼  MQj7  MRjª  MSj	  MTj  MUj	  MVj  MWjY  MXh[MYjW
+  MZj·  M[jS  M\j
+  M]jQ
+  M^j&  M_j  M`jÍ  MajÀ  Mbj[
+  Mcjò	  MdjÂ  MejÂ  Mfjc  Mgjó	  MhjF  Mijì  Mjj`	  Mkj¤  Mljf  Mmjl  MnjW  Moj6	  MpjM  MqjG  MrjÀ  MsjØ	  Mtj=  MujŸ  Mvj  Mwj;  Mxj¡  MyjÕ  Mzjû  M{j
+  M|jK  M}h4M~heMjj  M€j  Mj¿  M‚j  MƒjÔ  M„jÙ  M…j§  M†j  M‡j’  Mˆjì  M‰j±  MŠhœM‹jb  MŒj²  Mjb	  MjG  Mjy  Mjq  M‘jú	  M’jŠ	  M“h$M”j0  M•j½  M–j²  M—jx  M˜hªM™jJ  Mšj  M›jÌ	  MœhMjÜ  Mjc  MŸjf  M j	  M¡h0M¢jj  M£jç  M¤j  M¥jÃ	  M¦jo
+  M§h×M¨j  M©j  Mªj,  M«j¿  M¬j”  M­j  M®j¡  M¯j‹  M°jñ  M±j  M²j	  M³j9
+  M´j+  Mµjõ  M¶j´  M·j÷  M¸j‘  M¹jP	  MºjŸ	  M»jÅ  M¼j  M½jÃ  M¾j‰  M¿j  MÀj
+  MÁj  MÂjÅ  MÃj•  MÄj¸  MÅjT  MÆjG
+  MÇjÈ	  MÈj  MÉjĞ  MÊj  MËjÑ  MÌjY  MÍjí  MÎjV  MÏu(j=  MĞj(  MÑj  MÒj'  MÓj%  MÔh6MÕj†  MÖj,  M×jº  MØj/	  MÙjR  MÚj  MÛjç  MÜj—  Mİj|	  MŞjJ	  Mßjo  Màje  Máj2
+  Mâj¬	  Mãjt  Mäj“  Måjô	  Mæjg	  Mçj]	  Mèj‚  Méjª	  MêjD  Mëj  Mìj!  Míj¯  MîjŸ  Mïj¶	  Mğj*  Mñjò  Mòjç	  Mój_  Môj4  Mõj  Möja  M÷j¡  Møj{  Mùjf
+  Múj  MûjU  Müj7  Mıj„  Mşjc	  Mÿj–  M jd
+  Mjñ  MjŞ  Mji  Mjó  Mj˜  Mj  Mj]  Mj_  M	j;  M
+hEMj	  MjÑ  Mj+  MhSMj«  Mj°  MjŞ  MhŞMj·  Mj–  MjØ  Mh§Mj•  Mj  Mh‘Mjm  Mj¬  MjF  Mj»  Mj‰	  MjG  M jA  M!jU
+  M"j´  M#j$  M$hğM%jT  M&hÆM'j©  M(hM)j¯  M*jz	  M+j?
+  M,j1  M-jµ  M.hVM/j3	  M0jŞ  M1jE  M2jƒ  M3jÂ  M4jİ	  M5jÀ  M6jÆ  M7js
+  M8jï  M9j|  M:jó  M;j  M<jû  M=jD  M>j¾  M?jd  M@j’  MAhMMBjÚ	  MCjá  MDj˜  MEju  MFjÈ  MGj6  MHjZ	  MIjé  MJjÒ  MKj+  MLhzMMjI  MNjz  MOj[  MPjc  MQj  MRjÎ  MSj·  MTjÃ  MUjß  MVj*  MWjÆ  MXj  MYjh  MZjş  M[j‡  M\jK  M]je  M^j0	  M_j‘  M`jµ  Maj€  Mbj
+  Mcj
+  Mdjl  MejB  Mfjİ  Mgj2  MhjU  Mij+  Mjj  MkjK	  Mljg  Mmj³  Mnj:  Moj;
+  Mpj·  Mqjo  Mrjü	  Msj1  MtjM  MujÚ  MvjP  Mwjå  Mxjh  MyhçMzjş  M{j«  M|jD  M}jQ  M~j  Mh‚M€jæ  MhFM‚j\  Mƒjµ	  M„jj
+  M…h…M†j;  M‡jC
+  Mˆj´  M‰j–  MŠjÑ	  M‹jv  MŒj9  MjT	  Mj  Mj~
+  MhÖM‘jÌ  M’jœ  M“jğ  M”jc  M•j5  M–j  M—j±  M˜h8M™jª  MšjM  M›hlMœj7  Mj†  MjÓ  MŸj&
+  M j¸  M¡jÙ	  M¢j‰  M£j+  M¤j½  M¥jf	  M¦jü  M§j•  M¨j  M©j´  Mªjl	  M«jq  M¬jÿ  M­j/  M®js  M¯j  M°j"
+  M±jß  M²j^  M³jã  M´j
+  Mµj¦  M¶j	  M·jû  M¸j¦  M¹hAMºh?M»jo  M¼j=  M½jè  M¾jj  M¿jE  MÀjm
+  MÁj}
+  MÂjc  MÃj  MÄj$	  MÅjÊ  MÆjw  MÇh€MÈj~  MÉj@  MÊj	  MËh MÌjI	  MÍj	
+  MÎjš	  MÏjß  MĞjZ  MÑj4	  MÒj0  MÓj  MÔj  MÕjö  MÖjŒ  M×jÓ  MØj?  MÙjÖ  MÚj!	  MÛh‡MÜjp  Mİj"  MŞhxMßj]
+  Màj±  Májo  MâjŠ  Mãj8  Mäjü  Måj
+  Mæj^  Mçj  MèhQMéjÏ	  Mêjn	  Mëjµ  MìjÕ  Míj·  Mîjê  Mïje  Mğj  MñjA  MòjF  Mójğ  Môj«  Mõj  Möjß  M÷j  Møjä  Mùh5MújS  Mûjğ  Müj 	  Mıjm  Mşjı  MÿjÁ  M 	jå  M	j)  M	jk  M	j­  M	jÃ  M	h¹M	jÌ  M	h’M	j  M		hÄM
+	j  M	j5  M	h©M	j¦  M	j÷  M	j÷  M	j0  M	j  M	hKM	j"  M	jü  M	jv  M	hmM	j%  M	j^
+  M	jß  M	jC  M	hÉM	jG	  M	j  M	ju  M	j9	  M 	jÙ  M!	j<
+  M"	jÔ  M#	h'M$	j  M%	jS  M&	j¢  M'	j-  M(	jc  M)	j‹  M*	j¤	  M+	jL  M,	jÌ  M-	j'  M.	jŒ  M/	hÏM0	hºM1	j   M2	j«  M3	j\  M4	j2  M5	hqM6	jR  M7	jò  M8	jõ  M9	jf  M:	hìM;	jã  M<	j  M=	j  M>	jg  M?	j“  M@	j•  MA	jt  MB	jK  MC	j©  MD	j(  ME	j\  MF	j  MG	j  MH	j  MI	jM	  MJ	j¸	  MK	h}ML	hàMM	jœ  MN	jf  MO	jq	  MP	jù  MQ	j‚  MR	jÖ  MS	j£  MT	jQ  MU	jÙ  MV	j	  MW	jB  MX	jj  MY	j]  MZ	jL  M[	jÚ  M\	jŸ  M]	jñ  M^	j¢	  M_	j  M`	j=  Ma	høMb	j  Mc	jX  Md	j  Me	jÉ  Mf	jØ  Mg	jz  Mh	j—  Mi	j0  Mj	j-  Mk	j  Ml	j€  Mm	j`  Mn	j«  Mo	j  Mp	jr  Mq	jC  Mr	jP  Ms	jr  Mt	j`  Mu	h¥Mv	jQ  Mw	j2  Mx	j
+  My	j  Mz	j°  M{	jç  M|	j   M}	jÊ	  M~	ja  M	j°	  M€	hÇM	j¤  M‚	ju  Mƒ	jb  M„	jä  M…	j(
+  M†	j¹  M‡	hMˆ	jØ  M‰	jÍ  MŠ	ja  M‹	h2MŒ	jÄ  M	j  M	j"  M	jŸ  M	j  M‘	j¹	  M’	jø  M“	hóM”	j=
+  M•	j²	  M–	j  M—	j  M˜	jÑ  M™	jÚ  Mš	j®  M›	j€  Mœ	jÃ  M	jJ  M	j­  MŸ	jÎ	  M 	hyM¡	hÓM¢	hM£	jh  M¤	jè  M¥	j}  M¦	j  M§	j:	  M¨	j@  M©	jÏ  Mª	jÅ  M«	j?  M¬	j  M­	j  M®	j)  M¯	j‰  M°	j1
+  M±	jg  M²	jÕ  M³	j  M´	j  Mµ	jT  M¶	j²  M·	jQ  M¸	j™  M¹	j  Mº	j5  M»	jŸ  M¼	jE	  M½	j	  M¾	jv
+  M¿	j	  MÀ	jÓ  MÁ	h–MÂ	hÀMÃ	jæ  MÄ	jC  MÅ	jN  MÆ	jú  MÇ	j6  MÈ	hâMÉ	j»	  MÊ	jè  MË	j~	  MÌ	jv  MÍ	j
+  MÎ	jU  MÏ	h¸MĞ	j¼  MÑ	j  MÒ	jò  MÓ	jå  MÔ	jo  MÕ	jm  MÖ	jJ
+  M×	j  MØ	j   MÙ	jÑ  MÚ	jÉ  MÛ	j  MÜ	j
+  Mİ	jn  MŞ	hÔMß	j  Mà	jP  Má	jt  Mâ	jè  Mã	js	  Mä	j´  Må	hÍMæ	h1Mç	j  Mè	jH  Mé	j%
+  Mê	j	  Më	jò  Mì	j
+  Mí	jd  Mî	j›  Mï	jÂ  Mğ	j¹  Mñ	jL  Mò	j  Mó	j  Mô	j'  Mõ	j
+  Mö	jš  M÷	j   Mø	jÍ  Mù	jH  Mú	j©	  Mû	jP  Mü	h—Mı	jS  Mş	je  Mÿ	hHM 
+jÌ  M
+j×  M
+j  M
+j¬  M
+jB  M
+j6  M
+jù  M
+j  M
+jX
+  M	
+jI  M
+
+jÛ  M
+hˆM
+jÖ  M
+jz  M
+jñ  M
+j—  M
+jÈ  M
+jÍ  M
+jh  M
+jx  M
+ja  M
+j!  M
+j¶  M
+j§  M
+jú  M
+j   M
+jù  M
+jd  M
+hM
+j  M
+j™  M
+jÃ  M 
+j$  M!
+j  M"
+jH  M#
+j  M$
+j
+  M%
+j  M&
+jX	  M'
+j’  M(
+j»  M)
+jí	  M*
+jY
+  M+
+j!  M,
+jæ	  M-
+jx  M.
+j,  M/
+hØM0
+h7M1
+j¯  M2
+jÆ  M3
+j  M4
+jS  M5
+j  M6
+jd  M7
+jù  M8
+jv  M9
+jj  M:
+j{
+  M;
+jn
+  M<
+j$  M=
+j  M>
+já	  M?
+j»  M@
+jò  MA
+jè	  MB
+jª  MC
+jÂ  MD
+jy  ME
+jÛ  MF
+j‡  MG
+jÙ  MH
+jä  MI
+j  MJ
+jâ  MK
+hjML
+j  MM
+hrMN
+jA  MO
+j  MP
+j  MQ
+jî	  MR
+jÊ  MS
+js  MT
+jÄ	  MU
+j¡  MV
+jU	  MW
+jK  MX
+h\MY
+j„  MZ
+jò  M[
+jÖ  M\
+j¶  M]
+j‘  M^
+jw  M_
+j§  M`
+jS	  Ma
+ji  Mb
+jÎ  Mc
+jı  Md
+j“  Me
+j	  Mf
+uX   _stop_words_idr‰
+  ŠĞÙFoÑX   _sklearn_versionrŠ
+  X   0.22r‹
+  ubcsklearn.feature_extraction.text
+TfidfTransformer
+rŒ
+  )r
+  }r
+  (X   normr
+  X   l2r
+  X   use_idfr‘
+  ˆX
+   smooth_idfr’
+  ˆX   sublinear_tfr“
+  ‰X	   _idf_diagr”
+  cscipy.sparse.csr
+csr_matrix
+r•
+  )r–
+  }r—
+  (X   _shaper˜
+  Mg
+Mg
+†r™
+  X   maxprintrš
+  K2X   indicesr›
+  cjoblib.numpy_pickle
+NumpyArrayWrapper
+rœ
+  )r
+  }r
+  (X   subclassrŸ
+  cnumpy
+ndarray
+r 
+  X   shaper¡
+  Mg
+…r¢
+  X   orderr£
+  X   Cr¤
+  j„
+  cnumpy
+dtype
+r¥
+  X   i4r¦
+  ‰ˆ‡r§
+  Rr¨
+  (KX   <r©
+  NNNJÿÿÿÿJÿÿÿÿK trª
+  bX
+   allow_mmapr«
+  ˆub                            	   
+                                                                      !   "   #   $   %   &   '   (   )   *   +   ,   -   .   /   0   1   2   3   4   5   6   7   8   9   :   ;   <   =   >   ?   @   A   B   C   D   E   F   G   H   I   J   K   L   M   N   O   P   Q   R   S   T   U   V   W   X   Y   Z   [   \   ]   ^   _   `   a   b   c   d   e   f   g   h   i   j   k   l   m   n   o   p   q   r   s   t   u   v   w   x   y   z   {   |   }   ~      €      ‚   ƒ   „   …   †   ‡   ˆ   ‰   Š   ‹   Œ               ‘   ’   “   ”   •   –   —   ˜   ™   š   ›   œ         Ÿ       ¡   ¢   £   ¤   ¥   ¦   §   ¨   ©   ª   «   ¬   ­   ®   ¯   °   ±   ²   ³   ´   µ   ¶   ·   ¸   ¹   º   »   ¼   ½   ¾   ¿   À   Á   Â   Ã   Ä   Å   Æ   Ç   È   É   Ê   Ë   Ì   Í   Î   Ï   Ğ   Ñ   Ò   Ó   Ô   Õ   Ö   ×   Ø   Ù   Ú   Û   Ü   İ   Ş   ß   à   á   â   ã   ä   å   æ   ç   è   é   ê   ë   ì   í   î   ï   ğ   ñ   ò   ó   ô   õ   ö   ÷   ø   ù   ú   û   ü   ı   ş   ÿ                      	  
+                                               !  "  #  $  %  &  '  (  )  *  +  ,  -  .  /  0  1  2  3  4  5  6  7  8  9  :  ;  <  =  >  ?  @  A  B  C  D  E  F  G  H  I  J  K  L  M  N  O  P  Q  R  S  T  U  V  W  X  Y  Z  [  \  ]  ^  _  `  a  b  c  d  e  f  g  h  i  j  k  l  m  n  o  p  q  r  s  t  u  v  w  x  y  z  {  |  }  ~    €    ‚  ƒ  „  …  †  ‡  ˆ  ‰  Š  ‹  Œ          ‘  ’  “  ”  •  –  —  ˜  ™  š  ›  œ      Ÿ     ¡  ¢  £  ¤  ¥  ¦  §  ¨  ©  ª  «  ¬  ­  ®  ¯  °  ±  ²  ³  ´  µ  ¶  ·  ¸  ¹  º  »  ¼  ½  ¾  ¿  À  Á  Â  Ã  Ä  Å  Æ  Ç  È  É  Ê  Ë  Ì  Í  Î  Ï  Ğ  Ñ  Ò  Ó  Ô  Õ  Ö  ×  Ø  Ù  Ú  Û  Ü  İ  Ş  ß  à  á  â  ã  ä  å  æ  ç  è  é  ê  ë  ì  í  î  ï  ğ  ñ  ò  ó  ô  õ  ö  ÷  ø  ù  ú  û  ü  ı  ş  ÿ                     	  
+                                               !  "  #  $  %  &  '  (  )  *  +  ,  -  .  /  0  1  2  3  4  5  6  7  8  9  :  ;  <  =  >  ?  @  A  B  C  D  E  F  G  H  I  J  K  L  M  N  O  P  Q  R  S  T  U  V  W  X  Y  Z  [  \  ]  ^  _  `  a  b  c  d  e  f  g  h  i  j  k  l  m  n  o  p  q  r  s  t  u  v  w  x  y  z  {  |  }  ~    €    ‚  ƒ  „  …  †  ‡  ˆ  ‰  Š  ‹  Œ          ‘  ’  “  ”  •  –  —  ˜  ™  š  ›  œ      Ÿ     ¡  ¢  £  ¤  ¥  ¦  §  ¨  ©  ª  «  ¬  ­  ®  ¯  °  ±  ²  ³  ´  µ  ¶  ·  ¸  ¹  º  »  ¼  ½  ¾  ¿  À  Á  Â  Ã  Ä  Å  Æ  Ç  È  É  Ê  Ë  Ì  Í  Î  Ï  Ğ  Ñ  Ò  Ó  Ô  Õ  Ö  ×  Ø  Ù  Ú  Û  Ü  İ  Ş  ß  à  á  â  ã  ä  å  æ  ç  è  é  ê  ë  ì  í  î  ï  ğ  ñ  ò  ó  ô  õ  ö  ÷  ø  ù  ú  û  ü  ı  ş  ÿ                     	  
+                                               !  "  #  $  %  &  '  (  )  *  +  ,  -  .  /  0  1  2  3  4  5  6  7  8  9  :  ;  <  =  >  ?  @  A  B  C  D  E  F  G  H  I  J  K  L  M  N  O  P  Q  R  S  T  U  V  W  X  Y  Z  [  \  ]  ^  _  `  a  b  c  d  e  f  g  h  i  j  k  l  m  n  o  p  q  r  s  t  u  v  w  x  y  z  {  |  }  ~    €    ‚  ƒ  „  …  †  ‡  ˆ  ‰  Š  ‹  Œ          ‘  ’  “  ”  •  –  —  ˜  ™  š  ›  œ      Ÿ     ¡  ¢  £  ¤  ¥  ¦  §  ¨  ©  ª  «  ¬  ­  ®  ¯  °  ±  ²  ³  ´  µ  ¶  ·  ¸  ¹  º  »  ¼  ½  ¾  ¿  À  Á  Â  Ã  Ä  Å  Æ  Ç  È  É  Ê  Ë  Ì  Í  Î  Ï  Ğ  Ñ  Ò  Ó  Ô  Õ  Ö  ×  Ø  Ù  Ú  Û  Ü  İ  Ş  ß  à  á  â  ã  ä  å  æ  ç  è  é  ê  ë  ì  í  î  ï  ğ  ñ  ò  ó  ô  õ  ö  ÷  ø  ù  ú  û  ü  ı  ş  ÿ                     	  
+                                               !  "  #  $  %  &  '  (  )  *  +  ,  -  .  /  0  1  2  3  4  5  6  7  8  9  :  ;  <  =  >  ?  @  A  B  C  D  E  F  G  H  I  J  K  L  M  N  O  P  Q  R  S  T  U  V  W  X  Y  Z  [  \  ]  ^  _  `  a  b  c  d  e  f  g  h  i  j  k  l  m  n  o  p  q  r  s  t  u  v  w  x  y  z  {  |  }  ~    €    ‚  ƒ  „  …  †  ‡  ˆ  ‰  Š  ‹  Œ          ‘  ’  “  ”  •  –  —  ˜  ™  š  ›  œ      Ÿ     ¡  ¢  £  ¤  ¥  ¦  §  ¨  ©  ª  «  ¬  ­  ®  ¯  °  ±  ²  ³  ´  µ  ¶  ·  ¸  ¹  º  »  ¼  ½  ¾  ¿  À  Á  Â  Ã  Ä  Å  Æ  Ç  È  É  Ê  Ë  Ì  Í  Î  Ï  Ğ  Ñ  Ò  Ó  Ô  Õ  Ö  ×  Ø  Ù  Ú  Û  Ü  İ  Ş  ß  à  á  â  ã  ä  å  æ  ç  è  é  ê  ë  ì  í  î  ï  ğ  ñ  ò  ó  ô  õ  ö  ÷  ø  ù  ú  û  ü  ı  ş  ÿ                     	  
+                                               !  "  #  $  %  &  '  (  )  *  +  ,  -  .  /  0  1  2  3  4  5  6  7  8  9  :  ;  <  =  >  ?  @  A  B  C  D  E  F  G  H  I  J  K  L  M  N  O  P  Q  R  S  T  U  V  W  X  Y  Z  [  \  ]  ^  _  `  a  b  c  d  e  f  g  h  i  j  k  l  m  n  o  p  q  r  s  t  u  v  w  x  y  z  {  |  }  ~    €    ‚  ƒ  „  …  †  ‡  ˆ  ‰  Š  ‹  Œ          ‘  ’  “  ”  •  –  —  ˜  ™  š  ›  œ      Ÿ     ¡  ¢  £  ¤  ¥  ¦  §  ¨  ©  ª  «  ¬  ­  ®  ¯  °  ±  ²  ³  ´  µ  ¶  ·  ¸  ¹  º  »  ¼  ½  ¾  ¿  À  Á  Â  Ã  Ä  Å  Æ  Ç  È  É  Ê  Ë  Ì  Í  Î  Ï  Ğ  Ñ  Ò  Ó  Ô  Õ  Ö  ×  Ø  Ù  Ú  Û  Ü  İ  Ş  ß  à  á  â  ã  ä  å  æ  ç  è  é  ê  ë  ì  í  î  ï  ğ  ñ  ò  ó  ô  õ  ö  ÷  ø  ù  ú  û  ü  ı  ş  ÿ                     	  
+                                               !  "  #  $  %  &  '  (  )  *  +  ,  -  .  /  0  1  2  3  4  5  6  7  8  9  :  ;  <  =  >  ?  @  A  B  C  D  E  F  G  H  I  J  K  L  M  N  O  P  Q  R  S  T  U  V  W  X  Y  Z  [  \  ]  ^  _  `  a  b  c  d  e  f  g  h  i  j  k  l  m  n  o  p  q  r  s  t  u  v  w  x  y  z  {  |  }  ~    €    ‚  ƒ  „  …  †  ‡  ˆ  ‰  Š  ‹  Œ          ‘  ’  “  ”  •  –  —  ˜  ™  š  ›  œ      Ÿ     ¡  ¢  £  ¤  ¥  ¦  §  ¨  ©  ª  «  ¬  ­  ®  ¯  °  ±  ²  ³  ´  µ  ¶  ·  ¸  ¹  º  »  ¼  ½  ¾  ¿  À  Á  Â  Ã  Ä  Å  Æ  Ç  È  É  Ê  Ë  Ì  Í  Î  Ï  Ğ  Ñ  Ò  Ó  Ô  Õ  Ö  ×  Ø  Ù  Ú  Û  Ü  İ  Ş  ß  à  á  â  ã  ä  å  æ  ç  è  é  ê  ë  ì  í  î  ï  ğ  ñ  ò  ó  ô  õ  ö  ÷  ø  ù  ú  û  ü  ı  ş  ÿ                     	  
+                                               !  "  #  $  %  &  '  (  )  *  +  ,  -  .  /  0  1  2  3  4  5  6  7  8  9  :  ;  <  =  >  ?  @  A  B  C  D  E  F  G  H  I  J  K  L  M  N  O  P  Q  R  S  T  U  V  W  X  Y  Z  [  \  ]  ^  _  `  a  b  c  d  e  f  g  h  i  j  k  l  m  n  o  p  q  r  s  t  u  v  w  x  y  z  {  |  }  ~    €    ‚  ƒ  „  …  †  ‡  ˆ  ‰  Š  ‹  Œ          ‘  ’  “  ”  •  –  —  ˜  ™  š  ›  œ      Ÿ     ¡  ¢  £  ¤  ¥  ¦  §  ¨  ©  ª  «  ¬  ­  ®  ¯  °  ±  ²  ³  ´  µ  ¶  ·  ¸  ¹  º  »  ¼  ½  ¾  ¿  À  Á  Â  Ã  Ä  Å  Æ  Ç  È  É  Ê  Ë  Ì  Í  Î  Ï  Ğ  Ñ  Ò  Ó  Ô  Õ  Ö  ×  Ø  Ù  Ú  Û  Ü  İ  Ş  ß  à  á  â  ã  ä  å  æ  ç  è  é  ê  ë  ì  í  î  ï  ğ  ñ  ò  ó  ô  õ  ö  ÷  ø  ù  ú  û  ü  ı  ş  ÿ                     	  
+                                               !  "  #  $  %  &  '  (  )  *  +  ,  -  .  /  0  1  2  3  4  5  6  7  8  9  :  ;  <  =  >  ?  @  A  B  C  D  E  F  G  H  I  J  K  L  M  N  O  P  Q  R  S  T  U  V  W  X  Y  Z  [  \  ]  ^  _  `  a  b  c  d  e  f  g  h  i  j  k  l  m  n  o  p  q  r  s  t  u  v  w  x  y  z  {  |  }  ~    €    ‚  ƒ  „  …  †  ‡  ˆ  ‰  Š  ‹  Œ          ‘  ’  “  ”  •  –  —  ˜  ™  š  ›  œ      Ÿ     ¡  ¢  £  ¤  ¥  ¦  §  ¨  ©  ª  «  ¬  ­  ®  ¯  °  ±  ²  ³  ´  µ  ¶  ·  ¸  ¹  º  »  ¼  ½  ¾  ¿  À  Á  Â  Ã  Ä  Å  Æ  Ç  È  É  Ê  Ë  Ì  Í  Î  Ï  Ğ  Ñ  Ò  Ó  Ô  Õ  Ö  ×  Ø  Ù  Ú  Û  Ü  İ  Ş  ß  à  á  â  ã  ä  å  æ  ç  è  é  ê  ë  ì  í  î  ï  ğ  ñ  ò  ó  ô  õ  ö  ÷  ø  ù  ú  û  ü  ı  ş  ÿ   	  	  	  	  	  	  	  	  	  		  
+	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	   	  !	  "	  #	  $	  %	  &	  '	  (	  )	  *	  +	  ,	  -	  .	  /	  0	  1	  2	  3	  4	  5	  6	  7	  8	  9	  :	  ;	  <	  =	  >	  ?	  @	  A	  B	  C	  D	  E	  F	  G	  H	  I	  J	  K	  L	  M	  N	  O	  P	  Q	  R	  S	  T	  U	  V	  W	  X	  Y	  Z	  [	  \	  ]	  ^	  _	  `	  a	  b	  c	  d	  e	  f	  g	  h	  i	  j	  k	  l	  m	  n	  o	  p	  q	  r	  s	  t	  u	  v	  w	  x	  y	  z	  {	  |	  }	  ~	  	  €	  	  ‚	  ƒ	  „	  …	  †	  ‡	  ˆ	  ‰	  Š	  ‹	  Œ	  	  	  	  	  ‘	  ’	  “	  ”	  •	  –	  —	  ˜	  ™	  š	  ›	  œ	  	  	  Ÿ	   	  ¡	  ¢	  £	  ¤	  ¥	  ¦	  §	  ¨	  ©	  ª	  «	  ¬	  ­	  ®	  ¯	  °	  ±	  ²	  ³	  ´	  µ	  ¶	  ·	  ¸	  ¹	  º	  »	  ¼	  ½	  ¾	  ¿	  À	  Á	  Â	  Ã	  Ä	  Å	  Æ	  Ç	  È	  É	  Ê	  Ë	  Ì	  Í	  Î	  Ï	  Ğ	  Ñ	  Ò	  Ó	  Ô	  Õ	  Ö	  ×	  Ø	  Ù	  Ú	  Û	  Ü	  İ	  Ş	  ß	  à	  á	  â	  ã	  ä	  å	  æ	  ç	  è	  é	  ê	  ë	  ì	  í	  î	  ï	  ğ	  ñ	  ò	  ó	  ô	  õ	  ö	  ÷	  ø	  ù	  ú	  û	  ü	  ı	  ş	  ÿ	   
+  
+  
+  
+  
+  
+  
+  
+  
+  	
+  
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+   
+  !
+  "
+  #
+  $
+  %
+  &
+  '
+  (
+  )
+  *
+  +
+  ,
+  -
+  .
+  /
+  0
+  1
+  2
+  3
+  4
+  5
+  6
+  7
+  8
+  9
+  :
+  ;
+  <
+  =
+  >
+  ?
+  @
+  A
+  B
+  C
+  D
+  E
+  F
+  G
+  H
+  I
+  J
+  K
+  L
+  M
+  N
+  O
+  P
+  Q
+  R
+  S
+  T
+  U
+  V
+  W
+  X
+  Y
+  Z
+  [
+  \
+  ]
+  ^
+  _
+  `
+  a
+  b
+  c
+  d
+  e
+  f
+  X   indptrr¬
+  jœ
+  )r­
+  }r®
+  (jŸ
+  j 
+  j¡
+  Mh
+…r¯
+  j£
+  j¤
+  j„
+  j¨
+  j«
+  ˆub                            	   
+                                                                      !   "   #   $   %   &   '   (   )   *   +   ,   -   .   /   0   1   2   3   4   5   6   7   8   9   :   ;   <   =   >   ?   @   A   B   C   D   E   F   G   H   I   J   K   L   M   N   O   P   Q   R   S   T   U   V   W   X   Y   Z   [   \   ]   ^   _   `   a   b   c   d   e   f   g   h   i   j   k   l   m   n   o   p   q   r   s   t   u   v   w   x   y   z   {   |   }   ~      €      ‚   ƒ   „   …   †   ‡   ˆ   ‰   Š   ‹   Œ               ‘   ’   “   ”   •   –   —   ˜   ™   š   ›   œ         Ÿ       ¡   ¢   £   ¤   ¥   ¦   §   ¨   ©   ª   «   ¬   ­   ®   ¯   °   ±   ²   ³   ´   µ   ¶   ·   ¸   ¹   º   »   ¼   ½   ¾   ¿   À   Á   Â   Ã   Ä   Å   Æ   Ç   È   É   Ê   Ë   Ì   Í   Î   Ï   Ğ   Ñ   Ò   Ó   Ô   Õ   Ö   ×   Ø   Ù   Ú   Û   Ü   İ   Ş   ß   à   á   â   ã   ä   å   æ   ç   è   é   ê   ë   ì   í   î   ï   ğ   ñ   ò   ó   ô   õ   ö   ÷   ø   ù   ú   û   ü   ı   ş   ÿ                      	  
+                                               !  "  #  $  %  &  '  (  )  *  +  ,  -  .  /  0  1  2  3  4  5  6  7  8  9  :  ;  <  =  >  ?  @  A  B  C  D  E  F  G  H  I  J  K  L  M  N  O  P  Q  R  S  T  U  V  W  X  Y  Z  [  \  ]  ^  _  `  a  b  c  d  e  f  g  h  i  j  k  l  m  n  o  p  q  r  s  t  u  v  w  x  y  z  {  |  }  ~    €    ‚  ƒ  „  …  †  ‡  ˆ  ‰  Š  ‹  Œ          ‘  ’  “  ”  •  –  —  ˜  ™  š  ›  œ      Ÿ     ¡  ¢  £  ¤  ¥  ¦  §  ¨  ©  ª  «  ¬  ­  ®  ¯  °  ±  ²  ³  ´  µ  ¶  ·  ¸  ¹  º  »  ¼  ½  ¾  ¿  À  Á  Â  Ã  Ä  Å  Æ  Ç  È  É  Ê  Ë  Ì  Í  Î  Ï  Ğ  Ñ  Ò  Ó  Ô  Õ  Ö  ×  Ø  Ù  Ú  Û  Ü  İ  Ş  ß  à  á  â  ã  ä  å  æ  ç  è  é  ê  ë  ì  í  î  ï  ğ  ñ  ò  ó  ô  õ  ö  ÷  ø  ù  ú  û  ü  ı  ş  ÿ                     	  
+                                               !  "  #  $  %  &  '  (  )  *  +  ,  -  .  /  0  1  2  3  4  5  6  7  8  9  :  ;  <  =  >  ?  @  A  B  C  D  E  F  G  H  I  J  K  L  M  N  O  P  Q  R  S  T  U  V  W  X  Y  Z  [  \  ]  ^  _  `  a  b  c  d  e  f  g  h  i  j  k  l  m  n  o  p  q  r  s  t  u  v  w  x  y  z  {  |  }  ~    €    ‚  ƒ  „  …  †  ‡  ˆ  ‰  Š  ‹  Œ          ‘  ’  “  ”  •  –  —  ˜  ™  š  ›  œ      Ÿ     ¡  ¢  £  ¤  ¥  ¦  §  ¨  ©  ª  «  ¬  ­  ®  ¯  °  ±  ²  ³  ´  µ  ¶  ·  ¸  ¹  º  »  ¼  ½  ¾  ¿  À  Á  Â  Ã  Ä  Å  Æ  Ç  È  É  Ê  Ë  Ì  Í  Î  Ï  Ğ  Ñ  Ò  Ó  Ô  Õ  Ö  ×  Ø  Ù  Ú  Û  Ü  İ  Ş  ß  à  á  â  ã  ä  å  æ  ç  è  é  ê  ë  ì  í  î  ï  ğ  ñ  ò  ó  ô  õ  ö  ÷  ø  ù  ú  û  ü  ı  ş  ÿ                     	  
+                                               !  "  #  $  %  &  '  (  )  *  +  ,  -  .  /  0  1  2  3  4  5  6  7  8  9  :  ;  <  =  >  ?  @  A  B  C  D  E  F  G  H  I  J  K  L  M  N  O  P  Q  R  S  T  U  V  W  X  Y  Z  [  \  ]  ^  _  `  a  b  c  d  e  f  g  h  i  j  k  l  m  n  o  p  q  r  s  t  u  v  w  x  y  z  {  |  }  ~    €    ‚  ƒ  „  …  †  ‡  ˆ  ‰  Š  ‹  Œ          ‘  ’  “  ”  •  –  —  ˜  ™  š  ›  œ      Ÿ     ¡  ¢  £  ¤  ¥  ¦  §  ¨  ©  ª  «  ¬  ­  ®  ¯  °  ±  ²  ³  ´  µ  ¶  ·  ¸  ¹  º  »  ¼  ½  ¾  ¿  À  Á  Â  Ã  Ä  Å  Æ  Ç  È  É  Ê  Ë  Ì  Í  Î  Ï  Ğ  Ñ  Ò  Ó  Ô  Õ  Ö  ×  Ø  Ù  Ú  Û  Ü  İ  Ş  ß  à  á  â  ã  ä  å  æ  ç  è  é  ê  ë  ì  í  î  ï  ğ  ñ  ò  ó  ô  õ  ö  ÷  ø  ù  ú  û  ü  ı  ş  ÿ                     	  
+                                               !  "  #  $  %  &  '  (  )  *  +  ,  -  .  /  0  1  2  3  4  5  6  7  8  9  :  ;  <  =  >  ?  @  A  B  C  D  E  F  G  H  I  J  K  L  M  N  O  P  Q  R  S  T  U  V  W  X  Y  Z  [  \  ]  ^  _  `  a  b  c  d  e  f  g  h  i  j  k  l  m  n  o  p  q  r  s  t  u  v  w  x  y  z  {  |  }  ~    €    ‚  ƒ  „  …  †  ‡  ˆ  ‰  Š  ‹  Œ          ‘  ’  “  ”  •  –  —  ˜  ™  š  ›  œ      Ÿ     ¡  ¢  £  ¤  ¥  ¦  §  ¨  ©  ª  «  ¬  ­  ®  ¯  °  ±  ²  ³  ´  µ  ¶  ·  ¸  ¹  º  »  ¼  ½  ¾  ¿  À  Á  Â  Ã  Ä  Å  Æ  Ç  È  É  Ê  Ë  Ì  Í  Î  Ï  Ğ  Ñ  Ò  Ó  Ô  Õ  Ö  ×  Ø  Ù  Ú  Û  Ü  İ  Ş  ß  à  á  â  ã  ä  å  æ  ç  è  é  ê  ë  ì  í  î  ï  ğ  ñ  ò  ó  ô  õ  ö  ÷  ø  ù  ú  û  ü  ı  ş  ÿ                     	  
+                                               !  "  #  $  %  &  '  (  )  *  +  ,  -  .  /  0  1  2  3  4  5  6  7  8  9  :  ;  <  =  >  ?  @  A  B  C  D  E  F  G  H  I  J  K  L  M  N  O  P  Q  R  S  T  U  V  W  X  Y  Z  [  \  ]  ^  _  `  a  b  c  d  e  f  g  h  i  j  k  l  m  n  o  p  q  r  s  t  u  v  w  x  y  z  {  |  }  ~    €    ‚  ƒ  „  …  †  ‡  ˆ  ‰  Š  ‹  Œ          ‘  ’  “  ”  •  –  —  ˜  ™  š  ›  œ      Ÿ     ¡  ¢  £  ¤  ¥  ¦  §  ¨  ©  ª  «  ¬  ­  ®  ¯  °  ±  ²  ³  ´  µ  ¶  ·  ¸  ¹  º  »  ¼  ½  ¾  ¿  À  Á  Â  Ã  Ä  Å  Æ  Ç  È  É  Ê  Ë  Ì  Í  Î  Ï  Ğ  Ñ  Ò  Ó  Ô  Õ  Ö  ×  Ø  Ù  Ú  Û  Ü  İ  Ş  ß  à  á  â  ã  ä  å  æ  ç  è  é  ê  ë  ì  í  î  ï  ğ  ñ  ò  ó  ô  õ  ö  ÷  ø  ù  ú  û  ü  ı  ş  ÿ                     	  
+                                               !  "  #  $  %  &  '  (  )  *  +  ,  -  .  /  0  1  2  3  4  5  6  7  8  9  :  ;  <  =  >  ?  @  A  B  C  D  E  F  G  H  I  J  K  L  M  N  O  P  Q  R  S  T  U  V  W  X  Y  Z  [  \  ]  ^  _  `  a  b  c  d  e  f  g  h  i  j  k  l  m  n  o  p  q  r  s  t  u  v  w  x  y  z  {  |  }  ~    €    ‚  ƒ  „  …  †  ‡  ˆ  ‰  Š  ‹  Œ          ‘  ’  “  ”  •  –  —  ˜  ™  š  ›  œ      Ÿ     ¡  ¢  £  ¤  ¥  ¦  §  ¨  ©  ª  «  ¬  ­  ®  ¯  °  ±  ²  ³  ´  µ  ¶  ·  ¸  ¹  º  »  ¼  ½  ¾  ¿  À  Á  Â  Ã  Ä  Å  Æ  Ç  È  É  Ê  Ë  Ì  Í  Î  Ï  Ğ  Ñ  Ò  Ó  Ô  Õ  Ö  ×  Ø  Ù  Ú  Û  Ü  İ  Ş  ß  à  á  â  ã  ä  å  æ  ç  è  é  ê  ë  ì  í  î  ï  ğ  ñ  ò  ó  ô  õ  ö  ÷  ø  ù  ú  û  ü  ı  ş  ÿ                     	  
+                                               !  "  #  $  %  &  '  (  )  *  +  ,  -  .  /  0  1  2  3  4  5  6  7  8  9  :  ;  <  =  >  ?  @  A  B  C  D  E  F  G  H  I  J  K  L  M  N  O  P  Q  R  S  T  U  V  W  X  Y  Z  [  \  ]  ^  _  `  a  b  c  d  e  f  g  h  i  j  k  l  m  n  o  p  q  r  s  t  u  v  w  x  y  z  {  |  }  ~    €    ‚  ƒ  „  …  †  ‡  ˆ  ‰  Š  ‹  Œ          ‘  ’  “  ”  •  –  —  ˜  ™  š  ›  œ      Ÿ     ¡  ¢  £  ¤  ¥  ¦  §  ¨  ©  ª  «  ¬  ­  ®  ¯  °  ±  ²  ³  ´  µ  ¶  ·  ¸  ¹  º  »  ¼  ½  ¾  ¿  À  Á  Â  Ã  Ä  Å  Æ  Ç  È  É  Ê  Ë  Ì  Í  Î  Ï  Ğ  Ñ  Ò  Ó  Ô  Õ  Ö  ×  Ø  Ù  Ú  Û  Ü  İ  Ş  ß  à  á  â  ã  ä  å  æ  ç  è  é  ê  ë  ì  í  î  ï  ğ  ñ  ò  ó  ô  õ  ö  ÷  ø  ù  ú  û  ü  ı  ş  ÿ                     	  
+                                               !  "  #  $  %  &  '  (  )  *  +  ,  -  .  /  0  1  2  3  4  5  6  7  8  9  :  ;  <  =  >  ?  @  A  B  C  D  E  F  G  H  I  J  K  L  M  N  O  P  Q  R  S  T  U  V  W  X  Y  Z  [  \  ]  ^  _  `  a  b  c  d  e  f  g  h  i  j  k  l  m  n  o  p  q  r  s  t  u  v  w  x  y  z  {  |  }  ~    €    ‚  ƒ  „  …  †  ‡  ˆ  ‰  Š  ‹  Œ          ‘  ’  “  ”  •  –  —  ˜  ™  š  ›  œ      Ÿ     ¡  ¢  £  ¤  ¥  ¦  §  ¨  ©  ª  «  ¬  ­  ®  ¯  °  ±  ²  ³  ´  µ  ¶  ·  ¸  ¹  º  »  ¼  ½  ¾  ¿  À  Á  Â  Ã  Ä  Å  Æ  Ç  È  É  Ê  Ë  Ì  Í  Î  Ï  Ğ  Ñ  Ò  Ó  Ô  Õ  Ö  ×  Ø  Ù  Ú  Û  Ü  İ  Ş  ß  à  á  â  ã  ä  å  æ  ç  è  é  ê  ë  ì  í  î  ï  ğ  ñ  ò  ó  ô  õ  ö  ÷  ø  ù  ú  û  ü  ı  ş  ÿ   	  	  	  	  	  	  	  	  	  		  
+	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	   	  !	  "	  #	  $	  %	  &	  '	  (	  )	  *	  +	  ,	  -	  .	  /	  0	  1	  2	  3	  4	  5	  6	  7	  8	  9	  :	  ;	  <	  =	  >	  ?	  @	  A	  B	  C	  D	  E	  F	  G	  H	  I	  J	  K	  L	  M	  N	  O	  P	  Q	  R	  S	  T	  U	  V	  W	  X	  Y	  Z	  [	  \	  ]	  ^	  _	  `	  a	  b	  c	  d	  e	  f	  g	  h	  i	  j	  k	  l	  m	  n	  o	  p	  q	  r	  s	  t	  u	  v	  w	  x	  y	  z	  {	  |	  }	  ~	  	  €	  	  ‚	  ƒ	  „	  …	  †	  ‡	  ˆ	  ‰	  Š	  ‹	  Œ	  	  	  	  	  ‘	  ’	  “	  ”	  •	  –	  —	  ˜	  ™	  š	  ›	  œ	  	  	  Ÿ	   	  ¡	  ¢	  £	  ¤	  ¥	  ¦	  §	  ¨	  ©	  ª	  «	  ¬	  ­	  ®	  ¯	  °	  ±	  ²	  ³	  ´	  µ	  ¶	  ·	  ¸	  ¹	  º	  »	  ¼	  ½	  ¾	  ¿	  À	  Á	  Â	  Ã	  Ä	  Å	  Æ	  Ç	  È	  É	  Ê	  Ë	  Ì	  Í	  Î	  Ï	  Ğ	  Ñ	  Ò	  Ó	  Ô	  Õ	  Ö	  ×	  Ø	  Ù	  Ú	  Û	  Ü	  İ	  Ş	  ß	  à	  á	  â	  ã	  ä	  å	  æ	  ç	  è	  é	  ê	  ë	  ì	  í	  î	  ï	  ğ	  ñ	  ò	  ó	  ô	  õ	  ö	  ÷	  ø	  ù	  ú	  û	  ü	  ı	  ş	  ÿ	   
+  
+  
+  
+  
+  
+  
+  
+  
+  	
+  
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+   
+  !
+  "
+  #
+  $
+  %
+  &
+  '
+  (
+  )
+  *
+  +
+  ,
+  -
+  .
+  /
+  0
+  1
+  2
+  3
+  4
+  5
+  6
+  7
+  8
+  9
+  :
+  ;
+  <
+  =
+  >
+  ?
+  @
+  A
+  B
+  C
+  D
+  E
+  F
+  G
+  H
+  I
+  J
+  K
+  L
+  M
+  N
+  O
+  P
+  Q
+  R
+  S
+  T
+  U
+  V
+  W
+  X
+  Y
+  Z
+  [
+  \
+  ]
+  ^
+  _
+  `
+  a
+  b
+  c
+  d
+  e
+  f
+  g
+  X   datar°
+  jœ
+  )r±
+  }r²
+  (jŸ
+  j 
+  j¡
+  Mg
+…r³
+  j£
+  j¤
+  j„
+  j¥
+  X   f8r´
+  ‰ˆ‡rµ
+  Rr¶
+  (Kj©
+  NNNJÿÿÿÿJÿÿÿÿK tr·
+  bj«
+  ˆubYš­¡,@Yš­¡,@Yš­¡,@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@ºŞÃ	A@SÎAMf@§1®È@Ä@,³6@SÎAMf@SÎAMf@SÎAMf@ndG
+x@.¼”Eú?Yš­¡,@Yš­¡,@SÎAMf@Yš­¡,@Yš­¡,@Ôİ:˜m;ÿ?SÎAMf@SÎAMf@SÎAMf@,³6@Yš­¡,@Yš­¡,@,³6@ºŞÃ	A@,³6@SÎAMf@SÎAMf@,³6@Yš­¡,@Yš­¡,@,³6@SÎAMf@SÎAMf@ndG
+x@°”õ¹¾ù?Yš­¡,@SÎAMf@SÎAMf@,³6@SÎAMf@ndG
+x@SÎAMf@,³6@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@ndG
+x@SÎAMf@fıÛ‹G)@ºŞÃ	A@§1®È@Ä@SÎAMf@SÎAMf@ºŞÃ	A@,³6@SÎAMf@SÎAMf@SÎAMf@SÎAMf@,³6@SÎAMf@SÎAMf@Yš­¡,@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@§1®È@Ä@ndG
+x@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@_)b’>Z÷?†V=õÉ @Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@ndG
+x@SÎAMf@,³6@SÎAMf@,³6@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@>‰yµ@SÎAMf@SÎAMf@SÎAMf@SÎAMf@ºŞÃ	A@>‰yµ@SÎAMf@SÎAMf@>‰yµ@ºŞÃ	A@ºŞÃ	A@,³6@Yš­¡,@Yš­¡,@ndG
+x@SÎAMf@ºŞÃ	A@SÎAMf@,³6@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@,³6@§1®È@Ä@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@±$FF¥
+@SÎAMf@SÎAMf@SÎAMf@§1®È@Ä@SÎAMf@SÎAMf@SÎAMf@ndG
+x@±$FF¥
+@SÎAMf@SÎAMf@SÎAMf@SÎAMf@,³6@SÎAMf@SÎAMf@SÎAMf@±$FF¥
+@±$FF¥
+@SÎAMf@§1®È@Ä@±$FF¥
+@§1®È@Ä@,³6@,³6@SÎAMf@ndG
+x@SÎAMf@SÎAMf@SÎAMf@SÎAMf@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@±$FF¥
+@ºŞÃ	A@SÎAMf@,³6@†V=õÉ @Yš­¡,@Yš­¡,@ºŞÃ	A@œß¥‡yì@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@fıÛ‹G)@,³6@SÎAMf@Yš­¡,@SÎAMf@SÎAMf@,³6@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@,³6@ºŞÃ	A@SÎAMf@SÎAMf@,³6@,³6@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@,³6@,³6@SÎAMf@SÎAMf@SÎAMf@SÎAMf@Yš­¡,@Yš­¡,@SÎAMf@÷‡”'"ó?Yš­¡,@Yš­¡,@SÎAMf@>‰yµ@Yš­¡,@ºŞÃ	A@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@SÎAMf@SÎAMf@
+yƒ,a;@SÎAMf@±$FF¥
+@Yš­¡,@Yš­¡,@SÎAMf@Yš­¡,@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@,³6@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@ndG
+x@SÎAMf@SÎAMf@SÎAMf@ºŞÃ	A@ndG
+x@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@ºŞÃ	A@,³6@SÎAMf@SÎAMf@ndG
+x@Yš­¡,@Yš­¡,@SÎAMf@,³6@SÎAMf@SÎAMf@ºŞÃ	A@SÎAMf@SÎAMf@,³6@†V=õÉ @SÎAMf@§1®È@Ä@SÎAMf@,³6@,³6@SÎAMf@ndG
+x@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@ºŞÃ	A@,³6@SÎAMf@SÎAMf@SÎAMf@,³6@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@>‰yµ@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@Yš­¡,@Yš­¡,@SÎAMf@SÎAMf@ndG
+x@SÎAMf@Yš­¡,@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@ºŞÃ	A@œß¥‡yì@SÎAMf@SÎAMf@SÎAMf@SÎAMf@,³6@SÎAMf@SÎAMf@SÎAMf@,³6@,³6@±$FF¥
+@ºŞÃ	A@,³6@SÎAMf@SÎAMf@ºŞÃ	A@’ì
+®@Yš­¡,@,³6@Yš­¡,@ºŞÃ	A@Yš­¡,@Yš­¡,@,³6@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@SÎAMf@Yš­¡,@§1®È@Ä@,³6@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@,³6@SÎAMf@†BìñÆ@SÎAMf@ndG
+x@†BìñÆ@,³6@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@ºŞÃ	A@SÎAMf@SÎAMf@SÎAMf@SÎAMf@ØD	¯<ù?SÎAMf@SÎAMf@SÎAMf@Õ‰Ù _û?SÎAMf@ndG
+x@,³6@,³6@,³6@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@,³6@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@
+yƒ,a;@†BìñÆ@SÎAMf@†BìñÆ@ndG
+x@SÎAMf@SÎAMf@SÎAMf@SÎAMf@ndG
+x@ndG
+x@SÎAMf@SÎAMf@SÎAMf@5–‡†w@Yš­¡,@8µ`¿­@,³6@SÎAMf@SÎAMf@5–‡†w@SÎAMf@SÎAMf@SÎAMf@,³6@†BìñÆ@SÎAMf@Yš­¡,@SÎAMf@,³6@SÎAMf@,³6@†BìñÆ@,³6@,³6@
+yƒ,a;@†BìñÆ@Yš­¡,@SÎAMf@SÎAMf@SÎAMf@ndG
+x@SÎAMf@SÎAMf@ºŞÃ	A@SÎAMf@SÎAMf@ndG
+x@a¨)'Ó@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@§1®È@Ä@Yš­¡,@’ì
+®@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@±$FF¥
+@Yš­¡,@,³6@Yš­¡,@Yš­¡,@SÎAMf@§1®È@Ä@SÎAMf@SÎAMf@SÎAMf@±$FF¥
+@†V=õÉ @SÎAMf@,³6@,³6@,³6@SÎAMf@SÎAMf@§1®È@Ä@>‰yµ@Yš­¡,@SÎAMf@SÎAMf@SÎAMf@,³6@SÎAMf@,³6@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@±$FF¥
+@SÎAMf@,³6@SÎAMf@SÎAMf@†BìñÆ@SÎAMf@,³6@±$FF¥
+@SÎAMf@ndG
+x@SÎAMf@SÎAMf@SÎAMf@SÎAMf@±$FF¥
+@,³6@SÎAMf@SÎAMf@SÎAMf@SÎAMf@±$FF¥
+@Yš­¡,@SÎAMf@,³6@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@fıÛ‹G)@SÎAMf@SÎAMf@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@SÎAMf@Yš­¡,@SÎAMf@ºŞÃ	A@ƒ‹Z…ş?Yš­¡,@Yš­¡,@SÎAMf@Yš­¡,@Yš­¡,@Yš­¡,@†BìñÆ@Yš­¡,@Yš­¡,@Yš­¡,@,³6@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@ºŞÃ	A@SÎAMf@SÎAMf@ºŞÃ	A@SÎAMf@SÎAMf@SÎAMf@SÎAMf@ndG
+x@LC2—uİğ?,³6@ºŞÃ	A@Yš­¡,@Yš­¡,@Yš­¡,@ºŞÃ	A@Yš­¡,@Yš­¡,@Yš­¡,@SÎAMf@Yš­¡,@ QçÇè` @SÎAMf@SÎAMf@SÎAMf@ºŞÃ	A@,³6@ndG
+x@SÎAMf@SÎAMf@SÎAMf@ºŞÃ	A@SÎAMf@a¨)'Ó@SÎAMf@SÎAMf@SÎAMf@SÎAMf@,³6@SÎAMf@†BìñÆ@SÎAMf@SÎAMf@†BìñÆ@Yš­¡,@5–‡†w@Yš­¡,@Yš­¡,@8µ`¿­@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@>‰yµ@ºŞÃ	A@,³6@ºŞÃ	A@SÎAMf@,³6@ºŞÃ	A@§1®È@Ä@éÙ@ªêö?SÎAMf@,³6@±$FF¥
+@SÎAMf@SÎAMf@œß¥‡yì@SÎAMf@Yš­¡,@Yš­¡,@†BìñÆ@SÎAMf@>‰yµ@5–‡†w@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@ndG
+x@SÎAMf@SÎAMf@SÎAMf@,³6@ndG
+x@SÎAMf@SÎAMf@ndG
+x@,³6@SÎAMf@,³6@SÎAMf@SÎAMf@±$FF¥
+@SÎAMf@SÎAMf@SÎAMf@SÎAMf@,³6@SÎAMf@,³6@SÎAMf@SÎAMf@ndG
+x@SÎAMf@SÎAMf@ºŞÃ	A@±$FF¥
+@SÎAMf@SÎAMf@SÎAMf@ºŞÃ	A@ºŞÃ	A@SÎAMf@†V=õÉ @±$FF¥
+@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@·M¦µcö?Yš­¡,@†V=õÉ @Yš­¡,@SÎAMf@ºŞÃ	A@SÎAMf@ºŞÃ	A@SÎAMf@SÎAMf@,³6@ºŞÃ	A@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@œß¥‡yì@SÎAMf@,³6@SÎAMf@SÎAMf@,³6@SÎAMf@SÎAMf@5–‡†w@SÎAMf@±$FF¥
+@SÎAMf@SÎAMf@SÎAMf@,³6@SÎAMf@SÎAMf@SÎAMf@SÎAMf@†BìñÆ@Yš­¡,@œß¥‡yì@SÎAMf@SÎAMf@,³6@SÎAMf@SÎAMf@SÎAMf@§1®È@Ä@ndG
+x@œß¥‡yì@SÎAMf@SÎAMf@ºŞÃ	A@SÎAMf@ndG
+x@ºŞÃ	A@,³6@SÎAMf@SÎAMf@SÎAMf@SÎAMf@,³6@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@5–‡†w@SÎAMf@,³6@SÎAMf@,³6@§1®È@Ä@†BìñÆ@œß¥‡yì@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@,³6@SÎAMf@ndG
+x@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@ºŞÃ	A@SÎAMf@SÎAMf@ndG
+x@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@œß¥‡yì@Yš­¡,@SÎAMf@SÎAMf@±$FF¥
+@ºŞÃ	A@SÎAMf@±$FF¥
+@×]ùùÿ?SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@ndG
+x@SÎAMf@Yš­¡,@SÎAMf@ºŞÃ	A@SÎAMf@SÎAMf@SÎAMf@SÎAMf@,³6@,³6@SÎAMf@,³6@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@œß¥‡yì@,³6@SÎAMf@ndG
+x@ndG
+x@SÎAMf@,³6@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@SÎAMf@Yš­¡,@Yš­¡,@SÎAMf@,³6@,³6@SÎAMf@SÎAMf@œß¥‡yì@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@ºŞÃ	A@,³6@SÎAMf@SÎAMf@SÎAMf@ºŞÃ	A@SÎAMf@,³6@SÎAMf@’ì
+®@Yš­¡,@Yš­¡,@ºŞÃ	A@SÎAMf@,³6@SÎAMf@SÎAMf@Yš­¡,@Yš­¡,@SÎAMf@SÎAMf@,³6@SÎAMf@,³6@SÎAMf@,³6@SÎAMf@SÎAMf@SÎAMf@ºŞÃ	A@SÎAMf@SÎAMf@,³6@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@ndG
+x@SÎAMf@SÎAMf@,³6@SÎAMf@SÎAMf@,³6@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@,³6@SÎAMf@SÎAMf@SÎAMf@ndG
+x@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@
+yƒ,a;@SÎAMf@SÎAMf@SÎAMf@SÎAMf@,³6@§1®È@Ä@,³6@,³6@SÎAMf@†BìñÆ@†BìñÆ@SÎAMf@,³6@SÎAMf@SÎAMf@SÎAMf@,³6@SÎAMf@SÎAMf@SÎAMf@ndG
+x@SÎAMf@ndG
+x@SÎAMf@ndG
+x@SÎAMf@SÎAMf@SÎAMf@SÎAMf@,³6@,³6@SÎAMf@,³6@SÎAMf@SÎAMf@SÎAMf@SÎAMf@,³6@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@Yš­¡,@Yš­¡,@SÎAMf@SÎAMf@§1®È@Ä@,³6@SÎAMf@±$FF¥
+@SÎAMf@SÎAMf@ºŞÃ	A@SÎAMf@SÎAMf@SÎAMf@,³6@SÎAMf@SÎAMf@SÎAMf@SÎAMf@ndG
+x@ºŞÃ	A@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@5–‡†w@,³6@,³6@,³6@†BìñÆ@SÎAMf@SÎAMf@SÎAMf@,³6@,³6@SÎAMf@SÎAMf@ndG
+x@ºŞÃ	A@SÎAMf@SÎAMf@ºŞÃ	A@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@,³6@SÎAMf@SÎAMf@±$FF¥
+@SÎAMf@SÎAMf@SÎAMf@SÎAMf@†BìñÆ@SÎAMf@†BìñÆ@ºŞÃ	A@SÎAMf@ºŞÃ	A@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@,³6@,³6@SÎAMf@SÎAMf@ndG
+x@SÎAMf@SÎAMf@SÎAMf@ºŞÃ	A@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@ºŞÃ	A@SÎAMf@SÎAMf@ndG
+x@SÎAMf@SÎAMf@a¨)'Ó@SÎAMf@SÎAMf@>‰yµ@±$FF¥
+@SÎAMf@SÎAMf@SÎAMf@ºŞÃ	A@,³6@SÎAMf@œß¥‡yì@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@a¨)'Ó@SÎAMf@SÎAMf@SÎAMf@SÎAMf@,³6@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@8µ`¿­@SÎAMf@SÎAMf@SÎAMf@,³6@±$FF¥
+@SÎAMf@ndG
+x@,³6@ºŞÃ	A@ºŞÃ	A@Yš­¡,@Yš­¡,@Yš­¡,@SÎAMf@SÎAMf@D`¯—ôû?Yš­¡,@Yš­¡,@Yš­¡,@§1®È@Ä@SÎAMf@Yš­¡,@,³6@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@fıÛ‹G)@Yš­¡,@,³6@SÎAMf@,³6@SÎAMf@SÎAMf@SÎAMf@SÎAMf@,³6@a¨)'Ó@±$FF¥
+@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@,³6@’ì
+®@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@,³6@SÎAMf@±$FF¥
+@ºŞÃ	A@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@,³6@SÎAMf@SÎAMf@SÎAMf@,³6@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@,³6@SÎAMf@±$FF¥
+@Âú`Dè)@ndG
+x@5–‡†w@SÎAMf@,³6@,³6@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@,³6@§1®È@Ä@,³6@SÎAMf@SÎAMf@SÎAMf@ºŞÃ	A@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@†BìñÆ@SÎAMf@SÎAMf@ºŞÃ	A@,³6@SÎAMf@SÎAMf@8µ`¿­@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@a¨)'Ó@SÎAMf@SÎAMf@SÎAMf@SÎAMf@,³6@>‰yµ@SÎAMf@SÎAMf@>‰yµ@SÎAMf@SÎAMf@,³6@>‰yµ@ndG
+x@SÎAMf@†BìñÆ@SÎAMf@SÎAMf@ºŞÃ	A@SÎAMf@SÎAMf@±$FF¥
+@SÎAMf@SÎAMf@SÎAMf@,³6@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@ndG
+x@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@ºŞÃ	A@SÎAMf@œß¥‡yì@SÎAMf@SÎAMf@SÎAMf@,³6@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@ºŞÃ	A@Yš­¡,@SÎAMf@ndG
+x@SÎAMf@Yš­¡,@SÎAMf@,³6@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@,³6@,³6@SÎAMf@SÎAMf@ºŞÃ	A@SÎAMf@SÎAMf@,³6@,³6@,³6@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@,³6@SÎAMf@†BìñÆ@SÎAMf@SÎAMf@†BìñÆ@Yš­¡,@,³6@SÎAMf@SÎAMf@.¼”Eú?Yš­¡,@Yš­¡,@,³6@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@ºŞÃ	A@SÎAMf@SÎAMf@SÎAMf@ndG
+x@SÎAMf@SÎAMf@a¨)'Ó@œß¥‡yì@SÎAMf@SÎAMf@SÎAMf@,³6@,³6@SÎAMf@Yš­¡,@§1®È@Ä@SÎAMf@SÎAMf@Yš­¡,@Yš­¡,@SÎAMf@’ì
+®@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@†BìñÆ@SÎAMf@ndG
+x@SÎAMf@SÎAMf@,³6@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@Yš­¡,@SÎAMf@SÎAMf@SÎAMf@ndG
+x@a¨)'Ó@Yš­¡,@Yš­¡,@Yš­¡,@ndG
+x@Yš­¡,@Yš­¡,@SÎAMf@fıÛ‹G)@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@,³6@±$FF¥
+@SÎAMf@,³6@,³6@SÎAMf@SÎAMf@,³6@SÎAMf@,³6@ºŞÃ	A@SÎAMf@SÎAMf@SÎAMf@SÎAMf@a¨)'Ó@SÎAMf@±$FF¥
+@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@fıÛ‹G)@†BìñÆ@SÎAMf@SÎAMf@Yš­¡,@ºŞÃ	A@SÎAMf@SÎAMf@SÎAMf@°”õ¹¾ù?Yš­¡,@SÎAMf@,³6@SÎAMf@,³6@ºŞÃ	A@SÎAMf@SÎAMf@SÎAMf@,³6@,³6@SÎAMf@SÎAMf@ºŞÃ	A@SÎAMf@ QçÇè` @Yš­¡,@SÎAMf@SÎAMf@üNÛ–Ò/ı?Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@SÎAMf@SÎAMf@SÎAMf@±$FF¥
+@SÎAMf@SÎAMf@SÎAMf@,³6@SÎAMf@SÎAMf@SÎAMf@Yš­¡,@ºŞÃ	A@SÎAMf@SÎAMf@SÎAMf@SÎAMf@Âú`Dè)@±$FF¥
+@,³6@,³6@ndG
+x@ndG
+x@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@ºŞÃ	A@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@
+ïYŞ×âô?SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@,³6@SÎAMf@±$FF¥
+@SÎAMf@ºŞÃ	A@SÎAMf@,³6@SÎAMf@ºŞÃ	A@SÎAMf@SÎAMf@ºŞÃ	A@ºŞÃ	A@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@Yš­¡,@†BìñÆ@SÎAMf@SÎAMf@œß¥‡yì@ºŞÃ	A@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@ºŞÃ	A@ºŞÃ	A@†BìñÆ@SÎAMf@SÎAMf@SÎAMf@+£ï°8@Yš­¡,@,³6@Yš­¡,@Yš­¡,@SÎAMf@SÎAMf@SÎAMf@ndG
+x@ndG
+x@SÎAMf@SÎAMf@SÎAMf@ºŞÃ	A@ºŞÃ	A@Yš­¡,@SÎAMf@SÎAMf@œß¥‡yì@SÎAMf@SÎAMf@±$FF¥
+@ºŞÃ	A@ºŞÃ	A@ºŞÃ	A@SÎAMf@ºŞÃ	A@SÎAMf@,³6@SÎAMf@SÎAMf@Yš­¡,@Yš­¡,@SÎAMf@SÎAMf@ºŞÃ	A@Yš­¡,@
+yƒ,a;@ndG
+x@±$FF¥
+@SÎAMf@SÎAMf@œß¥‡yì@fıÛ‹G)@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@,³6@SÎAMf@ndG
+x@SÎAMf@SÎAMf@SÎAMf@ºŞÃ	A@SÎAMf@,³6@±$FF¥
+@
+yƒ,a;@SÎAMf@ºŞÃ	A@SÎAMf@Yš­¡,@SÎAMf@SÎAMf@SÎAMf@,³6@+£ï°8@Yš­¡,@Yš­¡,@Yš­¡,@+£ï°8@Yš­¡,@SÎAMf@±$FF¥
+@2^±ò?Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@§1®È@Ä@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@ndG
+x@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@SÎAMf@,³6@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@,³6@SÎAMf@ºŞÃ	A@’ì
+®@,³6@ºŞÃ	A@>‰yµ@SÎAMf@
+yƒ,a;@SÎAMf@,³6@fıÛ‹G)@SÎAMf@SÎAMf@Yš­¡,@Yš­¡,@SÎAMf@,³6@ºŞÃ	A@.¼”Eú?Yš­¡,@Yš­¡,@SÎAMf@ndG
+x@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@ºŞÃ	A@5–‡†w@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@SÎAMf@SÎAMf@SÎAMf@SÎAMf@Ù–à¡Í÷?Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@SÎAMf@SÎAMf@SÎAMf@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@SÎAMf@SÎAMf@Yš­¡,@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@,³6@SÎAMf@±$FF¥
+@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@fıÛ‹G)@SÎAMf@†BìñÆ@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@ºŞÃ	A@ºŞÃ	A@±$FF¥
+@,³6@,³6@SÎAMf@SÎAMf@
+yƒ,a;@ºŞÃ	A@,³6@ndG
+x@ndG
+x@SÎAMf@SÎAMf@SÎAMf@
+yƒ,a;@SÎAMf@±$FF¥
+@,³6@,³6@SÎAMf@SÎAMf@×]ùùÿ?SÎAMf@SÎAMf@SÎAMf@SÎAMf@,³6@SÎAMf@SÎAMf@,³6@SÎAMf@SÎAMf@ºŞÃ	A@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@,³6@,³6@SÎAMf@ºŞÃ	A@SÎAMf@SÎAMf@SÎAMf@†BìñÆ@ºŞÃ	A@SÎAMf@fıÛ‹G)@,³6@†BìñÆ@SÎAMf@SÎAMf@,³6@SÎAMf@fıÛ‹G)@fıÛ‹G)@Yš­¡,@Yš­¡,@,³6@Yš­¡,@SÎAMf@>‰yµ@SÎAMf@ndG
+x@
+yƒ,a;@SÎAMf@SÎAMf@SÎAMf@SÎAMf@§1®È@Ä@SÎAMf@SÎAMf@SÎAMf@SÎAMf@±$FF¥
+@SÎAMf@,³6@SÎAMf@,³6@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@Ôİ:˜m;ÿ?SÎAMf@SÎAMf@ndG
+x@SÎAMf@SÎAMf@œß¥‡yì@ndG
+x@SÎAMf@†BìñÆ@,³6@+£ï°8@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@§1®È@Ä@SÎAMf@SÎAMf@SÎAMf@,³6@SÎAMf@,³6@±$FF¥
+@SÎAMf@SÎAMf@SÎAMf@,³6@,³6@SÎAMf@SÎAMf@ºŞÃ	A@ºŞÃ	A@SÎAMf@SÎAMf@a¨)'Ó@SÎAMf@SÎAMf@,³6@,³6@,³6@SÎAMf@SÎAMf@Yš­¡,@,³6@,³6@ºŞÃ	A@SÎAMf@ºŞÃ	A@Yš­¡,@Yš­¡,@ºŞÃ	A@SÎAMf@SÎAMf@,³6@SÎAMf@SÎAMf@,³6@ndG
+x@±$FF¥
+@§1®È@Ä@ndG
+x@SÎAMf@SÎAMf@ºŞÃ	A@,³6@,³6@,³6@SÎAMf@±$FF¥
+@SÎAMf@,³6@SÎAMf@§1®È@Ä@SÎAMf@SÎAMf@,³6@,³6@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@,³6@a¨)'Ó@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@,³6@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@,³6@>‰yµ@SÎAMf@,³6@SÎAMf@,³6@,³6@SÎAMf@SÎAMf@ndG
+x@SÎAMf@,³6@SÎAMf@Yš­¡,@ºŞÃ	A@SÎAMf@ºŞÃ	A@ndG
+x@SÎAMf@>‰yµ@,³6@’ì
+®@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@,³6@SÎAMf@,³6@SÎAMf@SÎAMf@,³6@SÎAMf@SÎAMf@SÎAMf@SÎAMf@,³6@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@ndG
+x@SÎAMf@ndG
+x@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@ºŞÃ	A@SÎAMf@,³6@,³6@SÎAMf@SÎAMf@§1®È@Ä@SÎAMf@SÎAMf@>‰yµ@SÎAMf@SÎAMf@SÎAMf@Yš­¡,@SÎAMf@5–‡†w@Yš­¡,@SÎAMf@,³6@SÎAMf@ºŞÃ	A@SÎAMf@ºŞÃ	A@SÎAMf@SÎAMf@SÎAMf@SÎAMf@üNÛ–Ò/ı?Yš­¡,@Yš­¡,@a¨)'Ó@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@SÎAMf@SÎAMf@†BìñÆ@,³6@SÎAMf@
+yƒ,a;@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@fıÛ‹G)@SÎAMf@Yš­¡,@Yš­¡,@Yš­¡,@Âú`Dè)@Yš­¡,@Yš­¡,@Yš­¡,@,³6@Yš­¡,@Yš­¡,@’ì
+®@Yš­¡,@Yš­¡,@Yš­¡,@SÎAMf@Yš­¡,@±$FF¥
+@SÎAMf@Yš­¡,@Yš­¡,@Yš­¡,@,³6@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@SÎAMf@Yš­¡,@ƒ‹Z…ş?Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@†BìñÆ@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@ndG
+x@SÎAMf@SÎAMf@,³6@,³6@SÎAMf@SÎAMf@SÎAMf@,³6@ºŞÃ	A@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@,³6@SÎAMf@SÎAMf@5–‡†w@5–‡†w@Yš­¡,@Yš­¡,@ºŞÃ	A@SÎAMf@,³6@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@,³6@SÎAMf@SÎAMf@SÎAMf@,³6@SÎAMf@SÎAMf@SÎAMf@ºŞÃ	A@ºŞÃ	A@SÎAMf@SÎAMf@SÎAMf@,³6@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@ndG
+x@,³6@SÎAMf@SÎAMf@ºŞÃ	A@SÎAMf@,³6@ºŞÃ	A@,³6@SÎAMf@SÎAMf@5–‡†w@ndG
+x@§1®È@Ä@,³6@SÎAMf@SÎAMf@SÎAMf@,³6@SÎAMf@SÎAMf@SÎAMf@ndG
+x@SÎAMf@,³6@SÎAMf@’ì
+®@fıÛ‹G)@5–‡†w@ºŞÃ	A@Yš­¡,@Yš­¡,@SÎAMf@SÎAMf@SÎAMf@±$FF¥
+@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@ºŞÃ	A@ndG
+x@SÎAMf@SÎAMf@SÎAMf@SÎAMf@ºŞÃ	A@Yš­¡,@Yš­¡,@SÎAMf@SÎAMf@SÎAMf@Ê3Ö°,ü?Yš­¡,@SÎAMf@SÎAMf@ndG
+x@Yš­¡,@ºŞÃ	A@SÎAMf@’ì
+®@SÎAMf@†V=õÉ @Yš­¡,@Yš­¡,@SÎAMf@SÎAMf@SÎAMf@a¨)'Ó@SÎAMf@SÎAMf@,³6@,³6@SÎAMf@,³6@ºŞÃ	A@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@ndG
+x@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@œß¥‡yì@SÎAMf@SÎAMf@ØD	¯<ù?Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@SÎAMf@SÎAMf@SÎAMf@,³6@SÎAMf@ºŞÃ	A@SÎAMf@SÎAMf@SÎAMf@SÎAMf@,³6@Yš­¡,@SÎAMf@SÎAMf@SÎAMf@ºŞÃ	A@SÎAMf@SÎAMf@SÎAMf@°”õ¹¾ù?SÎAMf@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@SÎAMf@SÎAMf@SÎAMf@ºŞÃ	A@SÎAMf@+£ï°8@Yš­¡,@Yš­¡,@SÎAMf@SÎAMf@SÎAMf@SÎAMf@ºŞÃ	A@Yš­¡,@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@±$FF¥
+@SÎAMf@SÎAMf@SÎAMf@,³6@SÎAMf@’ì
+®@SÎAMf@ndG
+x@ndG
+x@SÎAMf@Yš­¡,@Yš­¡,@SÎAMf@SÎAMf@SÎAMf@SÎAMf@ºŞÃ	A@ndG
+x@SÎAMf@SÎAMf@SÎAMf@µ´Q*qkò?’ì
+®@Yš­¡,@5–‡†w@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@SÎAMf@Yš­¡,@SÎAMf@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@fıÛ‹G)@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@±$FF¥
+@Yš­¡,@SÎAMf@Yš­¡,@Yš­¡,@Yš­¡,@SÎAMf@SÎAMf@SÎAMf@SÎAMf@Yš­¡,@SÎAMf@,³6@SÎAMf@ºŞÃ	A@SÎAMf@SÎAMf@,³6@SÎAMf@†BìñÆ@§1®È@Ä@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@ºŞÃ	A@SÎAMf@SÎAMf@SÎAMf@,³6@SÎAMf@ºŞÃ	A@§1®È@Ä@SÎAMf@SÎAMf@SÎAMf@SÎAMf@,³6@†BìñÆ@SÎAMf@SÎAMf@D`¯—ôû?ºŞÃ	A@SÎAMf@SÎAMf@>‰yµ@SÎAMf@5–‡†w@SÎAMf@SÎAMf@SÎAMf@ºŞÃ	A@,³6@Yš­¡,@Yš­¡,@Yš­¡,@SÎAMf@±$FF¥
+@ºŞÃ	A@5–‡†w@SÎAMf@SÎAMf@SÎAMf@Âú`Dè)@,³6@SÎAMf@,³6@SÎAMf@>‰yµ@ndG
+x@Yš­¡,@Yš­¡,@SÎAMf@SÎAMf@SÎAMf@SÎAMf@ºŞÃ	A@,³6@SÎAMf@a¨)'Ó@Yš­¡,@,³6@SÎAMf@,³6@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@SÎAMf@SÎAMf@ºŞÃ	A@,³6@†BìñÆ@,³6@SÎAMf@ºŞÃ	A@§1®È@Ä@SÎAMf@SÎAMf@SÎAMf@SÎAMf@fıÛ‹G)@SÎAMf@SÎAMf@SÎAMf@,³6@,³6@SÎAMf@†BìñÆ@,³6@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@,³6@SÎAMf@SÎAMf@SÎAMf@ºŞÃ	A@,³6@>‰yµ@SÎAMf@SÎAMf@SÎAMf@5–‡†w@Yš­¡,@Yš­¡,@SÎAMf@SÎAMf@œß¥‡yì@SÎAMf@SÎAMf@,³6@’ì
+®@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@,³6@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@ºŞÃ	A@SÎAMf@SÎAMf@œß¥‡yì@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@ndG
+x@SÎAMf@SÎAMf@SÎAMf@SÎAMf@>‰yµ@,³6@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@SÎAMf@±$FF¥
+@SÎAMf@ºŞÃ	A@SÎAMf@SÎAMf@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@Yš­¡,@SÎAMf@SÎAMf@œß¥‡yì@SÎAMf@SÎAMf@ubjŠ
+  j‹
+  ubjœ
+  )r¸
+  }r¹
+  (jŸ
+  j 
+  j¡
+  K…rº
+  j£
+  j¤
+  j„
+  j¥
+  X   O8r»
+  ‰ˆ‡r¼
+  Rr½
+  (KX   |r¾
+  NNNJÿÿÿÿJÿÿÿÿK?tr¿
+  bj«
+  ‰ub€cnumpy.core.multiarray
+_reconstruct
+q cnumpy
+ndarray
+qK …qc_codecs
+encode
+qX   bqX   latin1q†qRq‡qRq	(KK…q
+cnumpy
+dtype
+qX   O8q‰ˆ‡qRq(KX   |qNNNJÿÿÿÿJÿÿÿÿK?tqb‰]q(X$   63842cbd-c858-4a5d-955c-7825edb7da25qX$   a2827178-33da-403b-aaa8-b0bb3b820959qX$   b65d6596-71e0-4def-92e4-fc5e04ff4e66qetqb.cpandas.core.frame
+DataFrame
+rÀ
+  )rÁ
+  }rÂ
+  (X   _datarÃ
+  cpandas.core.internals.managers
+BlockManager
+rÄ
+  )rÅ
+  (]rÆ
+  (cpandas.core.indexes.base
+_new_Index
+rÇ
+  cpandas.core.indexes.base
+Index
+rÈ
+  }rÉ
+  (j°
+  jœ
+  )rÊ
+  }rË
+  (jŸ
+  j 
+  j¡
+  K…rÌ
+  j£
+  j¤
+  j„
+  j½
+  j«
+  ‰ub€cnumpy.core.multiarray
+_reconstruct
+q cnumpy
+ndarray
+qK …qc_codecs
+encode
+qX   bqX   latin1q†qRq‡qRq	(KK…q
+cnumpy
+dtype
+qX   O8q‰ˆ‡qRq(KX   |qNNNJÿÿÿÿJÿÿÿÿK?tqb‰]q(X   documentclassidqX   documentclassqX   noofdocumentsqX   trainedqetqb.X   namerÍ
+  Nu†rÎ
+  RrÏ
+  jÇ
+  cpandas.core.indexes.range
+RangeIndex
+rĞ
+  }rÑ
+  (jÍ
+  NX   startrÒ
+  K X   stoprÓ
+  KX   steprÔ
+  Ku†rÕ
+  RrÖ
+  e]r×
+  (jœ
+  )rØ
+  }rÙ
+  (jŸ
+  j 
+  j¡
+  KK†rÚ
+  j£
+  j¤
+  j„
+  j¥
+  X   i8rÛ
+  ‰ˆ‡rÜ
+  Rrİ
+  (Kj©
+  NNNJÿÿÿÿJÿÿÿÿK trŞ
+  bj«
+  ˆub                                          jœ
+  )rß
+  }rà
+  (jŸ
+  j 
+  j¡
+  KK†rá
+  j£
+  j¤
+  j„
+  j½
+  j«
+  ‰ub€cnumpy.core.multiarray
+_reconstruct
+q cnumpy
+ndarray
+qK …qc_codecs
+encode
+qX   bqX   latin1q†qRq‡qRq	(KKK†q
+cnumpy
+dtype
+qX   O8q‰ˆ‡qRq(KX   |qNNNJÿÿÿÿJÿÿÿÿK?tqb‰]q(X$   63842cbd-c858-4a5d-955c-7825edb7da25qX$   a2827178-33da-403b-aaa8-b0bb3b820959qX$   b65d6596-71e0-4def-92e4-fc5e04ff4e66qX   Bill of LadingqX   Utility BillqX   Invoiceqetqb.e]râ
+  (jÇ
+  jÈ
+  }rã
+  (j°
+  jœ
+  )rä
+  }rå
+  (jŸ
+  j 
+  j¡
+  K…ræ
+  j£
+  j¤
+  j„
+  j½
+  j«
+  ‰ub€cnumpy.core.multiarray
+_reconstruct
+q cnumpy
+ndarray
+qK …qc_codecs
+encode
+qX   bqX   latin1q†qRq‡qRq	(KK…q
+cnumpy
+dtype
+qX   O8q‰ˆ‡qRq(KX   |qNNNJÿÿÿÿJÿÿÿÿK?tqb‰]q(X   noofdocumentsqX   trainedqetqb.jÍ
+  Nu†rç
+  Rrè
+  jÇ
+  jÈ
+  }ré
+  (j°
+  jœ
+  )rê
+  }rë
+  (jŸ
+  j 
+  j¡
+  K…rì
+  j£
+  j¤
+  j„
+  j½
+  j«
+  ‰ub€cnumpy.core.multiarray
+_reconstruct
+q cnumpy
+ndarray
+qK …qc_codecs
+encode
+qX   bqX   latin1q†qRq‡qRq	(KK…q
+cnumpy
+dtype
+qX   O8q‰ˆ‡qRq(KX   |qNNNJÿÿÿÿJÿÿÿÿK?tqb‰]q(X   documentclassidqX   documentclassqetqb.jÍ
+  Nu†rí
+  Rrî
+  e}rï
+  X   0.14.1rğ
+  }rñ
+  (X   axesrò
+  jÆ
+  X   blocksró
+  ]rô
+  (}rõ
+  (X   valuesrö
+  jœ
+  )r÷
+  }rø
+  (jŸ
+  j 
+  j¡
+  KK†rù
+  j£
+  j¤
+  j„
+  jİ
+  j«
+  ˆub                                          X   mgr_locsrú
+  cbuiltins
+slice
+rû
+  KKK‡rü
+  Rrı
+  u}rş
+  (jö
+  jœ
+  )rÿ
+  }r   (jŸ
+  j 
+  j¡
+  KK†r  j£
+  j¤
+  j„
+  j½
+  j«
+  ‰ub€cnumpy.core.multiarray
+_reconstruct
+q cnumpy
+ndarray
+qK …qc_codecs
+encode
+qX   bqX   latin1q†qRq‡qRq	(KKK†q
+cnumpy
+dtype
+qX   O8q‰ˆ‡qRq(KX   |qNNNJÿÿÿÿJÿÿÿÿK?tqb‰]q(X$   63842cbd-c858-4a5d-955c-7825edb7da25qX$   a2827178-33da-403b-aaa8-b0bb3b820959qX$   b65d6596-71e0-4def-92e4-fc5e04ff4e66qX   Bill of LadingqX   Utility BillqX   Invoiceqetqb.jú
+  jû
+  K KK‡r  Rr  ueustr  bX   _typr  X	   dataframer  X	   _metadatar  ]r  ubtr	  .{"NoOfFiles":69,"NoOfDocClasses":3,"DocClassesAndFiles":[{"docClassId":"63842cbd-c858-4a5d-955c-7825edb7da25","docClassName":"Bill of Lading","files":[{"fileId":"fb87d690-daee-43aa-86ec-dc990109d433","fileName":"BOL_005.pdf"},{"fileId":"c4632c7c-42ac-4c6c-992a-4611a94a7d5f","fileName":"BOL_002.pdf"},{"fileId":"f29b203a-1038-45cc-b03d-0ce5d0f8ad24","fileName":"BOL_003.pdf"},{"fileId":"b131ae25-481d-4f66-a100-97333822edbe","fileName":"BOL_007.pdf"},{"fileId":"5c743a81-a11d-4f2e-b322-95ca5d30ac1e","fileName":"BOL_009.pdf"},{"fileId":"b52505d1-dcf9-4452-ac9e-1bda5bfceff5","fileName":"BOL_015.pdf"},{"fileId":"7b3e782a-4624-48da-8d89-8acccfcf8d5f","fileName":"BOL_019.pdf"},{"fileId":"6f48bde2-02d8-4536-b3b4-b9777109640c","fileName":"BOL_031.pdf"},{"fileId":"e2ccc7ce-ab04-4bee-b012-d3597c268e73","fileName":"BOL_041.pdf"},{"fileId":"e33535ce-008d-4ad0-8546-75371028a17d","fileName":"BOL_027.pdf"},{"fileId":"40a8f5f8-8dc7-4c5e-aa42-8387f4da6829","fileName":"BOL_073.pdf"},{"fileId":"d2376f0d-4358-4333-b6d3-bad8bb08f269","fileName":"BOL_072.pdf"},{"fileId":"7d1f6b6b-aa5c-4e52-9f7b-782c6eddf642","fileName":"BOL_077.pdf"},{"fileId":"557c879d-6586-47c3-8903-366077caeadc","fileName":"BOL_075.pdf"},{"fileId":"86871da5-8d7f-4213-b0d2-dcab5b517336","fileName":"BOL_081.pdf"},{"fileId":"3bdec311-dae6-4cd2-a230-fd52330b463d","fileName":"BOL_095.pdf"},{"fileId":"683736e5-1a73-4f2c-b517-d53c937f751a","fileName":"BOL_092.pdf"},{"fileId":"fbc99eea-2799-4027-b281-017dbcd731d1","fileName":"BOL_100.pdf"},{"fileId":"6ac759f4-cad2-4378-8af3-bf6f9edf1ad7","fileName":"BOL_099.pdf"}]},{"docClassId":"b65d6596-71e0-4def-92e4-fc5e04ff4e66","docClassName":"Invoice","files":[{"fileId":"46b48775-acf2-43e5-92cf-2da18f7487b6","fileName":"INV_002.pdf"},{"fileId":"7ada9445-fe9e-4450-a1f9-d06a7cc4c7f0","fileName":"INV_008.pdf"},{"fileId":"8d2d4856-6f6d-4c3b-b5eb-d22b77d9b6d1","fileName":"INV_010.pdf"},{"fileId":"5353df4d-f134-4355-9b21-1183e0961126","fileName":"INV_015.pdf"},{"fileId":"fde3cde8-10e9-4148-bcbd-f58c4d6cfbde","fileName":"INV_017.pdf"},{"fileId":"60d23f07-1781-4302-a626-109c6a3a80f0","fileName":"INV_020.pdf"},{"fileId":"6b416ca6-8caf-42f9-bf16-b5e22d804baa","fileName":"INV_018.pdf"},{"fileId":"f4a56a59-9415-4115-b1a2-1e99f2b36dd8","fileName":"INV_023_2.pdf"},{"fileId":"a3098d86-2c1b-42bb-91f9-f41d511031d4","fileName":"INV_024.pdf"},{"fileId":"a3b1f38d-c265-43ee-8cbb-6ab0c6b2f722","fileName":"INV_023.pdf"},{"fileId":"0aca73ad-6534-4486-bed2-fd4176c59ac5","fileName":"INV_028.pdf"},{"fileId":"514201cd-7e4d-4466-9d29-c11fcb8d7d1d","fileName":"INV_029.pdf"},{"fileId":"cd07d3e7-3418-4bcb-b171-bdea9180cc46","fileName":"INV_030.pdf"},{"fileId":"dcfc981c-6565-45f7-bdea-8d8c99c55efc","fileName":"INV_031.pdf"},{"fileId":"f8ecc4d2-e26d-46b7-9aa0-57ee39cd25d5","fileName":"INV_032.pdf"},{"fileId":"3377f96b-3402-4d46-90e8-f2eca078dc1e","fileName":"INV_033.pdf"},{"fileId":"c86eeaf3-6a27-4e22-953e-fcf9540a33e3","fileName":"INV_034.pdf"},{"fileId":"aa8749e2-ccd8-48eb-9eb9-9c0e74ea75ce","fileName":"INV_035.pdf"},{"fileId":"7db03e8a-7045-4049-89ef-2e7193eb5b22","fileName":"INV_036.pdf"},{"fileId":"706196f6-8113-4f65-9794-50178b688a05","fileName":"INV_038.pdf"},{"fileId":"4b591783-2357-4efb-aaec-491f2f7ead30","fileName":"INV_039.pdf"},{"fileId":"e46f6e1a-ca80-4d06-b12c-a843a8c7572d","fileName":"INV_040.pdf"},{"fileId":"2fafae48-aa91-4ebb-9f45-554c73c56c4b","fileName":"INV_041.pdf"},{"fileId":"c9381f35-1912-493f-b9a9-389c8de66271","fileName":"INV_045.pdf"},{"fileId":"489713db-59db-4a90-8f3c-a1b15d2cdd65","fileName":"INV_050.pdf"},{"fileId":"9b5bf8e8-0916-402a-9a4c-36e4be003002","fileName":"INV_046.pdf"},{"fileId":"0f124c64-12a8-4b32-881d-f4170f57cd62","fileName":"INV_051.pdf"},{"fileId":"def9e7d6-1973-4ec5-aceb-ee409063e85f","fileName":"INV_052.pdf"},{"fileId":"da33c352-e509-4fc5-9d93-ceec01f37b62","fileName":"INV_068.pdf"}]},{"docClassId":"a2827178-33da-403b-aaa8-b0bb3b820959","docClassName":"Utility Bill","files":[{"fileId":"28050e58-323a-4fe1-b2aa-7840ad4f2b5f","fileName":"UBILL_007.pdf"},{"fileId":"cd8f271c-05da-4569-8075-bb86bd02e831","fileName":"UBILL_001.pdf"},{"fileId":"bb867d4f-4314-445f-b28b-f7d43c04f49d","fileName":"UBILL_003.pdf"},{"fileId":"bda2f394-94a4-4edc-ba83-ac481c950bc2","fileName":"UBILL_016.pdf"},{"fileId":"83c67c0c-226b-49dd-8cf2-b4af00f13151","fileName":"UBILL_020.pdf"},{"fileId":"70d67835-a9fd-4772-816b-b8d1d6649ce8","fileName":"UBILL_021.pdf"},{"fileId":"9dfb5563-eaaf-4eda-83bd-1a68c0a64309","fileName":"UBILL_038.pdf"},{"fileId":"ec3ab8a2-6869-47ef-97ea-94b0bcea4cb3","fileName":"UBILL_041.pdf"},{"fileId":"7382048a-8369-4ae6-b2c6-16b06404f7f2","fileName":"UBILL_057.pdf"},{"fileId":"95c98185-cc85-414f-8eb6-6ce08e544bb8","fileName":"UBILL_058.pdf"},{"fileId":"276fcfc9-9aab-46e4-a42b-dd236103f55b","fileName":"UBILL_061.pdf"},{"fileId":"33dddac5-57e6-47e1-9766-04c498be0bca","fileName":"UBILL_073.pdf"},{"fileId":"679b4f5e-68a1-4a3c-aeb7-43752af81509","fileName":"UBILL_074.pdf"},{"fileId":"8a4c0036-b897-436a-8e06-ef6472293ae9","fileName":"UBILL_075.pdf"},{"fileId":"932cfc8c-4f82-42fc-b831-a4e0f898214d","fileName":"UBILL_078.pdf"},{"fileId":"7ab7c937-499b-4e22-bfaf-d1bde29c3799","fileName":"UBILL_076.pdf"},{"fileId":"6afa9fd8-d3ff-4c5d-a893-d08d68ed1073","fileName":"UBILL_079.pdf"},{"fileId":"64eb157a-e623-4d16-9b78-e5f5c06c2b5c","fileName":"UBILL_081.pdf"},{"fileId":"c58a7ead-1500-407f-8b41-8bd1bc406feb","fileName":"UBILL_082.pdf"},{"fileId":"5a32b0df-c2e5-48a8-8cbe-2ff2179fddee","fileName":"UBILL_083.pdf"},{"fileId":"b098f8ae-ff97-4c00-9352-393c32fbb2e3","fileName":"UBILL_085.pdf"}]}]}

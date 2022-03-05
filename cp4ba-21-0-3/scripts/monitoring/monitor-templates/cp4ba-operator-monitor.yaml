@@ -1,0 +1,25 @@
+###############################################################################
+#
+# Licensed Materials - Property of IBM
+#
+# (C) Copyright IBM Corp. 2022. All Rights Reserved.
+#
+# US Government Users Restricted Rights - Use, duplication or
+# disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+#
+###############################################################################
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: cp4a-operator-monitor
+  namespace: paramNamespace 
+  labels:
+    group: cp4basetup
+spec:
+  endpoints:
+  - interval: 30s
+    port: http-metrics 
+    scheme: http
+  selector:
+    matchLabels:
+      name: ibm-cp4a-operator 

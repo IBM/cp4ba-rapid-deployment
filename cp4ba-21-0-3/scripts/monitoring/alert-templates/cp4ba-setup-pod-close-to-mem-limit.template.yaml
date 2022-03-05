@@ -1,0 +1,28 @@
+###############################################################################
+#
+# Licensed Materials - Property of IBM
+#
+# (C) Copyright IBM Corp. 2022. All Rights Reserved.
+#
+# US Government Users Restricted Rights - Use, duplication or
+# disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+#
+###############################################################################
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: cp4basetup-podclosetomemlimit
+  namespace: paramNamespace 
+spec:
+  groups:
+  - name: cp4basetup
+    rules:
+      - alert: Cp4baSetup-PodCloseToMemLimit
+        expr: ((( sum(container_memory_working_set_bytes{image!="",container!="POD", namespace!="kube-system"}) by (namespace,container,pod) / sum(container_spec_memory_limit_bytes{image!="",container!="POD",namespace!="kube-system"}) by (namespace,container,pod) ) * 100 ) < +Inf ) > 90  
+        for: 15m
+        labels:
+          severity: warning 
+          group: cp4basetup
+          cluster: paramClusterName
+        annotations:
+          message: Pod {{ $labels.namespace }}/{{ $labels.pod }} ({{ $labels.container }}) memory utilization is above 90% of it's limit.
