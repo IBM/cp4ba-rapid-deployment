@@ -3,7 +3,7 @@
 ![Overview](images/overview01.jpg "Overview")
 
 1. First, secure the funding for the infrastructure
-   - You’ll need ~$300 as a minimum for a small cluster (replica size of 1, means no HA) for ~one week, e.g. for a Customer Demo, Foundation and Content only
+   - You’ll need ~$300 as a minimum for a small cluster (replica size of 1, means no HA) for ~one week, e.g. for a Customer Demo, FoundationContent template only
 
 2. Check your entitlement on **https://myibm.ibm.com/products-services/containerlibrary**
    - Under **View library** check that you are entitled for **IBM Cloud Pak for Business Automation** (IBMers will see **IBM SOFTWARE ACCESS 1 YEAR - all**)
