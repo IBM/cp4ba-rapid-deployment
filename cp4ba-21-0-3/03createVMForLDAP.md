@@ -79,7 +79,7 @@ Please also refer to **https://cloud.ibm.com/docs/virtual-servers?topic=virtual-
 - IBM SDS 6.4 installation image (sds64-linux-x86-64.iso, part number: CN487ML, needs to be downloaded from IBM Passport Advantage, or internally from IBM Internal DSW Downloads/XL Software)
 - KornShell (ksh-20120801-142.el7.x86_64.rpm, download it from http://mirror.centos.org/centos/7/os/x86_64/Packages/ksh-20120801-142.el7.x86_64.rpm, more info under https://centos.pkgs.org/7/centos-x86_64/ksh-20120801-142.el7.x86_64.rpm.html)
 - libaio (libaio-0.3.109-13.el7.x86_64.rpm, download it from http://mirror.centos.org/centos/7/os/x86_64/Packages/libaio-0.3.109-13.el7.x86_64.rpm, more info under https://centos.pkgs.org/7/centos-x86_64/libaio-0.3.109-13.el7.x86_64.rpm.html)
-- predefined.ldif - defines user `cp4badmin` and two groups, `cp4bausers` and `cp4badmins` (download it from https://github.com/IBM/cp4ba-rapid-deployment/blob/main/cp4ba-21-0-2/scripts/predefined.ldif)
+- predefined.ldif - defines user `cp4badmin` and two groups, `cp4bausers` and `cp4badmins` (download it from https://github.com/IBM/cp4ba-rapid-deployment/blob/main/cp4ba-21-0-3/scripts/predefined.ldif)
 
   **Note:** By default the password for user `cp4badmin` is `passw0rd` - if you like to modify that password, it's now the right time to do that: For that, open predefined.ldif with an editor of your choice, change the password and save your changes before uploading that file to the VM - make sure to note it down and use that while the CP4BA deployment
   
