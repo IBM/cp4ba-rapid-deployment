@@ -7,7 +7,7 @@ This github project provides you a bunch of sample scripts and sample template f
 **IMPORTANT:** Opening a Case against official IBM Support due to issues with these scripts or issues with the results of these scripts is not supported. Instead, IBMers can use this IBM internal Slack channel: **#dba-swat-asset-qna** (**https://ibm-cloud.slack.com/archives/C026TD1SGCA**), everyone else can open a new issue in this github.
 
 This doc provides you step-by-step instructions to set up the needed infrastructure for the Demo or your deployment, this is:
-- Install IBM Cloud Pak for Business Automation version 21.0.3 (production deployment, previously called enterprise deployment)
+- Install IBM Cloud Pak for Business Automation version 21.0.3 IF005 (production deployment, previously called enterprise deployment)
 - Get the required infrastructure on IBM Cloud (OpenShift cluster, VM for LDAP and optionally VM for RPA)
 - Installing all the prerequisite software of CP4BA (LDAP and DB2)
 - Optional: Install all other components needed by the Client Onboarding Demo (Machine Learning Service needed by ADS, optionally RPA to execute some tasks by robots, Process Mining)
