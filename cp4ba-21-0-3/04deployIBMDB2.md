@@ -245,7 +245,12 @@
 
 7. Run script **03-createCp4baDBs4Db2OnOCP.sh** to create the databases needed for the CP4BA template that you selected
    
+   ```
+   ./03-createCp4baDBs4Db2OnOCP.sh
+   ```
+   
    **Note:** You can ignore the following errors / warnings:
+   
    ```
    DB21034E  The command was processed as an SQL statement because it was not a
    valid Command Line Processor command.  During SQL processing it returned:
