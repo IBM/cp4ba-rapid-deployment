@@ -4,7 +4,7 @@
 
 1. On your bastion host create a new directory for the scripts needed and switch to it
    
-   **Note:** As part of this doc, it is assumed that you create new directory `/cp4ba`. If you select a different directory, you have to change some of the commands in this and following steps accordingly.
+   **Note:** As part of this doc, it is assumed that you create new directory `/cp4ba`. If you select a different directory, you have to change some of the commands in this and following steps accordingly, otherwise you can simply copy/paste them.
    
    ```
    mkdir /cp4ba
@@ -16,7 +16,7 @@
    
 2. Clone this git repository onto your bastion host and copy the deployment scripts
    
-   **Note:** As part of this doc, it is assumed that you copy the deployment scripts into directory `mycluster`. If you select a different directory, you have to change some of the commands in this and following steps accordingly.
+   **Note:** As part of this doc, it is assumed that you copy the deployment scripts into directory `mycluster`. If you select a different directory, you have to change some of the commands in this and following steps accordingly, otherwise you can simply copy/paste them.
 
    ```
    git clone https://github.com/IBM/cp4ba-rapid-deployment
