@@ -176,9 +176,9 @@
    - `ldapAdminPassword`, e.g., `passw0rd` - use the password that you specified for cn=root when setting up LDAP
    - `ldapServer`, e.g., `123.456.679.012` - the hostname or IP of the previously installed LDAP server
    
-   **Note:** Also review the other properties, in case changes are needed, e.g., in case you are not deploying on ROKS, also provide correct Storage Class values for properties `cp4baScSlow`, `cp4baScMedium` and `cp4baScFast`. These Storage Classes have to provide RWX storage, for more details about storage for CP4BA, see also **https://www.ibm.com/docs/en/cloud-paks/cp-biz-automation/21.0.x?topic=pei-storage-considerations**.
+   **Note:** Also review the other properties, in case changes are needed, e.g., in case you are not deploying on ROKS, also provide correct Storage Class values for properties `cp4baScSlow`, `cp4baScMedium` and `cp4baScFast`. These Storage Classes have to provide RWX storage, for more details about storage for CP4BA, see also **https://www.ibm.com/docs/en/cloud-paks/cp-biz-automation/21.0.3?topic=ppd-storage-considerations**.
 
-8. Cloud Pak for Business Automation Version 21.0.3 has a known Issue. The IAF Framework is unable to pull some of the container images, because the service account it is using is missing the secret which authorizes it on the IBM Registry, see https://www.ibm.com/support/pages/node/6426995 for details. To work around it apply the workaround given on the webpage, as soon as the mentioned service account has been created. Note that this is only needed, if the mentioned container images have not yet been loaded by the nodes, where the pods have been scheduled to execute.
+8. Cloud Pak for Business Automation Version 21.0.3 has a known Issue. The IAF Framework is unable to pull some of the container images, because the service account it is using is missing the secret which authorizes it on the IBM Registry, see **https://www.ibm.com/support/pages/node/6426995** for details. To work around it apply the workaround given on the webpage, as soon as the mentioned service account has been created. Note that this is only needed, if the mentioned container images have not yet been loaded by the nodes, where the pods have been scheduled to execute.
 
 9. Run script **07-createCp4baDeployment.sh**
    
