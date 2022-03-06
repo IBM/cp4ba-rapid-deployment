@@ -54,18 +54,18 @@
    
    **Note:** More background on this topic can be found here: **https://www.ibm.com/support/producthub/db2/docs/content/SSEPGG_11.5.0/com.ibm.db2.luw.qb.server.doc/doc/c0061199.html**
 
-4. In folder **/cp4ba/cp4ba-rapid-deployment/cp4ba-21-0-3/mycluster/deployment-db2-cp4ba** update the properties file for DB2 **01-parametersForDb2OnOCP.sh**, provide the following properties:
+4. In folder **/cp4ba/cp4ba-rapid-deployment/cp4ba-21-0-3/mycluster/deployment-db2-cp4ba** update the properties file for DB2, **01-parametersForDb2OnOCP.sh**, and provide the following properties:
    
-   - `cp4baTemplateToUse` - Name of CP4BA deployment template that will be used e.g. `ibm_cp4a_cr_template.100.ent.ClientOnboardingDemo.yaml`
+   - `cp4baTemplateToUse` - Name of CP4BA deployment template that will be used e.g. `ibm_cp4a_cr_template.002.ent.FoundationContent.yaml`
    - `db2OnOcpProjectName` - Namespace where DB2 should be installed e.g. `ibm-db2`
    - `db2AdminUserPassword` - Password that will be assigned to the db2 instance user e.g. `passw0rd`
-   - `db2StandardLicenseKey` - provide the encoded licence key from previous step
+   - `db2StandardLicenseKey` - provide the encoded licence key from previous step if needed, otherwise leave empty, means remove the default value `REQUIRED`
    - `db2Cpu` - Number of CPUs for DB2 pod according to the selected CP4BA template
    - `db2Memory` - Amount of memory for DB2 pod according to the selected CP4BA template
    
    Also review the other properties, in case changes are needed, e.g., if you are not deploying on ROKS, specify `cp4baDeploymentPlatform=OCP` and also provide the `db2OnOcpStorageClassName` available on your own OpenShift cluster (must be RWX). For ROKS a `db2StorageSize` of `500Gi` is optimal as the size also defines the IOPS. If you are not deploying on ROKS and your storage provider gives you good IO speed with smaller storage size, you can reduce that value to `150Gi`.
 
-5. Login to your OCP cluster through OC CLI, for example:
+5. If not done already, login to your OCP cluster through OC CLI, for example:
    
    ```
    oc login --token=<your-token> --server=https://<your-server>:<your-port>
