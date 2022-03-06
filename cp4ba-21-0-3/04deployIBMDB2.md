@@ -213,11 +213,8 @@
    DB20000I  The UPDATE DATABASE MANAGER CONFIGURATION command completed 
    successfully.
    
-   Removing BLUDB from system.
-   DB20000I  The DEACTIVATE DATABASE command completed successfully.
-   DB20000I  The DROP DATABASE command completed successfully.
-   
    Restarting DB2 instance.
+   DB20000I  The DEACTIVATE DATABASE command completed successfully.
    01/01/2022 08:00:05     0   0   SQL1064N  DB2STOP processing was successful.
    SQL1064N  DB2STOP processing was successful.
    01/01/2022 08:00:06     0   0   SQL1063N  DB2START processing was successful.
@@ -226,6 +223,9 @@
    *********************************************************************************
    ********* Installation and configuration of DB2 completed successfully! *********
    *********************************************************************************
+   
+   Removing BLUDB from system.
+   DB20000I  The DROP DATABASE command completed successfully.
    
    Existing databases are:
    
@@ -268,6 +268,14 @@
    **Note:** In case you are not using the DB2 Standard Edition license or have assigned less memory to DB2 than specified for the selected CP4BA template, it might happen that not all databases got activated which might lead to other issues later while the deployment of CP4BA
 
 8. Review the output of the script and make sure there were no errors, all databases got created and activated
+   
+9. Optional: If your selected template includes ADP, run script **08-createAdpDBs4Db2OnOCP.sh** to create the databases for ADP
+   
+   ```
+   ./08-createAdpDBs4Db2OnOCP.sh
+   ```
+   
+   Review the output of the script and make sure there were no errors, all databases got created and activated
 
 ## What to do next
 
