@@ -54,7 +54,7 @@
    
    **Note:** More background on this topic can be found here: **https://www.ibm.com/support/producthub/db2/docs/content/SSEPGG_11.5.0/com.ibm.db2.luw.qb.server.doc/doc/c0061199.html**
 
-4. In folder **deployment-db2-cp4ba** update the properties file for DB2 **01-parametersForDb2OnOCP.sh**, provide the following properties:
+4. In folder **/cp4ba/cp4ba-rapid-deployment/cp4ba-21-0-3/mycluster/deployment-db2-cp4ba** update the properties file for DB2 **01-parametersForDb2OnOCP.sh**, provide the following properties:
    
    - `cp4baTemplateToUse` - Name of CP4BA deployment template that will be used e.g. `ibm_cp4a_cr_template.100.ent.ClientOnboardingDemo.yaml`
    - `db2OnOcpProjectName` - Namespace where DB2 should be installed e.g. `ibm-db2`
