@@ -90,8 +90,14 @@
    
    **Note:** If the version is not similar, download the appropriate OC CLI and install it on your bastion host.
 
-6. Run script **02-createDb2OnOCP.sh**.  This script will install and configure DB2 for you.  If the script displays the following banner **all** DB2 components have been deployed and configured properly.
-
+6. Run script **02-createDb2OnOCP.sh**. This script will install and configure DB2 for you.
+   
+   ```
+   ./02-createDb2OnOCP.sh
+   ```
+   
+   If the script displays the following banner **all** DB2 components have been deployed and configured properly.
+   
    ```bash
    *********************************************************************************
    ********* Installation and configuration of DB2 completed successfully! *********
