@@ -303,14 +303,9 @@ oc exec c-db2ucluster-db2u-0 -it -c db2u -- su - $db2AdminUserName -c "set CUR_C
 sleep 30 #let DB2 settle down
 
 echo
-echo "Removing BLUDB from system."
+echo "Restarting DB2 instance."
 oc exec c-db2ucluster-db2u-0 -it -c db2u -- su - $db2AdminUserName -c "db2 deactivate database BLUDB"
 sleep 10 #let DB2 settle down
-oc exec c-db2ucluster-db2u-0 -it -c db2u -- su - $db2AdminUserName -c "db2 drop database BLUDB"
-sleep 10 #let DB2 settle down
-
-echo
-echo "Restarting DB2 instance."
 oc exec c-db2ucluster-db2u-0 -it -c db2u -- su - $db2AdminUserName -c "db2stop"
 sleep 10 #let DB2 settle down
 oc exec c-db2ucluster-db2u-0 -it -c db2u -- su - $db2AdminUserName -c "db2start"
@@ -326,6 +321,11 @@ echo
 echo "*********************************************************************************"
 echo "********* Installation and configuration of DB2 completed successfully! *********"
 echo "*********************************************************************************"
+
+echo
+echo "Removing BLUDB from system."
+oc exec c-db2ucluster-db2u-0 -it -c db2u -- su - $db2AdminUserName -c "db2 drop database BLUDB"
+sleep 10 #let DB2 settle down
 
 echo
 echo "Existing databases are:"
