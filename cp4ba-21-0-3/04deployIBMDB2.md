@@ -114,7 +114,7 @@
    - To successfully run the script you need the **jq tool** and **podman** installed - if not yet installed, install them before running the script
    - You need your **Entitlement Registry key** handy, see also **[Step 1: Create your IBM Cloud Account (or use existing)](01createIBMCloudAccount.md)**
    - This script will exit if errors are hit during the installation.
-   - This script is idempotent.
+   - This script is idempotent. If it fails, you can run it a second time.
    
    Sample script output:
    ```
