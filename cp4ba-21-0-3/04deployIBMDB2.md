@@ -14,7 +14,7 @@
    cd /cp4ba
    ```
    
-2. Clone this git repository onto your bastion host and copy the deployment scripts
+2. Clone this git repository onto your bastion host, extract an archive and copy the deployment scripts
    
    **Note:** As part of this doc, it is assumed that you copy the deployment scripts into directory `mycluster`. If you select a different directory, you have to change some of the commands in this and following steps accordingly, otherwise you can simply copy/paste them.
 
@@ -24,6 +24,10 @@
    
    ```
    cd /cp4ba/cp4ba-rapid-deployment/cp4ba-21-0-3
+   ```
+   
+   ```
+   unzip scripts/deployment-db2-cp4ba/baca-db/DB2/imports/runtime_page.del.001.lob.zip -d scripts/deployment-db2-cp4ba/baca-db/DB2/imports
    ```
    
    ```
