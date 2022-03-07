@@ -178,9 +178,7 @@
    
    **Note:** Also review the other properties, in case changes are needed, e.g., in case you are not deploying on ROKS, also provide correct Storage Class values for properties `cp4baScSlow`, `cp4baScMedium` and `cp4baScFast`. These Storage Classes have to provide RWX storage, for more details about storage for CP4BA, see also **https://www.ibm.com/docs/en/cloud-paks/cp-biz-automation/21.0.3?topic=ppd-storage-considerations**.
 
-8. Cloud Pak for Business Automation Version 21.0.3 has a known Issue. The IAF Framework is unable to pull some of the container images, because the service account it is using is missing the secret which authorizes it on the IBM Registry, see **https://www.ibm.com/support/pages/node/6426995** for details. To work around it apply the workaround given on the webpage, as soon as the mentioned service account has been created. Note that this is only needed, if the mentioned container images have not yet been loaded by the nodes, where the pods have been scheduled to execute.
-
-9. Run script **07-createCp4baDeployment.sh**
+8. Run script **07-createCp4baDeployment.sh**
    
    ```
    cd /cp4ba/cp4ba-rapid-deployment/cp4ba-21-0-3/mycluster/deployment-db2-cp4ba
@@ -277,11 +275,11 @@
    All changes got applied. Exiting...
    ```
 
-10. The deployment of CP4BA might now take several hours dependant on the CP4BA template that you selected. Monitor the logs of the Operator to spot any potential issues.
+9. The deployment of CP4BA might now take several hours dependant on the CP4BA template that you selected. Monitor the logs of the Operator to spot any potential issues.
+   
+   **Note:** In case you have not used a DB2 Standard Edition license key or enough memory for the DB2, closely monitor the operator logs. This configuration might result in issues when deploying CP4BA, as it might happen that the CPE Object Stores can't be automatically initialized while the deployment as the DB connections might not be able to be created. In that case, scale down the operator to zero after the Object Store initialization failed and create the missing DB connections manually. Then, scale up the operator to one and it will usually initialze the Object Stores.
 
-    **Note:** In case you have not used a DB2 Standard Edition license key or enough memory for the DB2, closely monitor the operator logs. This configuration might result in issues when deploying CP4BA, as it might happen that the CPE Object Stores can't be automatically initialized while the deployment as the DB connections might not be able to be created. In that case, scale down the operator to zero after the Object Store initialization failed and create the missing DB connections manually. Then, scale up the operator to one and it will usually initialze the Object Stores.
-
-11. The CP4BA deployment is complete when you see:
+10. The CP4BA deployment is complete when you see:
     - for template **Client Onboarding Demo with ADP**: in your **CP4BA project** about 84 Running and Ready pods, and about 39 Completed pods, but no Pending / CrashLoopBackOff pods, plus in project **ibm-common-services** about 37 Running and Ready pods, and about 9 Completed pods, but no Pending / CrashLoopBackOff pods
     - for template **Foundation, Content**: in your **CP4BA project** about 30 Running and Ready pods, and about 10 Completed pods, but no Pending / CrashLoopBackOff pods, plus in project **ibm-common-services** about 32 Running and Ready pods, and about 9 Completed pods, but no Pending / CrashLoopBackOff pods
     - for template **Foundation**: in your **CP4BA project** about TODO Running and Ready pods, and about TODO Completed pods, but no Pending / CrashLoopBackOff pods, plus in project **ibm-common-services** about TODO Running and Ready pods, and about TODO Completed pods, but no Pending / CrashLoopBackOff pods
@@ -339,7 +337,7 @@
     zen-watcher-748b4887b7-mm8gm                                      1/1     Running     0          12h
     ```
 
-12. Now that the deployment is complete, you need to apply some post-deployment steps. First post-deployment step is to enable you to log in with the users from LDAP. For this, first get the user ID and password of the zen admin user by running those two commands:
+11. Now that the deployment is complete, you need to apply some post-deployment steps. First post-deployment step is to enable you to log in with the users from LDAP. For this, first get the user ID and password of the zen admin user by running those two commands:
     
     ```
     oc -n ibm-cp4ba get secret ibm-iam-bindinfo-platform-auth-idp-credentials -o jsonpath='{.data.admin_username}' | base64 -d && echo
@@ -350,85 +348,85 @@
     
     **Note:** By default the user id is **admin**
 
-13. Open the **cpd** route
+12. Open the **cpd** route
     
     ![Open the cpd route](images/cp4baDeployment02.jpg "Open the cpd route")
 
-14. Accept the self-signed certificates (two times)
+13. Accept the self-signed certificates (two times)
 
-15. On the **Log in to IBM Cloud Pak** screen, select **IBM provided credentials (admin only)**
+14. On the **Log in to IBM Cloud Pak** screen, select **IBM provided credentials (admin only)**
 
-16. Log in using the zen admin user credentials
+15. Log in using the zen admin user credentials
 
-17. Click **Manage users**
+16. Click **Manage users**
 
-18. Select the **User groups** tab and click **New user group**
+17. Select the **User groups** tab and click **New user group**
 
-19. Enter name **cp4bausers** and click **Next**
+18. Enter name **cp4bausers** and click **Next**
 
-20. On the **Users** page select **Identity provider groups**, search for **cp4bausers**, select it and click **Next**
+19. On the **Users** page select **Identity provider groups**, search for **cp4bausers**, select it and click **Next**
 
-21. On the **Roles** page select roles **Automation Analyst** (needed for Process Mining), **Automation Developer** (needed for CP4BA, for example to access BAStudio) and **User**, then click **Next**
+20. On the **Roles** page select roles **Automation Analyst** (needed for Process Mining), **Automation Developer** (needed for CP4BA, for example to access BAStudio) and **User**, then click **Next**
 
-22. On the **Summary** page review the selections and click **Create**
+21. On the **Summary** page review the selections and click **Create**
 
-23. Select the **Users** tab and click **cp4badmin**
+22. Select the **Users** tab and click **cp4badmin**
 
-24. Click on **Assign roles**, select all roles and click **Assign**
+23. Click on **Assign roles**, select all roles and click **Assign**
 
-25. Log out with the zen admin user
+24. Log out with the zen admin user
 
-26. Second post-deployment step is to verify that users from LDAP can log-in. For this, back on the **Log in to IBM Cloud Pak** page, first select **Change your authentication method** and then **Enterprise LDAP**
+25. Second post-deployment step is to verify that users from LDAP can log-in. For this, back on the **Log in to IBM Cloud Pak** page, first select **Change your authentication method** and then **Enterprise LDAP**
 
-27. Log in with **cp4badmin** which is a user from LDAP (password can be found in property **cp4baAdminPassword** above in properties file **05-parametersForCp4ba.sh**)
+26. Log in with **cp4badmin** which is a user from LDAP (password can be found in property **cp4baAdminPassword** above in properties file **05-parametersForCp4ba.sh**)
 
-28. Verify that cp4admin now has full administatative access to zen: **cp4badmin** schould also see the **Manage users** option and in the menu the entries **Design** and **Administration**
+27. Verify that cp4admin now has full administatative access to zen: **cp4badmin** schould also see the **Manage users** option and in the menu the entries **Design** and **Administration**
 
-29. Gather the cluster's URLs from config map **icp4adeploy-cp4ba-access-info** and test that all URLs work
+28. Gather the cluster's URLs from config map **icp4adeploy-cp4ba-access-info** and test that all URLs work
 
-**Note:** The remaining post-deployment steps are only needed if you want to access the system with one of the usr*** IDs - if this is not the case, proceed with step 49 below
+**Note:** The remaining post-deployment steps are only needed if you want to access the system with one of the usr*** IDs - if this is not the case, proceed with sub-step 48 below
 
-30. Third post-deployment step is to allow users from LDAP to author Process Applications. For this, from the config map open the URL for **Business Automation Workflow Authoring Portal** in a new Browser tab
+29. Third post-deployment step is to allow users from LDAP to author Process Applications. For this, from the config map open the URL for **Business Automation Workflow Authoring Portal** in a new Browser tab
 
-31. Change the context root from **/ProcessPortal** to **/ProcessAdmin** to open the Process Admin Console (it will open without asking for userId / password as you are already logged in as cp4badmin)
+30. Change the context root from **/ProcessPortal** to **/ProcessAdmin** to open the Process Admin Console (it will open without asking for userId / password as you are already logged in as cp4badmin)
 
-32. Expand **User Management** and select **Group Management**
+31. Expand **User Management** and select **Group Management**
 
-33. In the field **Select Group to Modify** enter **tw_a** and first select group **tw_authors**
+32. In the field **Select Group to Modify** enter **tw_a** and first select group **tw_authors**
 
-34. On the right-hand side click **Add Groups**
+33. On the right-hand side click **Add Groups**
 
-35. Search for **cp4bausers**, select that LDAP group and click **Add Selected** to add it to **tw_authors**
+34. Search for **cp4bausers**, select that LDAP group and click **Add Selected** to add it to **tw_authors**
     
     **Note:** It might take a few seconds until the group appears. Wait till it appears automatically.
 
-36. Second, similarly as in the previous three steps, add LDAP group **cp4bausers** to **tw_admins** - once complete you can close the Browser tab with Process Admin Console
+35. Second, similarly as in the previous three steps, add LDAP group **cp4bausers** to **tw_admins** - once complete you can close the Browser tab with Process Admin Console
 
-37. Fourth post-deployment step is to modify the App Designer toolkits. For this, switch back to the Browser tab where you are logged in to IBM Cloud Pak
+36. Fourth post-deployment step is to modify the App Designer toolkits. For this, switch back to the Browser tab where you are logged in to IBM Cloud Pak
 
-38. In the top-left corner open the hamburger menu and select **Design -> Business applications**
+37. In the top-left corner open the hamburger menu and select **Design -> Business applications**
 
-39. Click **Toolkits -> UI** and switch to the **Collaborators** tab
+38. Click **Toolkits -> UI** and switch to the **Collaborators** tab
 
-40. Remove **tw_authors** and add **tw_allusers** with **Read** access instead
+39. Remove **tw_authors** and add **tw_allusers** with **Read** access instead
 
-41. In the top-left corner click the **Back** arrow
+40. In the top-left corner click the **Back** arrow
 
-42. Apply the same change to toolkit **System Data**
+41. Apply the same change to toolkit **System Data**
 
-43. In the top-left corner open the hamburger menu, expand **Administration** and select **Repository and registry access**
+42. In the top-left corner open the hamburger menu, expand **Administration** and select **Repository and registry access**
 
-44. On the **Collaborators** tab add group **cp4bausers** and give them **Edit** access
+43. On the **Collaborators** tab add group **cp4bausers** and give them **Edit** access
 
-45. Fifth post-deployment step is to allow the users to create Case solutions. For this, from the config map open the URL for **Business Automation Case Client** in a new Browser tab
+44. Fifth post-deployment step is to allow the users to create Case solutions. For this, from the config map open the URL for **Business Automation Case Client** in a new Browser tab
 
-46. In the URL change the desktop from **baw** to **bawadmin** to open the Case administration UI
+45. In the URL change the desktop from **baw** to **bawadmin** to open the Case administration UI
 
-47. On the left-hand side, select the **BAWDOS** ObjecStore, expand **Project Areas** and select **dev_env_connection_definition**
+46. On the left-hand side, select the **BAWDOS** ObjecStore, expand **Project Areas** and select **dev_env_connection_definition**
 
-48. Switch to the **Security** tab, add group **cp4bausers**, click **Finish** and click **Close**- once complete you can close the Browser tab with Case administration UI
+47. Switch to the **Security** tab, add group **cp4bausers**, click **Finish** and click **Close**- once complete you can close the Browser tab with Case administration UI
 
-49. Optional: Set the subscription of all installed Operators to **Manual**
+48. Optional: Set the subscription of all installed Operators to **Manual**
     
 
 ## What to do next
