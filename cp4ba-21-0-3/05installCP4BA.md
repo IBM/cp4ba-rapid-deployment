@@ -290,114 +290,53 @@
     
     **Note:** It might be that going forward the number of pods mentioned here does change, as with every new installation latest versions of ibm-common-services and IBM Automation Foundation are installed and those latest versions might come with a different number of Running and / or Completed pods. The most important point here is that you don't see pods in any other state (Pending / CrashLoopBackOff / Failed / Error / ...).
     
-    For example, when you selected the Template **Client Onboarding Demo with ADP**, you shoud see the following:
+    For example, when you selected the Template **Foundation, Content**, you shoud see the following:
     
-    ![Complete CP4BA deployment](images/cp4baDeployment01.jpg "Complete CP4BA deployment")
+    ![CP4BA deployment](images/cp4baDeployment01.jpg "CP4BA deployment")
     
     ```
     oc get pods
     NAME                                                              READY   STATUS      RESTARTS   AGE
-    create-secrets-job-nkphk                                          0/1     Completed   0          14h
-    iaf-core-operator-controller-manager-794f4586c5-9fwv4             1/1     Running     2          46h
-    iaf-eventprocessing-operator-controller-manager-7b4f454fb544gdz   1/1     Running     3          46h
-    iaf-flink-operator-controller-manager-5766b9c7fc-txq4z            1/1     Running     0          46h
-    iaf-insights-engine--7fc4-eve-29ee-ep-jobmanager-0                2/2     Running     0          128m
-    iaf-insights-engine--7fc4-eve-29ee-ep-taskmanager-0               1/1     Running     0          127m
-    iaf-insights-engine--7fc4-eve-29ee-ep-taskmanager-1               1/1     Running     0          127m
-    iaf-insights-engine--7fc4-eve-29ee-ep-taskmanager-2               1/1     Running     0          127m
-    iaf-insights-engine--7fc4-eve-29ee-ep-taskmanager-3               1/1     Running     0          127m
-    iaf-insights-engine-application-setup-nxr2x                       0/1     Completed   0          126m
-    iaf-insights-engine-cockpit-854b888f47-rh8cn                      1/1     Running     0          126m
-    iaf-insights-engine-event-forwarder-zhp9p                         0/1     Completed   0          126m
-    iaf-insights-engine-management-85d8bb559d-8wq24                   2/2     Running     0          126m
-    iaf-insights-engine-operator-controller-manager-676f8c77fbwm8xh   1/1     Running     0          46h
-    iaf-operator-controller-manager-65b548c995-z8sfd                  1/1     Running     2          46h
-    iaf-system-apicurio-59f595b777-z5nmd                              1/1     Running     0          14h
-    iaf-system-elasticsearch-es-data-0                                2/2     Running     0          14h
-    iaf-system-entity-operator-865d698db6-t5mlf                       3/3     Running     0          14h
-    iaf-system-kafka-0                                                1/1     Running     0          14h
-    iaf-system-zookeeper-0                                            1/1     Running     0          14h
-    iaf-zen-tour-job-t8hrw                                            0/1     Completed   0          14h
-    iam-config-job-v67xc                                              0/1     Completed   0          14h
-    ibm-bts-cnpg-ibm-cp4ba-cp4ba-bts-1                                1/1     Running     0          3h18m
-    ibm-bts-cp4ba-bts-deployment-576955c75b-bpv6t                     1/1     Running     0          3h17m
-    ibm-common-service-operator-57d475879-vkhwg                       1/1     Running     0          46h
-    ibm-cp4a-operator-f9945474d-5tlbp                                 1/1     Running     0          16h
-    ibm-cp4a-wfps-operator-controller-manager-899876dbb-jmhcq         1/1     Running     0          46h
-    ibm-elastic-operator-controller-manager-555b7fb6f9-769zh          1/1     Running     2          46h
-    ibm-nginx-7d9486fb9d-wks6q                                        1/1     Running     0          14h
-    ibm-nginx-7d9486fb9d-wr6hq                                        1/1     Running     0          14h
-    icp4adeploy-ads-credentials-service-56f74d85c7-fwqg5              1/1     Running     0          94m
-    icp4adeploy-ads-download-service-c9d87f84f-c5nh5                  1/1     Running     0          94m
-    icp4adeploy-ads-embedded-build-service-84f7d6b55b-2f47v           1/1     Running     0          94m
-    icp4adeploy-ads-front-548b76b94c-5nczm                            1/1     Running     0          94m
-    icp4adeploy-ads-git-service-7db7bb48f4-js4xd                      1/1     Running     0          94m
-    icp4adeploy-ads-ltpa-creation-zq8dw                               0/1     Completed   0          94m
-    icp4adeploy-ads-mongo-6984b8cfd4-fqwlk                            1/1     Running     0          94m
-    icp4adeploy-ads-parsing-service-845585cd88-smzqt                  1/1     Running     0          94m
-    icp4adeploy-ads-rest-api-594fb9cb74-cdc25                         1/1     Running     0          94m
-    icp4adeploy-ads-rr-as-runtime-synchro-27387885-tfkjb              0/1     Completed   0          43m
-    icp4adeploy-ads-rr-as-runtime-synchro-27387900-zqrfc              0/1     Completed   0          28m
-    icp4adeploy-ads-rr-as-runtime-synchro-27387915-2lvfk              0/1     Completed   0          13m
-    icp4adeploy-ads-rr-registration-27387885-fb4zr                    0/1     Completed   0          43m
-    icp4adeploy-ads-rr-registration-27387900-phssk                    0/1     Completed   0          28m
-    icp4adeploy-ads-rr-registration-27387915-m7g4c                    0/1     Completed   0          13m
-    icp4adeploy-ads-rr-registration-initjob-mmz9l                     0/1     Completed   0          94m
-    icp4adeploy-ads-run-service-5f74b446dc-hrlqs                      1/1     Running     0          94m
-    icp4adeploy-ads-runtime-bai-registration-32139d1a8c8a8e6b08gpgm   0/1     Completed   0          94m
-    icp4adeploy-ads-runtime-service-59c549597-7sqsk                   1/1     Running     0          94m
-    icp4adeploy-bai-bpmn-vxs28                                        0/1     Completed   0          123m
-    icp4adeploy-bai-content-5x54p                                     0/1     Completed   0          123m
-    icp4adeploy-bai-icm-gllj9                                         0/1     Completed   0          123m
-    icp4adeploy-bai-setup-wr9cd                                       0/1     Completed   0          123m
-    icp4adeploy-ban-job-cxx4t                                         0/1     Completed   0          152m
-    icp4adeploy-bastudio-bootstrap-fzphw                              0/1     Completed   0          146m
-    icp4adeploy-bastudio-deployment-0                                 1/1     Running     0          141m
-    icp4adeploy-bastudio-ltpa-ddwjm                                   0/1     Completed   0          146m
-    icp4adeploy-bastudio-zen-translation-n8mds                        0/1     Completed   0          146m
-    icp4adeploy-cmis-deploy-6bdc45d576-k2b8j                          1/1     Running     0          178m
-    icp4adeploy-cpe-deploy-6b8c5c5554-45qnj                           1/1     Running     0          3h10m
-    icp4adeploy-css-deploy-1-6cfbb5996b-z2d42                         1/1     Running     1          3h3m
-    icp4adeploy-dba-rr-a237fa6dd6                                     1/1     Running     0          3h29m
-    icp4adeploy-dba-rr-e253f0ada1                                     1/1     Running     0          3h29m
-    icp4adeploy-dba-rr-f69f880250                                     1/1     Running     0          3h29m
-    icp4adeploy-graphql-deploy-5885fb57b7-pfxtr                       1/1     Running     0          174m
-    icp4adeploy-mls-itp-664769584f-qz4zb                              1/1     Running     0          121m
-    icp4adeploy-mls-wfi-5cbdb4775c-x8j69                              1/1     Running     0          121m
-    icp4adeploy-navigator-deploy-7bfb75f685-v2lkw                     1/1     Running     0          157m
-    icp4adeploy-pbk-ae-db-job-lnsjt                                   0/1     Completed   0          144m
-    icp4adeploy-pbk-ae-deployment-6fd5545dfd-6xqrn                    1/1     Running     0          144m
-    icp4adeploy-pfs-0                                                 1/1     Running     0          113m
-    icp4adeploy-pfs-dbareg-7f7d57c5d6-rrg2n                           1/1     Running     0          113m
-    icp4adeploy-rr-backup-27387925-f8lm9                              0/1     Completed   0          3m48s
-    icp4adeploy-rr-setup-pod                                          0/1     Completed   0          3h29m
-    icp4adeploy-workflow-authoring-baw-basimport-job-hq2bk            0/1     Completed   0          105m
-    icp4adeploy-workflow-authoring-baw-case-init-job-rxt7b            0/1     Completed   0          109m
-    icp4adeploy-workflow-authoring-baw-content-init-job-rrm9m         0/1     Completed   0          110m
-    icp4adeploy-workflow-authoring-baw-db-init-job-6pkd8              0/1     Completed   0          110m
-    icp4adeploy-workflow-authoring-baw-db-init-job-pfs-gwb2r          0/1     Completed   0          110m
-    icp4adeploy-workflow-authoring-baw-jms-0                          1/1     Running     0          108m
-    icp4adeploy-workflow-authoring-baw-ltpa-4tsmt                     0/1     Completed   0          110m
-    icp4adeploy-workflow-authoring-baw-server-0                       1/1     Running     0          105m
-    icp4adeploy-workflow-authoring-baw-workplace-job-s2jdm            0/1     Completed   0          109m
-    icp4adeploy-workspace-aae-ae-db-job-nqw7w                         0/1     Completed   0          118m
-    icp4adeploy-workspace-aae-ae-deployment-64fbbd69c4-l65wt          1/1     Running     0          118m
-    setup-nginx-job-57g94                                             0/1     Completed   0          14h
-    usermgmt-7c8887f889-5mg95                                         1/1     Running     0          14h
-    usermgmt-7c8887f889-kgf5h                                         1/1     Running     0          14h
-    zen-audit-7b978f9c8f-qbg77                                        1/1     Running     0          14h
-    zen-core-574ddd5b97-5g9db                                         1/1     Running     0          14h
-    zen-core-574ddd5b97-jtdzs                                         1/1     Running     0          14h
-    zen-core-api-d78b45fdc-ln24b                                      1/1     Running     0          14h
-    zen-core-api-d78b45fdc-qqc5h                                      1/1     Running     0          14h
-    zen-metastoredb-0                                                 1/1     Running     0          14h
-    zen-metastoredb-1                                                 1/1     Running     0          14h
-    zen-metastoredb-2                                                 1/1     Running     0          14h
-    zen-metastoredb-certs-cws59                                       0/1     Completed   0          14h
-    zen-metastoredb-init-lzfn9                                        0/1     Completed   0          14h
-    zen-post-requisite-job-5xmfd                                      0/1     Completed   0          14h
-    zen-pre-requisite-job-p666v                                       0/1     Completed   0          14h
-    zen-watcher-56b5b49849-txnfj                                      1/1     Running     0          14h
+    create-secrets-job-jrmnf                                          0/1     Completed   0          12h
+    iaf-core-operator-controller-manager-5f889c65c6-vfvgb             1/1     Running     0          14h
+    iaf-eventprocessing-operator-controller-manager-84b8d7f598rp67w   1/1     Running     1          14h
+    iaf-flink-operator-controller-manager-57b6459b68-t8q2z            1/1     Running     0          14h
+    iaf-insights-engine-operator-controller-manager-c456b585-m8z22    1/1     Running     0          14h
+    iaf-operator-controller-manager-dfd564848-szjbg                   1/1     Running     0          14h
+    iaf-zen-tour-job-cmppv                                            0/1     Completed   0          11h
+    iam-config-job-5plht                                              0/1     Completed   0          12h
+    ibm-common-service-operator-6876c985f5-wbfv8                      1/1     Running     0          14h
+    ibm-cp4a-operator-7f7d56ccc6-qzfjg                                1/1     Running     0          14h
+    ibm-cp4a-wfps-operator-controller-manager-87ddbd47d-jkljs         1/1     Running     0          14h
+    ibm-elastic-operator-controller-manager-6d89456f86-jhvpk          1/1     Running     0          14h
+    ibm-nginx-586c5757cf-dbnrv                                        1/1     Running     0          11h
+    ibm-nginx-586c5757cf-gssj9                                        1/1     Running     0          11h
+    icp4adeploy-cmis-deploy-8647b75bcd-8zl2m                          1/1     Running     0          11h
+    icp4adeploy-cpe-deploy-6844554587-n529h                           1/1     Running     0          11h
+    icp4adeploy-css-deploy-1-6844d57848-xxphb                         1/1     Running     1          11h
+    icp4adeploy-dba-rr-228bb094a1                                     1/1     Running     0          11h
+    icp4adeploy-dba-rr-24d9558939                                     1/1     Running     0          11h
+    icp4adeploy-dba-rr-3d358e5801                                     1/1     Running     0          11h
+    icp4adeploy-graphql-deploy-5d5f95db9d-hqh4f                       1/1     Running     0          11h
+    icp4adeploy-navigator-deploy-798c49846f-ssfnm                     1/1     Running     0          11h
+    icp4adeploy-rr-backup-27444065-w2djr                              0/1     Completed   0          2m23s
+    icp4adeploy-rr-setup-pod                                          0/1     Completed   0          11h
+    setup-nginx-job-8hq6z                                             0/1     Completed   0          12h
+    usermgmt-6b47d88c96-cjvdx                                         1/1     Running     0          12h
+    usermgmt-6b47d88c96-cmwc7                                         1/1     Running     0          12h
+    zen-audit-bf55468b-ntv5g                                          1/1     Running     0          12h
+    zen-core-744bfc8b96-bf854                                         1/1     Running     0          12h
+    zen-core-744bfc8b96-gtppp                                         1/1     Running     0          12h
+    zen-core-api-697c88d8f9-59lzg                                     1/1     Running     0          12h
+    zen-core-api-697c88d8f9-pdw9r                                     1/1     Running     0          12h
+    zen-metastoredb-0                                                 1/1     Running     0          12h
+    zen-metastoredb-1                                                 1/1     Running     0          12h
+    zen-metastoredb-2                                                 1/1     Running     0          12h
+    zen-metastoredb-certs-jw86s                                       0/1     Completed   0          12h
+    zen-metastoredb-init-kbm2b                                        0/1     Completed   0          12h
+    zen-post-requisite-job-f9x8c                                      0/1     Completed   0          12h
+    zen-pre-requisite-job-2dwcp                                       0/1     Completed   0          12h
+    zen-watcher-748b4887b7-mm8gm                                      1/1     Running     0          12h
     ```
 
 12. Now that the deployment is complete, you need to apply some post-deployment steps. First post-deployment step is to enable you to log in with the users from LDAP. For this, first get the user ID and password of the zen admin user by running those two commands:
