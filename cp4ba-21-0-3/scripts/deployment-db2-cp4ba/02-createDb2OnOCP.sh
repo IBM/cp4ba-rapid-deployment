@@ -307,9 +307,9 @@ echo "Restarting DB2 instance."
 oc exec c-db2ucluster-db2u-0 -it -c db2u -- su - $db2AdminUserName -c "db2 deactivate database BLUDB"
 sleep 30 #let DB2 settle down
 oc exec c-db2ucluster-db2u-0 -it -c db2u -- su - $db2AdminUserName -c "db2stop force"
-sleep 10 #let DB2 settle down
+sleep 30 #let DB2 settle down
 oc exec c-db2ucluster-db2u-0 -it -c db2u -- su - $db2AdminUserName -c "db2start"
-sleep 10 #let DB2 settle down
+sleep 30 #let DB2 settle down
 
 ## 
 ## We are done installing and configuring DB2
