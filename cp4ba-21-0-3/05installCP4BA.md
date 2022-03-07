@@ -380,7 +380,7 @@
 
 26. Log in with **cp4badmin** which is a user from LDAP (password can be found in property **cp4baAdminPassword** above in properties file **05-parametersForCp4ba.sh**)
 
-27. Verify that cp4admin now has full administatative access to zen: **cp4badmin** schould also see the **Manage users** option and in the menu the entries **Design** and **Administration**
+27. Verify that cp4admin now has full administatative access to zen: **cp4badmin** schould also see the **Manage users** option, in the hamburger menu the entry **Administration**, and if you selected a template that deploys BAStudio also the entry **Design**
 
 28. Gather the cluster's URLs from config map **icp4adeploy-cp4ba-access-info** and test that all URLs work
 
