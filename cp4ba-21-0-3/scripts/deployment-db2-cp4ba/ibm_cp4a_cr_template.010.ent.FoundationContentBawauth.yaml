@@ -8,7 +8,7 @@
 # disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
 #
 ###############################################################################
-# Needed DBs: ICN GCD BAWDOCS BAWTOS BAWDOS BAW BAS
+# Needed DBs: ICN GCD BAWDOCS BAWTOS BAWDOS BAW APP AE BAS
 
 apiVersion: icp4a.ibm.com/v1
 kind: ICP4ACluster
@@ -36,8 +36,8 @@ spec:
     root_ca_secret: icp4a-root-ca
     external_tls_certificate_secret: tlsSecretName
 
-    sc_deployment_patterns: "foundation,content,workflow"
-    sc_optional_components: "css,cmis,bas,baw_authoring"
+    sc_deployment_patterns: "foundation,content,application,workflow"
+    sc_optional_components: "css,cmis,app_designer,bas,baw_authoring"
 
     sc_deployment_context: "CP4A"
     sc_deployment_type: "Production"
@@ -707,6 +707,280 @@ spec:
         access_modes:
           - ReadWriteOnce
         storage_class: "{{ shared_configuration.storage_configuration.sc_fast_file_storage_classname }}"
+
+    #-----------------------------------------------------------------------
+    #  App Engine Playback Server (playback_server) can be only one instance.
+    #-----------------------------------------------------------------------
+    playback_server:
+      images:
+        pull_policy: IfNotPresent
+        db_job:
+          repository: cp.icr.io/cp/cp4a/aae/solution-server-helmjob-db
+          tag: 21.0.3-IF005
+        solution_server:
+          repository: cp.icr.io/cp/cp4a/aae/solution-server
+          tag: 21.0.3-IF005
+
+      hostname: "{{ 'ae-pbk-' + shared_configuration.sc_deployment_hostname_suffix }}"
+      port: 443
+
+      admin_secret_name: "playback-server-admin-secret"
+      admin_user: "cp4baAdminName"
+
+      external_tls_secret: tlsSecretName
+      external_connection_timeout: 90s
+
+      replica_size: cp4baReplicaCount
+
+      use_custom_jdbc_drivers: false
+      service_type: Route
+
+      autoscaling:
+        enabled: false
+        max_replicas: 2
+        min_replicas: 2
+        target_cpu_utilization_percentage: 80
+
+      server_identifier: ""
+      database:
+        host: "db2HostName"
+        name: "db2AppdbName"
+        port: "db2PortNumber"
+        type: db2
+        enable_ssl: false
+
+        current_schema: DBASB
+        initial_pool_size: 1
+        max_pool_size: 100
+        max_lru_cache_size: 1000
+        max_lru_cache_age: 600000
+        dbcompatibility_max_retries: 30
+        dbcompatibility_retry_interval: 10
+        custom_jdbc_pvc:
+
+      log_level:
+        node: warn
+        browser: 2
+
+      content_security_policy:
+        enable: false
+        whitelist:
+        frame_ancestor:
+
+      env:
+        max_size_lru_cache_rr: 1000
+        server_env_type: development
+        purge_stale_apps_interval: 86400000
+        apps_threshold: 100
+        stale_threshold: 172800000
+        service_threshold: 100
+        service_stale_threshold: 172800000
+        connection_timeout: 1200000
+        uv_thread_pool_size: 40
+
+      max_age:
+        auth_cookie: "900000"
+        csrf_cookie: "3600000"
+        static_asset: "2592000"
+        hsts_header: "2592000"
+
+      probe:
+        liveness:
+          failure_threshold: 5
+          initial_delay_seconds: 60
+          period_seconds: 10
+          success_threshold: 1
+          timeout_seconds: 180
+        readiness:
+          failure_threshold: 5
+          initial_delay_seconds: 10
+          period_seconds: 10
+          success_threshold: 1
+          timeout_seconds: 180
+
+      resource_ae:
+        limits:
+          cpu: 1000m
+          memory: 2Gi
+        requests:
+          cpu: 300m
+          memory: 256Mi
+
+      resource_init:
+        limits:
+          cpu: 500m
+          memory: 256Mi
+        requests:
+          cpu: 100m
+          memory: 128Mi
+
+      session:
+        check_period: "3600000"
+        duration: "1800000"
+        max: "10000"
+        resave: "false"
+        rolling: "true"
+        save_uninitialized: "false"
+        use_external_store: "false"
+
+#      tls:
+#        tls_trust_list: []
+
+      share_storage:
+        enabled: true
+        auto_provision:
+          enabled: true
+          storage_class: "{{ shared_configuration.storage_configuration.sc_fast_file_storage_classname }}"
+          size: 20Gi
+
+      log_storage:
+        enabled: true
+        pvc_name: 'cp4a-shared-log-pvc'
+        log_file_size: '20M'
+        log_rotate_size: 5
+        auto_provision:
+          enabled: true
+          storage_class: "{{ shared_configuration.storage_configuration.sc_fast_file_storage_classname }}"
+          size: '5Gi'
+
+  #############################################################################
+  ######## IBM Business Automation Application server  configurations  ########
+  #############################################################################
+  application_engine_configuration:
+    - name: workspace
+      images:
+        pull_policy: IfNotPresent
+        solution_server:
+          repository: cp.icr.io/cp/cp4a/aae/solution-server
+          tag: 21.0.3-IF005
+        db_job:
+          repository: cp.icr.io/cp/cp4a/aae/solution-server-helmjob-db
+          tag: 21.0.3-IF005
+
+      hostname: "{{ 'ae-workspace-' + shared_configuration.sc_deployment_hostname_suffix }}"
+      port: 443
+
+      admin_secret_name: "icp4adeploy-workspace-aae-app-engine-admin-secret"
+      admin_user: "cp4baAdminName"
+      external_tls_secret: tlsSecretName
+      external_connection_timeout: 90s
+
+      replica_size: cp4baReplicaCount
+
+      data_persistence:
+        enable: false
+
+      use_custom_jdbc_drivers: false
+      service_type: Route
+
+      autoscaling:
+        enabled: false
+        max_replicas: 2
+        min_replicas: 2
+        target_cpu_utilization_percentage: 80
+
+      server_identifier: ""
+
+      database:
+        host: "db2HostName"
+        name: "db2AedbName"
+        port: "db2PortNumber"
+        type: db2
+        enable_ssl: false
+
+        current_schema: DBASB
+        initial_pool_size: 1
+        max_pool_size: 100
+        max_lru_cache_size: 1000
+        max_lru_cache_age: 600000
+        dbcompatibility_max_retries: 30
+        dbcompatibility_retry_interval: 10
+        custom_jdbc_pvc:
+
+      log_level:
+        node: warn
+        browser: 2
+
+      content_security_policy:
+        enable: false
+        whitelist:
+        frame_ancestor:
+
+      env:
+        max_size_lru_cache_rr: 1000
+        server_env_type: development
+        purge_stale_apps_interval: 86400000
+        apps_threshold: 100
+        stale_threshold: 172800000
+        service_threshold: 100
+        service_stale_threshold: 172800000
+        connection_timeout: 1200000
+        uv_thread_pool_size: 40
+
+      max_age:
+        auth_cookie: "900000"
+        csrf_cookie: "3600000"
+        static_asset: "2592000"
+        hsts_header: "2592000"
+
+      probe:
+        liveness:
+          failure_threshold: 5
+          initial_delay_seconds: 60
+          period_seconds: 10
+          success_threshold: 1
+          timeout_seconds: 180
+        readiness:
+          failure_threshold: 5
+          initial_delay_seconds: 10
+          period_seconds: 10
+          success_threshold: 1
+          timeout_seconds: 180
+
+      resource_ae:
+        limits:
+          cpu: 1000m
+          memory: 2Gi
+        requests:
+          cpu: 300m
+          memory: 256Mi
+
+      resource_init:
+        limits:
+          cpu: 500m
+          memory: 256Mi
+        requests:
+          cpu: 100m
+          memory: 128Mi
+
+      session:
+        check_period: "3600000"
+        duration: "1800000"
+        max: "10000"
+        resave: "false"
+        rolling: "true"
+        save_uninitialized: "false"
+        use_external_store: "false"
+
+#      tls:
+#        tls_trust_list: []
+
+      share_storage:
+        enabled: true
+        auto_provision:
+          enabled: true
+          storage_class: "{{ shared_configuration.storage_configuration.sc_fast_file_storage_classname }}"
+          size: 20Gi
+
+      log_storage:
+        enabled: true
+        pvc_name: 'cp4a-shared-log-pvc'
+        log_file_size: '20M'
+        log_rotate_size: 5
+        auto_provision:
+          enabled: true
+          storage_class: "{{ shared_configuration.storage_configuration.sc_fast_file_storage_classname }}"
+          size: '5Gi'
 
   ##############################################################################
   ########   IBM Business Automation Workflow Authoring configuration     ########
