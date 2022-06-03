@@ -4,7 +4,7 @@
 #
 # Licensed Materials - Property of IBM
 #
-# (C) Copyright IBM Corp. 2021. All Rights Reserved.
+# (C) Copyright IBM Corp. 2022. All Rights Reserved.
 #
 # US Government Users Restricted Rights - Use, duplication or
 # disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
@@ -24,7 +24,7 @@ echo "  Reading 01-parametersForDb2OnOCP.sh ..."
 #     ibm_cp4a_cr_template.001.ent.Foundation.yaml
 #     ibm_cp4a_cr_template.002.ent.FoundationContent.yaml
 #     ibm_cp4a_cr_template.100.ent.ClientOnboardingDemo.yaml
-cp4baTemplateToUse=ibm_cp4a_cr_template.100.ent.ClientOnboardingDemo.yaml
+cp4baTemplateToUse=ibm_cp4a_cr_template.002.ent.FoundationContent.yaml
 
 # OCP Project Name for DB2, for example ibm-db2
 db2OnOcpProjectName=REQUIRED
@@ -38,27 +38,16 @@ db2AdminUserPassword=REQUIRED
 db2StandardLicenseKey=REQUIRED
 
 # CPUs to assign to DB2 pod (max with DB2 Standard license is 16, max with Community edition is 4)
-#   If you selected CP4BA template     ibm_cp4a_cr_template.001.ent.Foundation.yaml               set it to 4
-#   If you selected CP4BA template     ibm_cp4a_cr_template.002.ent.FoundationContent.yaml        set it to 4
-#   If you selected CP4BA template     ibm_cp4a_cr_template.100.ent.ClientOnboardingDemo.yaml     set it to 16
-db2Cpu=16
+#   If you selected CP4BA template     ibm_cp4a_cr_template.001.ent.Foundation.yaml                      set it to 4
+#   If you selected CP4BA template     ibm_cp4a_cr_template.002.ent.FoundationContent.yaml               set it to 4
+#   If you selected CP4BA template     ibm_cp4a_cr_template.100.ent.ClientOnboardingDemo.yaml            set it to 16
+db2Cpu=4
 
 # RAM to assign to DB2 pod (max with DB2 Standard license is 128Gi, max with Community edition is 16Gi)
-#   If you selected CP4BA template     ibm_cp4a_cr_template.001.ent.Foundation.yaml               set it to 16Gi
-#   If you selected CP4BA template     ibm_cp4a_cr_template.002.ent.FoundationContent.yaml        set it to 16Gi
-#   If you selected CP4BA template     ibm_cp4a_cr_template.100.ent.ClientOnboardingDemo.yaml     set it to 110Gi
-db2Memory=110Gi
-
-
-
-# --- Provide those AFTER running script 02-createDb2OnOCP.sh (see output of script 02-createDb2OnOCP.sh) ---
-
-# DB2 instance access information - host name or IP to access DB2 instance(see output of script 02-createDb2OnOCP.sh)
-# This value can be either a hostname or an IP
-db2HostName=REQUIRED
-
-# DB2 instance access information - port number (see output of script 02-createDb2OnOCP.sh)
-db2PortNumber=REQUIRED
+#   If you selected CP4BA template     ibm_cp4a_cr_template.001.ent.Foundation.yaml                      set it to 16Gi
+#   If you selected CP4BA template     ibm_cp4a_cr_template.002.ent.FoundationContent.yaml               set it to 16Gi
+#   If you selected CP4BA template     ibm_cp4a_cr_template.100.ent.ClientOnboardingDemo.yaml            set it to 110Gi
+db2Memory=16Gi
 
 
 
@@ -68,21 +57,27 @@ db2PortNumber=REQUIRED
 
 # --- If changes are needed here, provide those BEFORE running script 02-createDb2OnOCP.sh ---
 
-# Version of DB2 operator to install.  For swat-dev-01 use db2u-operator.v1.0.5 otherwise leave as specified.
-# Change only when a new operator version should be used.
-db2OperatorVersion=db2u-operator.v1.1.3
+# Version of DB2 operator to install. Change only when a new operator version should be used.
+db2OperatorVersion=db2u-operator.v1.1.9
 
-# Channel version for Operator updates. For swat-dev-01 use v1.0 otherwise leave as specified. 
-# Change only if a new DB2 operator version requires a new channel version.
+# Channel version for Operator updates. Change only if a new DB2 operator version requires a new channel version.
 db2OperatorChannel=v1.1
 
-# DB2 instance version to be created.   For swat-dev-01 use 11.5.5.0-cn4 otherwise leave as specified.
-# Change only when a new version of DB2 should be used.  
+# DB2 instance version to be created. Change only when a new version of DB2 should be used.  
 # This version of DB2 must be supported by the Operator version installed as specified above.
 db2InstanceVersion=11.5.6.0
 
 # Indicate if to install DB2 containerized on the OpenShift cluster (true/false)
 db2UseOnOcp=true
+
+# DB2 instance access information.
+# This uses the DB2 nodeport service name to access DB2
+db2HostName=c-db2ucluster-db2u-engn-svc.${db2OnOcpProjectName}.svc
+
+# If the service name is used, the port is 5000 and does not need to be changed
+# If using IP address or a HAProxy to access the node port, the port number
+# would need to change.
+db2PortNumber=50000
 
 # IP for DB2 instance access information.  If IP must be specified use otherwise leave as specified
 db2HostIp=$db2HostName
@@ -97,11 +92,11 @@ cp4baDeploymentPlatform=ROKS
 db2OnOcpStorageClassName=cp4a-file-delete-gold-gid
 
 # Size of the PVC for DB2 (on ROKS: the larger the faster, good performance with 500Gi)
-db2StorageSize=500Gi
+db2StorageSize=150Gi
 
 # Database activation delay. Scripts will wait this time in seconds between activating databases.
 # With problems on activation, or if on slow environments, try to increase this delay
-db2ActivationDelay=5
+db2ActivationDelay=15
 
 # CP4BA Database Name information
 db2UmsdbName=UMSDB

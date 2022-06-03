@@ -339,7 +339,7 @@ oc exec c-db2ucluster-db2u-0 -it -c db2u -- su - $db2AdminUserName -c "db2 list 
 
 echo
 echo "Use this hostname/IP to access the databases e.g. with IBM Data Studio."
-echo -e "\x1B[1mPlease also update in ${DB2_INPUT_PROPS_FILENAME} property \"db2HostName\" with this information (in Skytap, use the IP 10.0.0.10 instead)\x1B[0m"
+#echo -e "\x1B[1mPlease also update in ${DB2_INPUT_PROPS_FILENAME} property \"db2HostName\" with this information (in Skytap, use the IP 10.0.0.10 instead)\x1B[0m"
 routerCanonicalHostname=$(oc get route console -n openshift-console -o yaml | grep routerCanonicalHostname | cut -d ":" -f2)
 workerNodeAddresses=$(get_worker_node_addresses_from_pod c-db2ucluster-db2u-0 $db2OnOcpProjectName)
 echo -e "\tHostname:${routerCanonicalHostname}"

@@ -4,7 +4,7 @@
 #
 # Licensed Materials - Property of IBM
 #
-# (C) Copyright IBM Corp. 2021. All Rights Reserved.
+# (C) Copyright IBM Corp. 2022. All Rights Reserved.
 #
 # US Government Users Restricted Rights - Use, duplication or
 # disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
@@ -133,7 +133,7 @@ done
 ##
 ## Create docker registry secret
 ##
-oc create secret docker-registry ibm-registry --docker-server=${DOCKER_REG_SERVER} --docker-username=${DOCKER_REG_USER} --docker-password=${ENTITLEMENTKEY} --docker-email=${EMAIL} --namespace=${db2OnOcpProjectName} --dry-run=true -o=yaml | oc apply -n ${db2OnOcpProjectName} --filename=-
+oc create secret docker-registry ibm-registry --docker-server=${DOCKER_REG_SERVER} --docker-username=${DOCKER_REG_USER} --docker-password=${ENTITLEMENTKEY} --docker-email=${EMAIL} --namespace=${db2OnOcpProjectName} --dry-run=client -o=yaml | oc apply -n ${db2OnOcpProjectName} --filename=-
 
 if [ $cp4baDeploymentPlatform == "ROKS" ]; then
   echo
@@ -256,9 +256,9 @@ oc patch $statefulsetQualifiedName -n=$db2OnOcpProjectName -p='{"spec":{"templat
 ## we can tell that the deployment was completed successfully.
 ##
 echo
-echo "Waiting up to 15 minutes for c-db2ucluster-restore-morph job to complete successfully."
+echo "Waiting up to 20 minutes for c-db2ucluster-restore-morph job to complete successfully."
 date
-jobStatus=$(wait_for_job_to_complete_by_name c-db2ucluster-restore-morph 15 $db2OnOcpProjectName)
+jobStatus=$(wait_for_job_to_complete_by_name c-db2ucluster-restore-morph 20 $db2OnOcpProjectName)
 if [ -z "$jobStatus" ]
 then
   echo "Timed out waiting for c-db2ucluster-restore-morph job to complete successfully."
@@ -275,19 +275,23 @@ oc get configmap c-db2ucluster-db2dbmconfig -n $db2OnOcpProjectName -o yaml | se
 
 echo
 echo "Updating database manager running configuration."
-oc exec c-db2ucluster-db2u-0 -it -- su - $db2AdminUserName -c "db2 update dbm cfg using numdb 20"
+oc exec c-db2ucluster-db2u-0 -it -c db2u -- su - $db2AdminUserName -c "db2 update dbm cfg using numdb 20"
 sleep 10 #let DB2 settle down
-oc exec c-db2ucluster-db2u-0 -it -- su - $db2AdminUserName -c "db2set DB2_WORKLOAD=FILENET_CM"
+oc exec c-db2ucluster-db2u-0 -it -c db2u -- su - $db2AdminUserName -c "db2set DB2_WORKLOAD=FILENET_CM"
 sleep 10 #let DB2 settle down
-oc exec c-db2ucluster-db2u-0 -it -- su - $db2AdminUserName -c "set CUR_COMMIT=ON"
-sleep 10 #let DB2 settle down
+oc exec c-db2ucluster-db2u-0 -it -c db2u -- su - $db2AdminUserName -c "set CUR_COMMIT=ON"
+sleep 30 #let DB2 settle down
 
 echo
 echo "Restarting DB2 instance."
-oc exec c-db2ucluster-db2u-0 -it -- su - $db2AdminUserName -c "db2stop"
-sleep 10 #let DB2 settle down
-oc exec c-db2ucluster-db2u-0 -it -- su - $db2AdminUserName -c "db2start"
-sleep 10 #let DB2 settle down
+oc exec c-db2ucluster-db2u-0 -it -c db2u -- su -c "sudo wvcli system disable"
+sleep 30 #let DB2 settle down
+oc exec c-db2ucluster-db2u-0 -it -c db2u -- su - $db2AdminUserName -c "db2stop"
+sleep 30 #let DB2 settle down
+oc exec c-db2ucluster-db2u-0 -it -c db2u -- su - $db2AdminUserName -c "db2start"
+sleep 30 #let DB2 settle down
+oc exec c-db2ucluster-db2u-0 -it -c db2u -- su -c "sudo wvcli system enable"
+sleep 30 #let DB2 settle down
 
 ## 
 ## We are done installing and configuring DB2
@@ -302,19 +306,20 @@ echo "**************************************************************************
 
 echo
 echo "Removing BLUDB from system."
-
-oc exec c-db2ucluster-db2u-0 -it -- su - $db2AdminUserName -c "db2 deactivate database BLUDB"
-sleep 10 #let DB2 settle down
-oc exec c-db2ucluster-db2u-0 -it -- su - $db2AdminUserName -c "db2 drop database BLUDB"
-sleep 10 #let DB2 settle down
+oc exec c-db2ucluster-db2u-0 -it -c db2u -- su - $db2AdminUserName -c "db2 force application all"
+sleep 30 #let DB2 settle down
+oc exec c-db2ucluster-db2u-0 -it -c db2u -- su - $db2AdminUserName -c "db2 deactivate database BLUDB"
+sleep 30 #let DB2 settle down
+oc exec c-db2ucluster-db2u-0 -it -c db2u -- su - $db2AdminUserName -c "db2 drop database BLUDB"
+sleep 30 #let DB2 settle down
 
 echo
 echo "Existing databases are:"
-oc exec c-db2ucluster-db2u-0 -it -- su - $db2AdminUserName -c "db2 list database directory | grep \"Database name\" | cat"
+oc exec c-db2ucluster-db2u-0 -it -c db2u -- su - $db2AdminUserName -c "db2 list database directory | grep \"Database name\" | cat"
 
 echo
 echo "Use this hostname/IP to access the databases e.g. with IBM Data Studio."
-echo -e "\x1B[1mPlease also update in ${DB2_INPUT_PROPS_FILENAME} property \"db2HostName\" with this information (in Skytap, use the IP 10.0.0.10 instead)\x1B[0m"
+#echo -e "\x1B[1mPlease also update in ${DB2_INPUT_PROPS_FILENAME} property \"db2HostName\" with this information (in Skytap, use the IP 10.0.0.10 instead)\x1B[0m"
 routerCanonicalHostname=$(oc get route console -n openshift-console -o yaml | grep routerCanonicalHostname | cut -d ":" -f2)
 workerNodeAddresses=$(get_worker_node_addresses_from_pod c-db2ucluster-db2u-0 $db2OnOcpProjectName)
 echo -e "\tHostname:${routerCanonicalHostname}"
@@ -322,7 +327,7 @@ echo -e "\tOther possible addresses(If hostname not available above): $workerNod
 
 echo
 echo "Use one of these NodePorts to access the databases e.g. with IBM Data Studio (usually the first one is for legacy-server (Db2 port 50000), the second for ssl-server (Db2 port 50001))."
-echo -e "\x1B[1mPlease also update in ${DB2_INPUT_PROPS_FILENAME} property \"db2PortNumber\" with this information (legacy-server).\x1B[0m"
+#echo -e "\x1B[1mPlease also update in ${DB2_INPUT_PROPS_FILENAME} property \"db2PortNumber\" with this information (legacy-server).\x1B[0m"
 oc get svc -n ${db2OnOcpProjectName} c-db2ucluster-db2u-engn-svc -o json | grep nodePort
 
 echo

@@ -4,7 +4,7 @@
 #
 # Licensed Materials - Property of IBM
 #
-# (C) Copyright IBM Corp. 2021. All Rights Reserved.
+# (C) Copyright IBM Corp. 2022. All Rights Reserved.
 #
 # US Government Users Restricted Rights - Use, duplication or
 # disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
@@ -55,16 +55,21 @@ DBs=$(sed -n '/Needed DBs:/{
 	  p
 }' $cp4baTemplateToUse)
 
+
 echo
 echo "Switching to project ${db2OnOcpProjectName}..."
 oc project ${db2OnOcpProjectName}
 
 echo
-echo "Restarting Db2..."
-oc exec c-db2ucluster-db2u-0 -it -- su - $db2AdminUserName -c "db2stop"
-sleep 5
-oc exec c-db2ucluster-db2u-0 -it -- su - $db2AdminUserName -c "db2start"
-sleep 5
+echo "Restarting DB2 instance."
+oc exec c-db2ucluster-db2u-0 -it -c db2u -- su -c "sudo wvcli system disable"
+sleep 30 #let DB2 settle down
+oc exec c-db2ucluster-db2u-0 -it -c db2u -- su - $db2AdminUserName -c "db2stop"
+sleep 30 #let DB2 settle down
+oc exec c-db2ucluster-db2u-0 -it -c db2u -- su - $db2AdminUserName -c "db2start"
+sleep 30 #let DB2 settle down
+oc exec c-db2ucluster-db2u-0 -it -c db2u -- su -c "sudo wvcli system enable"
+sleep 30 #let DB2 settle down
 
 echo
 echo "Activating databases..."
@@ -72,84 +77,84 @@ echo
 
 if [[ $DBs =~ xUMSx ]]; then
     echo "${db2UmsdbName}..."
-    oc exec c-db2ucluster-db2u-0 -it -- su - $db2AdminUserName -c "db2 activate database ${db2UmsdbName}"
+    oc exec -c db2u c-db2ucluster-db2u-0 -it -- su - $db2AdminUserName -c "db2 activate database ${db2UmsdbName}"
     sleep $db2ActivationDelay
     echo
 fi
 
 if [[ $DBs =~ xICNx ]]; then
     echo "${db2IcndbName}..."
-    oc exec c-db2ucluster-db2u-0 -it -- su - $db2AdminUserName -c "db2 activate database ${db2IcndbName}"
+    oc exec -c db2u c-db2ucluster-db2u-0 -it -- su - $db2AdminUserName -c "db2 activate database ${db2IcndbName}"
     sleep $db2ActivationDelay
 fi
 
 if [[ $DBs =~ xDEVOS1x ]]; then
     echo
     echo "${db2Devos1Name}..."
-    oc exec c-db2ucluster-db2u-0 -it -- su - $db2AdminUserName -c "db2 activate database ${db2Devos1Name}"
+    oc exec -c db2u c-db2ucluster-db2u-0 -it -- su - $db2AdminUserName -c "db2 activate database ${db2Devos1Name}"
     sleep $db2ActivationDelay
 fi
 
 if [[ $DBs =~ xAEOSx ]]; then
     echo
     echo "${db2AeosName}..."
-    oc exec c-db2ucluster-db2u-0 -it -- su - $db2AdminUserName -c "db2 activate database ${db2AeosName}"
+    oc exec -c db2u c-db2ucluster-db2u-0 -it -- su - $db2AdminUserName -c "db2 activate database ${db2AeosName}"
     sleep $db2ActivationDelay
 fi
 
 if [[ $DBs =~ xBAWDOCSx ]]; then
     echo
     echo "${db2BawDocsName}..."
-    oc exec c-db2ucluster-db2u-0 -it -- su - $db2AdminUserName -c "db2 activate database ${db2BawDocsName}"
+    oc exec -c db2u c-db2ucluster-db2u-0 -it -- su - $db2AdminUserName -c "db2 activate database ${db2BawDocsName}"
     sleep $db2ActivationDelay
 fi
 
 if [[ $DBs =~ xBAWDOSx ]]; then  
     echo
     echo "${db2BawDosName}..."
-    oc exec c-db2ucluster-db2u-0 -it -- su - $db2AdminUserName -c "db2 activate database ${db2BawDosName}"
+    oc exec -c db2u c-db2ucluster-db2u-0 -it -- su - $db2AdminUserName -c "db2 activate database ${db2BawDosName}"
     sleep $db2ActivationDelay
 fi
 
 if [[ $DBs =~ xBAWTOSx ]]; then
     echo
     echo "${db2BawTosName}..."
-    oc exec c-db2ucluster-db2u-0 -it -- su - $db2AdminUserName -c "db2 activate database ${db2BawTosName}"
+    oc exec -c db2u c-db2ucluster-db2u-0 -it -- su - $db2AdminUserName -c "db2 activate database ${db2BawTosName}"
     sleep $db2ActivationDelay
 fi
 
 if [[ $DBs =~ xBAWx ]]; then
     echo
     echo "${db2BawDbName}..."
-    oc exec c-db2ucluster-db2u-0 -it -- su - $db2AdminUserName -c "db2 activate database ${db2BawDbName}"
+    oc exec -c db2u c-db2ucluster-db2u-0 -it -- su - $db2AdminUserName -c "db2 activate database ${db2BawDbName}"
     sleep $db2ActivationDelay
 fi
 
 if [[ $DBs =~ xAPPx ]]; then
     echo
     echo "${db2AppdbName}..."
-    oc exec c-db2ucluster-db2u-0 -it -- su - $db2AdminUserName -c "db2 activate database ${db2AppdbName}"
+    oc exec -c db2u c-db2ucluster-db2u-0 -it -- su - $db2AdminUserName -c "db2 activate database ${db2AppdbName}"
     sleep $db2ActivationDelay
 fi
 
 if [[ $DBs =~ xAEx ]]; then
     echo
     echo "${db2AedbName}..."
-    oc exec c-db2ucluster-db2u-0 -it -- su - $db2AdminUserName -c "db2 activate database ${db2AedbName}"
+    oc exec -c db2u c-db2ucluster-db2u-0 -it -- su - $db2AdminUserName -c "db2 activate database ${db2AedbName}"
     sleep $db2ActivationDelay
 fi
 
 if [[ $DBs =~ xBASx ]]; then
     echo
     echo "${db2BasdbName}..."
-    oc exec c-db2ucluster-db2u-0 -it -- su - $db2AdminUserName -c "db2 activate database ${db2BasdbName}"
+    oc exec -c db2u c-db2ucluster-db2u-0 -it -- su - $db2AdminUserName -c "db2 activate database ${db2BasdbName}"
     sleep $db2ActivationDelay
 fi
 
 if [[ $DBs =~ xGCDx ]]; then
     echo
     echo "${db2GcddbName}..."
-    oc exec c-db2ucluster-db2u-0 -it -- su - $db2AdminUserName -c "db2 activate database ${db2GcddbName}"
+    oc exec -c db2u c-db2ucluster-db2u-0 -it -- su - $db2AdminUserName -c "db2 activate database ${db2GcddbName}"
     sleep $db2ActivationDelay
 fi
 
