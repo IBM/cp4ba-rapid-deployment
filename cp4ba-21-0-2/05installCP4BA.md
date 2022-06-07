@@ -11,13 +11,13 @@
 4. If you are deploying on a ROKS cluster, copy the modified storage class definitions so that CP4BA Operator is using them (in this version of the storage classes the reclaimPolicy got changed to Delete and the name got adapted, because Delete is usually the better reclaimPolicy for ROKS and Demo environments)
    
    ```
-   cp /cp4ba/cp4ba-rapid-deployment/cp4ba-21-0-2/<your-cluster-name>/deployment-db2-cp4ba/cp4a-*-storage-class.yaml /cp4ba/cert-kubernetes/descriptors/
+   cp /cp4ba/cp4ba-rapid-deployment/cp4ba-21-0-2/scripts/deployment-db2-cp4ba/cp4a-*-storage-class.yaml /cp4ba/cert-kubernetes/descriptors/
    ```
    
    For example:
    
    ```
-   cp /cp4ba/cp4ba-rapid-deployment/cp4ba-21-0-2/mycluster/deployment-db2-cp4ba/cp4a-*-storage-class.yaml /cp4ba/cert-kubernetes/descriptors/
+   cp /cp4ba/cp4ba-rapid-deployment/cp4ba-21-0-2/scripts/deployment-db2-cp4ba/cp4a-*-storage-class.yaml /cp4ba/cert-kubernetes/descriptors/
    cp: overwrite ‘cp4ba/cert-kubernetes/descriptors/cp4a-bronze-storage-class.yaml’? y
    cp: overwrite ‘cp4ba/cert-kubernetes/descriptors/cp4a-gold-storage-class.yaml’? y
    cp: overwrite ‘cp4ba/cert-kubernetes/descriptors/cp4a-silver-storage-class.yaml’? y
@@ -26,7 +26,7 @@
 5. If you want to use the pinned version of the various Operators, copy the modified scripts and definitions so that the next steps are using them
    
    ```
-   cp /cp4ba/cp4ba-rapid-deployment/cp4ba-21-0-2/<your-cluster-name>/deployment-db2-cp4ba/cert-kubernetes-patches/ /cp4ba/cert-kubernetes/
+   cp -R /cp4ba/cp4ba-rapid-deployment/cp4ba-21-0-2/scripts/deployment-db2-cp4ba/cert-kubernetes-patches/* /cp4ba/cert-kubernetes/
    ```
 
 6. From cert-kubernetes, execute script **cp4a-clusteradmin-setup.sh**
