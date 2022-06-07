@@ -1,0 +1,74 @@
+# CP4BA 21.0.2 IF005 catalog
+apiVersion: operators.coreos.com/v1alpha1
+kind: CatalogSource
+metadata:
+  name: ibm-cp4a-operator-catalog
+  namespace: openshift-marketplace
+spec:
+  displayName: ibm-cp4a-operator
+  publisher: IBM
+  sourceType: grpc
+  image: icr.io/cpopen/ibm-cp-automation-catalog@sha256:76f48815fcad374e7eb8294189f6320e0c01b9fd7fdbfdf59e37ae9fbd71dfff
+  updateStrategy:
+    registryPoll:
+      interval: 45m
+---
+# IBM Automation Foundation Base 1.2.1
+apiVersion: operators.coreos.com/v1alpha1
+kind: CatalogSource
+metadata:
+  name: ibm-cp-automation-foundation-catalog
+  namespace: openshift-marketplace
+spec:
+  displayName: IBM Automation Foundation Operators
+  publisher: IBM
+  sourceType: grpc
+  image: icr.io/cpopen/ibm-cp-automation-foundation-catalog@sha256:1c21a3f64252569633c6ba7daf74d47358b9f3b52546d9a716808b0ae62d187a
+  updateStrategy:
+    registryPoll:
+      interval: 45m
+---
+# IBM Automation Foundation Core 1.2.1
+apiVersion: operators.coreos.com/v1alpha1
+kind: CatalogSource
+metadata:
+  name: ibm-automation-foundation-core-catalog
+  namespace: openshift-marketplace
+spec:
+  displayName: IBM Automation Foundation Core Operators
+  publisher: IBM
+  sourceType: grpc
+  image: icr.io/cpopen/ibm-automation-foundation-core-catalog@sha256:6eb8c4affe571fd2a1146d4a53c23c54a36a975966fd11867d4fddcac458ae8d
+  updateStrategy:
+    registryPoll:
+      interval: 45m
+---
+# IBM Cloud Foundational Services 3.13.0
+ apiVersion: operators.coreos.com/v1alpha1
+ kind: CatalogSource
+ metadata:
+  name: opencloud-operators
+  namespace: openshift-marketplace
+ spec:
+  displayName: IBMCS Operators
+  publisher: IBM
+  sourceType: grpc
+  image: icr.io/cpopen/ibm-common-service-catalog@sha256:6ff86b45b34348cda0405f89f475a8634ce025c6256dbc020b74426c48f8700f
+  updateStrategy:
+    registryPoll:
+      interval: 45m
+---
+# IBM DB2 Operator Catalog 4.0.4
+apiVersion: operators.coreos.com/v1alpha1
+kind: CatalogSource
+metadata:
+  name: ibm-db2uoperator-catalog
+  namespace: openshift-marketplace
+spec:
+  sourceType: grpc
+  image: docker.io/ibmcom/ibm-db2uoperator-catalog@sha256:5347c6f194868eb7531bd15cf584dabb0dc82b8674409e8ffbbea2c5bc4bcafe
+  displayName: IBM Db2U Catalog
+  publisher: IBM
+  updateStrategy:
+    registryPoll:
+      interval: 45m
