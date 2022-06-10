@@ -75,19 +75,22 @@
 
    ```
    oc get pods |grep processmining
-   processmining-analytics-698b4d7cc9-brq2l                          1/1     Running     0          24m
-   processmining-bpa-66c795c6c4-pd9mv                                1/1     Running     0          24m
-   processmining-connectors-67f7db74bd-2g8xt                         1/1     Running     0          24m
-   processmining-dr-7b86d9887d-6fqgt                                 1/1     Running     0          24m
-   processmining-engine-658dbd5c6-jv87h                              1/1     Running     0          24m
-   processmining-mongo-db-5c6b8b44f6-xdbvr                           1/1     Running     0          28m
-   processmining-mysql-6cbcf578df-gpklq                              1/1     Running     0          28m
-   processmining-operator-controller-manager-6f468d5b7c-hbc5f        1/1     Running     0          31m
-   processmining-processmining-nginx-686969c4c8-9h77q                1/1     Running     0          28m
-   processmining-processmining-um-958445d7f-4ff4s                    1/1     Running     0          24m
-   processmining-taskbuilder-6469779f77-kvgl7                        1/1     Running     0          19m
-   processmining-taskminer-nginx-6b5ff9c6c6-k4nmv                    2/2     Running     0          22m
-   processmining-taskprocessor-7cdbf5668b-p86bz                      1/1     Running     0          19m
+   
+   c-processmining-redis-m-0                                   4/4   Running   0     68m
+   c-processmining-redis-m-1                                   4/4   Running   0     68m
+   c-processmining-redis-m-2                                   4/4   Running   0     68m
+   c-processmining-redis-s-0                                   4/4   Running   0     66m
+   c-processmining-redis-s-1                                   4/4   Running   0     66m
+   c-processmining-redis-s-2                                   4/4   Running   0     66m
+   processmining-analytics-79bd7d76-ggjwz                      1/1   Running   0     65m
+   processmining-bpa-766d4fcdd5-fr6nv                          1/1   Running   0     65m
+   processmining-connectors-5b48678b6b-8lzmj                   1/1   Running   0     65m
+   processmining-dr-5d67787764-55858                           1/1   Running   0     65m
+   processmining-engine-598dc7bfd7-ndmjw                       1/1   Running   0     66m
+   processmining-mongo-db-98b69bf75-lf65g                      1/1   Running   0     69m
+   processmining-operator-controller-manager-8df8fd6b8-6hjd6   1/1   Running   0     74m
+   processmining-processmining-nginx-cb87d7f88-827ll           1/1   Running   0     68m
+   processmining-processmining-um-7767c6b6c4-dmgzm             1/1   Running   0     66m
    ```
    
 7. Grant users Automation Analyst role so that they can use Process Mining (if not done previously as part of Step 5).
