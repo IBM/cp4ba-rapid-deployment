@@ -195,14 +195,14 @@ sed -i.bak "s|paramDB2OperatorChannel|$db2OperatorChannel|g" db2-subscription.ya
 oc apply -f db2-subscription.yaml
 
 ##
-## Waiting up to 5 minutes for DB2 Operator install plan to be generated
+## Waiting up to 15 minutes for DB2 Operator install plan to be generated
 ## The name for the DB2 operator subscription in our template is db2u-operator
 ## using that to find install plan generated for the subscription
 ##
 echo
-echo "Waiting up to 5 minutes for DB2 Operator install plan to be generated."
+echo "Waiting up to 15 minutes for DB2 Operator install plan to be generated."
 date
-installPlan=$(wait_for_install_plan "db2u-operator" 5 $db2OnOcpProjectName)
+installPlan=$(wait_for_install_plan "db2u-operator" 15 $db2OnOcpProjectName)
 if [ -z "$installPlan" ]
 then
   echo "Timed out waiting for DB2 install plan. Check status for CSV $db2OperatorVersion"
@@ -217,14 +217,14 @@ echo "Approving DB2 Operator install plan."
 oc patch installplan $installPlan --namespace $db2OnOcpProjectName --type merge --patch '{"spec":{"approved":true}}'
 
 ##
-## Waiting up to 5 minutes for DB2 Operator installation to complete. 
+## Waiting up to 15 minutes for DB2 Operator installation to complete. 
 ## The CSV name for the DB2 operator is exactly the version of the CSV hence 
 ## using db2OperatorVersion as the operator name.
 ##
 echo
-echo "Waiting up to 5 minutes for DB2 Operator to install."
+echo "Waiting up to 15 minutes for DB2 Operator to install."
 date
-operatorInstallStatus=$(wait_for_operator_to_install_successfully $db2OperatorVersion 5 $db2OnOcpProjectName)
+operatorInstallStatus=$(wait_for_operator_to_install_successfully $db2OperatorVersion 15 $db2OnOcpProjectName)
 if [ -z "$operatorInstallStatus" ]
 then
   echo "Timed out waiting for DB2 operator to install.  Check status for CSV $db2OperatorVersion"
@@ -258,9 +258,9 @@ oc apply -f db2.yaml
 ## This patch removes the tty issue that prevents the db2u pod from starting
 ##
 echo
-echo "Waiting up to 15 minutes for c-db2ucluster-db2u statefulset to be created."
+echo "Waiting up to 30 minutes for c-db2ucluster-db2u statefulset to be created."
 date
-statefulsetQualifiedName=$(wait_for_resource_created_by_name statefulset c-db2ucluster-db2u 15 $db2OnOcpProjectName)
+statefulsetQualifiedName=$(wait_for_resource_created_by_name statefulset c-db2ucluster-db2u 30 $db2OnOcpProjectName)
 if [ -z "$statefulsetQualifiedName" ]
 then
   echo "Timed out waiting for c-db2ucluster-db2u statefulset to be created by DB2 operator"
@@ -276,9 +276,9 @@ oc patch $statefulsetQualifiedName -n=$db2OnOcpProjectName -p='{"spec":{"templat
 ## we can tell that the deployment was completed successfully.
 ##
 echo
-echo "Waiting up to 20 minutes for c-db2ucluster-restore-morph job to complete successfully."
+echo "Waiting up to 30 minutes for c-db2ucluster-restore-morph job to complete successfully."
 date
-jobStatus=$(wait_for_job_to_complete_by_name c-db2ucluster-restore-morph 20 $db2OnOcpProjectName)
+jobStatus=$(wait_for_job_to_complete_by_name c-db2ucluster-restore-morph 30 $db2OnOcpProjectName)
 if [ -z "$jobStatus" ]
 then
   echo "Timed out waiting for c-db2ucluster-restore-morph job to complete successfully."
