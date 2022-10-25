@@ -59,20 +59,20 @@ spec:
     sc_cpe_limited_storage: false
     sc_run_as_user:
 
-    images:
-      keytool_job_container:
-        repository: cp.icr.io/cp/cp4a/ums/dba-keytool-jobcontainer
-        tag: 21.0.3-IF005
-      dbcompatibility_init_container:
-        repository: cp.icr.io/cp/cp4a/aae/dba-dbcompatibility-initcontainer
-        tag: 21.0.3-IF005
-      keytool_init_container:
-        repository: cp.icr.io/cp/cp4a/ums/dba-keytool-initcontainer
-        tag: 21.0.3-IF005
-      umsregistration_initjob:
-        repository: cp.icr.io/cp/cp4a/aae/dba-umsregistration-initjob
-        tag: 21.0.3-IF005
-      pull_policy: IfNotPresent
+#    images:
+#      keytool_job_container:
+#        repository: cp.icr.io/cp/cp4a/ums/dba-keytool-jobcontainer
+#        tag: 21.0.3-IF005
+#      dbcompatibility_init_container:
+#        repository: cp.icr.io/cp/cp4a/aae/dba-dbcompatibility-initcontainer
+#        tag: 21.0.3-IF005
+#      keytool_init_container:
+#        repository: cp.icr.io/cp/cp4a/ums/dba-keytool-initcontainer
+#        tag: 21.0.3-IF005
+#      umsregistration_initjob:
+#        repository: cp.icr.io/cp/cp4a/aae/dba-umsregistration-initjob
+#        tag: 21.0.3-IF005
+#      pull_policy: IfNotPresent
 
     encryption_key_secret: icp4a-shared-encryption-key
 
@@ -147,11 +147,11 @@ spec:
   resource_registry_configuration:
 #    hostname: "rr-{{ shared_configuration.sc_deployment_hostname_suffix }}"
 #    port: 443
-    images:
-      pull_policy: IfNotPresent
-      resource_registry:
-        repository: cp.icr.io/cp/cp4a/aae/dba-etcd
-        tag: 21.0.3-IF005
+#     images:
+#      pull_policy: IfNotPresent
+#      resource_registry:
+#        repository: cp.icr.io/cp/cp4a/aae/dba-etcd
+#        tag: 21.0.3-IF005
     admin_secret_name: resource-registry-admin-secret
     replica_size: 3
     probe:
@@ -197,10 +197,10 @@ spec:
 
     replica_count: cp4baReplicaCount
 
-    image:
-      repository: cp.icr.io/cp/cp4a/ban/navigator-sso
-      tag: ga-3011-icn-if002
-      pull_policy: IfNotPresent
+#    image:
+#      repository: cp.icr.io/cp/cp4a/ban/navigator-sso
+#      tag: ga-3011-icn-if002
+#      pull_policy: IfNotPresent
 
     log:
       format: json
@@ -271,10 +271,10 @@ spec:
 
       replica_count: cp4baReplicaCount
 
-      image:
-        repository: cp.icr.io/cp/cp4a/fncm/cpe
-        tag: ga-558-p8cpe-la005
-        pull_policy: IfNotPresent
+#      image:
+#        repository: cp.icr.io/cp/cp4a/fncm/cpe
+#        tag: ga-558-p8cpe-la005
+#        pull_policy: IfNotPresent
 
       log:
        format: json
@@ -340,10 +340,10 @@ spec:
 
       replica_count: 1
 
-      image:
-        repository: cp.icr.io/cp/cp4a/fncm/css
-        tag: ga-558-p8css-la005
-        pull_policy: IfNotPresent
+#      image:
+#        repository: cp.icr.io/cp/cp4a/fncm/css
+#        tag: ga-558-p8css-la005
+#        pull_policy: IfNotPresent
 
       log:
         format: json
@@ -392,10 +392,10 @@ spec:
 
       replica_count: cp4baReplicaCount
 
-      image:
-        repository: cp.icr.io/cp/cp4a/fncm/cmis
-        tag: ga-306-cmis-la104
-        pull_policy: IfNotPresent
+#      image:
+#        repository: cp.icr.io/cp/cp4a/fncm/cmis
+#        tag: ga-306-cmis-la104
+#        pull_policy: IfNotPresent
 
       log:
         format: json
@@ -469,10 +469,10 @@ spec:
 
       replica_count: cp4baReplicaCount
 
-      image:
-        repository: cp.icr.io/cp/cp4a/fncm/graphql
-        tag: ga-558-p8cgql-la005
-        pull_policy: IfNotPresent
+#      image:
+#        repository: cp.icr.io/cp/cp4a/fncm/graphql
+#        tag: ga-558-p8cgql-la005
+#        pull_policy: IfNotPresent
 
       log:
         format: json
