@@ -48,6 +48,11 @@ if [ ! -f $cp4baTemplateToUse ]; then
     exit 1
 fi
 
-DBs=$(sed '/Needed DBs:/s,^.*:,,g' $cp4baTemplateToUse | sed 's, ,x,g')
+echo
+DBs=$(sed -n '/Needed DBs:/{
+	  s,^.*:,,g
+	  p
+}' $cp4baTemplateToUse)
 
-echo $DBs
+echo "Used Template:" $cp4baTemplateToUse
+echo "Used DBs:" $DBs
