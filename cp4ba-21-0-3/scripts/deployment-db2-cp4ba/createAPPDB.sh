@@ -12,6 +12,7 @@
 
 dbname=$1
 dbuser=$2
+myself=$(whoami)
 
 echo "*** Creating DB named: ${dbname} ***"
 
@@ -22,8 +23,12 @@ db2 CREATE BUFFERPOOL DBASBBP IMMEDIATE SIZE 1024 PAGESIZE 32K;
 db2 CREATE REGULAR TABLESPACE APPENG_TS PAGESIZE 32 K MANAGED BY AUTOMATIC STORAGE DROPPED TABLE RECOVERY ON BUFFERPOOL DBASBBP;
 db2 CREATE USER TEMPORARY TABLESPACE APPENG_TEMP_TS PAGESIZE 32 K MANAGED BY AUTOMATIC STORAGE BUFFERPOOL DBASBBP;
 
-db2 GRANT USE OF TABLESPACE APPENG_TS TO user "${dbuser}";
-db2 GRANT USE OF TABLESPACE APPENG_TEMP_TS TO user "${dbuser}";
+if [ "$dbuser" != "$myself" ]; then 
+  db2 GRANT USE OF TABLESPACE APPENG_TS TO user "${dbuser}";
+  db2 GRANT USE OF TABLESPACE APPENG_TEMP_TS TO user "${dbuser}";
+  db2 grant dbadm on database to user "${dbuser}";
+fi
 
-db2 grant dbadm on database to user "${dbuser}";
 db2 connect reset;
+
+echo "*** Done creating and tuning DB named: ${dbname} ***"

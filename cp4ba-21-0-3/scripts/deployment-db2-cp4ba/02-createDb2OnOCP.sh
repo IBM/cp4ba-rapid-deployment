@@ -87,7 +87,7 @@ esac
 ##
 if [ $cp4baDeploymentPlatform == "ROKS" ]; then
   echo
-  echo "Installing the storage classes..."
+  echo "Installing the storage classes for ROKS..."
   oc apply -f cp4a-bronze-storage-class.yaml
   oc apply -f cp4a-silver-storage-class.yaml
   oc apply -f cp4a-gold-storage-class.yaml
@@ -99,8 +99,8 @@ fi
 ## Install storage class definitions upddates in ROKS installations
 ##
 echo
-echo "Installing the IBM Operator Catalog..."
-oc apply -f ibmOperatorCatalog.yaml
+echo "Installing the DB2 Operator Catalog..."
+oc apply -f db2OperatorCatalog.yaml
 
 ##
 ## Create DB2 project as specified in 01-parametersForDb2OnOCP.sh
@@ -157,7 +157,7 @@ oc create secret docker-registry ibm-registry --docker-server=${DOCKER_REG_SERVE
 
 if [ $cp4baDeploymentPlatform == "ROKS" ]; then
   echo
-  echo "Preparing the cluster for Db2..."
+  echo "Preparing the ROKS cluster for Db2..."
   oc get no -l node-role.kubernetes.io/worker --no-headers -o name | xargs -I {} --  oc debug {} -- chroot /host sh -c 'grep "^Domain = slnfsv4.coms" /etc/idmapd.conf || ( sed -i.bak "s/.*Domain =.*/Domain = slnfsv4.com/g" /etc/idmapd.conf; nfsidmap -c; rpc.idmapd )'
 fi
 
@@ -195,14 +195,14 @@ sed -i.bak "s|paramDB2OperatorChannel|$db2OperatorChannel|g" db2-subscription.ya
 oc apply -f db2-subscription.yaml
 
 ##
-## Waiting up to 15 minutes for DB2 Operator install plan to be generated
+## Waiting up to 5 minutes for DB2 Operator install plan to be generated
 ## The name for the DB2 operator subscription in our template is db2u-operator
 ## using that to find install plan generated for the subscription
 ##
 echo
-echo "Waiting up to 15 minutes for DB2 Operator install plan to be generated."
+echo "Waiting up to 5 minutes for DB2 Operator install plan to be generated."
 date
-installPlan=$(wait_for_install_plan "db2u-operator" 15 $db2OnOcpProjectName)
+installPlan=$(wait_for_install_plan "db2u-operator" 5 $db2OnOcpProjectName)
 if [ -z "$installPlan" ]
 then
   echo "Timed out waiting for DB2 install plan. Check status for CSV $db2OperatorVersion"
@@ -217,14 +217,14 @@ echo "Approving DB2 Operator install plan."
 oc patch installplan $installPlan --namespace $db2OnOcpProjectName --type merge --patch '{"spec":{"approved":true}}'
 
 ##
-## Waiting up to 15 minutes for DB2 Operator installation to complete. 
+## Waiting up to 5 minutes for DB2 Operator installation to complete. 
 ## The CSV name for the DB2 operator is exactly the version of the CSV hence 
 ## using db2OperatorVersion as the operator name.
 ##
 echo
-echo "Waiting up to 15 minutes for DB2 Operator to install."
+echo "Waiting up to 5 minutes for DB2 Operator to install."
 date
-operatorInstallStatus=$(wait_for_operator_to_install_successfully $db2OperatorVersion 15 $db2OnOcpProjectName)
+operatorInstallStatus=$(wait_for_operator_to_install_successfully $db2OperatorVersion 5 $db2OnOcpProjectName)
 if [ -z "$operatorInstallStatus" ]
 then
   echo "Timed out waiting for DB2 operator to install.  Check status for CSV $db2OperatorVersion"
@@ -258,9 +258,9 @@ oc apply -f db2.yaml
 ## This patch removes the tty issue that prevents the db2u pod from starting
 ##
 echo
-echo "Waiting up to 30 minutes for c-db2ucluster-db2u statefulset to be created."
+echo "Waiting up to 15 minutes for c-db2ucluster-db2u statefulset to be created."
 date
-statefulsetQualifiedName=$(wait_for_resource_created_by_name statefulset c-db2ucluster-db2u 30 $db2OnOcpProjectName)
+statefulsetQualifiedName=$(wait_for_resource_created_by_name statefulset c-db2ucluster-db2u 15 $db2OnOcpProjectName)
 if [ -z "$statefulsetQualifiedName" ]
 then
   echo "Timed out waiting for c-db2ucluster-db2u statefulset to be created by DB2 operator"
@@ -296,22 +296,22 @@ oc get configmap c-db2ucluster-db2dbmconfig -n $db2OnOcpProjectName -o yaml | se
 echo
 echo "Updating database manager running configuration."
 oc exec c-db2ucluster-db2u-0 -it -c db2u -- su - $db2AdminUserName -c "db2 update dbm cfg using numdb ${db2NumOfDBsSupported}"
-sleep 10 #let DB2 settle down
+sleep $db2ActivationDelay #let DB2 settle down
 oc exec c-db2ucluster-db2u-0 -it -c db2u -- su - $db2AdminUserName -c "db2set DB2_WORKLOAD=FILENET_CM"
-sleep 10 #let DB2 settle down
+sleep $db2ActivationDelay #let DB2 settle down
 oc exec c-db2ucluster-db2u-0 -it -c db2u -- su - $db2AdminUserName -c "set CUR_COMMIT=ON"
-sleep 30 #let DB2 settle down
+sleep $db2ActivationDelay #let DB2 settle down
 
 echo
 echo "Restarting DB2 instance."
 oc exec c-db2ucluster-db2u-0 -it -c db2u -- su -c "sudo wvcli system disable"
-sleep 30 #let DB2 settle down
+sleep $db2ActivationDelay #let DB2 settle down
 oc exec c-db2ucluster-db2u-0 -it -c db2u -- su - $db2AdminUserName -c "db2stop"
-sleep 30 #let DB2 settle down
+sleep $db2ActivationDelay #let DB2 settle down
 oc exec c-db2ucluster-db2u-0 -it -c db2u -- su - $db2AdminUserName -c "db2start"
-sleep 30 #let DB2 settle down
+sleep $db2ActivationDelay #let DB2 settle down
 oc exec c-db2ucluster-db2u-0 -it -c db2u -- su -c "sudo wvcli system enable"
-sleep 30 #let DB2 settle down
+sleep $db2ActivationDelay #let DB2 settle down
 
 ## 
 ## We are done installing and configuring DB2
@@ -327,19 +327,32 @@ echo "**************************************************************************
 echo
 echo "Removing BLUDB from system."
 oc exec c-db2ucluster-db2u-0 -it -c db2u -- su - $db2AdminUserName -c "db2 force application all"
-sleep 30 #let DB2 settle down
+sleep $db2ActivationDelay #let DB2 settle down
 oc exec c-db2ucluster-db2u-0 -it -c db2u -- su - $db2AdminUserName -c "db2 deactivate database BLUDB"
-sleep 30 #let DB2 settle down
+sleep $db2ActivationDelay #let DB2 settle down
 oc exec c-db2ucluster-db2u-0 -it -c db2u -- su - $db2AdminUserName -c "db2 drop database BLUDB"
-sleep 30 #let DB2 settle down
+sleep $db2ActivationDelay #let DB2 settle down
 
 echo
 echo "Existing databases are:"
 oc exec c-db2ucluster-db2u-0 -it -c db2u -- su - $db2AdminUserName -c "db2 list database directory | grep \"Database name\" | cat"
 
 echo
+echo "Removing temporary files..."
+rm db2-namespace.yaml.bak
+rm dockerconfig_merged
+rm db2-operatorgroup.yaml.bak
+rm db2-subscription.yaml.bak
+rm db2.yaml.bak
+echo "Done."
+
+echo
+echo "***********************************************"
+echo "********* DB2 Connection Information: *********"
+echo "***********************************************"
+
+echo
 echo "Use this hostname/IP to access the databases e.g. with IBM Data Studio."
-#echo -e "\x1B[1mPlease also update in ${DB2_INPUT_PROPS_FILENAME} property \"db2HostName\" with this information (in Skytap, use the IP 10.0.0.10 instead)\x1B[0m"
 routerCanonicalHostname=$(oc get route console -n openshift-console -o yaml | grep routerCanonicalHostname | cut -d ":" -f2)
 workerNodeAddresses=$(get_worker_node_addresses_from_pod c-db2ucluster-db2u-0 $db2OnOcpProjectName)
 echo -e "\tHostname:${routerCanonicalHostname}"
@@ -347,7 +360,6 @@ echo -e "\tOther possible addresses(If hostname not available above): $workerNod
 
 echo
 echo "Use one of these NodePorts to access the databases e.g. with IBM Data Studio (usually the first one is for legacy-server (Db2 port 50000), the second for ssl-server (Db2 port 50001))."
-#echo -e "\x1B[1mPlease also update in ${DB2_INPUT_PROPS_FILENAME} property \"db2PortNumber\" with this information (legacy-server).\x1B[0m"
 oc get svc -n ${db2OnOcpProjectName} c-db2ucluster-db2u-engn-svc -o json | grep nodePort
 
 echo

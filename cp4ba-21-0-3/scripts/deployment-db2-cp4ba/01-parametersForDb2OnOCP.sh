@@ -96,7 +96,7 @@ db2StorageSize=150Gi
 
 # Database activation delay. Scripts will wait this time in seconds between activating databases.
 # With problems on activation, or if on slow environments, try to increase this delay
-db2ActivationDelay=15
+db2ActivationDelay=5
 
 # Number of DBs that should be supported by the DB instance
 db2NumOfDBsSupported=30

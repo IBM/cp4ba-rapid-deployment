@@ -12,10 +12,16 @@
 
 dbname=$1
 dbuser=$2
+myself=$(whoami)
 
 echo "*** Creating DB named: ${dbname} ***"
 
 db2 create database "${dbname}" automatic storage yes using codeset UTF-8 territory US pagesize 32 K
-db2 connect to "${dbname}";
-db2 grant dbadm on database to user "${dbuser}";
-db2 connect reset;
+
+if [ "$dbuser" != "$myself" ]; then 
+  db2 connect to "${dbname}";
+  db2 grant dbadm on database to user "${dbuser}";
+  db2 connect reset;
+fi
+
+echo "*** Done creating and tuning DB named: ${dbname} ***"

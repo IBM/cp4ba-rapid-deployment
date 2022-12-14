@@ -15,7 +15,7 @@ dbuser=$2
 dbpath=$3
 dbtuning=$4
 dbstopaths=$3
-
+myself=$(whoami)
 
 echo "*** Creating DB named: $dbname ***"
 
@@ -38,16 +38,18 @@ db2 CREATE LARGE TABLESPACE "${dbname}"_DATA_TBS PAGESIZE 32 K MANAGED BY AUTOMA
 
 db2 CREATE USER TEMPORARY TABLESPACE "${dbname}"_TMP_TBS PAGESIZE 32 K MANAGED BY AUTOMATIC STORAGE BUFFERPOOL "${dbname}"_32K
 
-echo "*** Grant permissions to DB user ***"
-db2 GRANT CREATETAB,CONNECT ON DATABASE  TO user "${dbuser}"
-db2 GRANT USE OF TABLESPACE "${dbname}"_DATA_TBS TO user "${dbuser}"
-db2 GRANT USE OF TABLESPACE "${dbname}"_TMP_TBS TO user "${dbuser}"
-db2 GRANT SELECT ON SYSIBM.SYSVERSIONS to user "${dbuser}"
-db2 GRANT SELECT ON SYSCAT.DATATYPES to user "${dbuser}"
-db2 GRANT SELECT ON SYSCAT.INDEXES to user "${dbuser}"
-db2 GRANT SELECT ON SYSIBM.SYSDUMMY1 to user "${dbuser}"
-db2 GRANT USAGE ON WORKLOAD SYSDEFAULTUSERWORKLOAD to user "${dbuser}"
-db2 GRANT IMPLICIT_SCHEMA ON DATABASE to user "${dbuser}"
+if [ "$myself" != "$dbuser" ]; then
+  echo "*** Grant permissions to DB user ***"
+  db2 GRANT CREATETAB,CONNECT ON DATABASE  TO user "${dbuser}"
+  db2 GRANT USE OF TABLESPACE "${dbname}"_DATA_TBS TO user "${dbuser}"
+  db2 GRANT USE OF TABLESPACE "${dbname}"_TMP_TBS TO user "${dbuser}"
+  db2 GRANT SELECT ON SYSIBM.SYSVERSIONS to user "${dbuser}"
+  db2 GRANT SELECT ON SYSCAT.DATATYPES to user "${dbuser}"
+  db2 GRANT SELECT ON SYSCAT.INDEXES to user "${dbuser}"
+  db2 GRANT SELECT ON SYSIBM.SYSDUMMY1 to user "${dbuser}"
+  db2 GRANT USAGE ON WORKLOAD SYSDEFAULTUSERWORKLOAD to user "${dbuser}"
+  db2 GRANT IMPLICIT_SCHEMA ON DATABASE to user "${dbuser}"
+fi
 
 echo "*** Apply DB tunings ***"
 db2 update db cfg for "${dbname}" using LOCKTIMEOUT 30

@@ -12,6 +12,7 @@
 
 dbname=$1
 dbuser=$2
+myself=$(whoami)
 
 echo "*** Creating DB named: ${dbname} ***"
 
@@ -20,5 +21,11 @@ db2 connect to "${dbname}";
 db2 CREATE USER TEMPORARY TABLESPACE USRTMPSPC1;
 db2 UPDATE DB CFG FOR "${dbname}" USING LOGFILSIZ 16384 DEFERRED;
 db2 UPDATE DB CFG FOR "${dbname}" USING LOGSECOND 64 IMMEDIATE;
-db2 grant dbadm on database to user "${dbuser}";
+
+if [ "$dbuser" != "$myself" ]; then 
+  db2 grant dbadm on database to user "${dbuser}";
+fi
+
 db2 connect reset;
+
+echo "*** Done creating and tuning DB named: ${dbname} ***"

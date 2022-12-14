@@ -67,12 +67,13 @@ echo "Switching to project ${db2OnOcpProjectName}..."
 oc project ${db2OnOcpProjectName}
 
 ## Update values required to create Content Analizer base DB and tenant DBs
-echo 
+echo
 echo "Preparing create base DB and tennant templates"
 cp baca-db/DB2/common_for_DB2.sh.sample baca-db/DB2/common_for_DB2.sh
 sed -i.bak "s|db2CaBasedbName|$db2CaBasedbName|g" baca-db/DB2/common_for_DB2.sh
 sed -i.bak "s|db2AdminUserName|$db2AdminUserName|g" baca-db/DB2/common_for_DB2.sh
 sed -i.bak "s|db2AdminUserPassword|$db2AdminUserPassword|g" baca-db/DB2/common_for_DB2.sh
+rm baca-db/DB2/common_for_DB2.sh.bak
 
 
 ## Copy content on DB2 server

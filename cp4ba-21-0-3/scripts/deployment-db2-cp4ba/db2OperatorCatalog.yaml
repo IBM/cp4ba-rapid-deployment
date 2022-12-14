@@ -9,16 +9,16 @@
 #
 ###############################################################################
 apiVersion: operators.coreos.com/v1alpha1
-kind: Subscription
+kind: CatalogSource
 metadata:
-  name: db2u-operator
-  namespace: paramDB2Namespace 
-  labels:
-    operators.coreos.com/db2u-operator.paramDB2Namespace: ''
+  name: ibm-db2uoperator-catalog
+  namespace: openshift-marketplace
 spec:
-  channel: paramDB2OperatorChannel 
-  name: db2u-operator
-  installPlanApproval: Manual
-  source: ibm-db2uoperator-catalog
-  sourceNamespace: openshift-marketplace
-  startingCSV: paramDB2OperatorVersion
+  displayName: IBM Db2U Catalog
+  image: >-
+    icr.io/cpopen/ibm-db2uoperator-catalog@sha256:99f725098b801474ff77e880ca235023452116e4b005e49de613496a1917f719
+  publisher: IBM
+  sourceType: grpc
+  updateStrategy:
+    registryPoll:
+      interval: 45m
