@@ -55,6 +55,7 @@ sed -i.bak "s|adsMlServiceReplicaCount|$adsMlServiceReplicaCount|g" adsMlService
 sed -i.bak "s|pgAdminPassword|$pgAdminPassword|g" adsMlServiceDeployment.yaml
 sed -i.bak "s|adsMlServiceProjectName|$adsMlServiceProjectName|g" adsMlServiceDeployment.yaml
 oc apply -f adsMlServiceDeployment.yaml
+rm adsMlServiceDeployment.yaml.bak
 
 echo
 echo "Deploying the ads ml service service..."

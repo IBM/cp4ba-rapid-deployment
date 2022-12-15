@@ -62,6 +62,7 @@ cp processmining.template.yaml processmining.yaml
 sed -i.bak "s|cp4baProjectName|$cp4baProjectName|g" processmining.yaml
 sed -i.bak "s|cp4baReplicaCount|$cp4baReplicaCount|g" processmining.yaml
 sed -i.bak "s|cp4baScFast|$cp4baScFast|g" processmining.yaml
+rm processmining.yaml.bak
 
 echo
 echo "Deploying Process Mining..."

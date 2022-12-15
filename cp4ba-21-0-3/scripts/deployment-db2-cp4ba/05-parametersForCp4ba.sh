@@ -84,6 +84,9 @@ cp4baScFast=cp4a-file-delete-gold-gid
 cp4baBlockScFast=ibmc-block-gold
 
 # --- HA Settings ---
+cp4baDeploymentProfileSize=small
+cp4baADPDeploymentProfileSize=small
+
 cp4baReplicaCount=1
 cp4baBaiJobParallelism=1
 

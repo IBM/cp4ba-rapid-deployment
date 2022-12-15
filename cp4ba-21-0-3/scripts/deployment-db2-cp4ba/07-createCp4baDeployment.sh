@@ -142,9 +142,12 @@ sed -i.bak "s|ldapAdminName|$ldapAdminName|g" secrets.yaml
 sed -i.bak "s|ldapAdminPassword|$ldapAdminPassword|g" secrets.yaml
 
 sed -i.bak "s|cp4baAdminFullName|$cp4baAdminFullName|g" secrets.yaml
+rm secrets.yaml.bak
+
 cp adp-aca-basedb-secret.template.yaml  adp-aca-basedb-secret.yaml
 sed -i.bak "s|db2AdminUserName|$adpDb2AdminUserName|g" adp-aca-basedb-secret.yaml
 sed -i.bak "s|db2AdminUserPassword|$adpDb2AdminUserPassword|g" adp-aca-basedb-secret.yaml
+rm adp-aca-basedb-secret.yaml.bak
 
 adpProjectList=""
 if [[ $db2CreateAdpDbs == "true" ]]
@@ -191,6 +194,7 @@ if [ $cp4baDeploymentPlatform == "ROKS" ] && [ "$cp4baTlsSecretName" != "" ]; th
   sed -i.bak "s|tlsCert|$tlsCert|g" tlsSecrets.yaml
   sed -i.bak "s|tlsKey|$tlsKey|g" tlsSecrets.yaml
   tlsSecretName=icp4a-tls-secret
+  rm tlsSecrets.yaml.bak
 fi
 
 echo
@@ -241,6 +245,9 @@ sed -i.bak "s|cp4baScFast|$cp4baScFast|g" ibm_cp4a_cr_final.yaml
 sed -i.bak "s|cp4baBlockScFast|$cp4baBlockScFast|g" ibm_cp4a_cr_final.yaml
 sed -i.bak "s|cp4baReplicaCount|$cp4baReplicaCount|g" ibm_cp4a_cr_final.yaml
 sed -i.bak "s|cp4baBaiJobParallelism|$cp4baBaiJobParallelism|g" ibm_cp4a_cr_final.yaml
+sed -i.bak "s|cp4baDeploymentProfileSize|$cp4baDeploymentProfileSize|g" ibm_cp4a_cr_final.yaml
+sed -i.bak "s|cp4baADPDeploymentProfileSize|$cp4baADPDeploymentProfileSize|g" ibm_cp4a_cr_final.yaml
+
 sed -i.bak "s|cp4baAdminName|$cp4baAdminName|g" ibm_cp4a_cr_final.yaml
 sed -i.bak "s|cp4baAdminPassword|$cp4baAdminPassword|g" ibm_cp4a_cr_final.yaml
 sed -i.bak "s|cp4baAdminGroup|$cp4baAdminGroup|g" ibm_cp4a_cr_final.yaml
@@ -261,6 +268,7 @@ if [ $cp4baDeploymentPlatform == "ROKS" ] && [ "$cp4baTlsSecretName" != "" ]; th
 else
   sed -i.bak "s|trustedCertificateList||g" ibm_cp4a_cr_final.yaml
 fi
+rm ibm_cp4a_cr_final.yaml.bak
 
 # finally, create all the prepared artifacts on OCP if user decides to do that
 echo
@@ -288,10 +296,13 @@ oc create secret docker-registry ibm-entitlement-key --docker-server=${DOCKER_RE
 oc project $cp4baProjectName
 echo "Done."
 
-echo
-echo "Copying the jdbc driver to ibm-cp4a-operator..."
-oc get pods | grep ibm-cp4a-operator- | awk '$1 {print$1}' | while read vol; do oc cp jdbc ${vol}:/opt/ansible/share/; done
-echo "Done."
+if [[ $db2UseOnOcp == true ]]; then
+  echo
+  echo "Copying the jdbc driver to ibm-cp4a-operator..."
+  oc get pods | grep ibm-cp4a-operator- | awk '$1 {print$1}' | while read vol; do oc cp jdbc ${vol}:/opt/ansible/share/; done
+  rm -f -r ./jdbc
+  echo "Done."
+fi
 
 echo
 echo "Creating CP4BA secrets..."

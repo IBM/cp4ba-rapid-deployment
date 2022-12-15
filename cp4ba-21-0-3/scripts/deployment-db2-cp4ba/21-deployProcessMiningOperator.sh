@@ -57,6 +57,11 @@ echo
 echo "Switching to project ${cp4baProjectName}..."
 oc project $cp4baProjectName
 
+echo
+echo "Installing the CatalogSource for Process Mining..."
+oc apply -f processminingOperatorCatalog.yaml
+
+echo
 echo "Preparing the subscription..."
 cp processmining-subscription.template.yaml processmining-subscription.yaml
 sed -i.bak "s|cp4baProjectName|$cp4baProjectName|g" processmining-subscription.yaml
@@ -64,6 +69,7 @@ sed -i.bak "s|cp4baProjectName|$cp4baProjectName|g" processmining-subscription.y
 echo
 echo "Creating operator subscription..."
 oc apply -f processmining-subscription.yaml
+rm processmining-subscription.yaml.bak
 echo "Done."
 
 

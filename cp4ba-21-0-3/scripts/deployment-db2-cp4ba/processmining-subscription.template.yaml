@@ -17,6 +17,7 @@ spec:
   channel: v2.0
   installPlanApproval: Automatic
   name: ibm-automation-processmining
-  source: ibm-operator-catalog
+  source: ibm-automation-processminings
   sourceNamespace: openshift-marketplace
+  startingCSV: ibm-automation-processmining.v1.1.1
 
