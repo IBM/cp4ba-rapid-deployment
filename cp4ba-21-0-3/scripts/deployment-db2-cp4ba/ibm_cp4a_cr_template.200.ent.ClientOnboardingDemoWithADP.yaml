@@ -24,19 +24,6 @@ spec:
   appVersion: 21.0.3
   ibm_license: accept
 
-  ##################################################################
-  ########   Shared Monitoring configuration                ########
-  ##################################################################
-  monitoring_configuration:
-    collectd_disable_host_monitoring: false
-    collectd_interval: 10
-    collectd_plugin_write_graphite_host: localhost
-    collectd_plugin_write_graphite_port: 2003
-    collectd_plugin_write_prometheus_port: 9103
-    mon_enable_plugin_mbean: true
-    mon_enable_plugin_pch: true
-    mon_metrics_writer_option: 4
-
   shared_configuration:
     show_sensitive_log: true
     no_log: false
@@ -1682,16 +1669,6 @@ spec:
     port: 443
     service_type: Route
 
-    elasticsearch:
-      endpoint: ""
-      admin_secret_name: ""
-      connect_timeout: 10s
-      read_timeout: 30s
-      thread_count: 0
-      max_connection_total: -1
-      max_connection_per_route: -1
-      use_iaf: false
-
     image:
       # repository: cp.icr.io/cp/cp4a/baw/pfs-prod
       # tag: "21.0.3-IF010"
@@ -1788,59 +1765,6 @@ spec:
       #   requests:
       #     memory: '512Mi'
       #     cpu: '200m'
-
-  ########################################################################
-  ########   Embedded Elasticsearch configuration                 ########
-  ########################################################################
-  elasticsearch_configuration:
-    es_image:
-      # repository: cp.icr.io/cp/cp4a/baw/pfs-elasticsearch-prod
-      # tag: "21.0.3-IF010"
-      pull_policy: IfNotPresent
-
-    es_init_image:
-      # repository: cp.icr.io/cp/cp4a/baw/pfs-init-prod
-      # tag: "21.0.3-IF010"
-      pull_policy: IfNotPresent
-
-    es_nginx_image:
-      # repository: cp.icr.io/cp/cp4a/baw/pfs-nginx-prod
-      # tag: "21.0.3-IF010"
-      pull_policy: IfNotPresent
-
-#    replicas: cp4baReplicaCount
-    service_type: ClusterIP
-    external_port:
-    admin_secret_name:
-    anti_affinity: hard
-
-    privileged: false
-    service_account: ""
-
-    probe_initial_delay: 90
-    heap_size: "2048m"
-    monitor_enabled: false
-
-    # resources:
-    #   requests:
-    #     cpu: "100m"
-    #     memory: "2Gi"
-    #   limits:
-    #     cpu: "1000m"
-    #     memory: "6Gi"
-
-    storage:
-      persistent: true
-      use_dynamic_provisioning: true
-      size: 10Gi
-      storage_class: "{{ shared_configuration.storage_configuration.sc_fast_file_storage_classname }}"
-
-    snapshot_storage:
-      enabled: false
-      use_dynamic_provisioning: true
-      size: 30Gi
-      storage_class_name: ""
-      existing_claim_name: ""
 
   ##############################################################################
   ########      IBM Business Automation Insights (BAI) configuration    ########

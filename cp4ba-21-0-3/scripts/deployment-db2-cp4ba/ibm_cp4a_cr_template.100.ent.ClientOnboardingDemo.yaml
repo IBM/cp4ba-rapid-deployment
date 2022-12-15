@@ -24,19 +24,6 @@ spec:
   appVersion: 21.0.3
   ibm_license: accept
 
-  ##################################################################
-  ########   Shared Monitoring configuration                ########
-  ##################################################################
-  monitoring_configuration:
-    collectd_disable_host_monitoring: false
-    collectd_interval: 10
-    collectd_plugin_write_graphite_host: localhost
-    collectd_plugin_write_graphite_port: 2003
-    collectd_plugin_write_prometheus_port: 9103
-    mon_enable_plugin_mbean: true
-    mon_enable_plugin_pch: true
-    mon_metrics_writer_option: 4
-
   shared_configuration:
     show_sensitive_log: true
     no_log: false
@@ -57,6 +44,7 @@ spec:
     sc_deployment_platform: "cp4baDeploymentPlatform"
     sc_deployment_hostname_suffix: "{{ meta.namespace }}.cp4baOcpHostname"
     sc_install_automation_base: true
+    sc_deployment_profile_size: cp4baDeploymentProfileSize
 
     sc_ingress_enable: false
     sc_ingress_tls_secret_name: tlsSecretName
@@ -73,18 +61,18 @@ spec:
     sc_run_as_user:
 
     images:
-      keytool_job_container:
-        repository: cp.icr.io/cp/cp4a/ums/dba-keytool-jobcontainer
-        tag: 21.0.3-IF005
-      dbcompatibility_init_container:
-        repository: cp.icr.io/cp/cp4a/aae/dba-dbcompatibility-initcontainer
-        tag: 21.0.3-IF005
-      keytool_init_container:
-        repository: cp.icr.io/cp/cp4a/ums/dba-keytool-initcontainer
-        tag: 21.0.3-IF005
-      umsregistration_initjob:
-        repository: cp.icr.io/cp/cp4a/aae/dba-umsregistration-initjob
-        tag: 21.0.3-IF005
+      # keytool_job_container:
+      #   repository: cp.icr.io/cp/cp4a/ums/dba-keytool-jobcontainer
+      #   tag: 21.0.3-IF010
+      # dbcompatibility_init_container:
+      #   repository: cp.icr.io/cp/cp4a/aae/dba-dbcompatibility-initcontainer
+      #   tag: 21.0.3-IF010
+      # keytool_init_container:
+      #   repository: cp.icr.io/cp/cp4a/ums/dba-keytool-initcontainer
+      #   tag: 21.0.3-IF010
+      # umsregistration_initjob:
+      #   repository: cp.icr.io/cp/cp4a/aae/dba-umsregistration-initjob
+      #   tag: 21.0.3-IF010
       pull_policy: IfNotPresent
 
     encryption_key_secret: icp4a-shared-encryption-key
@@ -197,11 +185,12 @@ spec:
 #    port: 443
     images:
       pull_policy: IfNotPresent
-      resource_registry:
-        repository: cp.icr.io/cp/cp4a/aae/dba-etcd
-        tag: 21.0.3-IF005
+      # resource_registry:
+      #   repository: cp.icr.io/cp/cp4a/aae/dba-etcd
+      #   tag: 21.0.3-IF010
+      
     admin_secret_name: resource-registry-admin-secret
-    replica_size: 3
+#    replica_size: 3
     probe:
       liveness:
         initial_delay_seconds: 60
@@ -215,13 +204,13 @@ spec:
         timeout_seconds: 5
         success_threshold: 1
         failure_threshold: 3
-    resource:
-      limits:
-        cpu: "500m"
-        memory: "512Mi"
-      requests:
-        cpu: "100m"
-        memory: "256Mi"
+    # resource:
+    #   limits:
+    #     cpu: "500m"
+    #     memory: "512Mi"
+    #   requests:
+    #     cpu: "100m"
+    #     memory: "256Mi"
     auto_backup:
       enable: true
       minimal_time_interval: 300
@@ -243,26 +232,26 @@ spec:
     arch:
       amd64: "3 - Most preferred"
 
-    replica_count: cp4baReplicaCount
+#    replica_count: cp4baReplicaCount
 
     image:
-      repository: cp.icr.io/cp/cp4a/ban/navigator-sso
-      tag: ga-3011-icn-if002
+      # repository: cp.icr.io/cp/cp4a/ban/navigator-sso
+      # tag: 21.0.3-IF010
       pull_policy: IfNotPresent
     log:
       format: json
-    resources:
-      requests:
-        cpu: 250m
-        memory: 512Mi
-      limits:
-        cpu: 500m
-        memory: 1536Mi
+    # resources:
+    #   requests:
+    #     cpu: 750m
+    #     memory: 1024Mi
+    #   limits:
+    #     cpu: 1
+    #     memory: 1536Mi
 
     auto_scaling:
       enabled: false
-      max_replicas: 2
-      min_replicas: 2
+      max_replicas: cp4baReplicaCount
+      min_replicas: cp4baReplicaCount
       target_cpu_utilization_percentage: 80
 
     icn_production_setting:
@@ -315,28 +304,28 @@ spec:
       arch:
         amd64: "3 - Most preferred"
 
-      replica_count: cp4baReplicaCount
+#      replica_count: cp4baReplicaCount
 
       image:
-        repository: cp.icr.io/cp/cp4a/fncm/cpe
-        tag: ga-558-p8cpe-la005
+        # repository: cp.icr.io/cp/cp4a/fncm/cpe
+        # tag: 21.0.3-IF010
         pull_policy: IfNotPresent
 
       log:
        format: json
 
-      resources:
-        requests:
-          cpu: 500m
-          memory: 512Mi
-        limits:
-          cpu: 2
-          memory: 3072Mi
+      # resources:
+      #   requests:
+      #     cpu: 1
+      #     memory: 1024Mi
+      #   limits:
+      #     cpu: 2
+      #     memory: 3072Mi
 
       auto_scaling:
         enabled: false
-        max_replicas: 2
-        min_replicas: 2
+        max_replicas: cp4baReplicaCount
+        min_replicas: cp4baReplicaCount
         target_cpu_utilization_percentage: 80
 
       cpe_production_setting:
@@ -387,20 +376,20 @@ spec:
       replica_count: 1
 
       image:
-        repository: cp.icr.io/cp/cp4a/fncm/css
-        tag: ga-558-p8css-la005
+        # repository: cp.icr.io/cp/cp4a/fncm/css
+        # tag: 21.0.3-IF010
         pull_policy: IfNotPresent
 
       log:
         format: json
 
-      resources:
-        requests:
-          cpu: 250m
-          memory: 512Mi
-        limits:
-          cpu: 500m
-          memory: 4096Mi
+      # resources:
+      #   requests:
+      #     cpu: 250m
+      #     memory: 512Mi
+      #   limits:
+      #     cpu: 500m
+      #     memory: 4096Mi
 
       css_production_setting:
         jvm_max_heap_percentage: 50
@@ -436,23 +425,23 @@ spec:
       arch:
         amd64: "3 - Most preferred"
 
-      replica_count: cp4baReplicaCount
+#      replica_count: cp4baReplicaCount
 
       image:
-        repository: cp.icr.io/cp/cp4a/fncm/cmis
-        tag: ga-306-cmis-la104
+        # repository: cp.icr.io/cp/cp4a/fncm/cmis
+        # tag: 21.0.3-IF010
         pull_policy: IfNotPresent
 
       log:
         format: json
 
-      resources:
-        requests:
-          cpu: 500m
-          memory: 256Mi
-        limits:
-          cpu: 1
-          memory: 1536Mi
+      # resources:
+      #   requests:
+      #     cpu: 500m
+      #     memory: 256Mi
+      #   limits:
+      #     cpu: 1
+      #     memory: 1536Mi
 
       auto_scaling:
         enabled: false
@@ -513,28 +502,28 @@ spec:
       arch:
         amd64: "3 - Most preferred"
 
-      replica_count: cp4baReplicaCount
+#      replica_count: cp4baReplicaCount
 
       image:
-        repository: cp.icr.io/cp/cp4a/fncm/graphql
-        tag: ga-558-p8cgql-la005
+        # repository: cp.icr.io/cp/cp4a/fncm/graphql
+        # tag: 21.0.3-IF010
         pull_policy: IfNotPresent
 
       log:
         format: json
 
-      resources:
-        requests:
-          cpu: 500m
-          memory: 512Mi
-        limits:
-          cpu: 1
-          memory: 1536Mi
+      # resources:
+      #   requests:
+      #     cpu: 750m
+      #     memory: 1024Mi
+      #   limits:
+      #     cpu: 1
+      #     memory: 1536Mi
 
       auto_scaling:
         enabled: false
-        min_replicas: 2
-        max_replicas: 2
+        min_replicas: cp4baReplicaCount
+        max_replicas: cp4baReplicaCount
         target_cpu_utilization_percentage: 80
 
       graphql_production_setting:
@@ -593,8 +582,9 @@ spec:
           oc_cpe_obj_store_admin_user_groups:
             - "cp4baGroupAdminFullName"
             - "cp4baAdminFullName"
-          oc_cpe_obj_store_basic_user_groups:
             - "cp4baUsersGroup"
+          oc_cpe_obj_store_basic_user_groups:
+            - "#Authenticated-Users"            
           oc_cpe_obj_store_enable_content_event_emitter: false
         - oc_cpe_obj_store_display_name: "db2Devos1Name"
           oc_cpe_obj_store_symb_name: "db2Devos1Name"
@@ -668,14 +658,14 @@ spec:
     port: 443
     images:
       pull_policy: IfNotPresent
-      bastudio:
-        repository: cp.icr.io/cp/cp4a/bas/bastudio
-        tag: 21.0.3-IF005
+      # bastudio:
+      #   repository: cp.icr.io/cp/cp4a/bas/bastudio
+      #   tag: 21.0.3-IF010
 
     admin_secret_name: icp4adeploy-bas-admin-secret
     admin_user:  "cp4baAdminName"
 
-    replica_size: cp4baReplicaCount
+#    replica_size: cp4baReplicaCount
 
     database:
       type: "db2"
@@ -726,21 +716,21 @@ spec:
       failureThreshold: 5
       successThreshold: 1
 
-    resources:
-      bastudio:
-        limits:
-          cpu: '3'
-          memory: '3Gi'
-        requests:
-          cpu: '300m'
-          memory: '1752Mi'
-      init_process:
-        limits:
-          cpu: '500m'
-          memory: '512Mi'
-        requests:
-          cpu: '100m'
-          memory: '128Mi'
+    # resources:
+    #   bastudio:
+    #     limits:
+    #       cpu: '3'
+    #       memory: '3Gi'
+    #     requests:
+    #       cpu: '300m'
+    #       memory: '1752Mi'
+    #   init_process:
+    #     limits:
+    #       cpu: '500m'
+    #       memory: '512Mi'
+    #     requests:
+    #       cpu: '100m'
+    #       memory: '128Mi'
 
     csrf_referrer:
       whitelist: ''
@@ -757,18 +747,16 @@ spec:
 
     jms_server:
       image:
-        repository: cp.icr.io/cp/cp4a/bas/jms
-        tag: 21.0.3-IF005
         pull_policy: IfNotPresent
       tls:
         tls_secret_name: "{{ meta.name }}-bastudio-jms-tls"
-      resources:
-        limits:
-          memory: "1Gi"
-          cpu: "500m"
-        requests:
-          memory: "256Mi"
-          cpu: "200m"
+      # resources:
+      #   limits:
+      #     memory: "1Gi"
+      #     cpu: "500m"
+      #   requests:
+      #     memory: "256Mi"
+      #     cpu: "200m"
       storage:
         persistent: true
         size: "1Gi"
@@ -783,12 +771,12 @@ spec:
     playback_server:
       images:
         pull_policy: IfNotPresent
-        db_job:
-          repository: cp.icr.io/cp/cp4a/aae/solution-server-helmjob-db
-          tag: 21.0.3-IF005
-        solution_server:
-          repository: cp.icr.io/cp/cp4a/aae/solution-server
-          tag: 21.0.3-IF005
+        # db_job:
+        #   repository: cp.icr.io/cp/cp4a/aae/solution-server-helmjob-db
+        #   tag: 21.0.3-IF010
+        # solution_server:
+        #   repository: cp.icr.io/cp/cp4a/aae/solution-server
+        #   tag: 21.0.3-IF010
 
       hostname: "{{ 'ae-pbk-' + shared_configuration.sc_deployment_hostname_suffix }}"
       port: 443
@@ -799,7 +787,7 @@ spec:
       external_tls_secret: tlsSecretName
       external_connection_timeout: 90s
 
-      replica_size: cp4baReplicaCount
+#      replica_size: cp4baReplicaCount
 
       use_custom_jdbc_drivers: false
       service_type: Route
@@ -867,21 +855,21 @@ spec:
           success_threshold: 1
           timeout_seconds: 180
 
-      resource_ae:
-        limits:
-          cpu: 1000m
-          memory: 2Gi
-        requests:
-          cpu: 300m
-          memory: 256Mi
+      # resource_ae:
+      #   limits:
+      #     cpu: 1000m
+      #     memory: 2Gi
+      #   requests:
+      #     cpu: 300m
+      #     memory: 256Mi
 
-      resource_init:
-        limits:
-          cpu: 500m
-          memory: 256Mi
-        requests:
-          cpu: 100m
-          memory: 128Mi
+      # resource_init:
+      #   limits:
+      #     cpu: 500m
+      #     memory: 256Mi
+      #   requests:
+      #     cpu: 100m
+      #     memory: 128Mi
 
       session:
         check_period: "3600000"
@@ -919,12 +907,12 @@ spec:
     - name: workspace
       images:
         pull_policy: IfNotPresent
-        solution_server:
-          repository: cp.icr.io/cp/cp4a/aae/solution-server
-          tag: 21.0.3-IF005
-        db_job:
-          repository: cp.icr.io/cp/cp4a/aae/solution-server-helmjob-db
-          tag: 21.0.3-IF005
+        # solution_server:
+        #   repository: cp.icr.io/cp/cp4a/aae/solution-server
+        #   tag: 21.0.3-IF010
+        # db_job:
+        #   repository: cp.icr.io/cp/cp4a/aae/solution-server-helmjob-db
+        #   tag: 21.0.3-IF010
 
       hostname: "{{ 'ae-workspace-' + shared_configuration.sc_deployment_hostname_suffix }}"
       port: 443
@@ -934,7 +922,7 @@ spec:
       external_tls_secret: tlsSecretName
       external_connection_timeout: 90s
 
-      replica_size: cp4baReplicaCount
+#      replica_size: cp4baReplicaCount
 
       data_persistence:
         enable: true
@@ -1007,21 +995,21 @@ spec:
           success_threshold: 1
           timeout_seconds: 180
 
-      resource_ae:
-        limits:
-          cpu: 1000m
-          memory: 2Gi
-        requests:
-          cpu: 300m
-          memory: 256Mi
+      # resource_ae:
+      #   limits:
+      #     cpu: 1000m
+      #     memory: 2Gi
+      #   requests:
+      #     cpu: 300m
+      #     memory: 256Mi
 
-      resource_init:
-        limits:
-          cpu: 500m
-          memory: 256Mi
-        requests:
-          cpu: 100m
-          memory: 128Mi
+      # resource_init:
+      #   limits:
+      #     cpu: 500m
+      #     memory: 256Mi
+      #   requests:
+      #     cpu: 100m
+      #     memory: 128Mi
 
       session:
         check_period: "3600000"
@@ -1100,23 +1088,23 @@ spec:
         enabled: true
 
     rr_integration:
-      image:
-        repository: cp.icr.io/cp/cp4a/ads/ads-rrintegration
-        tag: 21.0.3-IF005
+      # image:
+      #   repository: cp.icr.io/cp/cp4a/ads/ads-rrintegration
+      #   tag: 21.0.3-IF010
 
-      resources:
-        requests:
-          cpu: '200m'
-          memory: '256Mi'
-        limits:
-          cpu: '500m'
-          memory: '512Mi'
+      # resources:
+      #   requests:
+      #     cpu: '200m'
+      #     memory: '256Mi'
+      #   limits:
+      #     cpu: '500m'
+      #     memory: '512Mi'
 
     mongo:
       use_embedded: true
-      image:
-        repository: cp.icr.io/cp/cp4a/ads/mongo
-        tag: 4.2.17
+      # image:
+      #   repository: cp.icr.io/cp/cp4a/ads/mongo
+      #   tag: 4.2.20
 
       persistence:
         use_dynamic_provisioning: true
@@ -1125,79 +1113,81 @@ spec:
           requests:
             storage: 3Gi
 
-      resources:
-        requests:
-          cpu: '250m'
-          memory: '256Mi'
-        limits:
-          cpu: '500m'
-          memory: '1Gi'
+      # resources:
+      #   requests:
+      #     cpu: '250m'
+      #     memory: '256Mi'
+      #   limits:
+      #     cpu: '500m'
+      #     memory: '1Gi'
 
     front:
-      image:
-        repository: cp.icr.io/cp/cp4a/ads/ads-front
-        tag: 21.0.3-IF005
+      # image:
+      #   repository: cp.icr.io/cp/cp4a/ads/ads-front
+      #   tag: 21.0.3-IF010
 
       log_trace_specification: "*=warning"
-      replica_count: cp4baReplicaCount
-      resources:
-        requests:
-          cpu: '250m'
-          memory: '512Mi'
-        limits:
-          cpu: '750m'
-          memory: '2Gi'
+#      replica_count: cp4baReplicaCount
+      # resources:
+      #   requests:
+      #     cpu: '250m'
+      #     memory: '512Mi'
+      #   limits:
+      #     cpu: '750m'
+      #     memory: '2Gi'
 
     download_service:
-      image:
-        repository: cp.icr.io/cp/cp4a/ads/ads-download
-        tag: 21.0.3-IF005
+      # image:
+      #   repository: cp.icr.io/cp/cp4a/ads/ads-download
+      #   tag: 21.0.3-IF010
       log_trace_specification: "*=warning"
 
-      replica_count: cp4baReplicaCount
-      resources:
-        requests:
-          cpu: '100m'
-          memory: '200Mi'
-        limits:
-          cpu: '250m'
-          memory: '200Mi'
+#      replica_count: cp4baReplicaCount
+      # resources:
+      #   requests:
+      #     cpu: '100m'
+      #     memory: '200Mi'
+      #   limits:
+      #     cpu: '250m'
+      #     memory: '200Mi'
 
     rest_api:
-      image:
-        repository: cp.icr.io/cp/cp4a/ads/ads-restapi
-        tag: 21.0.3-IF005
-      replica_count: cp4baReplicaCount
+      # image:
+      #   repository: cp.icr.io/cp/cp4a/ads/ads-restapi
+      #   tag: 21.0.3-IF010
+      
+#      replica_count: cp4baReplicaCount
       log_trace_specification: "*=warning"
 
-      resources:
-        requests:
-          cpu: '250m'
-          memory: '512Mi'
-        limits:
-          cpu: '750m'
-          memory: '2Gi'
+      # resources:
+      #   requests:
+      #     cpu: '250m'
+      #     memory: '512Mi'
+      #   limits:
+      #     cpu: '750m'
+      #     memory: '2Gi'
 
     credentials_service:
-      image:
-        repository: cp.icr.io/cp/cp4a/ads/ads-credentials
-        tag: 21.0.3-IF005
-      replica_count: cp4baReplicaCount
+      # image:
+      #   repository: cp.icr.io/cp/cp4a/ads/ads-credentials
+      #   tag: 21.0.3-IF010
+      
+#      replica_count: cp4baReplicaCount
       log_trace_specification: "*=warning"
 
-      resources:
-        requests:
-          cpu: '500m'
-          memory: '512Mi'
-        limits:
-          cpu: '1000m'
-          memory: '2Gi'
+      # resources:
+      #   requests:
+      #     cpu: '500m'
+      #     memory: '512Mi'
+      #   limits:
+      #     cpu: '1000m'
+      #     memory: '2Gi'
 
     git_service:
-      image:
-        repository: cp.icr.io/cp/cp4a/ads/ads-gitservice
-        tag: 21.0.3-IF005
-      replica_count: cp4baReplicaCount
+      # image:
+      #   repository: cp.icr.io/cp/cp4a/ads/ads-gitservice
+      #   tag: 21.0.3-IF010
+#      replica_count: cp4baReplicaCount
       log_trace_specification: "*=warning"
 
       persistence:
@@ -1207,49 +1197,50 @@ spec:
           requests:
             storage: 300Gi
 
-      resources:
-        requests:
-          cpu: '500m'
-          memory: '512Mi'
-        limits:
-          cpu: '1500m'
-          memory: '2Gi'
+      # resources:
+      #   requests:
+      #     cpu: '500m'
+      #     memory: '512Mi'
+      #   limits:
+      #     cpu: '1500m'
+      #     memory: '2Gi'
 
     parsing_service:
-      image:
-        repository: cp.icr.io/cp/cp4a/ads/ads-parsing
-        tag: 21.0.3-IF005
-      replica_count: cp4baReplicaCount
+      # image:
+      #   repository: cp.icr.io/cp/cp4a/ads/ads-parsing
+      #   tag: 21.0.3-IF010
+      
+#      replica_count: cp4baReplicaCount
       log_trace_specification: "*=warning"
 
-      resources:
-        requests:
-          cpu: '500m'
-          memory: '512Mi'
-        limits:
-          cpu: '1000m'
-          memory: '2Gi'
+      # resources:
+      #   requests:
+      #     cpu: '500m'
+      #     memory: '512Mi'
+      #   limits:
+      #     cpu: '1000m'
+      #     memory: '2Gi'
 
     run_service:
-      image:
-        repository: cp.icr.io/cp/cp4a/ads/ads-run
-        tag: 21.0.3-IF005
-      replica_count: cp4baReplicaCount
+      # image:
+      #   repository: cp.icr.io/cp/cp4a/ads/ads-run
+      #   tag: 21.0.3-IF010
+#      replica_count: cp4baReplicaCount
       log_trace_specification: "*=warning"
 
-      resources:
-        requests:
-          cpu: '500m'
-          memory: '512Mi'
-        limits:
-          cpu: '1500m'
-          memory: '2Gi'
+      # resources:
+      #   requests:
+      #     cpu: '500m'
+      #     memory: '512Mi'
+      #   limits:
+      #     cpu: '1500m'
+      #     memory: '2Gi'
 
     embedded_build_service:
-      image:
-        repository: cp.icr.io/cp/cp4a/ads/ads-build
-        tag: 21.0.3-IF005
-      replica_count: cp4baReplicaCount
+      # image:
+      #   repository: cp.icr.io/cp/cp4a/ads/ads-build
+      #   tag: 21.0.3-IF010
+#      replica_count: cp4baReplicaCount
       log_trace_specification: "*=warning"
 
       persistence:
@@ -1259,19 +1250,20 @@ spec:
           requests:
             storage: '6Gi'
 
-      resources:
-        requests:
-          cpu: '500m'
-          memory: '512Mi'
-        limits:
-          cpu: '1500m'
-          memory: '2Gi'
+      # resources:
+      #   requests:
+      #     cpu: '500m'
+      #     memory: '512Mi'
+      #   limits:
+      #     cpu: '1500m'
+      #     memory: '2Gi'
 
     embedded_runtime_service:
-      image:
-        repository: cp.icr.io/cp/cp4a/ads/ads-runtime
-        tag: 21.0.3-IF005
-      replica_count: cp4baReplicaCount
+      # image:
+      #   repository: cp.icr.io/cp/cp4a/ads/ads-runtime
+      #   tag: 21.0.3-IF010
+      
+#      replica_count: cp4baReplicaCount
       log_trace_specification: "*=warning"
 
       stack_trace_enabled: false
@@ -1282,19 +1274,20 @@ spec:
           resources: |-
             <heap unit="entries">100</heap>
 
-      resources:
-        requests:
-          cpu: '500m'
-          memory: '512Mi'
-        limits:
-          cpu: '1500m'
-          memory: '2Gi'
+      # resources:
+      #   requests:
+      #     cpu: '500m'
+      #     memory: '512Mi'
+      #   limits:
+      #     cpu: '1500m'
+      #     memory: '2Gi'
 
     decision_runtime_service:
-      image:
-        repository: cp.icr.io/cp/cp4a/ads/ads-runtime
-        tag: 21.0.3-IF005
-      replica_count: cp4baReplicaCount
+      # image:
+      #   repository: cp.icr.io/cp/cp4a/ads/ads-runtime
+      #   tag: 21.0.3-IF010
+      
+#      replica_count: cp4baReplicaCount
       log_trace_specification: "*=warning"
 
       stack_trace_enabled: false
@@ -1305,13 +1298,13 @@ spec:
           resources: |-
             <heap unit="entries">100</heap>
 
-      resources:
-        requests:
-          cpu: '500m'
-          memory: '512Mi'
-        limits:
-          cpu: '1000m'
-          memory: '2Gi'
+      # resources:
+      #   requests:
+      #     cpu: '500m'
+      #     memory: '512Mi'
+      #   limits:
+      #     cpu: '1000m'
+      #     memory: '2Gi'
 
       autoscaling:
         enabled: false
@@ -1328,7 +1321,7 @@ spec:
     port: 443
     nodeport: 30026
 
-    replicas: cp4baReplicaCount
+#    replicas: cp4baReplicaCount
 
     admin_user: "cp4baAdminName"
     admin_secret_name: "ibm-bawaut-admin-secret"
@@ -1344,28 +1337,28 @@ spec:
 #      tls_trust_store: 
 
     image:
-      repository: cp.icr.io/cp/cp4a/bas/workflow-authoring
-      tag: 21.0.3-IF005
+      # repository: cp.icr.io/cp/cp4a/bas/workflow-authoring
+      # tag: 21.0.3-IF010
       pullPolicy: IfNotPresent
 
     pfs_bpd_database_init_job:
-      repository: cp.icr.io/cp/cp4a/baw/pfs-bpd-database-init-prod
-      tag: 21.0.3-IF005
+      # repository: cp.icr.io/cp/cp4a/baw/pfs-bpd-database-init-prod
+      # tag: 21.0.3-IF010
       pullPolicy: IfNotPresent
 
     upgrade_job:
-      repository: cp.icr.io/cp/cp4a/baw/workflow-server-dbhandling
-      tag: 21.0.3-IF005
+      # repository: cp.icr.io/cp/cp4a/baw/workflow-server-dbhandling
+      # tag: 21.0.3-IF010
       pullPolicy: IfNotPresent
 
     bas_auto_import_job:
-      repository: cp.icr.io/cp/cp4a/baw/toolkit-installer
-      tag: 21.0.3-IF005
+      # repository: cp.icr.io/cp/cp4a/baw/toolkit-installer
+      # tag: 21.0.3-IF010
       pullPolicy: IfNotPresent
 
     ibm_workplace_job:
-      repository: cp.icr.io/cp/cp4a/baw/iaws-ibm-workplace
-      tag: 21.0.3-IF005
+      # repository: cp.icr.io/cp/cp4a/baw/iaws-ibm-workplace
+      # tag: 21.0.3-IF010
       pull_policy: IfNotPresent
 
     database:
@@ -1387,8 +1380,8 @@ spec:
 
     content_integration:
       init_job_image:
-        repository: cp.icr.io/cp/cp4a/baw/iaws-ps-content-integration
-        tag: 21.0.3-IF005
+        # repository: cp.icr.io/cp/cp4a/baw/iaws-ps-content-integration
+        # tag: 21.0.3-IF010
         pull_policy: IfNotPresent
 
       domain_name: "CP4BADOM"
@@ -1397,8 +1390,8 @@ spec:
 
     case:
       init_job_image:
-        repository: cp.icr.io/cp/cp4a/baw/workflow-server-case-initialization
-        tag: 21.0.3-IF005
+        # repository: cp.icr.io/cp/cp4a/baw/workflow-server-case-initialization
+        # tag: 21.0.3-IF010
         pull_policy: IfNotPresent
 
       domain_name: "CP4BADOM"
@@ -1418,36 +1411,36 @@ spec:
 #        emitter_batch_size: 
 #        process_pe_events: 
 
-    resources_init:
-      limits:
-        cpu: "500m"
-        memory: 256Mi
-      requests:
-        cpu: "200m"
-        memory: 128Mi
+    # resources_init:
+    #   limits:
+    #     cpu: "500m"
+    #     memory: 256Mi
+    #   requests:
+    #     cpu: "200m"
+    #     memory: 128Mi
 
-    resources_init_heavy_job:
-      limits:
-        cpu: 1
-        memory: 1536Mi
-      requests:
-        cpu: "500m"
-        memory: 512Mi
+    # resources_init_heavy_job:
+    #   limits:
+    #     cpu: 1
+    #     memory: 1536Mi
+    #   requests:
+    #     cpu: "500m"
+    #     memory: 512Mi
 
     jms:
       image:
-        repository: cp.icr.io/cp/cp4a/baw/jms
-        tag: 21.0.3-IF005
+        # repository: cp.icr.io/cp/cp4a/baw/jms
+        # tag: 21.0.3-IF010
         pull_policy: IfNotPresent
 #      tls:
 #        tls_secret_name: ibm-jms-tls-secret - we don't have this secret yet
-      resources:
-        limits:
-          memory: "2Gi"
-          cpu: "1000m"
-        requests:
-          memory: "512Mi"
-          cpu: "200m"
+      # resources:
+      #   limits:
+      #     memory: "2Gi"
+      #     cpu: "1000m"
+      #   requests:
+      #     memory: "512Mi"
+      #     cpu: "200m"
       storage:
         persistent: true
         size: "1Gi"
@@ -1514,8 +1507,8 @@ spec:
 
     autoscaling:
       enabled: false
-      max_replicas: 2
-      min_replicas: 2
+      max_replicas: cp4baReplicaCount
+      min_replicas: cp4baReplicaCount
       target_cpu_utilization_percentage: 80
 
     environment_config:
@@ -1548,21 +1541,21 @@ spec:
   ##################################################################################
   baml_configuration:
     intelligent_task_prioritization:
-      replicas: cp4baReplicaCount
+#      replicas: cp4baReplicaCount
       probes:
         readiness:
           initial_delay_seconds: 40
       image:
-        repository: cp.icr.io/cp/cp4a/baw/bui-task-prioritization
-        tag: "21.0.3-IF005"
+        # repository: cp.icr.io/cp/cp4a/baw/bui-task-prioritization
+        # tag: "21.0.3-IF010"
         pull_policy: IfNotPresent
-      resources:
-        limits:
-          cpu: "1"
-          memory: "2048Mi"
-        requests:
-          cpu: "500m"
-          memory: "1024Mi"
+      # resources:
+      #   limits:
+      #     cpu: "1"
+      #     memory: "2048Mi"
+      #   requests:
+      #     cpu: "500m"
+      #     memory: "1024Mi"
       storage:
         use_dynamic_provisioning: true
         existing_pvc_for_logstore: ""
@@ -1576,21 +1569,21 @@ spec:
         target_cpu_utilization_percentage: 80
 
     workforce_insights:
-      replicas: cp4baReplicaCount
+#      replicas: cp4baReplicaCount
       probes:
         readiness:
           initial_delay_seconds: 40
       image:
-        repository: cp.icr.io/cp/cp4a/baw/workforce-insights
-        tag: "21.0.3-IF005"
+        # repository: cp.icr.io/cp/cp4a/baw/workforce-insights
+        # tag: "21.0.3-IF010"
         pull_policy: IfNotPresent
-      resources:
-        limits:
-          cpu: "1"
-          memory: "2048Mi"
-        requests:
-          cpu: "500m"
-          memory: "1024Mi"
+      # resources:
+      #   limits:
+      #     cpu: "1"
+      #     memory: "2048Mi"
+      #   requests:
+      #     cpu: "500m"
+      #     memory: "1024Mi"
       storage:
         use_dynamic_provisioning: true
         existing_pvc_for_logstore: ""
@@ -1609,22 +1602,12 @@ spec:
     port: 443
     service_type: Route
 
-    elasticsearch:
-      endpoint: ""
-      admin_secret_name: ""
-      connect_timeout: 10s
-      read_timeout: 30s
-      thread_count: 0
-      max_connection_total: -1
-      max_connection_per_route: -1
-      use_iaf: false
-
     image:
-      repository: cp.icr.io/cp/cp4a/baw/pfs-prod
-      tag: "21.0.3-IF005"
+      # repository: cp.icr.io/cp/cp4a/baw/pfs-prod
+      # tag: "21.0.3-IF010"
       pull_policy: IfNotPresent
 
-    replicas: cp4baReplicaCount
+#    replicas: cp4baReplicaCount
 
     service_account:
     anti_affinity: hard
@@ -1643,13 +1626,13 @@ spec:
       tls_trust_list:
       tls_trust_store:
 
-    resources:
-      requests:
-        cpu: 500m
-        memory: 512Mi
-      limits:
-        cpu: 2
-        memory: 4Gi
+    # resources:
+    #   requests:
+    #     cpu: 500m
+    #     memory: 512Mi
+    #   limits:
+    #     cpu: 2
+    #     memory: 4Gi
 
     liveness_probe:
       initial_delay_seconds: 300
@@ -1708,66 +1691,13 @@ spec:
       pfs_connect_timeout: 10
       pfs_response_timeout: 30
       pfs_registration_key: /dba/appresources/IBM_PFS/PFS_SYSTEM
-      resources:
-        limits:
-          memory: '512Mi'
-          cpu: '500m'
-        requests:
-          memory: '512Mi'
-          cpu: '200m'
-
-  ########################################################################
-  ########   Embedded Elasticsearch configuration                 ########
-  ########################################################################
-  elasticsearch_configuration:
-    es_image:
-      repository: cp.icr.io/cp/cp4a/baw/pfs-elasticsearch-prod
-      tag: "21.0.3-IF005"
-      pull_policy: IfNotPresent
-
-    es_init_image:
-      repository: cp.icr.io/cp/cp4a/baw/pfs-init-prod
-      tag: "21.0.3-IF005"
-      pull_policy: IfNotPresent
-
-    es_nginx_image:
-      repository: cp.icr.io/cp/cp4a/baw/pfs-nginx-prod
-      tag: "21.0.3-IF005"
-      pull_policy: IfNotPresent
-
-    replicas: cp4baReplicaCount
-    service_type: ClusterIP
-    external_port:
-    admin_secret_name:
-    anti_affinity: hard
-
-    privileged: false
-    service_account: ""
-
-    probe_initial_delay: 90
-    heap_size: "2048m"
-    monitor_enabled: false
-
-    resources:
-      requests:
-        cpu: "100m"
-        memory: "2Gi"
-      limits:
-        cpu: "1000m"
-        memory: "6Gi"
-
-    storage:
-      persistent: true
-      use_dynamic_provisioning: true
-      size: 10Gi
-      storage_class: "{{ shared_configuration.storage_configuration.sc_fast_file_storage_classname }}"
-
-    snapshot_storage:
-      enabled: false
-      use_dynamic_provisioning: true
-      size: 30Gi
-      storage_class_name: ""
-      existing_claim_name: ""
+      # resources:
+      #   limits:
+      #     memory: '512Mi'
+      #     cpu: '500m'
+      #   requests:
+      #     memory: '512Mi'
+      #     cpu: '200m'
 
   ##############################################################################
   ########      IBM Business Automation Insights (BAI) configuration    ########
@@ -1777,8 +1707,8 @@ spec:
     persistence:
       useDynamicProvisioning: true
 #    bai_secret: ""
-    image_credentials:
-      registry: cp.icr.io/cp/cp4a
+    # image_credentials:
+    #   registry: cp.icr.io/cp/cp4a
     image_pull_policy: "IfNotPresent"
     sc_deployment_license: "production"
 
@@ -1796,19 +1726,19 @@ spec:
 
     setup:
       backoff_limit: 6
-      resources:
-        requests:
-          memory: "50Mi"
-          cpu: "200m"
-        limits:
-          memory: "120Mi"
+      # resources:
+      #   requests:
+      #     memory: "50Mi"
+      #     cpu: "200m"
+      #   limits:
+      #     memory: "120Mi"
       run_as_user: "{{ shared_configuration.sc_run_as_user }}"
 
     admin:
 #      service_type: NodePort
 #      external_port: 
 #      hostname: "admin.bai.{{ shared_configuration.sc_deployment_hostname_suffix }}"
-      replicas: cp4baReplicaCount
+#      replicas: cp4baReplicaCount
 #      username: admin
 #      password: passw0rd
 #      run_as_user: "{{ shared_configuration.sc_run_as_user }}"
@@ -1817,7 +1747,7 @@ spec:
 
     management:
 #      hostname: "management.bai.{{ shared_configuration.sc_deployment_hostname_suffix }}"
-      replicas: cp4baReplicaCount
+#      replicas: cp4baReplicaCount
 #      external_tls_secret_name: "{{ meta.name }}-bai-management-external-tls-secret"
 #      external_tls_ca_secret_name: ""
 
@@ -1849,9 +1779,6 @@ spec:
 
     bpmn:
       install: true
-      image:
-        repository: cp.icr.io/cp/cp4a/bai/bai-bpmn
-        tag: 21.0.3-IF005
 #      recovery_path: ""
       parallelism: cp4baBaiJobParallelism
       end_aggregation_delay: 10000
@@ -1859,40 +1786,25 @@ spec:
 
     bawadv:
       install: false
-      image:
-        repository: cp.icr.io/cp/cp4a/bai/bai-bawadv
-        tag: 21.0.3-IF005
 #      recovery_path: ""
       parallelism: cp4baBaiJobParallelism
 
     icm:
       install: true
-      image:
-        repository: cp.icr.io/cp/cp4a/bai/bai-icm
-        tag: 21.0.3-IF005
 #      recovery_path: ""
       parallelism: cp4baBaiJobParallelism
 
     odm:
       install: false
-      image:
-        repository: cp.icr.io/cp/cp4a/bai/bai-odm
-        tag: 21.0.3-IF005
 #      recovery_path: ""
       parallelism: cp4baBaiJobParallelism
 
     content:
       install: true
-      image:
-        repository: cp.icr.io/cp/cp4a/bai/bai-content
-        tag: 21.0.3-IF005
 #      recovery_path: ""
       parallelism: cp4baBaiJobParallelism
 
     event_forwarder:
-#      image:
-#        repository: cp.icr.io/cp/cp4a/bai/bai-event-forwarder
-#        tag: 21.0.3-IF005
 #      recovery_path: ""
       parallelism: cp4baBaiJobParallelism
 #      configurations:
@@ -1907,16 +1819,12 @@ spec:
 #      principal: ""
 #      keytab: ""
 
-    init_image:
-      image:
-        repository: cp.icr.io/cp/cp4a/bai/bai-init
-        tag: 21.0.3-IF005
 
     business_performance_center:
       install: true
 #      config_secret_name: ""
 #      external_port: 9443
-      replicas: cp4baReplicaCount
+#      replicas: cp4baReplicaCount
 #      oidc:
 #        host: ""
 #        external_host: ""
@@ -1930,10 +1838,10 @@ spec:
 #      logout_redirect_uris: ""
 #      run_as_user: "{{ shared_configuration.sc_run_as_user }}"
 #      hostname: "business-performance-center-bai-{{ shared_configuration.sc_deployment_hostname_suffix }}"
-      resources:
-        limits:
-          memory: "2Gi"
-          cpu: "2000m"
+      # resources:
+      #   limits:
+      #     memory: "2Gi"
+      #     cpu: "2000m"
 #      auto_plugin: true
       external_tls_secret_name: tlsSecretName
 #      external_tls_ca_secret_name: ""
