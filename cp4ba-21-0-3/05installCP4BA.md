@@ -165,7 +165,7 @@
    
    First you should see that the two persistent volume claims are get bound. Then the deployment of the 9 operators can be seen, and last but not least, the 9 pods implementing those operators should be getting deployed and running.
 
-6. Wait untill all Operators are installed, this might take a while (you need to see e.g. 9 pods in \<your-ibm-cp4ba-project\>, 12 pods in ibm-common-services project, all Running and Ready 1/1)
+6. Wait untill all Operators are installed, this might take a while (you need to see e.g. 9 pods in \<your-ibm-cp4ba-project\>, 11 pods in ibm-common-services project, all Running and Ready 1/1)
    
    **Note:** The number of pods can vary based on when you install and what version of the Operators is installed. Important is that all are Running and Ready.
 
