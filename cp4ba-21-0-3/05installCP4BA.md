@@ -38,15 +38,14 @@
    ```
    creating temp folder
    
-   Select the cloud platform to deploy: 
+   Select the cloud platform to deploy:
    1) RedHat OpenShift Kubernetes Service (ROKS) - Public Cloud
    2) Openshift Container Platform (OCP) - Private Cloud
    3) Other ( Certified Kubernetes Cloud Platform / CNCF)
    Enter a valid option [1 to 3]: 1
    
    
-   
-   This script prepares the OLM for the deployment of some Cloud Pak for Business Automation capabilities 
+   This script prepares the OLM for the deployment of some Cloud Pak for Business Automation capabilities
    
    What type of deployment is being performed?
    1) Starter
@@ -63,21 +62,19 @@
    
    Using project <your-ibm-cp4ba-project>...
    
-   Here are the existing users on this cluster:
+   Here are the existing users on this cluster: 
    <list of users>
    Enter an existing username in your cluster, valid option [1 to X], non-admin is suggested: <select a number>
-
+   
    Follow the instructions on how to get your Entitlement Key: 
    https://www.ibm.com/support/knowledgecenter/en/SSYHZ8_21.0.x/com.ibm.dba.install/op_topics/tsk_images_enterp_entitled.html
    
    Do you have a Cloud Pak for Business Automation Entitlement Registry key (Yes/No, default: No): y
    
-   Enter your Entitlement Registry key: 
+   Enter your Entitlement Registry key: <paste your key here once - it will not be shown>
    Verifying the Entitlement Registry key...
    Login Succeeded!
    Entitlement Registry key is valid.
-   
-   Create storage classes for deployment: Done 
    
    The existing storage classes in the cluster: 
    NAME                                  PROVISIONER         RECLAIMPOLICY   VOLUMEBINDINGMODE   ALLOWVOLUMEEXPANSION   AGE
@@ -87,7 +84,7 @@
    <your-list-of-storage classes>
    
    To provision the persistent volumes and volume claims
-   please enter the dynamic storage classname for fast storage: cp4a-file-delete-gold-gid
+   please enter the dynamic storage classname: cp4a-file-delete-gold-gid
    Creating docker-registry secret for Entitlement Registry key in project <your-ibm-cp4ba-project>...
    secret/admin.registrykey created
    Done
@@ -114,16 +111,19 @@
    ......
    ......
    Done
-   ibm-operator-catalog   IBM Operator Catalog   grpc   IBM         1m
-   Found existing ibm operator catalog source, updating it
-   catalogsource.operators.coreos.com/ibm-operator-catalog configured
-   IBM Operator Catalog source updated!
+   catalogsource.operators.coreos.com/ibm-cp4a-operator-catalog created
+   catalogsource.operators.coreos.com/ibm-cp-automation-foundation-catalog created
+   catalogsource.operators.coreos.com/ibm-automation-foundation-core-catalog created
+   catalogsource.operators.coreos.com/opencloud-operators created
+   catalogsource.operators.coreos.com/ibm-db2uoperator-catalog configured
+   catalogsource.operators.coreos.com/bts-operator created
+   catalogsource.operators.coreos.com/cloud-native-postgresql-catalog created
+   IBM Operator Catalog source created!
    Waiting for CP4A Operator Catalog pod initialization
-   Waiting for CP4A Operator Catalog pod initialization
-   CP4BA Operator Catalog is running ibm-operator-catalog-97xx4                                        1/1   Running     0     30s
+   CP4BA Operator Catalog is running ibm-cp4a-operator-catalog-b8fpx                          1/1   Running     0     30s
    operatorgroup.operators.coreos.com/ibm-cp4a-operator-catalog-group created
    CP4BA Operator Group Created!
-   subscription.operators.coreos.com/ibm-cp4a-operator-catalog-subscription created
+   subscription.operators.coreos.com/ibm-cp4a-operator created
    CP4BA Operator Subscription Created!
    Waiting for CP4BA operator pod initialization
    No resources found in <your-ibm-cp4ba-project> namespace.
@@ -135,8 +135,7 @@
    Waiting for CP4BA operator pod initialization
    Waiting for CP4BA operator pod initialization
    Waiting for CP4BA operator pod initialization
-   Waiting for CP4BA operator pod initialization
-   CP4A operator is running ibm-cp4a-operator-7dbfc56cdb-h7zrk                                1/1   Running             0     114s
+   CP4A operator is running ibm-cp4a-operator-5d9b6794d9-676q2                                1/1   Running   0     93s
    
    Adding the user <your-selected-user> to the ibm-cp4a-operator role...Done!
    
@@ -146,9 +145,9 @@
    
    Storage classes are needed to run the deployment script. For the Starter deployment scenario, you may use one (1) storage class.
    For an Production deployment, the deployment script will ask for three (3) storage classes to meet the slow, medium, and fast
-   storage for the configuration of CP4A components.  If you don't have three (3) storage classes, you can use the same one for
-   slow, medium, or fast.  Note that you can get the existing storage class(es) in the environment by running the following
-   command: oc get storageclass. Take note of the storage classes that you want to use for deployment. 
+   storage for the configuration of CP4A components.  If you don't have three (3) storage classes, you can use the same one for
+   slow, medium, or fast.  Note that you can get the existing storage class(es) in the environment by running the following
+   command: oc get storageclass. Take note of the storage classes that you want to use for deployment.
    NAME                                  PROVISIONER         RECLAIMPOLICY   VOLUMEBINDINGMODE   ALLOWVOLUMEEXPANSION   AGE
    cp4a-file-delete-bronze-gid           ibm.io/ibmc-file    Delete          Immediate           false                  2m
    cp4a-file-delete-gold-gid (default)   ibm.io/ibmc-file    Delete          Immediate           false                  2m
