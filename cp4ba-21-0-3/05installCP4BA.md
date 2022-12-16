@@ -67,7 +67,8 @@
    Enter an existing username in your cluster, valid option [1 to X], non-admin is suggested: <select a number>
    
    Follow the instructions on how to get your Entitlement Key: 
-   https://www.ibm.com/support/knowledgecenter/en/SSYHZ8_21.0.x/com.ibm.dba.install/op_topics/tsk_images_enterp_entitled.html
+   https://www.ibm.com/support/knowledgecenter/en/SSYHZ8_21.0.x/com.ibm.dba.install/op_topics/
+   tsk_images_enterp_entitled.html
    
    Do you have a Cloud Pak for Business Automation Entitlement Registry key (Yes/No, default: No): y
    
@@ -143,11 +144,12 @@
    namespaceSelector...namespace/default labeled
    Done
    
-   Storage classes are needed to run the deployment script. For the Starter deployment scenario, you may use one (1) storage class.
-   For an Production deployment, the deployment script will ask for three (3) storage classes to meet the slow, medium, and fast
-   storage for the configuration of CP4A components.  If you don't have three (3) storage classes, you can use the same one for
-   slow, medium, or fast.  Note that you can get the existing storage class(es) in the environment by running the following
-   command: oc get storageclass. Take note of the storage classes that you want to use for deployment.
+   Storage classes are needed to run the deployment script. For the Starter deployment scenario, you may use one (1)
+   storage class. For an Production deployment, the deployment script will ask for three (3) storage classes to meet
+   the slow, medium, and fast storage for the configuration of CP4A components.  If you don't have three (3) storage
+   classes, you can use the same one for slow, medium, or fast.  Note that you can get the existing storage class(es)
+   in the environment by running the following command: oc get storageclass. Take note of the storage classes that you
+   want to use for deployment.
    NAME                                  PROVISIONER         RECLAIMPOLICY   VOLUMEBINDINGMODE   ALLOWVOLUMEEXPANSION   AGE
    cp4a-file-delete-bronze-gid           ibm.io/ibmc-file    Delete          Immediate           false                  2m
    cp4a-file-delete-gold-gid (default)   ibm.io/ibmc-file    Delete          Immediate           false                  2m
