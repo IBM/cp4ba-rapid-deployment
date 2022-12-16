@@ -205,7 +205,8 @@
    This script PREPARES and optionaly CREATES the CP4BA deployment using template <your-selected-template> in
    project <your-ibm-cp4ba-project>.
    
-   Are 01-parametersForDb2OnOCP.sh and 05-parametersForCp4ba.sh up to date, and do you want to continue? (Yes/No, default: No): y
+   Are 01-parametersForDb2OnOCP.sh and 05-parametersForCp4ba.sh up to date, and do you want to continue?
+   (Yes/No, default: No): y
    
    Preparing the CP4BA deployment...
    
@@ -222,16 +223,12 @@
    Entitlement Registry key is valid.
    
    Copying jdbc for Db2 from Db2 container to local disk...
-   Now using project "<your-ibm-db2-project>" on server "https://<your-server>:<your-port>".
+   Now using project "<your-ibm-db2-project>" on server "<your-server>:<your-port>".
    tar: Removing leading `/' from member names
    tar: Removing leading `/' from member names
-   Now using project "<your-ibm-cp4ba-project>" on server "https://<your-server>:<your-port>".
+   Now using project "<your-ibm-cp4ba-project>" on server "<your-server>:<your-port>".
    
    Preparing the CP4BA secrets...
-   
-   Preparing the tls secret...
-   Now using project "ibm-cert-store" on server "https://<your-server>:<your-port>".
-   Now using project "<your-ibm-cp4ba-project>" on server "https://<your-server>:<your-port>".
    
    Preparing the CR YAML for deployment...
    
@@ -242,9 +239,9 @@
    Creating the CP4BA deployment...
    
    Creating secret ibm-entitlement-key in project ibm-common-services...
-   Now using project "ibm-common-services" on server "https://<your-server>:<your-port>".
+   Now using project "ibm-common-services" on server "<your-server>:<your-port>".
    secret/ibm-entitlement-key created
-   Now using project "<your-ibm-cp4ba-project>" on server "https://<your-server>:<your-port>".
+   Now using project "<your-ibm-cp4ba-project>" on server "<your-server>:<your-port>".
    Done.
    
    Copying the jdbc driver to ibm-cp4a-operator...
@@ -263,10 +260,6 @@
    secret/ibm-bawaut-server-db-secret created
    secret/ibm-pfs-admin-secret created
    secret/ibm-bawaut-admin-secret created
-   Done.
-   
-   Creating the tls secret...
-   secret/icp4a-tls-secret created
    Done.
    
    Creating the CP4BA deployment...
