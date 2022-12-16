@@ -145,8 +145,8 @@
    storageclass.storage.k8s.io/ibmc-block-gold patched
    storageclass.storage.k8s.io/cp4a-file-delete-gold-gid patched
    
-   Installing the IBM Operator Catalog...
-   catalogsource.operators.coreos.com/ibm-operator-catalog created
+   Installing the DB2 Operator Catalog...
+   catalogsource.operators.coreos.com/ibm-db2uoperator-catalog created
    
    Creating project ibm-db2...
    namespace/ibm-db2 created
@@ -214,23 +214,34 @@
    successfully.
    
    Restarting DB2 instance.
-   DB20000I  The DEACTIVATE DATABASE command completed successfully.
+   Wolverine HA management state was disabled successfully.
    01/01/2022 08:00:05     0   0   SQL1064N  DB2STOP processing was successful.
    SQL1064N  DB2STOP processing was successful.
    01/01/2022 08:00:06     0   0   SQL1063N  DB2START processing was successful.
    SQL1063N  DB2START processing was successful.
+   Wolverine HA management state was enabled successfully.
    
    *********************************************************************************
    ********* Installation and configuration of DB2 completed successfully! *********
    *********************************************************************************
    
    Removing BLUDB from system.
+   DB20000I  The FORCE APPLICATION command completed successfully.
+   DB21024I  This command is asynchronous and may not be effective immediately.
+   
+   DB20000I  The DEACTIVATE DATABASE command completed successfully.
    DB20000I  The DROP DATABASE command completed successfully.
    
    Existing databases are:
    
+   Removing temporary files...
+   Done.
+   
+   ***********************************************
+   ********* DB2 Connection Information: *********
+   ***********************************************
+   
    Use this hostname/IP to access the databases e.g. with IBM Data Studio.
-   Please also update in 01-parametersForDb2OnOCP.sh property "db2HostName" with this information (in Skytap, use the IP 10.0.0.10 instead)
      Hostname: <your-hostname>
      Other possible addresses(If hostname not available above): <your-addresses>
    
