@@ -275,7 +275,7 @@
 
 10. The CP4BA deployment is complete when you see:
     - for template **Client Onboarding Demo with ADP**: in your **CP4BA project** about 84 Running and Ready pods, and about 39 Completed pods, but no Pending / CrashLoopBackOff pods, plus in project **ibm-common-services** about 37 Running and Ready pods, and about 5 Completed pods, but no Pending / CrashLoopBackOff pods
-    - for template **Foundation, Content**: in your **CP4BA project** about 30 Running and Ready pods, and about 10 Completed pods, but no Pending / CrashLoopBackOff pods, plus in project **ibm-common-services** about 32 Running and Ready pods, and about 5 Completed pods, but no Pending / CrashLoopBackOff pods
+    - for template **Foundation, Content**: in your **CP4BA project** about 30 Running and Ready pods, and about 9 Completed pods, but no Pending / CrashLoopBackOff pods, plus in project **ibm-common-services** about 31 Running and Ready pods, and about 5 Completed pods, but no Pending / CrashLoopBackOff pods
     - for template **Foundation**: in your **CP4BA project** about 26 Running and Ready pods, and about 10 Completed pods, but no Pending / CrashLoopBackOff pods, plus in project **ibm-common-services** about 32 Running and Ready pods, and about 5 Completed pods, but no Pending / CrashLoopBackOff pods
     
     **Note:** It might be that some pods are in Failed or Error state, for those make sure there is another instance of that pod in Completed state. If this is the case, you can delete the Failed or Error pods. If there are pods in Failed or Error state where there is no other instance of that pod in Completed state, the deployment is not healthy.
