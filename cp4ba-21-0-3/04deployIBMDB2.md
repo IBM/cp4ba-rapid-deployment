@@ -163,7 +163,7 @@
    
    You can get the Entitlement Registry key from here: https://myibm.ibm.com/products-services/containerlibrary
    
-   Enter your Entitlement Registry key: 
+   Enter your Entitlement Registry key: <paste your key here once - it will not be shown>
    Verifying the Entitlement Registry key...
    Login Succeeded!
    Entitlement Registry key is valid.
