@@ -126,7 +126,8 @@
    
    Installing DB instance for CloudPak.
    
-   This script installs Db2u on OCP into project ibm-db2. For this, you need the jq tool installed and your Entitlement Registry key handy.
+   This script installs Db2u on OCP into project ibm-db2. For this, you need the jq tool installed and your Entitlement
+   Registry key handy.
    
    Do you want to continue (Yes/No, default: No): y
    
