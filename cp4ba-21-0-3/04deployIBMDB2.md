@@ -134,14 +134,20 @@
    Installing Db2U on OCP...
    
    Installing the storage classes...
-   W0215 08:00:00.000000   12241 warnings.go:70] storage.k8s.io/v1beta1 StorageClass is deprecated in v1.19+, unavailable in v1.22+; use storage.k8s.io/v1 StorageClass
-   W0215 08:00:00.000001   12241 warnings.go:70] storage.k8s.io/v1beta1 StorageClass is deprecated in v1.19+, unavailable in v1.22+; use storage.k8s.io/v1 StorageClass
+   W0215 08:00:00.000000   12241 warnings.go:70] storage.k8s.io/v1beta1 StorageClass is deprecated in v1.19+, unavailable
+   in v1.22+; use storage.k8s.io/v1 StorageClass
+   W0215 08:00:00.000001   12241 warnings.go:70] storage.k8s.io/v1beta1 StorageClass is deprecated in v1.19+, unavailable
+   in v1.22+; use storage.k8s.io/v1 StorageClass
    storageclass.storage.k8s.io/cp4a-file-delete-bronze-gid created
-   W0215 08:00:00.000002   12257 warnings.go:70] storage.k8s.io/v1beta1 StorageClass is deprecated in v1.19+, unavailable in v1.22+; use storage.k8s.io/v1 StorageClass
-   W0215 08:00:00.000003   12257 warnings.go:70] storage.k8s.io/v1beta1 StorageClass is deprecated in v1.19+, unavailable in v1.22+; use storage.k8s.io/v1 StorageClass
+   W0215 08:00:00.000002   12257 warnings.go:70] storage.k8s.io/v1beta1 StorageClass is deprecated in v1.19+, unavailable
+   in v1.22+; use storage.k8s.io/v1 StorageClass
+   W0215 08:00:00.000003   12257 warnings.go:70] storage.k8s.io/v1beta1 StorageClass is deprecated in v1.19+, unavailable
+   in v1.22+; use storage.k8s.io/v1 StorageClass
    storageclass.storage.k8s.io/cp4a-file-delete-silver-gid created
-   W0215 08:00:00.000004   12269 warnings.go:70] storage.k8s.io/v1beta1 StorageClass is deprecated in v1.19+, unavailable in v1.22+; use storage.k8s.io/v1 StorageClass
-   W0215 08:00:00.000005   12269 warnings.go:70] storage.k8s.io/v1beta1 StorageClass is deprecated in v1.19+, unavailable in v1.22+; use storage.k8s.io/v1 StorageClass
+   W0215 08:00:00.000004   12269 warnings.go:70] storage.k8s.io/v1beta1 StorageClass is deprecated in v1.19+, unavailable
+   in v1.22+; use storage.k8s.io/v1 StorageClass
+   W0215 08:00:00.000005   12269 warnings.go:70] storage.k8s.io/v1beta1 StorageClass is deprecated in v1.19+, unavailable
+   in v1.22+; use storage.k8s.io/v1 StorageClass
    storageclass.storage.k8s.io/cp4a-file-delete-gold-gid created
    storageclass.storage.k8s.io/ibmc-block-gold patched
    storageclass.storage.k8s.io/cp4a-file-delete-gold-gid patched
@@ -246,7 +252,8 @@
      Hostname: <your-hostname>
      Other possible addresses(If hostname not available above): <your-addresses>
    
-   Use one of these NodePorts to access the databases e.g. with IBM Data Studio (usually the first one is for legacy-server (Db2 port 50000), the second for ssl-server (Db2 port 50001)).
+   Use one of these NodePorts to access the databases e.g. with IBM Data Studio (usually the first one is for legacy-server
+   (Db2 port 50000), the second for ssl-server (Db2 port 50001)).
                    "nodePort": <your-http-port>,
                    "nodePort": <your-https-port>,
    
