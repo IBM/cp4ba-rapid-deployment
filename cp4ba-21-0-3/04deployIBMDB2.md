@@ -260,22 +260,15 @@
    ./03-createCp4baDBs4Db2OnOCP.sh
    ```
    
-   **Note:** You can ignore the following errors / warnings:
+   **Note:** You can ignore the following warnings:
    
-   ```
-   DB21034E  The command was processed as an SQL statement because it was not a
-   valid Command Line Processor command.  During SQL processing it returned:
-   SQL0554N  An authorization ID cannot grant a privilege or authority to itself.
-   SQLSTATE=42502
-   ```
-   
-   and
    ```
    SQL1363W  One or more of the parameters submitted for immediate modification
    were not changed dynamically. For these configuration parameters, the database
    must be shutdown and reactivated before the configuration parameter changes
    become effective.
    ```
+   The databases will get de-activated and activated again by the script.
    
    **Note:** In case you got errors **creating** DBs, please use script **99-dropCp4baDBs4Db2OnOCP.sh** to drop all DBs - then re-run script **03-createCp4baDBs4Db2OnOCP.sh**
 
