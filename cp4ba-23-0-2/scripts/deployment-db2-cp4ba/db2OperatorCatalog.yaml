@@ -1,0 +1,31 @@
+###############################################################################
+#
+# Licensed Materials - Property of IBM
+#
+# (C) Copyright IBM Corp. 2024. All Rights Reserved.
+#
+# US Government Users Restricted Rights - Use, duplication or
+# disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+#
+###############################################################################
+# For available Versions, refer to
+# https://github.com/IBM/cloud-pak/tree/master/repo/case/ibm-db2uoperator
+# This is version 5.6.0 for appVersion s11.5.9.0
+#
+# Find following comment in the documentation:
+# Operators of version 3.x and higher are intended for deployments on Cloud Pak for Data
+# and should not be obtained for standalone deployments of Db2 on OpenShift or Kubernetes
+
+apiVersion: operators.coreos.com/v1alpha1
+kind: CatalogSource
+metadata:
+  name: ibm-db2uoperator-catalog
+  namespace: openshift-marketplace
+spec:
+  displayName: IBM Db2U Catalog
+  image: icr.io/cpopen/ibm-db2uoperator-catalog@sha256:7d00366552d438c612716c1ce43f596eab9a0d97728a65130a0aee6d9640b60d
+  publisher: IBM
+  sourceType: grpc
+  updateStrategy:
+    registryPoll:
+      interval: 45m

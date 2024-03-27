@@ -1,0 +1,49 @@
+###############################################################################
+#
+# Licensed Materials - Property of IBM
+#
+# (C) Copyright IBM Corp. 2024. All Rights Reserved.
+#
+# US Government Users Restricted Rights - Use, duplication or
+# disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+#
+###############################################################################
+apiVersion: db2u.databases.ibm.com/v1
+kind: Db2uCluster
+metadata:
+  name: db2OnOcpInstanceName
+  namespace: db2OnOcpProjectName
+spec:
+  size: 1
+  license:
+    accept: true
+    db2License
+  account:
+    imagePullSecrets:
+      - ibm-registry
+    privileged: true
+  environment:
+    dbType: db2oltp
+    instance:
+      password: db2AdminUserPassword
+  version: db2InstanceVersion
+  podConfig:
+    db2u:
+      resource:
+        db2u:
+          requests:
+            cpu: db2Cpu
+            memory: db2Memory
+          limits:
+            cpu: db2Cpu
+            memory: db2Memory
+  storage:
+    - name: share
+      type: create
+      spec:
+        accessModes:
+          - ReadWriteMany
+        resources:
+          requests:
+            storage: db2StorageSize
+        storageClassName: db2OnOcpStorageClassName

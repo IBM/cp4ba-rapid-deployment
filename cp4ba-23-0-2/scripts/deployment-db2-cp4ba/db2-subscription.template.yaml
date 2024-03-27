@@ -1,0 +1,24 @@
+###############################################################################
+#
+# Licensed Materials - Property of IBM
+#
+# (C) Copyright IBM Corp. 2024. All Rights Reserved.
+#
+# US Government Users Restricted Rights - Use, duplication or
+# disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+#
+###############################################################################
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: db2u-operator
+  namespace: paramDB2Namespace 
+  labels:
+    operators.coreos.com/db2u-operator.paramDB2Namespace: ''
+spec:
+  channel: paramDB2OperatorChannel 
+  name: db2u-operator
+  installPlanApproval: Manual
+  source: ibm-db2uoperator-catalog
+  sourceNamespace: openshift-marketplace
+  startingCSV: paramDB2OperatorVersion
