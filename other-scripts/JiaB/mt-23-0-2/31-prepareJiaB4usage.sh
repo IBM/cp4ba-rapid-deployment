@@ -17,7 +17,7 @@
 
 git clone --depth 1 --no-checkout https://github.com/IBM/cp4ba-rapid-deployment.git
 cd cp4ba-rapid-deployment
-git sparse-checkout set other-scripts/JiaB/su-23-0-2
+git sparse-checkout set other-scripts/JiaB/mt-23-0-2
 git checkout
 
 cd other-scripts/JiaB/mt-23-0-2
