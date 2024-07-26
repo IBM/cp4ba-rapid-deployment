@@ -1,0 +1,10 @@
+oc extract secret/ibm-edu-all-cert --confirm=true --to .
+csplit -s -k -f tls tls.crt '/END CERTIFICATE/+1' {2}
+rm -f tls.crt
+mv tls00 tls.crt
+cat tls0* > ca.crt
+rm -f tls01
+rm -f tls02
+rm -f tls03
+oc create secret generic cpd-route-tls-secret --from-file=tls.crt=tls.crt --from-file=tls.key=tls.key --from-file=ca.crt=ca.crt
+oc patch ZenService iaf-zen-cpdservice --type='json' -p='[{"op": "replace", "path": "/spec/zenCustomRoute/route_secret","value": "cpd-route-tls-secret"}]'
