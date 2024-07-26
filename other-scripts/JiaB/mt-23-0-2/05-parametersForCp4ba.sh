@@ -95,13 +95,13 @@ cp4baScFast=nfs-client
 cp4baBlockScFast=nfs-client
 
 # --- HA Settings ---
-cp4baDeploymentProfileSize=small
+cp4baDeploymentProfileSize=medium
 cp4baADPDeploymentProfileSize=entry
 
 processminingUseRedis=false
 
-cp4baReplicaCount=1
-cp4baBaiJobParallelism=1
+cp4baReplicaCount=2
+cp4baBaiJobParallelism=2
 
 # --- RPA integration Settings ---
 cp4baIntegrateWithRPA=false
