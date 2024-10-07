@@ -151,6 +151,14 @@ echo
 
 
 
+# Fix the issue with expired PostgreSQL database license key, see also https://www.ibm.com/support/pages/node/7160230
+echo "Fixing issue with expired PostgreSQL database license key..."
+oc annotate secret postgresql-operator-controller-manager-config  ibm-bts/skip-updates="true"
+oc get job create-postgres-license-config -o yaml | sed -e 's/operator.ibm.com\/opreq-control: "true"/operator.ibm.com\/opreq-control: "false"/' -e 's|\(image: \).*|\1"cp.icr.io/cp/cpd/edb-postgres-license-provider@sha256:c1670e7dd93c1e65a6659ece644e44aa5c2150809ac1089e2fd6be37dceae4ce"|' -e '/controller-uid:/d' | oc replace --force -f - && oc wait --for=condition=complete job/create-postgres-license-config
+echo
+
+
+
 # Re-create nginx pods
 echo "Re-starting nginx pods..."
 nginxpods=$(oc get pod -l=app=0030-gateway --no-headers --ignore-not-found | grep nginx | awk '{print $1}')
