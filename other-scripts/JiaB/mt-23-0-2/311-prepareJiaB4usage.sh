@@ -260,6 +260,11 @@ echo "Switching to project mail..."
 oc project mail
 echo
 
+# Update roundcubedb image url to use specified version
+echo "Updating roundcubedb image URL..."
+oc patch deployment roundcubedb --type='json' -p='[{"op": "replace", "path": "/spec/template/spec/containers/0/image","value": "postgres:16-alpine"}]'
+echo
+
 echo "Scaling up roundcubedb pods..."
 oc scale deployment roundcubedb --replicas=1
 echo
