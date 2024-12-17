@@ -96,6 +96,19 @@ fi
 
 
 
+# Step Zero:
+#   - Do some checks if this is really a CP4BA deployment
+#   - Check the CP4BA version number, atm only CP4BA v21.0.3 is supported
+#   - Check the deployed CP4BA components, atm only Content, BAW and BAI are supported
+#   - Check that everything is healthy atm, we only proceed if all pods are in Running or Completed state
+#   - There is no unexpected stuff running in the project
+#   - Check that dedicated common services is used
+#   - Any other checks needed?
+# TODO
+
+# TODO: How to keep track of all changes done? So that when scaling up later, all things that where "scaled down" here, get "scaled up" later on?
+# For example, number of pods to scale up to, or cron jobs that got suspended, to only enable those again that where active initially?
+
 # First, scale down all operators
 oc scale deploy ibm-cp4a-operator --replicas=0
 oc scale deploy ibm-cp4a-wfps-operator-controller-manager --replicas=0
@@ -123,36 +136,73 @@ oc scale deploy iam-policy-controller --replicas=0
 sleep 10
 echo
 
-# Second, scale down all cp4ba deployments
-# TODO: icp4adeploy could be different!
-# deployments=$(oc get deploy -o name |grep icp4adeploy)
+# Second, suspend all cron jobs
+if $DEBUG = true; then
+   echo "DEBUG Suspending cron jobs..."
+fi
+cronJobs=$(oc get cronjob -o 'custom-columns=NAME:.metadata.name,SUSPEND:.spec.suspend' --no-headers --ignore-not-found | grep 'false' | awk '{print $1}')
+if $DEBUG = true; then
+   echo "DEBUG cronJobs =" $cronJobs
+   echo
+fi
+for i in $cronJobs; do
+   if $DEBUG = true; then
+      echo "DEBUG suspending i =" $i;
+      echo
+   fi
+   oc patch cronJob $i --type merge --patch '{"spec":{"suspend":true}}';
+done
+
+# Third, scale down all deployments
 deployments=$(oc get deploy -o name)
 if $DEBUG = true; then
    echo "DEBUG deployments =" $deployments
+   echo
 fi
 for i in $deployments; do
    if $DEBUG = true; then
-      echo
       echo "DEBUG scaling i =" $i;
       echo
    fi
    oc scale $i --replicas=0;
 done
 
-# Third, scale down all cp4ba stateful sets
-# TODO: icp4adeploy could be different!
-# statefulSets=$(oc get sts -o name |grep icp4adeploy)
+# Fourth, scale down all stateful sets
 statefulSets=$(oc get sts -o name)
 if $DEBUG = true; then
    echo "DEBUG statefulSets =" $statefulSets
+   echo
 fi
 for i in $statefulSets; do
    if $DEBUG = true; then
-      echo
       echo "DEBUG scaling i =" $i;
       echo
    fi
    oc scale $i --replicas=0;
 done
+
+# Fifth, delete all remaing running pods that we know
+# TODO
+
+# Sixth, delete all completed pods
+if $DEBUG = true; then
+   echo "DEBUG Deleting completed pods"
+   echo
+fi
+completedpods=$(oc get pod -o 'custom-columns=NAME:.metadata.name,PHASE:.status.phase' --no-headers --ignore-not-found | grep 'Succeeded' | awk '{print $1}')
+if $DEBUG = true; then
+   echo "DEBUG completedpods = " $completedpods
+   echo
+fi
+for i in $completedpods; do
+   if $DEBUG = true; then
+      echo "DEBUG deleting i =" $i;
+      echo
+   fi
+   oc delete pod $i
+done
+
+# Seventh, check if there are some pods remaining
+# TODO
 
 echo
