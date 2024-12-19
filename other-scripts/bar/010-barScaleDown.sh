@@ -14,7 +14,9 @@
 # This script is for preparing the Backup And Restore (BAR) process, scaling down all CP4BA components in the given namespace.
 #    Only tested with CP4BA version: 21.0.3 IF034, dedicated common services set-up
 
+# TODO: Instead of a debug flag, we want to write detailed logs into a log file
 DEBUG=false
+
 CUR_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 INPUT_PROPS_FILENAME="001-barParameters.sh"
 INPUT_PROPS_FILENAME_FULL="${CUR_DIR}/${INPUT_PROPS_FILENAME}"
@@ -97,6 +99,7 @@ fi
 
 
 # Step Zero:
+#   - Maybe have a separate script for all these checks that needs to be run first
 #   - Do some checks if this is really a CP4BA deployment
 #   - Check the CP4BA version number, atm only CP4BA v21.0.3 is supported
 #   - Check the deployed CP4BA components, atm only Content, BAW and BAI are supported
@@ -108,6 +111,9 @@ fi
 
 # TODO: How to keep track of all changes done? So that when scaling up later, all things that where "scaled down" here, get "scaled up" later on?
 # For example, number of pods to scale up to, or cron jobs that got suspended, to only enable those again that where active initially?
+
+# TODO: We on TechZone only have an authoring environment available. CTIE will also have Process Server environments where other pods / resources are there.
+# All bar scripts need to be tested with non-authoring environments, too.
 
 # First, scale down all operators
 oc scale deploy ibm-cp4a-operator --replicas=0
@@ -150,10 +156,12 @@ for i in $cronJobs; do
       echo "DEBUG suspending i =" $i;
       echo
    fi
+   # TODO: How to keep track of the cron jobs that we suspended?
    oc patch cronJob $i --type merge --patch '{"spec":{"suspend":true}}';
 done
 
 # Third, scale down all deployments
+# TODO: We want to be more speciffic here, scale down only the deployments we are aware of, not all.
 deployments=$(oc get deploy -o name)
 if $DEBUG = true; then
    echo "DEBUG deployments =" $deployments
@@ -168,6 +176,7 @@ for i in $deployments; do
 done
 
 # Fourth, scale down all stateful sets
+# TODO: We want to be more speciffic here, scale down only the stateful sets we are aware of, not all.
 statefulSets=$(oc get sts -o name)
 if $DEBUG = true; then
    echo "DEBUG statefulSets =" $statefulSets
@@ -182,7 +191,27 @@ for i in $statefulSets; do
 done
 
 # Fifth, delete all remaing running pods that we know
-# TODO
+# TODO: This section most likely needs a more flexible approach. What when a customer has 5 or more kafka pods? Same for the other pods deleted here.
+# We want to first query for all those pods and then delete those that are existing.
+oc delete pod iaf-system-kafka-2
+oc delete pod iaf-system-kafka-1
+sleep 10
+oc delete pod iaf-system-kafka-0
+sleep 10
+oc delete pod iaf-system-zookeeper-2
+oc delete pod iaf-system-zookeeper-1
+sleep 10
+oc delete pod iaf-system-zookeeper-0
+sleep 10
+oc delete pod ibm-bts-cnpg-ibm-cp4ba-cp4ba-bts-2
+sleep 10
+oc delete pod ibm-bts-cnpg-ibm-cp4ba-cp4ba-bts-1
+sleep 10
+rrpods=$(oc get pod -l=app.kubernetes.io/name=resource-registry --no-headers --ignore-not-found | awk '{print $1}')
+for pod in ${rrpods[*]}
+do
+  oc delete pod $pod
+done
 
 # Sixth, delete all completed pods
 if $DEBUG = true; then
