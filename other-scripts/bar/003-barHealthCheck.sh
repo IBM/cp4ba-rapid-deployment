@@ -14,12 +14,19 @@
 # This script is for preparing the Backup And Restore (BAR) process, performing health check on all CP4BA components in the given namespace.
 #    Only tested with CP4BA version: 21.0.3 IF034, dedicated common services set-up
 
+# Check if jq is installed
+type jq > /dev/null 2>&1
+if [ $? -eq 1 ]; then
+  echo "Please install jq to continue."
+  exit 1
+fi
+
 CUR_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 # Import common utilities
 source ${CUR_DIR}/common.sh
 
-LOG_FILE="$CUR_DIR/HealthCheck_$(date +'%F_%T').log"
+LOG_FILE="$CUR_DIR/HealthCheck_$(date +'%Y%m%d_%H%M%S').log"
 
 echo "Details will be logged to $LOG_FILE."
 
@@ -439,7 +446,7 @@ if [[ $CP4BA_COMPONENTS =~ "workflow" ]]; then
     else
       # check how many instances
       CP4BA_BAW_INSTANCE_COUNT=$(jq -r .status.components.baw ${CUR_DIR}/CR.json | jq 'length')
-      for ((i=0; i<CP4BA_BAW_INSTANCE_COUNT; i++)); do
+      for ((i=0; i<$CP4BA_BAW_INSTANCE_COUNT; i++)); do
         CP4BA_BAW_NAME=$(jq -r .status.components.baw[$i].name ${CUR_DIR}/CR.json)
         logInfo "  Business Automation Workflow Runtime instance name: $CP4BA_BAW_NAME"
 
@@ -523,10 +530,10 @@ if [[ $CP4BA_VERSION =~ "24.0" ]]; then
 else
   # ElasticSearch
   logInfo "Trying to connect to ElasticSearch..."
-  ELASTICEARCH_ROUTE=$(oc get route iaf-system-es -o jsonpath='{.spec.host}')
-  ELASTICEARCH_PASSWORD=$(oc get secret iaf-system-elasticsearch-es-default-user --no-headers --ignore-not-found -o jsonpath={.data.password} | base64 -d)
-  ELASTICEARCH_CURL_RESULT=$(curl -sk -w "%{http_code}" -o /dev/null -u elasticsearch-admin:$ELASTICEARCH_PASSWORD https://$ELASTICEARCH_ROUTE)
-  checkHTTPCode $ELASTICEARCH_CURL_RESULT "200" $ELASTICEARCH_ROUTE
+  ELASTICSEARCH_ROUTE=$(oc get route iaf-system-es -o jsonpath='{.spec.host}')
+  ELASTICSEARCH_PASSWORD=$(oc get secret iaf-system-elasticsearch-es-default-user --no-headers --ignore-not-found -o jsonpath={.data.password} | base64 -d)
+  ELASTICSEARCH_CURL_RESULT=$(curl -sk -w "%{http_code}" -o /dev/null -u elasticsearch-admin:$ELASTICSEARCH_PASSWORD https://$ELASTICSEARCH_ROUTE)
+  checkHTTPCode $ELASTICSEARCH_CURL_RESULT "200" $ELASTICSEARCH_ROUTE
 fi
 
 
@@ -610,6 +617,26 @@ if oc get FlinkDeployment icp4adeploy-insights-engine-flink > /dev/null 2>&1; th
 
   FLINK_RECONCILE_STATE=$(oc get FlinkDeployment icp4adeploy-insights-engine-flink -o 'jsonpath={.status.reconciliationStatus.state}')
   checkResult $FLINK_RECONCILE_STATE "DEPLOYED" "Flink Reconcile State"
+
+  INSIGHTS_ENGINE=$(oc get insightsengine --no-headers | awk {'print $1'})
+  MANAGEMENT_URL=$(oc get insightsengine $INSIGHTS_ENGINE -o jsonpath='{.status.components.management.endpoints[?(@.scope=="External")].uri}')
+  logInfo "  Insights Engine $INSIGHTS_ENGINE Management: $MANAGEMENT_URL"
+  MANAGEMENT_AUTH_SECRET=$(oc get insightsengine $INSIGHTS_ENGINE -o jsonpath='{.status.components.management.endpoints[?(@.scope=="External")].authentication.secret.secretName}')
+  MANAGEMENT_USERNAME=$(oc get secret ${MANAGEMENT_AUTH_SECRET} -o jsonpath='{.data.username}' | base64 -d)
+  MANAGEMENT_PASSWORD=$(oc get secret ${MANAGEMENT_AUTH_SECRET} -o jsonpath='{.data.password}' | base64 -d)
+  logInfo "  Retrieving flink jobs..."
+  FLINK_JOBS=$(curl -sk -u ${MANAGEMENT_USERNAME}:${MANAGEMENT_PASSWORD} $MANAGEMENT_URL/api/v1/processing/jobs/list)
+  FLINK_JOBS_COUNT=$(echo $FLINK_JOBS |jq '.jobs' | jq 'length')
+  if [[ $FLINK_JOBS_COUNT == "0" ]]; then {
+    logError "    No flink jobs are running, please check !!"
+  } else
+      for ((i=0; i<$FLINK_JOBS_COUNT; i++)); do
+      FLINK_JOB_ID=$(echo $FLINK_JOBS | jq ".jobs[$i].jid")
+      FLINK_JOB_NAME=$(echo $FLINK_JOBS | jq ".jobs[$i].name")
+      FLINK_JOB_STATE=$(echo $FLINK_JOBS | jq ".jobs[$i].state")
+      logInfo "    FLINK JOB ID: $FLINK_JOB_ID, Name: $FLINK_JOB_NAME, State: $FLINK_JOB_STATE"
+    done
+  fi
 fi
 
 ##### OCP jobs #################################################################
