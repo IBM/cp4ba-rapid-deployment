@@ -13,13 +13,13 @@
 # This script contains shared utility functions.
 
 function logInfo() {
-  echo "$(date +'%F %T.%3N %Z') INFO  $*"
-  echo "$(date +'%F %T.%3N %Z') INFO  $*" >> $LOG_FILE
+  echo "$(date +'%F %T.%3N %Z')   INFO    $*"
+  echo "$(date +'%F %T.%3N %Z')   INFO    $*" >> $LOG_FILE
 }
 
 function logError() {
-  echo "$(date +'%F %T.%3N %Z') ERROR $*"
-  echo "$(date +'%F %T.%3N %Z') ERROR $*" >> $LOG_FILE
+  echo "$(date +'%F %T.%3N %Z')   ERROR   $*"
+  echo "$(date +'%F %T.%3N %Z')   ERROR   $*" >> $LOG_FILE
 }
 
 # Convert operator version number to actual release number, e.g. 21.3.34 to 21.0.3.34
