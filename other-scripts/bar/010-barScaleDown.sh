@@ -31,7 +31,7 @@ if [[ -f $INPUT_PROPS_FILENAME_FULL ]]; then
    if [ $cp4baProjectName == "REQUIRED" ]; then
       echo "File ${INPUT_PROPS_FILENAME} not fully updated. Pls. update all REQUIRED parameters."
       echo
-      exit 0
+      exit 1
    fi
 
    echo "Done!"
@@ -39,7 +39,7 @@ else
    echo
    echo "File ${INPUT_PROPS_FILENAME_FULL} not found. Pls. check."
    echo
-   exit 0
+   exit 1
 fi
 
 BACKUP_ROOT_DIRECTORY_FULL="${CUR_DIR}/${cp4baProjectName}"
@@ -79,7 +79,7 @@ logInfo "WHOAMI =" $WHOAMI
 if [[ "$WHOAMI" == "" ]]; then
    logError "OC CLI is NOT connected to the OCP cluster. Please log in first with an admin user to OpenShift Web Console, then use option \"Copy login command\" and log in with OC CLI, before using this script."
    echo
-   exit 0
+   exit 1
 fi
 echo
 
