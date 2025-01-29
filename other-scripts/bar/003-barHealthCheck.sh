@@ -713,7 +713,7 @@ fi
 
 ##### Pod health ###############################################################
 logInfo "Checking Pod Health..."
-logInfo $(oc get pod -o 'custom-columns=NAME:.metadata.name,PHASE:.status.phase,READY:.status.containerStatuses[0].ready' --no-headers --ignore-not-found)
+# logInfo $(oc get pod -o 'custom-columns=NAME:.metadata.name,PHASE:.status.phase,READY:.status.containerStatuses[0].ready' --no-headers --ignore-not-found)
 
 # Pending verified
 podsinpending=$(oc get pod -o 'custom-columns=NAME:.metadata.name,PHASE:.status.phase' --no-headers --ignore-not-found | grep 'Pending' | awk '{print $1}')
