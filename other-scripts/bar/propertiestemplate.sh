@@ -22,7 +22,7 @@ echo "  Reading properties.sh ..."
 # --- Parameters captured                           ---
 # -----------------------------------------------------
 
-cp4baProjectName=§cp4baProjectName
+cp4baProjectNamespace=§cp4baProjectNamespace
 
 cp4baSuspendedCronJobs=§cp4baSuspendedCronJobs
 

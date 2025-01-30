@@ -11,7 +11,8 @@
 #
 ###############################################################################
 
-# This script is for preparing the Backup And Restore (BAR) process, scaling down all CP4BA components in the given namespace.
+# This script is for scaling up the CP4BA deployment after you took a backup as part of the Backup And Restore (BAR) process.
+# It will scale up all CP4BA components in the given namespace.
 #    Only tested with CP4BA version: 21.0.3 IF034, dedicated common services set-up
 
 CUR_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -50,18 +51,18 @@ else
    mkdir "$BACKUP_ROOT_DIRECTORY_FULL"
 fi
 
-LOG_FILE="$BACKUP_ROOT_DIRECTORY_FULL/ScaleDownForBackup_$(date +'%Y%m%d_%H%M%S').log"
+LOG_FILE="$BACKUP_ROOT_DIRECTORY_FULL/ScaleUpAfterBackup_$(date +'%Y%m%d_%H%M%S').log"
 logInfo "Details will be logged to $LOG_FILE."
 
 echo
-echo -e "\x1B[1mThis script prepares namespace ${cp4baProjectName} for taking a backup. It scales down all pods to zero. \n \x1B[0m"
+echo -e "\x1B[1mThis script scales up namespace ${cp4baProjectName} after you took a backup. It scales up all needed pods. \n \x1B[0m"
 
-printf "Do you want to continue? (Yes/No, default: No): "
+printf "Have you completed taking the required backups and do you want to continue? (Yes/No, default: No): "
 read -rp "" ans
 case "$ans" in
 "y"|"Y"|"yes"|"Yes"|"YES")
    echo
-   logInfo "Ok, scaling down the CP4BA deployment in namespace ${cp4baProjectName}..."
+   logInfo "Ok, scaling up the CP4BA deployment in namespace ${cp4baProjectName}..."
    echo
    ;;
 *)
@@ -93,16 +94,23 @@ echo
 
 propertiesfile=$BACKUP_ROOT_DIRECTORY_FULL/properties.sh
 if [[ -f $propertiesfile ]]; then
-  backupFile=$BACKUP_ROOT_DIRECTORY_FULL/properties_$(date +'%Y%m%d_%H%M%S').bak
-  logInfo "Old properties file found. Moving it to" $backupFile
-  mv $propertiesfile $backupFile
+  logInfo "Properties file $propertiesfile found. Using it to scale up."
+  . $propertiesfile
+  logInfo "Done!"
+else
+  logError "Properties file $propertiesfile NOT found. It is required to properly scale up the CP4BA deployment. It got created when you scaled down the deployment. Please restore it before you can proceed."
+  echo
+  exit 1
 fi
-logInfo "Persisting scale down information in" $propertiesfile
-cp propertiestemplate.sh $propertiesfile
-sed -i.bak "s|§cp4baProjectNamespace|$cp4baProjectName|g" $propertiesfile
 echo
 
+logInfo $cp4baProjectNamespace
+logInfo $cp4baSuspendedCronJobs
 
+
+
+exit
+# EOF! Copy things from below before this line to complet the scale up script.
 
 # Step Zero:
 #   - Maybe have a separate script for all these checks that needs to be run first
@@ -155,7 +163,7 @@ for i in $cronJobs; do
    if [[ $cronJobsProperty = "" ]]; then
      cronJobsProperty="$i"
    else
-     cronJobsProperty="$cronJobsProperty,$i"
+     cronJobsProperty="$cronJobsProperty $i"
    fi
    logInfo "suspending cron job=" $i;
    logInfo $(oc patch cronJob $i --type merge --patch '{"spec":{"suspend":true}}');
