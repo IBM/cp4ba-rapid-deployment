@@ -91,6 +91,17 @@ if [[ "$project" != "$cp4baProjectName" ]]; then
 fi
 echo
 
+propertiesfile=$BACKUP_ROOT_DIRECTORY_FULL/properties.sh
+if [[ -f $propertiesfile ]]; then
+  backupFile=$BACKUP_ROOT_DIRECTORY_FULL/properties_$(date +'%Y%m%d_%H%M%S').bak
+  logInfo "Old properties file found. Moving it to" $backupFile
+  mv $propertiesfile $backupFile
+fi
+logInfo "Persisting scale down information in" $propertiesfile
+cp propertiestemplate.sh $propertiesfile
+sed -i.bak "s|§cp4baProjectName|$cp4baProjectName|g" $propertiesfile
+echo
+
 
 
 # Step Zero:
@@ -103,9 +114,6 @@ echo
 #   - Check that dedicated common services is used
 #   - Any other checks needed?
 # TODO
-
-# TODO: How to keep track of all changes done? So that when scaling up later, all things that where "scaled down" here, get "scaled up" later on?
-# For example, number of pods to scale up to, or cron jobs that got suspended, to only enable those again that where active initially?
 
 # TODO: We on TechZone only have an authoring environment available. CTIE will also have Process Server environments where other pods / resources are there.
 # All bar scripts need to be tested with non-authoring environments, too.
@@ -141,12 +149,18 @@ echo
 # Second, suspend all cron jobs
 logInfo "Suspending cron jobs..."
 cronJobs=$(oc get cronjob -o 'custom-columns=NAME:.metadata.name,SUSPEND:.spec.suspend' --no-headers --ignore-not-found | grep 'false' | awk '{print $1}')
+cronJobsProperty=""
 logInfo "cronJobs =" $cronJobs
 for i in $cronJobs; do
+   if [[ $cronJobsProperty = "" ]]; then
+     cronJobsProperty="$i"
+   else
+     cronJobsProperty="$cronJobsProperty $i"
+   fi
    logInfo "suspending cron job=" $i;
-   # TODO: How to keep track of the cron jobs that we suspended?
    logInfo $(oc patch cronJob $i --type merge --patch '{"spec":{"suspend":true}}');
 done
+sed -i.bak "s|§cp4baSuspendedCronJobs|$cronJobsProperty|g" $propertiesfile
 echo
 
 # Third, scale down all deployments
@@ -209,5 +223,7 @@ echo
 
 # Seventh, check if there are some pods remaining
 # TODO
+
+rm $propertiesfile.bak
 
 echo
