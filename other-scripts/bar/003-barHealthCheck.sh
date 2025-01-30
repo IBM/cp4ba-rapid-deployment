@@ -14,6 +14,10 @@
 # This script is for preparing the Backup And Restore (BAR) process, performing health check on all CP4BA components in the given namespace.
 #    Only tested with CP4BA version: 21.0.3 IF034, dedicated common services set-up
 
+# TODO: We also should check the subscritions, that they are set to manual approval. This is recommended if there are multiple CP deployments. If set to automatic approval, we might want to issue a warning, that user should set them to manual if multiple CPs are installed on this cluster.
+
+# TODO: At the end of the script, we atm only give the number of errors found. We should extend that to list once more all warnings and errors found.
+
 # Check if jq is installed
 type jq > /dev/null 2>&1
 if [ $? -eq 1 ]; then

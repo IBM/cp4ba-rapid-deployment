@@ -104,8 +104,43 @@ else
 fi
 echo
 
-logInfo $cp4baProjectNamespace
-logInfo $cp4baSuspendedCronJobs
+if [[ "$cp4baProjectName" != "$cp4baProjectNamespace" ]]; then
+  logError "Properties file is NOT for the given project namespace. Expected project: $cp4baProjectName Properties file is for project: $cp4baProjectNamespace"
+  echo
+  exit 1
+else
+  logInfo "Properties file is for the given project namespace. Continuing..."
+fi
+echo
+
+
+
+# First test: simply scale up all operators and check if this does the job ;-)
+logInfo "Scaling up all operators..."
+logInfo $(oc scale deploy ibm-cp4a-operator --replicas=1)
+logInfo $(oc scale deploy ibm-cp4a-wfps-operator-controller-manager --replicas=1)
+logInfo $(oc scale deploy iaf-core-operator-controller-manager --replicas=1)
+logInfo $(oc scale deploy iaf-eventprocessing-operator-controller-manager --replicas=1)
+logInfo $(oc scale deploy iaf-flink-operator-controller-manager --replicas=1)
+logInfo $(oc scale deploy iaf-insights-engine-operator-controller-manager --replicas=1)
+logInfo $(oc scale deploy iaf-operator-controller-manager --replicas=1)
+logInfo $(oc scale deploy ibm-bts-operator-controller-manager --replicas=1)
+logInfo $(oc scale deploy ibm-elastic-operator-controller-manager --replicas=1)
+logInfo $(oc scale deploy nginx-ingress-controller --replicas=1)
+logInfo $(oc scale deploy postgresql-operator-controller-manager-1-18-12 --replicas=1)
+logInfo $(oc scale deploy ibm-zen-operator --replicas=1)
+logInfo $(oc scale deploy ibm-platform-api-operator --replicas=1)
+logInfo $(oc scale deploy ibm-namespace-scope-operator --replicas=1)
+logInfo $(oc scale deploy ibm-mongodb-operator --replicas=1)
+logInfo $(oc scale deploy ibm-management-ingress-operator --replicas=1)
+logInfo $(oc scale deploy ibm-ingress-nginx-operator --replicas=1)
+logInfo $(oc scale deploy ibm-iam-operator --replicas=1)
+logInfo $(oc scale deploy ibm-events-operator-v5.0.1 --replicas=1)
+logInfo $(oc scale deploy ibm-commonui-operator --replicas=1)
+logInfo $(oc scale deploy ibm-common-service-operator --replicas=1)
+logInfo $(oc scale deploy iaf-system-entity-operator --replicas=1)
+logInfo $(oc scale deploy iam-policy-controller --replicas=1)
+echo
 
 
 
