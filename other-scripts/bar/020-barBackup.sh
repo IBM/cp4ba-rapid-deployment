@@ -38,28 +38,29 @@ CUR_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 # Import common utilities
 source ${CUR_DIR}/common.sh
 DATETIMESTR=$(date +'%Y%m%d_%H%M%S')
-LOG_FILE="$CUR_DIR/Backup_${DATETIMESTR}.log"
-
-echo "Details will be logged to $LOG_FILE."
 
 INPUT_PROPS_FILENAME="001-barParameters.sh"
 INPUT_PROPS_FILENAME_FULL="${CUR_DIR}/${INPUT_PROPS_FILENAME}"
+echo
 
 if [[ -f $INPUT_PROPS_FILENAME_FULL ]]; then
-   logInfo "Found ${INPUT_PROPS_FILENAME}. Reading in variables from that script."
+   echo "Found ${INPUT_PROPS_FILENAME}. Reading in variables from that script."
    
    . $INPUT_PROPS_FILENAME_FULL
    
-   if [ $cp4baProjectName == "REQUIRED" ] || [ "$cp4baTlsSecretName" == "REQUIRED" ] || [ $cp4baAdminPassword == "REQUIRED" ] || [ $ldapAdminPassword == "REQUIRED" ] || [ $ldapServer == "REQUIRED" ]; then
-      logError "File ${INPUT_PROPS_FILENAME} not fully updated. Pls. update all REQUIRED parameters."
+   if [ $cp4baProjectName == "REQUIRED" ]; then
+      echo "File ${INPUT_PROPS_FILENAME} not fully updated. Pls. update all REQUIRED parameters."
+      echo
       exit 1
    fi
 
-   logInfo "Done!"
+   echo "Done!"
 else
-   logError "File ${INPUT_PROPS_FILENAME_FULL} not found. Pls. check."
+   echo "File ${INPUT_PROPS_FILENAME_FULL} not found. Pls. check."
+   echo
    exit 1
 fi
+echo
 
 echo -e "\x1B[1mThis script will backup the CP4BA environment deployed in ${cp4baProjectName}.\n \x1B[0m"
 
@@ -69,7 +70,6 @@ case "$ans" in
 "y"|"Y"|"yes"|"Yes"|"YES")
    echo
    echo -e "Backing up CP4BA deployment in namespace ${cp4baProjectName}..."
-   echo
    ;;
 *)
    echo
@@ -79,31 +79,45 @@ case "$ans" in
    ;;
 esac
 
+BACKUP_ROOT_DIRECTORY_FULL="${CUR_DIR}/${cp4baProjectName}"
+if [[ -d $BACKUP_ROOT_DIRECTORY_FULL ]]; then
+   echo
+else
+   echo
+   mkdir "$BACKUP_ROOT_DIRECTORY_FULL"
+fi
+
+LOG_FILE="$BACKUP_ROOT_DIRECTORY_FULL/Backup_${DATETIMESTR}.log"
+logInfo "Details will be logged to $LOG_FILE."
+echo
+
+
+
 ##### Preparation ##############################################################
 # Verify OCP Connecction
 logInfo "Verifying OC CLI is connected to the OCP cluster..."
-
 WHOAMI=$(oc whoami)
 logInfo "WHOAMI =" $WHOAMI
 
 if [[ "$WHOAMI" == "" ]]; then
    logError "OC CLI is NOT connected to the OCP cluster. Please log in first with an admin user to OpenShift Web Console, then use option \"Copy login command\" and log in with OC CLI, before using this script."
+   echo
    exit 1
 fi
+echo
 
 # switch to CP4BA project
-logInfo "Switching to project ${cp4baProjectName}..."
-
-CP4BA_PROJECT=$(oc project --short)
-logInfo "CP4BA project =" $CP4BA_PROJECT
-   
+project=$(oc project --short)
+logInfo "project =" $project
 if [[ "$project" != "$cp4baProjectName" ]]; then
-   oc project $cp4baProjectName
+   logInfo "Switching to project ${cp4baProjectName}..."
+   logInfo $(oc project $cp4baProjectName)
 fi
+echo
 
 # Create backup directory
 logInfo "Creating backup directory..."
-BACKUP_DIR=$CUR_DIR/backup_${DATETIMESTR}
+BACKUP_DIR=$BACKUP_ROOT_DIRECTORY_FULL/backup_${DATETIMESTR}
 mkdir -p $BACKUP_DIR/{secrets,pvc,postgresql,flink}
 
 ##### Backup CR ################################################################
@@ -185,6 +199,7 @@ if jq --exit-status -r .spec.workflow_authoring_configuration.database.secret_na
   oc get secret $SECRET_WORKFLOW_AUTHORING_DB -o yaml | yq eval 'del(.metadata.annotations, .metadata.creationTimestamp, .metadata.namespace, .metadata.resourceVersion, .metadata.uid)'  > ${BACKUP_DIR}/secrets/$SECRET_WORKFLOW_AUTHORING_DB.yaml
 fi
 
+# TODO: In current case ADP is not deployed. jq can't be set to verbose. Therefore the following if results in an error on the console. We have to think about how to avoid that.
 # ADP database secret
 if jq --exit-status -r .spec.ca_configuration.global.db_secret ${BACKUP_DIR}/CRTMP.json > /dev/null 2>&1; then
   logInfo "Backing up Automation Document Processing database secret..."
@@ -362,7 +377,7 @@ if [[ $CP4BA_VERSION =~ "21.0.3" ]]; then
 else
   MANAGEMENT_POD=$(oc get pod --no-headers -l component=${CP4BA_NAME}-insights-engine-management |awk {'print $1'})
 fi
-logInfo "MAnagement pod: $MANAGEMENT_POD"
+logInfo "Management pod: $MANAGEMENT_POD"
 
 # Get management service URL and credentails
 logInfo "Getting insightsengine details..."
@@ -389,7 +404,7 @@ FLINK_JOBS=$(curl -sk -u ${MANAGEMENT_USERNAME}:${MANAGEMENT_PASSWORD} $MANAGEME
 FLINK_JOBS_COUNT=$(echo $FLINK_JOBS |jq '.jobs' | jq 'length')
 
 # Take savepoints and cancel the jobs
-logInfo "Creating flink savepoints and canceling the jonbs..."
+logInfo "Creating flink savepoints and canceling the jobs..."
 FLINK_SAVEPOINT_RESULTS=$(curl -X POST -sk -u ${MANAGEMENT_USERNAME}:${MANAGEMENT_PASSWORD} "${MANAGEMENT_URL}/api/v1/processing/jobs/savepoints?cancel-job=true")
 FLINK_SAVEPOINT_COUNT=$(echo $FLINK_SAVEPOINT_RESULTS | jq 'length')
 for ((i=0; i<$FLINK_SAVEPOINT_COUNT; i++)); do

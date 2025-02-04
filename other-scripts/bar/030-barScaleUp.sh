@@ -151,8 +151,12 @@ echo
 
 # Third, Zen's cpdservice needs to be modified to get back all zen pods -> add "flag: true/false"
 logInfo "Re-enabling ZEN..."
-logInfo $(oc patch ZenService iaf-zen-cpdservice --type merge --patch '{"spec":{"flag":true}}')
-logInfo $(oc patch ZenService iaf-zen-cpdservice --type merge --patch '{"spec":{"flag":false}}')
+flag=$(oc get ZenService iaf-zen-cpdservice -o 'custom-columns=NAME:.metadata.name,FLAG:.spec.flag' --no-headers --ignore-not-found | awk '{print $2}')
+if [[ $flag == null || $flag == "true" ]]; then
+  logInfo $(oc patch ZenService iaf-zen-cpdservice --type merge --patch '{"spec":{"flag":false}}')
+else
+  logInfo $(oc patch ZenService iaf-zen-cpdservice --type merge --patch '{"spec":{"flag":true}}')
+fi
 echo
 
 # Fourth, re-enable all suspended cron jobs

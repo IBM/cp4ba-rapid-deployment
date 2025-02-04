@@ -176,8 +176,13 @@ logInfo "Scaling down deployments..."
 deployments=$(oc get deploy -o name)
 logInfo "deployments =" $deployments
 for i in $deployments; do
-   logInfo "scaling deployment =" $i;
-   logInfo $(oc scale $i --replicas=0);
+   if [[ "$i" == "deployment.apps/iaf-insights-engine-management" ]] ; then
+     # Don't scale down now, needed while backup
+     logInfo "not scaled = $i"
+   else
+     logInfo "scaling deployment =" $i;
+     logInfo $(oc scale $i --replicas=0);
+   fi
 done
 echo
 
@@ -187,8 +192,13 @@ logInfo "Scaling down stateful sets..."
 statefulSets=$(oc get sts -o name)
 logInfo "statefulSets =" $statefulSets
 for i in $statefulSets; do
-   logInfo "scaling stateful set =" $i;
-   logInfo $(oc scale $i --replicas=0);
+   if [[ "$i" == "statefulset.apps/iaf-system-elasticsearch-es-data" ]] ; then
+     # Don't scale down now, needed while backup
+     logInfo "not scaled = $i"
+   else
+     logInfo "scaling stateful set =" $i;
+     logInfo $(oc scale $i --replicas=0);
+   fi
 done
 echo
 
@@ -199,16 +209,18 @@ logInfo "Deleting all remaing running CP4BA pods..."
 logInfo $(oc delete pod iaf-system-kafka-2)
 logInfo $(oc delete pod iaf-system-kafka-1)
 sleep 10
-logInfo $(oc delete pod iaf-system-kafka-0)
+# Don't scale down now, needed while backup
+# logInfo $(oc delete pod iaf-system-kafka-0)
 sleep 10
 logInfo $(oc delete pod iaf-system-zookeeper-2)
 logInfo $(oc delete pod iaf-system-zookeeper-1)
 sleep 10
-logInfo $(oc delete pod iaf-system-zookeeper-0)
+# Don't scale down now, needed while backup
+# logInfo $(oc delete pod iaf-system-zookeeper-0)
 sleep 10
 logInfo $(oc delete pod ibm-bts-cnpg-ibm-cp4ba-cp4ba-bts-2)
 sleep 10
-# Do not delete the bts-1 pod yet, will be needed to backup the db, once done it'll be deleted
+# Don't scale down now, needed while backup
 # logInfo $(oc delete pod ibm-bts-cnpg-ibm-cp4ba-cp4ba-bts-1)
 # sleep 10
 rrpods=$(oc get pod -l=app.kubernetes.io/name=resource-registry --no-headers --ignore-not-found | awk '{print $1}')
