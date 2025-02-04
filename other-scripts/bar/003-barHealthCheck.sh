@@ -35,7 +35,7 @@ INPUT_PROPS_FILENAME_FULL="${CUR_DIR}/${INPUT_PROPS_FILENAME}"
 
 if [[ -f $INPUT_PROPS_FILENAME_FULL ]]; then
    echo
-   echo "Found ${INPUT_PROPS_FILENAME}.  Reading in variables from that script."
+   echo "Found ${INPUT_PROPS_FILENAME}. Reading in variables from that script."
    
    . $INPUT_PROPS_FILENAME_FULL
    

@@ -26,6 +26,7 @@ cp4baProjectNamespace=§cp4baProjectNamespace
 
 cp4baSuspendedCronJobs=§cp4baSuspendedCronJobs
 
+cp4baCommonWebUiReplicaSize=§cp4baCommonWebUiReplicaSize
 
 # --- end of file ---
 

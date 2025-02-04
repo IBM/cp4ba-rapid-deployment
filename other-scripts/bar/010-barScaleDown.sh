@@ -24,7 +24,7 @@ INPUT_PROPS_FILENAME_FULL="${CUR_DIR}/${INPUT_PROPS_FILENAME}"
 
 if [[ -f $INPUT_PROPS_FILENAME_FULL ]]; then
    echo
-   echo "Found ${INPUT_PROPS_FILENAME}.  Reading in variables from that script."
+   echo "Found ${INPUT_PROPS_FILENAME}. Reading in variables from that script."
    
    . $INPUT_PROPS_FILENAME_FULL
    
@@ -99,7 +99,13 @@ if [[ -f $propertiesfile ]]; then
 fi
 logInfo "Persisting scale down information in" $propertiesfile
 cp propertiestemplate.sh $propertiesfile
+
+# Persist the project for which this backup is
 sed -i.bak "s|§cp4baProjectNamespace|$cp4baProjectName|g" $propertiesfile
+
+# Persist the replica size of the common-web-ui deployment
+commonWebUiReplicas=$(oc get pod -l=app.kubernetes.io/name=common-web-ui -o 'custom-columns=NAME:.metadata.name,PHASE:.status.phase,READY:.status.containerStatuses[0].ready,DELETED:.metadata.deletionTimestamp' --no-headers --ignore-not-found | grep 'Running' | grep 'true' | grep '<none>' | awk '{print $1}' | wc -l)
+sed -i.bak "s|§cp4baCommonWebUiReplicaSize|$commonWebUiReplicas|g" $propertiesfile
 echo
 
 
@@ -143,6 +149,7 @@ logInfo $(oc scale deploy ibm-commonui-operator --replicas=0)
 logInfo $(oc scale deploy ibm-common-service-operator --replicas=0)
 logInfo $(oc scale deploy iaf-system-entity-operator --replicas=0)
 logInfo $(oc scale deploy iam-policy-controller --replicas=0)
+logInfo $(oc scale deploy operand-deployment-lifecycle-manager --replicas=0)
 sleep 10
 echo
 
@@ -226,4 +233,5 @@ echo
 
 rm $propertiesfile.bak
 
+logInfo "Environment is scaled down. You now can take a backup of this project."
 echo

@@ -25,7 +25,7 @@ INPUT_PROPS_FILENAME_FULL="${CUR_DIR}/${INPUT_PROPS_FILENAME}"
 
 if [[ -f $INPUT_PROPS_FILENAME_FULL ]]; then
    echo
-   echo "Found ${INPUT_PROPS_FILENAME}.  Reading in variables from that script."
+   echo "Found ${INPUT_PROPS_FILENAME}. Reading in variables from that script."
    
    . $INPUT_PROPS_FILENAME_FULL
    
@@ -115,7 +115,7 @@ echo
 
 
 
-# First test: simply scale up all operators and check if this does the job ;-)
+# First, scale up all operators
 logInfo "Scaling up all operators..."
 logInfo $(oc scale deploy ibm-cp4a-operator --replicas=1)
 logInfo $(oc scale deploy ibm-cp4a-wfps-operator-controller-manager --replicas=1)
@@ -140,133 +140,36 @@ logInfo $(oc scale deploy ibm-commonui-operator --replicas=1)
 logInfo $(oc scale deploy ibm-common-service-operator --replicas=1)
 logInfo $(oc scale deploy iaf-system-entity-operator --replicas=1)
 logInfo $(oc scale deploy iam-policy-controller --replicas=1)
+logInfo $(oc scale deploy operand-deployment-lifecycle-manager --replicas=1)
+sleep 30
 echo
 
-
-
-exit
-# EOF! Copy things from below before this line to complet the scale up script.
-
-# Step Zero:
-#   - Maybe have a separate script for all these checks that needs to be run first
-#   - Do some checks if this is really a CP4BA deployment
-#   - Check the CP4BA version number, atm only CP4BA v21.0.3 is supported
-#   - Check the deployed CP4BA components, atm only Content, BAW and BAI are supported
-#   - Check that everything is healthy atm, we only proceed if all pods are in Running or Completed state
-#   - There is no unexpected stuff running in the project
-#   - Check that dedicated common services is used
-#   - Any other checks needed?
-# TODO
-
-# TODO: We on TechZone only have an authoring environment available. CTIE will also have Process Server environments where other pods / resources are there.
-# All bar scripts need to be tested with non-authoring environments, too.
-
-# First, scale down all operators
-logInfo "Scaling down operators..."
-logInfo $(oc scale deploy ibm-cp4a-operator --replicas=0)
-logInfo $(oc scale deploy ibm-cp4a-wfps-operator-controller-manager --replicas=0)
-logInfo $(oc scale deploy iaf-core-operator-controller-manager --replicas=0)
-logInfo $(oc scale deploy iaf-eventprocessing-operator-controller-manager --replicas=0)
-logInfo $(oc scale deploy iaf-flink-operator-controller-manager --replicas=0)
-logInfo $(oc scale deploy iaf-insights-engine-operator-controller-manager --replicas=0)
-logInfo $(oc scale deploy iaf-operator-controller-manager --replicas=0)
-logInfo $(oc scale deploy ibm-bts-operator-controller-manager --replicas=0)
-logInfo $(oc scale deploy ibm-elastic-operator-controller-manager --replicas=0)
-logInfo $(oc scale deploy nginx-ingress-controller --replicas=0)
-logInfo $(oc scale deploy postgresql-operator-controller-manager-1-18-12 --replicas=0)
-logInfo $(oc scale deploy ibm-zen-operator --replicas=0)
-logInfo $(oc scale deploy ibm-platform-api-operator --replicas=0)
-logInfo $(oc scale deploy ibm-namespace-scope-operator --replicas=0)
-logInfo $(oc scale deploy ibm-mongodb-operator --replicas=0)
-logInfo $(oc scale deploy ibm-management-ingress-operator --replicas=0)
-logInfo $(oc scale deploy ibm-ingress-nginx-operator --replicas=0)
-logInfo $(oc scale deploy ibm-iam-operator --replicas=0)
-logInfo $(oc scale deploy ibm-events-operator-v5.0.1 --replicas=0)
-logInfo $(oc scale deploy ibm-commonui-operator --replicas=0)
-logInfo $(oc scale deploy ibm-common-service-operator --replicas=0)
-logInfo $(oc scale deploy iaf-system-entity-operator --replicas=0)
-logInfo $(oc scale deploy iam-policy-controller --replicas=0)
-sleep 10
+# Second, scale up common-web-ui
+logInfo "Scaling up common-web-ui..."
+logInfo $(oc scale deploy common-web-ui --replicas=$cp4baCommonWebUiReplicaSize)
 echo
 
-# Second, suspend all cron jobs
-logInfo "Suspending cron jobs..."
-cronJobs=$(oc get cronjob -o 'custom-columns=NAME:.metadata.name,SUSPEND:.spec.suspend' --no-headers --ignore-not-found | grep 'false' | awk '{print $1}')
-cronJobsProperty=""
-logInfo "cronJobs =" $cronJobs
-for i in $cronJobs; do
-   if [[ $cronJobsProperty = "" ]]; then
-     cronJobsProperty="$i"
-   else
-     cronJobsProperty="$cronJobsProperty $i"
-   fi
-   logInfo "suspending cron job=" $i;
-   logInfo $(oc patch cronJob $i --type merge --patch '{"spec":{"suspend":true}}');
-done
-sed -i.bak "s|§cp4baSuspendedCronJobs|$cronJobsProperty|g" $propertiesfile
+# Third, Zen's cpdservice needs to be modified to get back all zen pods -> add "flag: true/false"
+logInfo "Re-enabling ZEN..."
+logInfo $(oc patch ZenService iaf-zen-cpdservice --type merge --patch '{"spec":{"flag":true}}')
+logInfo $(oc patch ZenService iaf-zen-cpdservice --type merge --patch '{"spec":{"flag":false}}')
 echo
 
-# Third, scale down all deployments
-# TODO: We want to be more speciffic here, scale down only the deployments we are aware of, not all.
-logInfo "Scaling down deployments..."
-deployments=$(oc get deploy -o name)
-logInfo "deployments =" $deployments
-for i in $deployments; do
-   logInfo "scaling deployment =" $i;
-   logInfo $(oc scale $i --replicas=0);
-done
-echo
-
-# Fourth, scale down all stateful sets
-# TODO: We want to be more speciffic here, scale down only the stateful sets we are aware of, not all.
-logInfo "Scaling down stateful sets..."
-statefulSets=$(oc get sts -o name)
-logInfo "statefulSets =" $statefulSets
-for i in $statefulSets; do
-   logInfo "scaling stateful set =" $i;
-   logInfo $(oc scale $i --replicas=0);
-done
-echo
-
-# Fifth, delete all remaing running pods that we know
-# TODO: This section most likely needs a more flexible approach. What when a customer has 5 or more kafka pods? Same for the other pods deleted here.
-# We want to first query for all those pods and then delete those that are existing.
-logInfo "Deleting all remaing running CP4BA pods..."
-logInfo $(oc delete pod iaf-system-kafka-2)
-logInfo $(oc delete pod iaf-system-kafka-1)
-sleep 10
-logInfo $(oc delete pod iaf-system-kafka-0)
-sleep 10
-logInfo $(oc delete pod iaf-system-zookeeper-2)
-logInfo $(oc delete pod iaf-system-zookeeper-1)
-sleep 10
-logInfo $(oc delete pod iaf-system-zookeeper-0)
-sleep 10
-logInfo $(oc delete pod ibm-bts-cnpg-ibm-cp4ba-cp4ba-bts-2)
-sleep 10
-# Do not delete the bts-1 pod yet, will be needed to backup the db, once done it'll be deleted
-# logInfo $(oc delete pod ibm-bts-cnpg-ibm-cp4ba-cp4ba-bts-1)
-# sleep 10
-rrpods=$(oc get pod -l=app.kubernetes.io/name=resource-registry --no-headers --ignore-not-found | awk '{print $1}')
-for pod in ${rrpods[*]}
+# Fourth, re-enable all suspended cron jobs
+logInfo "Re-enabling suspended cron jobs..."
+suspendedCronJobs=$(echo $cp4baSuspendedCronJobs | tr "," "\n")
+for job in $suspendedCronJobs
 do
-   logInfo $(oc delete pod $pod)
+  logInfo $(oc patch cronJob $job --type merge --patch '{"spec":{"suspend":false}}');
 done
 echo
 
-# Sixth, delete all completed pods
-logInfo "Deleting completed pods..."
-completedpods=$(oc get pod -o 'custom-columns=NAME:.metadata.name,PHASE:.status.phase' --no-headers --ignore-not-found | grep 'Succeeded' | awk '{print $1}')
-logInfo "completed pods = " $completedpods
-for i in $completedpods; do
-   logInfo "deleting pod =" $i;
-   logInfo $(oc delete pod $i)
-done
+# Fifth, re-start BAI Flink jobs
+logInfo "Re-starting BAI Flink jobs..."
+logInfo $(oc get job icp4adeploy-bai-bpmn -o json | jq 'del(.spec.selector)' | jq 'del(.spec.template.metadata.labels)' | oc replace --force -f -)
+logInfo $(oc get job icp4adeploy-bai-icm -o json | jq 'del(.spec.selector)' | jq 'del(.spec.template.metadata.labels)' | oc replace --force -f -)
+logInfo $(oc get job icp4adeploy-bai-content -o json | jq 'del(.spec.selector)' | jq 'del(.spec.template.metadata.labels)' | oc replace --force -f -)
 echo
 
-# Seventh, check if there are some pods remaining
-# TODO
-
-rm $propertiesfile.bak
-
+logInfo "Environment is scaled up. It will take some time till all needed pods are there and are Running and Ready. Please check in the OCP Web Console. Once all pods are there, pls. check that everything works as expected."
 echo

@@ -46,7 +46,7 @@ INPUT_PROPS_FILENAME="001-barParameters.sh"
 INPUT_PROPS_FILENAME_FULL="${CUR_DIR}/${INPUT_PROPS_FILENAME}"
 
 if [[ -f $INPUT_PROPS_FILENAME_FULL ]]; then
-   logInfo "Found ${INPUT_PROPS_FILENAME}.  Reading in variables from that script."
+   logInfo "Found ${INPUT_PROPS_FILENAME}. Reading in variables from that script."
    
    . $INPUT_PROPS_FILENAME_FULL
    
