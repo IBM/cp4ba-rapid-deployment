@@ -657,6 +657,7 @@ echo
 
 ##### Flink ####################################################################
 if oc get FlinkDeployment icp4adeploy-insights-engine-flink > /dev/null 2>&1; then
+  # 24.0
   logInfo "Checking Flink Deployment..."
   FLINK_JOBS_TATUS=$(oc get FlinkDeployment icp4adeploy-insights-engine-flink -o 'jsonpath={.status.jobManagerDeploymentStatus}')
   checkResult $FLINK_JOBS_TATUS "READY" "Flink Job Manager Deployment Status"
@@ -666,7 +667,18 @@ if oc get FlinkDeployment icp4adeploy-insights-engine-flink > /dev/null 2>&1; th
 
   FLINK_RECONCILE_STATE=$(oc get FlinkDeployment icp4adeploy-insights-engine-flink -o 'jsonpath={.status.reconciliationStatus.state}')
   checkResult $FLINK_RECONCILE_STATE "DEPLOYED" "Flink Reconcile State"
+fi
 
+if oc get FlinkCluster > /dev/null 2>&1; then
+  # 21.0.3
+  FLINK_CLUSTER_NAME=$(oc get FlinkCluster --no-headers |awk {'print $1'})
+  logInfo "Checking Flink Cluster $FLINK_CLUSTER_NAME..."
+  FLINK_CLUSTER_TATUS=$(oc get FlinkCluster $FLINK_CLUSTER_NAME -o 'jsonpath={.status.state}')
+  checkResult $FLINK_CLUSTER_TATUS "Running" "Flink Cluster Status"
+fi
+
+# Insights Engine
+if oc get insightsengine > /dev/null 2>&1; then
   INSIGHTS_ENGINE=$(oc get insightsengine --no-headers | awk {'print $1'})
   MANAGEMENT_URL=$(oc get insightsengine $INSIGHTS_ENGINE -o jsonpath='{.status.components.management.endpoints[?(@.scope=="External")].uri}')
   logInfo "  Insights Engine $INSIGHTS_ENGINE Management: $MANAGEMENT_URL"
@@ -687,6 +699,7 @@ if oc get FlinkDeployment icp4adeploy-insights-engine-flink > /dev/null 2>&1; th
     done
   fi
 fi
+
 
 ##### OCP jobs #################################################################
 
