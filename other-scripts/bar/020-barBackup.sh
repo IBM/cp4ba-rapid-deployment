@@ -400,13 +400,18 @@ FLINK_USERNAME=$(oc get secret ${FLINK_AUTH_SECRET} -o jsonpath='{.data.username
 FLINK_PASSWORD=$(oc get secret ${FLINK_AUTH_SECRET} -o jsonpath='{.data.password}' | base64 -d)
 logInfo "Retrieving flink jobs from $MANAGEMENT_URL/api/v1/processing/jobs/list..."
 
-FLINK_JOBS=$(curl -sk -u ${MANAGEMENT_USERNAME}:${MANAGEMENT_PASSWORD} $MANAGEMENT_URL/api/v1/processing/jobs/list)
-FLINK_JOBS_COUNT=$(echo $FLINK_JOBS |jq '.jobs' | jq 'length')
+#FLINK_JOBS=$(curl -sk -u ${MANAGEMENT_USERNAME}:${MANAGEMENT_PASSWORD} $MANAGEMENT_URL/api/v1/processing/jobs/list)
+#FLINK_JOBS_COUNT=$(echo $FLINK_JOBS |jq '.jobs' | jq 'length')
 
 # Take savepoints and cancel the jobs
 logInfo "Creating flink savepoints and canceling the jobs..."
 FLINK_SAVEPOINT_RESULTS=$(curl -X POST -sk -u ${MANAGEMENT_USERNAME}:${MANAGEMENT_PASSWORD} "${MANAGEMENT_URL}/api/v1/processing/jobs/savepoints?cancel-job=true")
-FLINK_SAVEPOINT_COUNT=$(echo $FLINK_SAVEPOINT_RESULTS | jq 'length')
+if [[ $FLINK_SAVEPOINT_RESULTS == "" ]]; then
+  FLINK_SAVEPOINT_COUNT=0
+else
+  FLINK_SAVEPOINT_COUNT=$(echo $FLINK_SAVEPOINT_RESULTS | jq 'length')
+fi
+
 for ((i=0; i<$FLINK_SAVEPOINT_COUNT; i++)); do
   FLINK_SAVEPOINT_NAME=$(echo $FLINK_SAVEPOINT_RESULTS | jq -r ".[$i].name")
   FLINK_SAVEPOINT_JID=$(echo $FLINK_SAVEPOINT_RESULTS | jq -r ".[$i].jid")
@@ -447,3 +452,9 @@ fi
 #TODO copy the snapshots from the pod, what should be copied ? Need clarification from document
 
 
+logInfo "All resources are backed up. Next, please back up:"
+logInfo "  - the databases"
+logInfo "  - the content of the PVs"
+logInfo "  - the binary document data of CPE"
+logInfo "Once those backups are complete, pls. scale up the deployment again."
+echo
