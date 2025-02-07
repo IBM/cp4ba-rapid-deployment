@@ -155,7 +155,7 @@ echo
 
 # Now, drain the system by disabling the nginx
 logInfo "Draining system by scaling deployment = ibm-nginx"
-logInfo $(oc scale ibm-nginx --replicas=0)
+logInfo $(oc scale deployment ibm-nginx --replicas=0)
 sleep 30
 echo
 
