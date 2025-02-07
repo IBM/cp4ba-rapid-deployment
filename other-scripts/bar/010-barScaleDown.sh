@@ -153,6 +153,12 @@ logInfo $(oc scale deploy operand-deployment-lifecycle-manager --replicas=0)
 sleep 10
 echo
 
+# Now, drain the system by disabling the nginx
+logInfo "Draining system by scaling deployment = ibm-nginx"
+logInfo $(oc scale ibm-nginx --replicas=0)
+sleep 30
+echo
+
 # Second, suspend all cron jobs
 logInfo "Suspending cron jobs..."
 cronJobs=$(oc get cronjob -o 'custom-columns=NAME:.metadata.name,SUSPEND:.spec.suspend' --no-headers --ignore-not-found | grep 'false' | awk '{print $1}')
