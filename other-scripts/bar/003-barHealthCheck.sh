@@ -209,7 +209,7 @@ if [[ $CP4BA_COMPONENTS =~ "foundation" ]] || [[ $CP4BA_COMPONENTS =~ "workflow"
   
   # BTS CNPG
   logInfo "Checking BTS Cloud Native PostgreSQL Status..."
-  CP4BA_CNPG_STATUS=$(oc get Cluster ibm-bts-cnpg-ibm-cp4ba-cp4ba-bts -o 'jsonpath={.status.conditions}'|jq -r '.[] |select(.type == "Ready") | .status')
+  CP4BA_CNPG_STATUS=$(oc get Cluster ibm-bts-cnpg-${cp4baProjectName}-cp4ba-bts -o 'jsonpath={.status.conditions}'|jq -r '.[] |select(.type == "Ready") | .status')
   checkResult $CP4BA_CNPG_STATUS "True" "CP4BA Cloud Native PostgreSQL cluster ready"
   echo
 
@@ -651,7 +651,7 @@ fi
 
 ##### Kafka ####################################################################
 logInfo "Checking Kafka..."
-KAFKA_STATUS=$(oc get Kafka iaf-system -o jsonpath='{.status.conditions}' | jq -r '.[] |select(.type == "Ready") |.status')
+KAFKA_STATUS=$(oc get kafka.ibmevents.ibm.com iaf-system -o jsonpath='{.status.conditions}' | jq -r '.[] |select(.type == "Ready") |.status')
 checkResult $KAFKA_STATUS "True" "Kafka ready"
 echo
 
