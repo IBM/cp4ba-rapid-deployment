@@ -98,7 +98,7 @@ if [[ -f $propertiesfile ]]; then
   mv $propertiesfile $backupFile
 fi
 logInfo "Persisting scale down information in" $propertiesfile
-cp propertiestemplate.sh $propertiesfile
+cp ${CUR_DIR}/propertiestemplate.sh $propertiesfile
 
 # Persist the project for which this backup is
 sed -i.bak "s|§cp4baProjectNamespace|$cp4baProjectName|g" $propertiesfile
@@ -224,11 +224,8 @@ sleep 10
 # Don't scale down now, needed while backup
 # logInfo $(oc delete pod iaf-system-zookeeper-0)
 sleep 10
-logInfo $(oc delete pod ibm-bts-cnpg-ibm-cp4ba-cp4ba-bts-2)
+logInfo $(oc delete pod "ibm-bts-cnpg-"$cp4baProjectName"-cp4ba-bts-2")
 sleep 10
-# Don't scale down now, needed while backup
-# logInfo $(oc delete pod ibm-bts-cnpg-ibm-cp4ba-cp4ba-bts-1)
-# sleep 10
 rrpods=$(oc get pod -l=app.kubernetes.io/name=resource-registry --no-headers --ignore-not-found | awk '{print $1}')
 for pod in ${rrpods[*]}
 do

@@ -363,15 +363,13 @@ if [[ $CP4BA_COMPONENTS =~ "application" ]]; then
   CP4BA_APPENGINE_COUNT=$(oc get ICP4ACluster $CP4BA_NAME -o 'jsonpath={.status.components.app-engine.instance_count}')
   logInfo "  Application Engine instance count: $CP4BA_APPENGINE_COUNT"
 
-  #TODO the name may not be icp4adeploy, need find a way to replace icp4adeploy with $CP4BA_NAME
-  CP4BA_APPENGINE_SERVICE=$(oc get ICP4ACluster $CP4BA_NAME -o 'jsonpath={.status.components.ae-icp4adeploy-workspace-aae.service}')
+  CP4BA_APPENGINE_SERVICE=$(oc get ICP4ACluster $CP4BA_NAME -o "jsonpath={.status.components.ae-"$CP4BA_NAME"-workspace-aae.service}")
   checkResult $CP4BA_APPENGINE_SERVICE "Ready" "CP4BA Application Engine service"
   echo
 
-  #TODO the name may not be icp4adeploy, need find a way to replace icp4adeploy with $CP4BA_NAME
   if [[ $CP4BA_OPTIONAL_COMPONENTS =~ "app_designer" ]]; then
     logInfo "Checking Application Engine Playback Server..."
-    CP4BA_PLAYBACK_SERVICE=$(oc get ICP4ACluster $CP4BA_NAME -o 'jsonpath={.status.components.ae-icp4adeploy-pbk.service}')
+    CP4BA_PLAYBACK_SERVICE=$(oc get ICP4ACluster $CP4BA_NAME -o "jsonpath={.status.components.ae-"$CP4BA_NAME"-pbk.service}")
     checkResult $CP4BA_PLAYBACK_SERVICE "Ready" "CP4BA Application Engine Playback Server service"
     echo
   fi
@@ -656,16 +654,16 @@ checkResult $KAFKA_STATUS "True" "Kafka ready"
 echo
 
 ##### Flink ####################################################################
-if oc get FlinkDeployment icp4adeploy-insights-engine-flink > /dev/null 2>&1; then
+if oc get FlinkDeployment $CP4BA_NAME"-insights-engine-flink" > /dev/null 2>&1; then
   # 24.0
   logInfo "Checking Flink Deployment..."
-  FLINK_JOBS_TATUS=$(oc get FlinkDeployment icp4adeploy-insights-engine-flink -o 'jsonpath={.status.jobManagerDeploymentStatus}')
+  FLINK_JOBS_TATUS=$(oc get FlinkDeployment $CP4BA_NAME"-insights-engine-flink" -o 'jsonpath={.status.jobManagerDeploymentStatus}')
   checkResult $FLINK_JOBS_TATUS "READY" "Flink Job Manager Deployment Status"
 
-  FLINK_LIFECYCLE_STATE=$(oc get FlinkDeployment icp4adeploy-insights-engine-flink -o 'jsonpath={.status.lifecycleState}')
+  FLINK_LIFECYCLE_STATE=$(oc get FlinkDeployment $CP4BA_NAME"-insights-engine-flink" -o 'jsonpath={.status.lifecycleState}')
   checkResult $FLINK_LIFECYCLE_STATE "STABLE" "Flink Lifecycle Status"
 
-  FLINK_RECONCILE_STATE=$(oc get FlinkDeployment icp4adeploy-insights-engine-flink -o 'jsonpath={.status.reconciliationStatus.state}')
+  FLINK_RECONCILE_STATE=$(oc get FlinkDeployment $CP4BA_NAME"-insights-engine-flink" -o 'jsonpath={.status.reconciliationStatus.state}')
   checkResult $FLINK_RECONCILE_STATE "DEPLOYED" "Flink Reconcile State"
 fi
 

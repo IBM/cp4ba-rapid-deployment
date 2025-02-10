@@ -168,12 +168,5 @@ do
 done
 echo
 
-# Fifth, re-start BAI Flink jobs
-logInfo "Re-starting BAI Flink jobs..."
-logInfo $(oc get job icp4adeploy-bai-bpmn -o json | jq 'del(.spec.selector)' | jq 'del(.spec.template.metadata.labels)' | oc replace --force -f -)
-logInfo $(oc get job icp4adeploy-bai-icm -o json | jq 'del(.spec.selector)' | jq 'del(.spec.template.metadata.labels)' | oc replace --force -f -)
-logInfo $(oc get job icp4adeploy-bai-content -o json | jq 'del(.spec.selector)' | jq 'del(.spec.template.metadata.labels)' | oc replace --force -f -)
-echo
-
 logInfo "Environment is scaled up. It will take some time till all needed pods are there and are Running and Ready. Please check in the OCP Web Console. Once all pods are there, pls. check that everything works as expected."
 echo

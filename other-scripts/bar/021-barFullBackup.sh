@@ -129,7 +129,7 @@ oc cp --container postgres ibm-bts-cnpg-${cp4baProjectName}-cp4ba-bts-1:/var/lib
 
 # After the backup, we also can delete this pod
 logInfo "Scaling down last BTS PostgreSQL Database pod..."
-logInfo $(oc delete pod ibm-bts-cnpg-ibm-cp4ba-cp4ba-bts-1)
+logInfo $(oc delete pod "ibm-bts-cnpg-"$cp4baProjectName"-cp4ba-bts-1")
 echo
 
 ##### BAI ######################################################################
