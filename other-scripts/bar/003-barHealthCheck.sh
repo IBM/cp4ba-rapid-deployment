@@ -120,11 +120,17 @@ if oc get csv -n $cp4baProjectName|grep "ibm-cp4a-operator" > /dev/null 2>&1; th
   logInfo "  CP4BA version: $CP4BA_VERSION"
 else 
   logError "  Cannot find CP4BA Operator!"
+  echo
   exit 1
 fi
 echo
 
-# TODO log Error if the CP4BA version is not expected
+MAJOR_CP4BA_VERSION=$(cut -c 1-6 <<< $CP4BA_VERSION)
+if [[ $MAJOR_CP4BA_VERSION != "21.0.3" ]]; then
+  logError "  CP4BA version not supported!"
+  echo
+  exit 1
+fi
 
 # Get CP4BA depoyment name
 CP4BA_NAME=$(oc get ICP4ACluster -o name |cut -d "/" -f 2)
@@ -254,18 +260,20 @@ if [[ $CP4BA_COMPONENTS =~ "content" ]] || [[ $CP4BA_COMPONENTS =~ "workflow" ]]
   CP4BA_CPE_ZENINTEGRATION=$(jq -r .status.components.cpe.cpeZenIntegration ${BACKUP_ROOT_DIRECTORY_FULL}/CR.json)
   checkResult $CP4BA_CPE_ZENINTEGRATION "Ready" "CP4BA Content Platform Engine Zen Integration"
   echo
-
-  # GraphQL
-  logInfo "Checking GraphQL..."
-  CP4BA_GRAPHQL_DEPLOYMENT=$(jq -r .status.components.graphql.graphqlDeployment ${BACKUP_ROOT_DIRECTORY_FULL}/CR.json)
-  checkResult $CP4BA_GRAPHQL_DEPLOYMENT "Ready" "CP4BA GraphQL Deployment"
   
-  CP4BA_GRAPHQL_SERVICE=$(jq -r .status.components.graphql.graphqlService ${BACKUP_ROOT_DIRECTORY_FULL}/CR.json)
-  checkResult $CP4BA_GRAPHQL_SERVICE "Ready" "CP4BA GraphQL Service"
-
-  CP4BA_GRAPHQL_STORAGE=$(jq -r .status.components.graphql.graphqlStorage ${BACKUP_ROOT_DIRECTORY_FULL}/CR.json)
-  checkResult $CP4BA_GRAPHQL_STORAGE "Ready" "CP4BA GraphQL Storage"
-  echo
+  # GraphQL - optional component, but for some compments required, therefore first check if it's installed
+  CP4BA_GRAPHQL_DEPLOYMENT=$(jq -r .status.components.graphql.graphqlDeployment ${BACKUP_ROOT_DIRECTORY_FULL}/CR.json)
+  if [[ $CP4BA_GRAPHQL_DEPLOYMENT != "NotInstalled" ]]; then
+    logInfo "Checking GraphQL..."
+    checkResult $CP4BA_GRAPHQL_DEPLOYMENT "Ready" "CP4BA GraphQL Deployment"
+    
+    CP4BA_GRAPHQL_SERVICE=$(jq -r .status.components.graphql.graphqlService ${BACKUP_ROOT_DIRECTORY_FULL}/CR.json)
+    checkResult $CP4BA_GRAPHQL_SERVICE "Ready" "CP4BA GraphQL Service"
+    
+    CP4BA_GRAPHQL_STORAGE=$(jq -r .status.components.graphql.graphqlStorage ${BACKUP_ROOT_DIRECTORY_FULL}/CR.json)
+    checkResult $CP4BA_GRAPHQL_STORAGE "Ready" "CP4BA GraphQL Storage"
+    echo
+  fi
 
   # CSS
   if [[ $CP4BA_OPTIONAL_COMPONENTS =~ "css" ]]; then
@@ -568,13 +576,15 @@ if [[ $CP4BA_VERSION =~ "24.0" ]]; then
   checkHTTPCode $OPENSEARCH_CURL_RESULT "200" $OPENSEARCH_ROUTE
   echo
 else
-  # ElasticSearch
-  logInfo "Trying to connect to ElasticSearch..."
-  ELASTICSEARCH_ROUTE=$(oc get route iaf-system-es -o jsonpath='{.spec.host}')
-  ELASTICSEARCH_PASSWORD=$(oc get secret iaf-system-elasticsearch-es-default-user --no-headers --ignore-not-found -o jsonpath={.data.password} | base64 -d)
-  ELASTICSEARCH_CURL_RESULT=$(curl -sk -w "%{http_code}" -o /dev/null -u elasticsearch-admin:$ELASTICSEARCH_PASSWORD https://$ELASTICSEARCH_ROUTE)
-  checkHTTPCode $ELASTICSEARCH_CURL_RESULT "200" $ELASTICSEARCH_ROUTE
-  echo
+  # ElasticSearch - always installed when workflow/pfs is installed, also needed for bai
+  if [[ $CP4BA_COMPONENTS =~ "workflow" ]] || [[ $CP4BA_OPTIONAL_COMPONENTS =~ "bai" ]]; then
+    logInfo "Trying to connect to ElasticSearch..."
+    ELASTICSEARCH_ROUTE=$(oc get route iaf-system-es -o jsonpath='{.spec.host}')
+    ELASTICSEARCH_PASSWORD=$(oc get secret iaf-system-elasticsearch-es-default-user --no-headers --ignore-not-found -o jsonpath={.data.password} | base64 -d)
+    ELASTICSEARCH_CURL_RESULT=$(curl -sk -w "%{http_code}" -o /dev/null -u elasticsearch-admin:$ELASTICSEARCH_PASSWORD https://$ELASTICSEARCH_ROUTE)
+    checkHTTPCode $ELASTICSEARCH_CURL_RESULT "200" $ELASTICSEARCH_ROUTE
+    echo
+  fi
 fi
 
 
@@ -697,7 +707,7 @@ if oc get insightsengine > /dev/null 2>&1; then
     done
   fi
 fi
-
+echo
 
 ##### OCP jobs #################################################################
 
