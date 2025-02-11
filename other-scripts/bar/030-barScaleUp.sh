@@ -127,7 +127,6 @@ logInfo $(oc scale deploy iaf-operator-controller-manager --replicas=1)
 logInfo $(oc scale deploy ibm-bts-operator-controller-manager --replicas=1)
 logInfo $(oc scale deploy ibm-elastic-operator-controller-manager --replicas=1)
 logInfo $(oc scale deploy nginx-ingress-controller --replicas=1)
-logInfo $(oc scale deploy postgresql-operator-controller-manager-1-18-12 --replicas=1)
 logInfo $(oc scale deploy ibm-zen-operator --replicas=1)
 logInfo $(oc scale deploy ibm-platform-api-operator --replicas=1)
 logInfo $(oc scale deploy ibm-namespace-scope-operator --replicas=1)
@@ -135,12 +134,17 @@ logInfo $(oc scale deploy ibm-mongodb-operator --replicas=1)
 logInfo $(oc scale deploy ibm-management-ingress-operator --replicas=1)
 logInfo $(oc scale deploy ibm-ingress-nginx-operator --replicas=1)
 logInfo $(oc scale deploy ibm-iam-operator --replicas=1)
-logInfo $(oc scale deploy ibm-events-operator-v5.0.1 --replicas=1)
 logInfo $(oc scale deploy ibm-commonui-operator --replicas=1)
 logInfo $(oc scale deploy ibm-common-service-operator --replicas=1)
 logInfo $(oc scale deploy iaf-system-entity-operator --replicas=1)
 logInfo $(oc scale deploy iam-policy-controller --replicas=1)
 logInfo $(oc scale deploy operand-deployment-lifecycle-manager --replicas=1)
+
+# these two operator deployments do have the version in their name, therefore we have to get the deployment name first
+eventsOperatorDeployment=$(oc get deployment -o 'custom-columns=NAME:.metadata.name,SELECTOR:.spec.selector.matchLabels.name' --no-headers --ignore-not-found | grep 'ibm-events-operator' | awk '{print $1}')
+logInfo $(oc scale deploy $eventsOperatorDeployment --replicas=1)
+postgresqlOperatorDeployment=$(oc get deployment -l=app.kubernetes.io/name=cloud-native-postgresql -o 'custom-columns=NAME:.metadata.name' --no-headers --ignore-not-found | awk '{print $1}')
+logInfo $(oc scale deploy $postgresqlOperatorDeployment --replicas=1)
 sleep 30
 echo
 
