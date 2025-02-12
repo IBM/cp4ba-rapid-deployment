@@ -240,22 +240,34 @@ for ((i=0; i<10; i++)); do
 done
 
 # Now that those backups are done, and all remaining pods are gone, we can take a full backup of all resources in the namespace
+# In 001-barParameters.sh, one can specify which resources to skip, get that list first
+skipToBackupResourceKinds=$(echo $barSkipToBackupResourceKinds | tr "," "\n")
 logInfo "Collecting resources that need to be backed up..."
 allResources=$(oc api-resources --verbs=list --namespaced=true -o name | xargs -n 1 oc get --show-kind --ignore-not-found -n $cp4baProjectName -o name)
 echo
 for i in $allResources; do
-   logInfo "Backing up resource =" $i
-   
    # Get the kind and the name
    kind=$(echo $i | grep -oP '.*(?=/)')
    name=$(echo $i | grep -oP '(?<=/).*')
    
-   RESOURCE_BACKUP_DIR=$BACKUP_DIR/$kind
-   if [[ !(-d $RESOURCE_BACKUP_DIR) ]]; then
-     mkdir -p $RESOURCE_BACKUP_DIR
-   fi
+   doSkip=false
+   for skipKind in $skipToBackupResourceKinds
+   do
+     if [[ "$skipKind" == "$kind" ]]; then
+       logInfo "Skipping backup for resource =" $i
+       doSkip=true
+     fi
+   done
    
-   oc get $kind $name -o yaml > $RESOURCE_BACKUP_DIR/$name.yaml
+   if [[ "$doSkip" = "false" ]]; then
+     logInfo "Backing up resource =" $i
+     RESOURCE_BACKUP_DIR=$BACKUP_DIR/$kind
+     if [[ !(-d $RESOURCE_BACKUP_DIR) ]]; then
+       mkdir -p $RESOURCE_BACKUP_DIR
+     fi
+     
+     oc get $kind $name -o yaml > $RESOURCE_BACKUP_DIR/$name.yaml
+   fi
 done
 echo
 
