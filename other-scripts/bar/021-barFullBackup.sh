@@ -214,7 +214,7 @@ else
 fi
 echo
 
-#TODO copy the snapshots from the pod, what should be copied ? Need clarification from document
+#TODO: copy the snapshots from the pod, what should be copied ? Need clarification from document
 
 # After the backup, we also can delete these pods
 logInfo "Scaling down all remaining pods..."
@@ -224,6 +224,7 @@ logInfo $(oc delete pod iaf-system-kafka-0)
 logInfo $(oc delete pod iaf-system-zookeeper-0)
 echo
 
+# TODO: We have to check if this could stay as is...
 # Wait till all pods are gone
 for ((i=0; i<10; i++)); do
    remainingPods=$(oc get pods --no-headers -o name)
