@@ -186,12 +186,12 @@ logInfo "Scaling down deployments..."
 deployments=$(oc get deploy -o name)
 logInfo "deployments =" $deployments
 for i in $deployments; do
-   if [[ "$i" == "deployment.apps/iaf-insights-engine-management" ]] ; then
+   if [[ "$i" == "deployment.apps/iaf-insights-engine-management" ]]; then
      # Don't scale down now, needed while backup
      logInfo "not scaled = $i"
    else
-     logInfo "scaling deployment =" $i;
-     logInfo $(oc scale $i --replicas=0);
+     logInfo "scaling deployment =" $i
+     logInfo $(oc scale $i --replicas=0)
    fi
 done
 echo
@@ -201,29 +201,31 @@ echo
 logInfo "Scaling down stateful sets..."
 statefulSets=$(oc get sts -o name)
 kafkaIsSTS=false
+kafkaReplicas=0
 zookeeperIsSTS=false
+zookeeperReplicas=0
 logInfo "statefulSets =" $statefulSets
-for i in $statefulSets; do
-   if [[ "$i" == "statefulset.apps/iaf-system-elasticsearch-es-data" ]] ; then
+for s in $statefulSets; do
+   if [[ "$s" == "statefulset.apps/iaf-system-elasticsearch-es-data" ]]; then
      # Don't scale down es now, needed while backup
-     logInfo "not scaled = $i"
-   else if [[ "$i" == "statefulset.apps/iaf-system-kafka" ]] ; then
+     logInfo "not scaled = $s"
+   elif [[ "$s" == "statefulset.apps/iaf-system-kafka" ]]; then
      # Scale down kafka to one only, needed while backup
-     kafkaReplicas=$(oc get statefulset.apps/iaf-system-kafka -o 'custom-columns=NAME:.metadata.name,REPLICAS:.spec.replicas' --no-headers --ignore-not-found | awk '{print $2}')
+     kafkaReplicas=$(oc get $s -o 'custom-columns=NAME:.metadata.name,REPLICAS:.spec.replicas' --no-headers --ignore-not-found | awk '{print $2}')
      sed -i.bak "s|§cp4baKafkaReplicaSize|$kafkaReplicas|g" $propertiesfile
-     logInfo "scaling stateful set to 1 =" $i;
-     logInfo $(oc scale $i --replicas=1);
+     logInfo "scaling stateful set to 1 =" $s
+     logInfo $(oc scale $s --replicas=1)
      kafkaIsSTS=true
-   else if [[ "$i" == "statefulset.apps/iaf-system-zookeeper" ]] ; then
+   elif [[ "$s" == "statefulset.apps/iaf-system-zookeeper" ]]; then
      # Scale down zookeeper to one only, needed while backup
-     zookeeperReplicas=$(oc get statefulset.apps/iaf-system-zookeeper -o 'custom-columns=NAME:.metadata.name,REPLICAS:.spec.replicas' --no-headers --ignore-not-found | awk '{print $2}')
+     zookeeperReplicas=$(oc get $s -o 'custom-columns=NAME:.metadata.name,REPLICAS:.spec.replicas' --no-headers --ignore-not-found | awk '{print $2}')
      sed -i.bak "s|§cp4baZookeeperReplicaSize|$zookeeperReplicas|g" $propertiesfile
-     logInfo "scaling stateful set to 1 =" $i;
-     logInfo $(oc scale $i --replicas=1);
+     logInfo "scaling stateful set to 1 =" $s
+     logInfo $(oc scale $s --replicas=1)
      zookeeperIsSTS=true
    else
-     logInfo "scaling stateful set =" $i;
-     logInfo $(oc scale $i --replicas=0);
+     logInfo "scaling stateful set =" $s
+     logInfo $(oc scale $s --replicas=0)
    fi
 done
 echo
@@ -232,7 +234,7 @@ echo
 # TODO: This section most likely needs a more flexible approach. What when a customer has 5 or more kafka pods? Same for the other pods deleted here.
 # We want to first query for all those pods and then delete those that are existing.
 logInfo "Deleting all remaing running CP4BA pods..."
-if [[ !$kafkaIsSTS ]]; then
+if [[ "$kafkaIsSTS" = "false" ]]; then
   # TODO: This section most likely needs a more flexible approach. What when a customer has 5 or more kafka pods?
   logInfo $(oc delete pod iaf-system-kafka-2)
   logInfo $(oc delete pod iaf-system-kafka-1)
@@ -242,7 +244,7 @@ if [[ !$kafkaIsSTS ]]; then
   # sleep 10
 fi
 
-if [[ !$zookeeperIsSTS ]]; then
+if [[ "$zookeeperIsSTS" = "false" ]]; then
   # TODO: This section most likely needs a more flexible approach. What when a customer has 5 or more zookeeper pods?
   logInfo $(oc delete pod iaf-system-zookeeper-2)
   logInfo $(oc delete pod iaf-system-zookeeper-1)

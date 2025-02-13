@@ -120,7 +120,7 @@ logInfo "CP4BA deployment name: $CP4BA_NAME"
 # Get CP4BA version
 CP4BA_VERSION=$(oc get ICP4ACluster $CP4BA_NAME -o 'custom-columns=NAME:.metadata.name,VERSION:.spec.appVersion' --no-headers | awk '{print $2}')
 logInfo "Found CP4BA version: $CP4BA_VERSION"
-
+echo
 
 ##### Backup BTS PostgreSQL Database ###########################################
 logInfo "Backing up BTS PostgreSQL Database..."
@@ -220,13 +220,15 @@ echo
 logInfo "Scaling down all remaining pods..."
 logInfo $(oc scale deployment.apps/iaf-insights-engine-management --replicas=0);
 sleep 5
-if [[ "$(oc get statefulset.apps/iaf-system-kafka -o name --ignore-not-found)" = "" ]]; then
+sts=$(oc get statefulset.apps/iaf-system-kafka -o name --ignore-not-found)
+if [[ "$sts" = "" ]]; then
   logInfo $(oc delete pod iaf-system-kafka-0)
 else
   logInfo $(oc scale statefulset.apps/iaf-system-kafka --replicas=0);
 fi
 sleep 5
-if [[ "$(oc get statefulset.apps/iaf-system-zookeeper -o name --ignore-not-found)" = "" ]]; then
+sts=$(oc get statefulset.apps/iaf-system-zookeeper -o name --ignore-not-found)
+if [[ "$sts" = "" ]]; then
   logInfo $(oc delete pod iaf-system-zookeeper-0)
 else
   logInfo $(oc scale statefulset.apps/iaf-system-zookeeper --replicas=0);
