@@ -219,19 +219,31 @@ echo
 # After the backup, we also can delete these pods
 logInfo "Scaling down all remaining pods..."
 logInfo $(oc scale deployment.apps/iaf-insights-engine-management --replicas=0);
+sleep 5
+if [[ "$(oc get statefulset.apps/iaf-system-kafka -o name --ignore-not-found)" = "" ]]; then
+  logInfo $(oc delete pod iaf-system-kafka-0)
+else
+  logInfo $(oc scale statefulset.apps/iaf-system-kafka --replicas=0);
+fi
+sleep 5
+if [[ "$(oc get statefulset.apps/iaf-system-zookeeper -o name --ignore-not-found)" = "" ]]; then
+  logInfo $(oc delete pod iaf-system-zookeeper-0)
+else
+  logInfo $(oc scale statefulset.apps/iaf-system-zookeeper --replicas=0);
+fi
+sleep 5
 logInfo $(oc scale statefulset.apps/iaf-system-elasticsearch-es-data --replicas=0);
-logInfo $(oc delete pod iaf-system-kafka-0)
-logInfo $(oc delete pod iaf-system-zookeeper-0)
+sleep 5
 echo
 
-# TODO: We have to check if this could stay as is...
+# TODO: We have to check if this could stay as is...we maybe want to wait here, till admin has removed the other pods, otherwise the backup will be incomplete / distributed onto multiple backups
 # Wait till all pods are gone
-for ((i=0; i<10; i++)); do
+for ((i=0; i<13; i++)); do
    remainingPods=$(oc get pods --no-headers -o name)
    if [[ $(oc get pods --no-headers -o name) = "" ]]; then
      break
    else
-     if [[ $i = 9 ]]; then
+     if [[ $i = 12 ]]; then
        logError "Remaining pods detected. Please check. Exiting WITHOUT full backup!!!"
        echo
        exit 1

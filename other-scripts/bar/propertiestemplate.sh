@@ -28,6 +28,10 @@ cp4baSuspendedCronJobs=§cp4baSuspendedCronJobs
 
 cp4baCommonWebUiReplicaSize=§cp4baCommonWebUiReplicaSize
 
+cp4baKafkaReplicaSize=§cp4baKafkaReplicaSize
+
+cp4baZookeeperReplicaSize=§cp4baZookeeperReplicaSize
+
 # --- end of file ---
 
 

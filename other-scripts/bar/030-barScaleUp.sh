@@ -148,9 +148,17 @@ logInfo $(oc scale deploy $postgresqlOperatorDeployment --replicas=1)
 sleep 30
 echo
 
-# Second, scale up common-web-ui
+# Second, scale up common-web-ui, and if stateful set also kafka and zookeeper
 logInfo "Scaling up common-web-ui..."
 logInfo $(oc scale deploy common-web-ui --replicas=$cp4baCommonWebUiReplicaSize)
+if [[ "$(oc get statefulset.apps/iaf-system-zookeeper -o name --ignore-not-found)" != "" ]]; then
+  logInfo "Scaling up zookeeper..."
+  logInfo $(oc scale statefulset.apps/iaf-system-zookeeper --replicas=$cp4baZookeeperReplicaSize);
+fi
+if [[ "$(oc get statefulset.apps/iaf-system-kafka -o name --ignore-not-found)" != "" ]]; then
+  logInfo "Scaling up kafka..."
+  logInfo $(oc scale statefulset.apps/iaf-system-kafka --replicas=$cp4baKafkaReplicaSize);
+fi
 echo
 
 # Third, Zen's cpdservice needs to be modified to get back all zen pods -> add "flag: true/false"

@@ -200,11 +200,27 @@ echo
 # TODO: We want to be more speciffic here, scale down only the stateful sets we are aware of, not all.
 logInfo "Scaling down stateful sets..."
 statefulSets=$(oc get sts -o name)
+kafkaIsSTS=false
+zookeeperIsSTS=false
 logInfo "statefulSets =" $statefulSets
 for i in $statefulSets; do
    if [[ "$i" == "statefulset.apps/iaf-system-elasticsearch-es-data" ]] ; then
-     # Don't scale down now, needed while backup
+     # Don't scale down es now, needed while backup
      logInfo "not scaled = $i"
+   else if [[ "$i" == "statefulset.apps/iaf-system-kafka" ]] ; then
+     # Scale down kafka to one only, needed while backup
+     kafkaReplicas=$(oc get statefulset.apps/iaf-system-kafka -o 'custom-columns=NAME:.metadata.name,REPLICAS:.spec.replicas' --no-headers --ignore-not-found | awk '{print $2}')
+     sed -i.bak "s|§cp4baKafkaReplicaSize|$kafkaReplicas|g" $propertiesfile
+     logInfo "scaling stateful set to 1 =" $i;
+     logInfo $(oc scale $i --replicas=1);
+     kafkaIsSTS=true
+   else if [[ "$i" == "statefulset.apps/iaf-system-zookeeper" ]] ; then
+     # Scale down zookeeper to one only, needed while backup
+     zookeeperReplicas=$(oc get statefulset.apps/iaf-system-zookeeper -o 'custom-columns=NAME:.metadata.name,REPLICAS:.spec.replicas' --no-headers --ignore-not-found | awk '{print $2}')
+     sed -i.bak "s|§cp4baZookeeperReplicaSize|$zookeeperReplicas|g" $propertiesfile
+     logInfo "scaling stateful set to 1 =" $i;
+     logInfo $(oc scale $i --replicas=1);
+     zookeeperIsSTS=true
    else
      logInfo "scaling stateful set =" $i;
      logInfo $(oc scale $i --replicas=0);
@@ -216,20 +232,33 @@ echo
 # TODO: This section most likely needs a more flexible approach. What when a customer has 5 or more kafka pods? Same for the other pods deleted here.
 # We want to first query for all those pods and then delete those that are existing.
 logInfo "Deleting all remaing running CP4BA pods..."
-logInfo $(oc delete pod iaf-system-kafka-2)
-logInfo $(oc delete pod iaf-system-kafka-1)
-sleep 10
-# Don't scale down now, needed while backup
-# logInfo $(oc delete pod iaf-system-kafka-0)
-sleep 10
-logInfo $(oc delete pod iaf-system-zookeeper-2)
-logInfo $(oc delete pod iaf-system-zookeeper-1)
-sleep 10
-# Don't scale down now, needed while backup
-# logInfo $(oc delete pod iaf-system-zookeeper-0)
-sleep 10
+if [[ !$kafkaIsSTS ]]; then
+  # TODO: This section most likely needs a more flexible approach. What when a customer has 5 or more kafka pods?
+  logInfo $(oc delete pod iaf-system-kafka-2)
+  logInfo $(oc delete pod iaf-system-kafka-1)
+  sleep 10
+  # Don't scale down now, needed while backup
+  # logInfo $(oc delete pod iaf-system-kafka-0)
+  # sleep 10
+fi
+
+if [[ !$zookeeperIsSTS ]]; then
+  # TODO: This section most likely needs a more flexible approach. What when a customer has 5 or more zookeeper pods?
+  logInfo $(oc delete pod iaf-system-zookeeper-2)
+  logInfo $(oc delete pod iaf-system-zookeeper-1)
+  sleep 10
+  # Don't scale down now, needed while backup
+  # logInfo $(oc delete pod iaf-system-zookeeper-0)
+  # sleep 10
+fi
+
+# TODO: This section most likely needs a more flexible approach. What when a customer has 3 or more bts-cnpg pods?
 logInfo $(oc delete pod "ibm-bts-cnpg-"$cp4baProjectName"-cp4ba-bts-2")
 sleep 10
+# Don't scale down now, needed while backup
+# logInfo $(oc delete pod "ibm-bts-cnpg-"$cp4baProjectName"-cp4ba-bts-1")
+# sleep 10
+
 rrpods=$(oc get pod -l=app.kubernetes.io/name=resource-registry --no-headers --ignore-not-found | awk '{print $1}')
 for pod in ${rrpods[*]}
 do
