@@ -611,28 +611,40 @@ if [[ $CP4BA_VERSION =~ "21.0.3" ]]; then
   checkResult $ZEN_AUTOMATIONBASE_READY "True" "AutomationBase foundation-iaf ready"
 
   ZEN_AUTOMATIONBASE_CS_READY=$(oc get AutomationBase foundation-iaf -o jsonpath='{.status.conditions}' | jq -r '.[] |select(.type == "CommonServicesReady") |.status')
-  checkResult $ZEN_AUTOMATIONBASE_CS_READY "True" "AutomationBase foundation-iaf CommonService ready"
+  # not always deployed
+  if [[ "$ZEN_AUTOMATIONBASE_CS_READY" != "" ]]; then
+    checkResult $ZEN_AUTOMATIONBASE_CS_READY "True" "AutomationBase foundation-iaf CommonService ready"
+  fi
 
   ZEN_AUTOMATIONBASE_KAFKA_READY=$(oc get AutomationBase foundation-iaf -o jsonpath='{.status.conditions}' | jq -r '.[] |select(.type == "KafkaReady") |.status')
-  checkResult $ZEN_AUTOMATIONBASE_KAFKA_READY "True" "AutomationBase foundation-iaf Kafka ready"
+  # not always deployed
+  if [[ "$ZEN_AUTOMATIONBASE_KAFKA_READY" != "" ]]; then
+    checkResult $ZEN_AUTOMATIONBASE_KAFKA_READY "True" "AutomationBase foundation-iaf Kafka ready"
+  fi
 
   ZEN_AUTOMATIONBASE_ELASTIC_READY=$(oc get AutomationBase foundation-iaf -o jsonpath='{.status.conditions}' | jq -r '.[] |select(.type == "ElasticReady") |.status')
   checkResult $ZEN_AUTOMATIONBASE_ELASTIC_READY "True" "AutomationBase foundation-iaf Elastic ready"
 
   ZEN_AUTOMATIONBASE_APICURIO_READY=$(oc get AutomationBase foundation-iaf -o jsonpath='{.status.conditions}' | jq -r '.[] |select(.type == "ApicurioReady") |.status')
-  checkResult $ZEN_AUTOMATIONBASE_APICURIO_READY "True" "AutomationBase foundation-iaf Apicurio ready"
+  # not always deployed
+  if [[ "$ZEN_AUTOMATIONBASE_APICURIO_READY" != "" ]]; then
+    checkResult $ZEN_AUTOMATIONBASE_APICURIO_READY "True" "AutomationBase foundation-iaf Apicurio ready"
+  fi
   echo
 
-  logInfo "Checking CartridgeRequirement insights-engine..."
-  ZEN_CARTRIDGEREQUIREMENT_INSIGHTSENGINE_READY=$(oc get CartridgeRequirements insights-engine -o jsonpath='{.status.conditions}' | jq -r '.[] |select(.type == "Ready") |.status')
-  checkResult $ZEN_CARTRIDGEREQUIREMENT_INSIGHTSENGINE_READY "True" "CartridgeRequirement insights-engine ready"
-
-  ZEN_CARTRIDGEREQUIREMENT_INSIGHTSENGINE_ELASTICUSER=$(oc get CartridgeRequirements insights-engine -o jsonpath='{.status.conditions}' | jq -r '.[] |select(.type == "ElasticUserReady") |.status')
-  checkResult $ZEN_CARTRIDGEREQUIREMENT_INSIGHTSENGINE_ELASTICUSER "True" "CartridgeRequirement insights-engine elastic user ready"
-
-  ZEN_CARTRIDGEREQUIREMENT_INSIGHTSENGINE_KAFKAUSER=$(oc get CartridgeRequirements insights-engine -o jsonpath='{.status.conditions}' | jq -r '.[] |select(.type == "KafkaUserReady") |.status')
-  checkResult $ZEN_CARTRIDGEREQUIREMENT_INSIGHTSENGINE_KAFKAUSER "True" "CartridgeRequirement insights-engine kafka user ready"
-  echo
+  ZEN_CARTRIDGEREQUIREMENT_INSIGHTSENGINE_READY=$(oc get CartridgeRequirements insights-engine --ignore-not-found -o jsonpath='{.status.conditions}' | jq -r '.[] |select(.type == "Ready") |.status')
+  # not always deployed
+  if [[ "$ZEN_CARTRIDGEREQUIREMENT_INSIGHTSENGINE_READY" != "" ]]; then
+    logInfo "Checking CartridgeRequirement insights-engine..."
+    checkResult $ZEN_CARTRIDGEREQUIREMENT_INSIGHTSENGINE_READY "True" "CartridgeRequirement insights-engine ready"
+    
+    ZEN_CARTRIDGEREQUIREMENT_INSIGHTSENGINE_ELASTICUSER=$(oc get CartridgeRequirements insights-engine --ignore-not-found -o jsonpath='{.status.conditions}' | jq -r '.[] |select(.type == "ElasticUserReady") |.status')
+    checkResult $ZEN_CARTRIDGEREQUIREMENT_INSIGHTSENGINE_ELASTICUSER "True" "CartridgeRequirement insights-engine elastic user ready"
+    
+    ZEN_CARTRIDGEREQUIREMENT_INSIGHTSENGINE_KAFKAUSER=$(oc get CartridgeRequirements insights-engine --ignore-not-found -o jsonpath='{.status.conditions}' | jq -r '.[] |select(.type == "KafkaUserReady") |.status')
+    checkResult $ZEN_CARTRIDGEREQUIREMENT_INSIGHTSENGINE_KAFKAUSER "True" "CartridgeRequirement insights-engine kafka user ready"
+    echo
+  fi
 
   logInfo "Checking CartridgeRequirement icp4ba..."
   ZEN_CARTRIDGEREQUIREMENT_ICP4BA_READY=$(oc get CartridgeRequirements icp4ba -o jsonpath='{.status.conditions}' | jq -r '.[] |select(.type == "Ready") |.status')
@@ -642,7 +654,10 @@ if [[ $CP4BA_VERSION =~ "21.0.3" ]]; then
   checkResult $ZEN_CARTRIDGEREQUIREMENT_ICP4BA_ELASTICUSER "True" "CartridgeRequirement icp4ba elastic user ready"
 
   ZEN_CARTRIDGEREQUIREMENT_ICP4BA_KAFKAUSER=$(oc get CartridgeRequirements icp4ba -o jsonpath='{.status.conditions}' | jq -r '.[] |select(.type == "KafkaUserReady") |.status')
-  checkResult $ZEN_CARTRIDGEREQUIREMENT_ICP4BA_KAFKAUSER "True" "CartridgeRequirement icp4ba kafka user ready"
+  # not always deployed
+  if [[ "$ZEN_CARTRIDGEREQUIREMENT_ICP4BA_KAFKAUSER" != "" ]]; then
+    checkResult $ZEN_CARTRIDGEREQUIREMENT_ICP4BA_KAFKAUSER "True" "CartridgeRequirement icp4ba kafka user ready"
+  fi
   echo
 fi
 
@@ -658,10 +673,16 @@ fi
 
 
 ##### Kafka ####################################################################
-logInfo "Checking Kafka..."
-KAFKA_STATUS=$(oc get kafka.ibmevents.ibm.com iaf-system -o jsonpath='{.status.conditions}' | jq -r '.[] |select(.type == "Ready") |.status')
-checkResult $KAFKA_STATUS "True" "Kafka ready"
-echo
+# not always deployed
+if oc get kafka.ibmevents.ibm.com > /dev/null 2>&1; then
+  KAFKA_STATUS=$(oc get kafka.ibmevents.ibm.com iaf-system --ignore-not-found -o jsonpath='{.status.conditions}' | jq -r '.[] |select(.type == "Ready") |.status')
+  # not always deployed
+  if [[ "$KAFKA_STATUS" != "" ]]; then
+    logInfo "Checking Kafka..."
+    checkResult $KAFKA_STATUS "True" "Kafka ready"
+    echo
+  fi
+fi
 
 ##### Flink ####################################################################
 if oc get FlinkDeployment $CP4BA_NAME"-insights-engine-flink" > /dev/null 2>&1; then
@@ -675,39 +696,47 @@ if oc get FlinkDeployment $CP4BA_NAME"-insights-engine-flink" > /dev/null 2>&1; 
 
   FLINK_RECONCILE_STATE=$(oc get FlinkDeployment $CP4BA_NAME"-insights-engine-flink" -o 'jsonpath={.status.reconciliationStatus.state}')
   checkResult $FLINK_RECONCILE_STATE "DEPLOYED" "Flink Reconcile State"
+  echo
 fi
 
 if oc get FlinkCluster > /dev/null 2>&1; then
   # 21.0.3
-  FLINK_CLUSTER_NAME=$(oc get FlinkCluster --no-headers |awk {'print $1'})
-  logInfo "Checking Flink Cluster $FLINK_CLUSTER_NAME..."
-  FLINK_CLUSTER_TATUS=$(oc get FlinkCluster $FLINK_CLUSTER_NAME -o 'jsonpath={.status.state}')
-  checkResult $FLINK_CLUSTER_TATUS "Running" "Flink Cluster Status"
+  FLINK_CLUSTER_NAME=$(oc get FlinkCluster --ignore-not-found --no-headers |awk {'print $1'})
+  # not always deployed
+  if [[ "$FLINK_CLUSTER_NAME" != "" ]]; then
+    logInfo "Checking Flink Cluster $FLINK_CLUSTER_NAME..."
+    FLINK_CLUSTER_TATUS=$(oc get FlinkCluster $FLINK_CLUSTER_NAME -o 'jsonpath={.status.state}')
+    checkResult $FLINK_CLUSTER_TATUS "Running" "Flink Cluster Status"
+    echo
+  fi
 fi
 
 # Insights Engine
 if oc get insightsengine > /dev/null 2>&1; then
-  INSIGHTS_ENGINE=$(oc get insightsengine --no-headers | awk {'print $1'})
-  MANAGEMENT_URL=$(oc get insightsengine $INSIGHTS_ENGINE -o jsonpath='{.status.components.management.endpoints[?(@.scope=="External")].uri}')
-  logInfo "  Insights Engine $INSIGHTS_ENGINE Management: $MANAGEMENT_URL"
-  MANAGEMENT_AUTH_SECRET=$(oc get insightsengine $INSIGHTS_ENGINE -o jsonpath='{.status.components.management.endpoints[?(@.scope=="External")].authentication.secret.secretName}')
-  MANAGEMENT_USERNAME=$(oc get secret ${MANAGEMENT_AUTH_SECRET} -o jsonpath='{.data.username}' | base64 -d)
-  MANAGEMENT_PASSWORD=$(oc get secret ${MANAGEMENT_AUTH_SECRET} -o jsonpath='{.data.password}' | base64 -d)
-  logInfo "  Retrieving flink jobs..."
-  FLINK_JOBS=$(curl -sk -u ${MANAGEMENT_USERNAME}:${MANAGEMENT_PASSWORD} $MANAGEMENT_URL/api/v1/processing/jobs/list)
-  FLINK_JOBS_COUNT=$(echo $FLINK_JOBS |jq '.jobs' | jq 'length')
-  if [[ $FLINK_JOBS_COUNT == "0" ]]; then {
-    logError "    No flink jobs are running, please check !!"
-  } else
+  INSIGHTS_ENGINE=$(oc get insightsengine --no-headers --ignore-not-found | awk {'print $1'})
+  # not always deployed
+  if [[ "$INSIGHTS_ENGINE" != "" ]]; then
+    MANAGEMENT_URL=$(oc get insightsengine $INSIGHTS_ENGINE -o jsonpath='{.status.components.management.endpoints[?(@.scope=="External")].uri}')
+    logInfo "  Insights Engine $INSIGHTS_ENGINE Management: $MANAGEMENT_URL"
+    MANAGEMENT_AUTH_SECRET=$(oc get insightsengine $INSIGHTS_ENGINE -o jsonpath='{.status.components.management.endpoints[?(@.scope=="External")].authentication.secret.secretName}')
+    MANAGEMENT_USERNAME=$(oc get secret ${MANAGEMENT_AUTH_SECRET} -o jsonpath='{.data.username}' | base64 -d)
+    MANAGEMENT_PASSWORD=$(oc get secret ${MANAGEMENT_AUTH_SECRET} -o jsonpath='{.data.password}' | base64 -d)
+    logInfo "  Retrieving flink jobs..."
+    FLINK_JOBS=$(curl -sk -u ${MANAGEMENT_USERNAME}:${MANAGEMENT_PASSWORD} $MANAGEMENT_URL/api/v1/processing/jobs/list)
+    FLINK_JOBS_COUNT=$(echo $FLINK_JOBS |jq '.jobs' | jq 'length')
+    if [[ $FLINK_JOBS_COUNT == "0" ]]; then {
+      logError "    No flink jobs are running, please check !!"
+    } else
       for ((i=0; i<$FLINK_JOBS_COUNT; i++)); do
-      FLINK_JOB_ID=$(echo $FLINK_JOBS | jq ".jobs[$i].jid")
-      FLINK_JOB_NAME=$(echo $FLINK_JOBS | jq ".jobs[$i].name")
-      FLINK_JOB_STATE=$(echo $FLINK_JOBS | jq ".jobs[$i].state")
-      logInfo "    FLINK JOB ID: $FLINK_JOB_ID, Name: $FLINK_JOB_NAME, State: $FLINK_JOB_STATE"
-    done
+        FLINK_JOB_ID=$(echo $FLINK_JOBS | jq ".jobs[$i].jid")
+        FLINK_JOB_NAME=$(echo $FLINK_JOBS | jq ".jobs[$i].name")
+        FLINK_JOB_STATE=$(echo $FLINK_JOBS | jq ".jobs[$i].state")
+        logInfo "    FLINK JOB ID: $FLINK_JOB_ID, Name: $FLINK_JOB_NAME, State: $FLINK_JOB_STATE"
+      done
+    fi
+    echo
   fi
 fi
-echo
 
 ##### OCP jobs #################################################################
 
@@ -746,10 +775,10 @@ if [[ $podsinpending != "" ]]; then
   logError "Pending pods found:" $podsinpending
 fi
 
-# Terminating
+# Terminating verified
 podsinterminating=$(oc get pod | grep 'Terminating' | awk '{print $1}')
 if [[ $podsinterminating != "" ]]; then
-  logError "Terminating pods found:" $podsinterminating
+  logWarning "Terminating pods found:" $podsinterminating
 fi
 
 # CrashLoopBackOff verified
@@ -761,13 +790,13 @@ fi
 # Failed
 podsinfailed=$(oc get pod -o 'custom-columns=NAME:.metadata.name,PHASE:.status.phase' --no-headers --ignore-not-found | grep 'Error' | awk '{print $1}')
 if [[ $podsinfailed != "" ]]; then
-  logError "Failed pods found:" $podsinfailed
+  logWarning "Failed pods found:" $podsinfailed
 fi
 
 # Unknown
 podsinunknown=$(oc get pod -o 'custom-columns=NAME:.metadata.name,PHASE:.status.phase' --no-headers --ignore-not-found | grep 'Unknown' | awk '{print $1}')
 if [[ $podsinunknown != "" ]]; then
-  logError "Unknown pods found:" $podsinunknown
+  logWarning "Unknown pods found:" $podsinunknown
 fi
 
 # Running but not Ready verified
@@ -778,6 +807,12 @@ fi
 echo
 
 
+WARNING_COUNT=$(grep WARNING $LOG_FILE | wc -l)
+if [ $WARNING_COUNT -ne 0 ]; then
+  logError "Found $WARNING_COUNT warning(s), please check the log for details."
+else
+  logInfo "No warnings found."
+fi
 
 ERROR_COUNT=$(grep ERROR $LOG_FILE | wc -l)
 if [ $ERROR_COUNT -ne 0 ]; then

@@ -17,6 +17,11 @@ function logInfo() {
   echo "$(date +'%F %T.%3N %Z')   INFO    $*" >> $LOG_FILE
 }
 
+function logWarning() {
+  echo "$(date +'%F %T.%3N %Z')   WARNING $*"
+  echo "$(date +'%F %T.%3N %Z')   WARNING $*" >> $LOG_FILE
+}
+
 function logError() {
   echo "$(date +'%F %T.%3N %Z')   ERROR   $*"
   echo "$(date +'%F %T.%3N %Z')   ERROR   $*" >> $LOG_FILE

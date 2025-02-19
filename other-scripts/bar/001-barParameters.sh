@@ -23,7 +23,7 @@ echo "  Reading 001-barParameters.sh ..."
 # --- Provide those BEFORE running any other bar script ---
 
 # OCP project name for CP4BA to backup/restore, for example ibm-cp4ba
-cp4baProjectName=ibm-cp4ba-dev
+cp4baProjectName=ibm-cp4ba
 
 # Not all resources might be required to be backed up, specify here which to skip
 barSkipToBackupResourceKinds=event,event.events.k8s.io,packagemanifest.packages.operators.coreos.com
