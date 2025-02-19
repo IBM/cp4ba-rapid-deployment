@@ -145,13 +145,19 @@ logInfo $(oc scale deploy ibm-ingress-nginx-operator --replicas=0)
 logInfo $(oc scale deploy ibm-iam-operator --replicas=0)
 logInfo $(oc scale deploy ibm-commonui-operator --replicas=0)
 logInfo $(oc scale deploy ibm-common-service-operator --replicas=0)
-logInfo $(oc scale deploy iaf-system-entity-operator --replicas=0)
+# not always deployed
+if oc get deployment iaf-system-entity-operator > /dev/null 2>&1; then
+  logInfo $(oc scale deploy iaf-system-entity-operator --replicas=0)
+fi
 logInfo $(oc scale deploy iam-policy-controller --replicas=0)
 logInfo $(oc scale deploy operand-deployment-lifecycle-manager --replicas=0)
 
 # these two operator deployments do have the version in their name, therefore we have to get the deployment name first
 eventsOperatorDeployment=$(oc get deployment -o 'custom-columns=NAME:.metadata.name,SELECTOR:.spec.selector.matchLabels.name' --no-headers --ignore-not-found | grep 'ibm-events-operator' | awk '{print $1}')
-logInfo $(oc scale deploy $eventsOperatorDeployment --replicas=0)
+# not always deployed
+if [[ "$eventsOperatorDeployment" != "" ]]; then
+  logInfo $(oc scale deploy $eventsOperatorDeployment --replicas=0)
+fi
 postgresqlOperatorDeployment=$(oc get deployment -l=app.kubernetes.io/name=cloud-native-postgresql -o 'custom-columns=NAME:.metadata.name' --no-headers --ignore-not-found | awk '{print $1}')
 logInfo $(oc scale deploy $postgresqlOperatorDeployment --replicas=0)
 sleep 10
@@ -231,35 +237,40 @@ done
 echo
 
 # Fifth, delete all remaing running pods that we know
-# TODO: This section most likely needs a more flexible approach. What when a customer has 5 or more kafka pods? Same for the other pods deleted here.
-# We want to first query for all those pods and then delete those that are existing.
 logInfo "Deleting all remaing running CP4BA pods..."
 if [[ "$kafkaIsSTS" = "false" ]]; then
-  # TODO: This section most likely needs a more flexible approach. What when a customer has 5 or more kafka pods?
-  logInfo $(oc delete pod iaf-system-kafka-2)
-  logInfo $(oc delete pod iaf-system-kafka-1)
+  kafkapods=$(oc get pod -l=app.kubernetes.io/name=kafka --no-headers --ignore-not-found | awk '{print $1}')
+  for pod in ${kafkapods[*]}
+  do
+    # Don't scale down kafka-0 pod now, needed while backup
+    if [[ "$pod" != "iaf-system-kafka-0" ]]; then
+      logInfo $(oc delete pod $pod)
+    fi
+  done
   sleep 10
-  # Don't scale down now, needed while backup
-  # logInfo $(oc delete pod iaf-system-kafka-0)
-  # sleep 10
 fi
 
 if [[ "$zookeeperIsSTS" = "false" ]]; then
-  # TODO: This section most likely needs a more flexible approach. What when a customer has 5 or more zookeeper pods?
-  logInfo $(oc delete pod iaf-system-zookeeper-2)
-  logInfo $(oc delete pod iaf-system-zookeeper-1)
+  zookeeperpods=$(oc get pod -l=app.kubernetes.io/name=zookeeper --no-headers --ignore-not-found | awk '{print $1}')
+  for pod in ${zookeeperpods[*]}
+  do
+    # Don't scale down zookeeper-0 pod now, needed while backup
+    if [[ "$pod" != "iaf-system-zookeeper-0" ]]; then
+      logInfo $(oc delete pod $pod)
+    fi
+  done
   sleep 10
-  # Don't scale down now, needed while backup
-  # logInfo $(oc delete pod iaf-system-zookeeper-0)
-  # sleep 10
 fi
 
-# TODO: This section most likely needs a more flexible approach. What when a customer has 3 or more bts-cnpg pods?
-logInfo $(oc delete pod "ibm-bts-cnpg-"$cp4baProjectName"-cp4ba-bts-2")
+btscnpgpods=$(oc get pod -l=app.kubernetes.io/name=ibm-bts-cp4ba-bts --no-headers --ignore-not-found | awk '{print $1}')
+for pod in ${btscnpgpods[*]}
+do
+  # Don't scale down ibm-bts-cp4ba-bts-1 pod now, needed while backup
+  if [[ "$pod" != "ibm-bts-cnpg-"$cp4baProjectName"-cp4ba-bts-1" ]]; then
+    logInfo $(oc delete pod $pod)
+  fi
+done
 sleep 10
-# Don't scale down now, needed while backup
-# logInfo $(oc delete pod "ibm-bts-cnpg-"$cp4baProjectName"-cp4ba-bts-1")
-# sleep 10
 
 rrpods=$(oc get pod -l=app.kubernetes.io/name=resource-registry --no-headers --ignore-not-found | awk '{print $1}')
 for pod in ${rrpods[*]}

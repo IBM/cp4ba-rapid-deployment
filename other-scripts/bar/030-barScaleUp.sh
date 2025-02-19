@@ -136,13 +136,19 @@ logInfo $(oc scale deploy ibm-ingress-nginx-operator --replicas=1)
 logInfo $(oc scale deploy ibm-iam-operator --replicas=1)
 logInfo $(oc scale deploy ibm-commonui-operator --replicas=1)
 logInfo $(oc scale deploy ibm-common-service-operator --replicas=1)
-logInfo $(oc scale deploy iaf-system-entity-operator --replicas=1)
+# not always deployed
+if oc get deployment iaf-system-entity-operator > /dev/null 2>&1; then
+  logInfo $(oc scale deploy iaf-system-entity-operator --replicas=1)
+fi
 logInfo $(oc scale deploy iam-policy-controller --replicas=1)
 logInfo $(oc scale deploy operand-deployment-lifecycle-manager --replicas=1)
 
 # these two operator deployments do have the version in their name, therefore we have to get the deployment name first
 eventsOperatorDeployment=$(oc get deployment -o 'custom-columns=NAME:.metadata.name,SELECTOR:.spec.selector.matchLabels.name' --no-headers --ignore-not-found | grep 'ibm-events-operator' | awk '{print $1}')
-logInfo $(oc scale deploy $eventsOperatorDeployment --replicas=1)
+# not always deployed
+if [[ "$eventsOperatorDeployment" != "" ]]; then
+  logInfo $(oc scale deploy $eventsOperatorDeployment --replicas=1)
+fi
 postgresqlOperatorDeployment=$(oc get deployment -l=app.kubernetes.io/name=cloud-native-postgresql -o 'custom-columns=NAME:.metadata.name' --no-headers --ignore-not-found | awk '{print $1}')
 logInfo $(oc scale deploy $postgresqlOperatorDeployment --replicas=1)
 sleep 30

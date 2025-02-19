@@ -123,72 +123,103 @@ logInfo "Found CP4BA version: $CP4BA_VERSION"
 echo
 
 ##### Backup BTS PostgreSQL Database ###########################################
-logInfo "Backing up BTS PostgreSQL Database..."
-oc exec --container postgres ibm-bts-cnpg-${cp4baProjectName}-cp4ba-bts-1 -it -- bash -c "pg_dump -d BTSDB -U postgres -Fp -c -C --if-exists  -f /var/lib/postgresql/data/backup_btsdb.sql"
-oc cp --container postgres ibm-bts-cnpg-${cp4baProjectName}-cp4ba-bts-1:/var/lib/postgresql/data/backup_btsdb.sql ${BACKUP_DIR}/postgresql/backup_btsdb.sql
-
-# After the backup, we also can delete this pod
-logInfo "Scaling down last BTS PostgreSQL Database pod..."
-logInfo $(oc delete pod "ibm-bts-cnpg-"$cp4baProjectName"-cp4ba-bts-1")
-echo
+btscnpgpods=$(oc get pod -l=app.kubernetes.io/name=ibm-bts-cp4ba-bts --no-headers --ignore-not-found | awk '{print $1}')
+for pod in ${btscnpgpods[*]}
+do
+  if [[ "$pod" = "ibm-bts-cnpg-"$cp4baProjectName"-cp4ba-bts-1" ]]; then
+    logInfo "Backing up BTS PostgreSQL Database..."
+    oc exec --container postgres ibm-bts-cnpg-${cp4baProjectName}-cp4ba-bts-1 -it -- bash -c "pg_dump -d BTSDB -U postgres -Fp -c -C --if-exists  -f /var/lib/postgresql/data/backup_btsdb.sql"
+    oc cp --container postgres ibm-bts-cnpg-${cp4baProjectName}-cp4ba-bts-1:/var/lib/postgresql/data/backup_btsdb.sql ${BACKUP_DIR}/postgresql/backup_btsdb.sql
+    
+    # After the backup, we also can delete this pod
+    logInfo "Scaling down last BTS PostgreSQL Database pod..."
+    logInfo $(oc delete pod "ibm-bts-cnpg-"$cp4baProjectName"-cp4ba-bts-1")
+    echo
+  fi
+done
 
 ##### BAI ######################################################################
 # Take ES snapshot
 
 # iaf-insights-engine-management needs to be up and running
 if [[ $CP4BA_VERSION =~ "21.0.3" ]]; then
-  MANAGEMENT_POD=$(oc get pod --no-headers -l component=iaf-insights-engine-management |awk {'print $1'})
+  MANAGEMENT_POD=$(oc get pod --no-headers --ignore-not-found -l component=iaf-insights-engine-management |awk {'print $1'})
 else
-  MANAGEMENT_POD=$(oc get pod --no-headers -l component=${CP4BA_NAME}-insights-engine-management |awk {'print $1'})
-fi
-logInfo "Management pod: $MANAGEMENT_POD"
-
-# Get management service URL and credentails
-logInfo "Getting insightsengine details..."
-INSIGHTS_ENGINE=$(oc get insightsengine --no-headers | awk {'print $1'})
-BPC_URL=$(oc get insightsengine $INSIGHTS_ENGINE -o jsonpath='{.status.components.cockpit.endpoints[?(@.scope=="External")].uri}')
-logInfo "BPC URL: $BPC_URL"
-
-MANAGEMENT_URL=$(oc get insightsengine $INSIGHTS_ENGINE -o jsonpath='{.status.components.management.endpoints[?(@.scope=="External")].uri}')
-logInfo "Management URL: $MANAGEMENT_URL"
-
-MANAGEMENT_AUTH_SECRET=$(oc get insightsengine $INSIGHTS_ENGINE -o jsonpath='{.status.components.management.endpoints[?(@.scope=="External")].authentication.secret.secretName}')
-MANAGEMENT_USERNAME=$(oc get secret ${MANAGEMENT_AUTH_SECRET} -o jsonpath='{.data.username}' | base64 -d)
-MANAGEMENT_PASSWORD=$(oc get secret ${MANAGEMENT_AUTH_SECRET} -o jsonpath='{.data.password}' | base64 -d)
-FLINK_UI_URL=$(oc get insightsengine $INSIGHTS_ENGINE -o jsonpath='{.status.components.flinkUi.endpoints[?(@.scope=="External")].uri}')
-logInfo "Flink UI: $FLINK_UI_URL"
-
-# Retrieve the flink jobs
-FLINK_AUTH_SECRET=$(oc get insightsengine $INSIGHTS_ENGINE -o jsonpath='{.status.components.flinkUi.endpoints[?(@.scope=="External")].authentication.secret.secretName}')
-FLINK_USERNAME=$(oc get secret ${FLINK_AUTH_SECRET} -o jsonpath='{.data.username}' | base64 -d)
-FLINK_PASSWORD=$(oc get secret ${FLINK_AUTH_SECRET} -o jsonpath='{.data.password}' | base64 -d)
-logInfo "Retrieving flink jobs from $MANAGEMENT_URL/api/v1/processing/jobs/list..."
-
-#FLINK_JOBS=$(curl -sk -u ${MANAGEMENT_USERNAME}:${MANAGEMENT_PASSWORD} $MANAGEMENT_URL/api/v1/processing/jobs/list)
-#FLINK_JOBS_COUNT=$(echo $FLINK_JOBS |jq '.jobs' | jq 'length')
-
-# Take savepoints and cancel the jobs
-logInfo "Creating flink savepoints and canceling the jobs..."
-FLINK_SAVEPOINT_RESULTS=$(curl -X POST -sk -u ${MANAGEMENT_USERNAME}:${MANAGEMENT_PASSWORD} "${MANAGEMENT_URL}/api/v1/processing/jobs/savepoints?cancel-job=true")
-if [[ $FLINK_SAVEPOINT_RESULTS == "" ]]; then
-  FLINK_SAVEPOINT_COUNT=0
-else
-  FLINK_SAVEPOINT_COUNT=$(echo $FLINK_SAVEPOINT_RESULTS | jq 'length')
+  MANAGEMENT_POD=$(oc get pod --no-headers --ignore-not-found -l component=${CP4BA_NAME}-insights-engine-management |awk {'print $1'})
 fi
 
-for ((i=0; i<$FLINK_SAVEPOINT_COUNT; i++)); do
-  FLINK_SAVEPOINT_NAME=$(echo $FLINK_SAVEPOINT_RESULTS | jq -r ".[$i].name")
-  FLINK_SAVEPOINT_JID=$(echo $FLINK_SAVEPOINT_RESULTS | jq -r ".[$i].jid")
-  FLINK_SAVEPOINT_STATE=$(echo $FLINK_SAVEPOINT_RESULTS | jq -r ".[$i].state")
-  FLINK_SAVEPOINT_LOCATION=$(echo $FLINK_SAVEPOINT_RESULTS | jq -r ".[$i].location")
-  logInfo "  Flink savepoint: $FLINK_SAVEPOINT_NAME, JID: $FLINK_SAVEPOINT_JID, STATE: $FLINK_SAVEPOINT_STATE, Location: $FLINK_SAVEPOINT_LOCATION"
-  logInfo "  Copying the savepoint to ${BACKUP_DIR}/flink/${FLINK_SAVEPOINT_LOCATION}..."
-  oc cp --container management ${MANAGEMENT_POD}:${FLINK_SAVEPOINT_LOCATION} ${BACKUP_DIR}/flink${FLINK_SAVEPOINT_LOCATION}
-done
-
-# Remove the Flink job submitters
-logInfo "Removing flink job submitters..."
-oc get jobs -o custom-columns=NAME:.metadata.name | grep bai- | grep -v bai-setup | xargs oc delete job
+# not always deployed
+if [[ "$MANAGEMENT_POD" != "" ]]; then
+  logInfo "Management pod: $MANAGEMENT_POD"
+  
+  # Get management service URL and credentails
+  logInfo "Getting insightsengine details..."
+  INSIGHTS_ENGINE=$(oc get insightsengine --no-headers | awk {'print $1'})
+  BPC_URL=$(oc get insightsengine $INSIGHTS_ENGINE -o jsonpath='{.status.components.cockpit.endpoints[?(@.scope=="External")].uri}')
+  logInfo "BPC URL: $BPC_URL"
+  
+  MANAGEMENT_URL=$(oc get insightsengine $INSIGHTS_ENGINE -o jsonpath='{.status.components.management.endpoints[?(@.scope=="External")].uri}')
+  logInfo "Management URL: $MANAGEMENT_URL"
+  
+  MANAGEMENT_AUTH_SECRET=$(oc get insightsengine $INSIGHTS_ENGINE -o jsonpath='{.status.components.management.endpoints[?(@.scope=="External")].authentication.secret.secretName}')
+  MANAGEMENT_USERNAME=$(oc get secret ${MANAGEMENT_AUTH_SECRET} -o jsonpath='{.data.username}' | base64 -d)
+  MANAGEMENT_PASSWORD=$(oc get secret ${MANAGEMENT_AUTH_SECRET} -o jsonpath='{.data.password}' | base64 -d)
+  FLINK_UI_URL=$(oc get insightsengine $INSIGHTS_ENGINE -o jsonpath='{.status.components.flinkUi.endpoints[?(@.scope=="External")].uri}')
+  logInfo "Flink UI: $FLINK_UI_URL"
+  
+  # Retrieve the flink jobs
+  FLINK_AUTH_SECRET=$(oc get insightsengine $INSIGHTS_ENGINE -o jsonpath='{.status.components.flinkUi.endpoints[?(@.scope=="External")].authentication.secret.secretName}')
+  FLINK_USERNAME=$(oc get secret ${FLINK_AUTH_SECRET} -o jsonpath='{.data.username}' | base64 -d)
+  FLINK_PASSWORD=$(oc get secret ${FLINK_AUTH_SECRET} -o jsonpath='{.data.password}' | base64 -d)
+  logInfo "Retrieving flink jobs from $MANAGEMENT_URL/api/v1/processing/jobs/list..."
+  
+  #FLINK_JOBS=$(curl -sk -u ${MANAGEMENT_USERNAME}:${MANAGEMENT_PASSWORD} $MANAGEMENT_URL/api/v1/processing/jobs/list)
+  #FLINK_JOBS_COUNT=$(echo $FLINK_JOBS |jq '.jobs' | jq 'length')
+  
+  # Take savepoints and cancel the jobs
+  logInfo "Creating flink savepoints and canceling the jobs..."
+  FLINK_SAVEPOINT_RESULTS=$(curl -X POST -sk -u ${MANAGEMENT_USERNAME}:${MANAGEMENT_PASSWORD} "${MANAGEMENT_URL}/api/v1/processing/jobs/savepoints?cancel-job=true")
+  if [[ $FLINK_SAVEPOINT_RESULTS == "" ]]; then
+    FLINK_SAVEPOINT_COUNT=0
+  else
+    FLINK_SAVEPOINT_COUNT=$(echo $FLINK_SAVEPOINT_RESULTS | jq 'length')
+  fi
+  
+  for ((i=0; i<$FLINK_SAVEPOINT_COUNT; i++)); do
+    FLINK_SAVEPOINT_NAME=$(echo $FLINK_SAVEPOINT_RESULTS | jq -r ".[$i].name")
+    FLINK_SAVEPOINT_JID=$(echo $FLINK_SAVEPOINT_RESULTS | jq -r ".[$i].jid")
+    FLINK_SAVEPOINT_STATE=$(echo $FLINK_SAVEPOINT_RESULTS | jq -r ".[$i].state")
+    FLINK_SAVEPOINT_LOCATION=$(echo $FLINK_SAVEPOINT_RESULTS | jq -r ".[$i].location")
+    logInfo "  Flink savepoint: $FLINK_SAVEPOINT_NAME, JID: $FLINK_SAVEPOINT_JID, STATE: $FLINK_SAVEPOINT_STATE, Location: $FLINK_SAVEPOINT_LOCATION"
+    logInfo "  Copying the savepoint to ${BACKUP_DIR}/flink/${FLINK_SAVEPOINT_LOCATION}..."
+    oc cp --container management ${MANAGEMENT_POD}:${FLINK_SAVEPOINT_LOCATION} ${BACKUP_DIR}/flink${FLINK_SAVEPOINT_LOCATION}
+  done
+  
+  # Remove the Flink job submitters
+  logInfo "Removing flink job submitters..."
+  oc get jobs -o custom-columns=NAME:.metadata.name | grep bai- | grep -v bai-setup | xargs oc delete job
+  echo
+  
+  # After the backup, we also can delete these pods
+  logInfo "Scaling down insights-engine pods..."
+  logInfo $(oc scale deployment.apps/iaf-insights-engine-management --replicas=0);
+  sleep 5
+  sts=$(oc get statefulset.apps/iaf-system-kafka -o name --ignore-not-found)
+  if [[ "$sts" = "" ]]; then
+    logInfo $(oc delete pod iaf-system-kafka-0)
+  else
+    logInfo $(oc scale statefulset.apps/iaf-system-kafka --replicas=0);
+  fi
+  sleep 5
+  sts=$(oc get statefulset.apps/iaf-system-zookeeper -o name --ignore-not-found)
+  if [[ "$sts" = "" ]]; then
+    logInfo $(oc delete pod iaf-system-zookeeper-0)
+  else
+    logInfo $(oc scale statefulset.apps/iaf-system-zookeeper --replicas=0);
+  fi
+  echo
+  sleep 5
+fi
 
 # Create ES/OS snapshots
 if [[ $CP4BA_VERSION =~ "24.0" ]]; then
@@ -211,32 +242,16 @@ else
   SNAPSHOT_RESULT=$(curl -skL -u elasticsearch-admin:${ELASTICSEARCH_PASSWORD} -XPUT "https://${ELASTICSEARCH_ROUTE}/_snapshot/${DATETIMESTR}/backup_${DATETIMESTR}?wait_for_completion=true&pretty=true")
   SNAPSHOT_STATE=$(echo $SNAPSHOT_RESULT | jq -r ".snapshot.state")
   checkResult $SNAPSHOT_STATE "SUCCESS" "Snapshot state"
+  echo
+  
+  # After the backup, we also can delete these pods
+  logInfo "Scaling down es pods..."
+  logInfo $(oc scale statefulset.apps/iaf-system-elasticsearch-es-data --replicas=0);
+  echo
+  sleep 5
 fi
-echo
 
 #TODO: copy the snapshots from the pod, what should be copied ? Need clarification from document
-
-# After the backup, we also can delete these pods
-logInfo "Scaling down all remaining pods..."
-logInfo $(oc scale deployment.apps/iaf-insights-engine-management --replicas=0);
-sleep 5
-sts=$(oc get statefulset.apps/iaf-system-kafka -o name --ignore-not-found)
-if [[ "$sts" = "" ]]; then
-  logInfo $(oc delete pod iaf-system-kafka-0)
-else
-  logInfo $(oc scale statefulset.apps/iaf-system-kafka --replicas=0);
-fi
-sleep 5
-sts=$(oc get statefulset.apps/iaf-system-zookeeper -o name --ignore-not-found)
-if [[ "$sts" = "" ]]; then
-  logInfo $(oc delete pod iaf-system-zookeeper-0)
-else
-  logInfo $(oc scale statefulset.apps/iaf-system-zookeeper --replicas=0);
-fi
-sleep 5
-logInfo $(oc scale statefulset.apps/iaf-system-elasticsearch-es-data --replicas=0);
-sleep 5
-echo
 
 # TODO: We have to check if this could stay as is...we maybe want to wait here, till admin has removed the other pods, otherwise the backup will be incomplete / distributed onto multiple backups
 # Wait till all pods are gone
