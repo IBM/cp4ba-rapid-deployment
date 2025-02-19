@@ -18,6 +18,7 @@
 # - https://www.ibm.com/docs/en/cloud-paks/cp-biz-automation/21.0.3?topic=recovery-backing-up-your-environments
 # - https://www.ibm.com/docs/en/cloud-paks/cp-biz-automation/21.0.3?topic=elasticsearch-taking-restoring-snapshots-data
 # - https://community.ibm.com/community/user/automation/blogs/dian-guo-zou/2022/10/12/backup-and-restore-baw-2103
+# - https://www.ibm.com/docs/en/cloud-paks/foundational-services/3.23?topic=operator-foundational-services-backup-restore
 
 # Check if jq is installed
 type jq > /dev/null 2>&1
@@ -122,6 +123,12 @@ CP4BA_VERSION=$(oc get ICP4ACluster $CP4BA_NAME -o 'custom-columns=NAME:.metadat
 logInfo "Found CP4BA version: $CP4BA_VERSION"
 echo
 
+# TODO: Added in session with Zhong Tao, needs testing
+##### Backup uid definition ####################################################
+NAMESPACE_UID=$(oc describe project $cp4baProjectName | grep uid-range | cut -d"=" -f2 | cut -d"/" -f1)
+logInfo "Namespace $cp4baProjectName uid: $NAMESPACE_UID"
+echo $NAMESPACE_UID > ${BACKUP_DIR}/namespace_uid
+
 ##### Backup BTS PostgreSQL Database ###########################################
 btscnpgpods=$(oc get pod -l=app.kubernetes.io/name=ibm-bts-cp4ba-bts --no-headers --ignore-not-found | awk '{print $1}')
 for pod in ${btscnpgpods[*]}
@@ -185,6 +192,7 @@ if [[ "$MANAGEMENT_POD" != "" ]]; then
     FLINK_SAVEPOINT_COUNT=$(echo $FLINK_SAVEPOINT_RESULTS | jq 'length')
   fi
   
+  # TODO: This sometimes does not work, needs further investigation
   for ((i=0; i<$FLINK_SAVEPOINT_COUNT; i++)); do
     FLINK_SAVEPOINT_NAME=$(echo $FLINK_SAVEPOINT_RESULTS | jq -r ".[$i].name")
     FLINK_SAVEPOINT_JID=$(echo $FLINK_SAVEPOINT_RESULTS | jq -r ".[$i].jid")
@@ -251,7 +259,7 @@ else
   sleep 5
 fi
 
-#TODO: copy the snapshots from the pod, what should be copied ? Need clarification from document
+#TODO: copy the snapshots from the pod, what should be copied ? Need clarification from document, Zhong Tao opened a case for this issue: https://jsw.ibm.com/browse/DBACLD-164204: Need clarification on how to copy ES/OS snapshots to another environment
 
 # TODO: We have to check if this could stay as is...we maybe want to wait here, till admin has removed the other pods, otherwise the backup will be incomplete / distributed onto multiple backups
 # Wait till all pods are gone
