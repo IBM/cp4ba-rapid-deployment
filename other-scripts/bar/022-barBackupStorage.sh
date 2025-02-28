@@ -100,7 +100,7 @@ echo
 cat > 023-backup-pvs.sh <<EOF
 #!/bin/bash
 
-// Assisted by watsonx Code Assistant 
+# Assisted by watsonx Code Assistant 
 function perform_backup() {
     namespace=\$1
     policy=\$2
