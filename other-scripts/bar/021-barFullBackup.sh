@@ -123,7 +123,6 @@ CP4BA_VERSION=$(oc get ICP4ACluster $CP4BA_NAME -o 'custom-columns=NAME:.metadat
 logInfo "Found CP4BA version: $CP4BA_VERSION"
 echo
 
-# TODO: Added in session with Zhong Tao, needs testing
 ##### Backup uid definition ####################################################
 NAMESPACE_UID=$(oc describe project $cp4baProjectName | grep uid-range | cut -d"=" -f2 | cut -d"/" -f1)
 logInfo "Namespace $cp4baProjectName uid: $NAMESPACE_UID"
@@ -137,6 +136,7 @@ do
     logInfo "Backing up BTS PostgreSQL Database..."
     oc exec --container postgres ibm-bts-cnpg-${cp4baProjectName}-cp4ba-bts-1 -it -- bash -c "pg_dump -d BTSDB -U postgres -Fp -c -C --if-exists  -f /var/lib/postgresql/data/backup_btsdb.sql"
     oc cp --container postgres ibm-bts-cnpg-${cp4baProjectName}-cp4ba-bts-1:/var/lib/postgresql/data/backup_btsdb.sql ${BACKUP_DIR}/postgresql/backup_btsdb.sql
+    oc exec --container postgres ibm-bts-cnpg-${cp4baProjectName}-cp4ba-bts-1 -it -- bash -c "rm -f /var/lib/postgresql/data/backup_btsdb.sql"
     
     # After the backup, we also can delete this pod
     logInfo "Scaling down last BTS PostgreSQL Database pod..."
@@ -249,6 +249,8 @@ else
   ELASTICSEARCH_ROUTE=$(oc get route iaf-system-es -o jsonpath='{.spec.host}')
   ELASTICSEARCH_PASSWORD=$(oc get secret iaf-system-elasticsearch-es-default-user --no-headers --ignore-not-found -o jsonpath={.data.password} | base64 -d)
   curl -skl -u elasticsearch-admin:$ELASTICSEARCH_PASSWORD -XPUT "https://$ELASTICSEARCH_ROUTE/_snapshot/${DATETIMESTR}" -H "Content-Type: application/json" -d'{"type":"fs","settings":{"location": "/usr/share/elasticsearch/snapshots/main","compress": true}}'
+  # TODO: Test if we would be able to call the APIs from within the pod
+  # oc exec --container elasticsearch iaf-system-elasticsearch-es-data-0 -it -- bash -c "curl -skl -u elasticsearch-admin:$ELASTICSEARCH_PASSWORD -XPUT \"localhost:${ELASTIC_CLIENT_PORT}/_snapshot/${DATETIMESTR}\" -H \"Content-Type: application/json\" -d'{\"type\":\"fs\",\"settings\":{\"location\": \"/usr/share/elasticsearch/snapshots/main\",\"compress\": true}}'"
   logInfo "Creating snapshot backup_${DATETIMESTR}..."
   SNAPSHOT_RESULT=$(curl -skL -u elasticsearch-admin:${ELASTICSEARCH_PASSWORD} -XPUT "https://${ELASTICSEARCH_ROUTE}/_snapshot/${DATETIMESTR}/backup_${DATETIMESTR}?wait_for_completion=true&pretty=true")
   SNAPSHOT_STATE=$(echo $SNAPSHOT_RESULT | jq -r ".snapshot.state")
@@ -256,9 +258,13 @@ else
   echo
   
   # Snapshots are kept in the pod in directory /usr/share/elasticsearch/snapshots/main
+  # TODO: Next commands produce some console output that we might want to get rid of
   oc exec --container elasticsearch iaf-system-elasticsearch-es-data-0 -it -- bash -c "tar -cvf /usr/share/elasticsearch/es_snapshots_main_backup_${DATETIMESTR}.tgz /usr/share/elasticsearch/snapshots/main"
   oc cp --container elasticsearch iaf-system-elasticsearch-es-data-0:/usr/share/elasticsearch/es_snapshots_main_backup_${DATETIMESTR}.tgz ${BACKUP_DIR}/es_snapshots_main_backup_${DATETIMESTR}.tgz
-  oc exec --container elasticsearch iaf-system-elasticsearch-es-data-0 -it -- bash -c "rm /usr/share/elasticsearch/es_snapshots_main_backup_${DATETIMESTR}.tgz"
+  # Delete the tar, the snapshot and the repository
+  oc exec --container elasticsearch iaf-system-elasticsearch-es-data-0 -it -- bash -c "rm -f /usr/share/elasticsearch/es_snapshots_main_backup_${DATETIMESTR}.tgz"
+  curl -skL -u elasticsearch-admin:${ELASTICSEARCH_PASSWORD} -X DELETE "https://$ELASTICSEARCH_ROUTE/_snapshot/${DATETIMESTR}/backup_${DATETIMESTR}?pretty"
+  curl -skL -u elasticsearch-admin:${ELASTICSEARCH_PASSWORD} -X DELETE "https://$ELASTICSEARCH_ROUTE/_snapshot/${DATETIMESTR}?pretty"
   
   # After the backup, we also can delete these pods
   logInfo "Scaling down es pods..."
