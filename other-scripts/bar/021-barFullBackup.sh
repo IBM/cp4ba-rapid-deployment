@@ -240,6 +240,9 @@ if [[ $CP4BA_VERSION =~ "24.0" ]]; then
   SNAPSHOT_RESULT=$(curl -skL -u elastic:${OPENSEARCH_PASSWORD} -XPUT "https://${OPENSEARCH_ROUTE}/_snapshot/${DATETIMESTR}/backup_${DATETIMESTR}?wait_for_completion=true&pretty=true")
   SNAPSHOT_STATE=$(echo $SNAPSHOT_RESULT | jq -r ".snapshot.state")
   checkResult $SNAPSHOT_STATE "SUCCESS" "Snapshot state"
+  echo
+  # TODO: copy the snapshots from the pod, what should be copied ? Need clarification from document, Zhong Tao opened a case for this issue: https://jsw.ibm.com/browse/DBACLD-164204: Need clarification on how to copy ES/OS snapshots to another environment
+  # TODO: scale down es pods
 else
   # ElasticSearch
   logInfo "Declaring the location of the snapshot repository for ElasticSearch..."
@@ -252,14 +255,17 @@ else
   checkResult $SNAPSHOT_STATE "SUCCESS" "Snapshot state"
   echo
   
+  # Snapshots are kept in the pod in directory /usr/share/elasticsearch/snapshots/main
+  oc exec --container elasticsearch iaf-system-elasticsearch-es-data-0 -it -- bash -c "tar -cvf /usr/share/elasticsearch/es_snapshots_main_backup_${DATETIMESTR}.tgz /usr/share/elasticsearch/snapshots/main"
+  oc cp --container elasticsearch iaf-system-elasticsearch-es-data-0:/usr/share/elasticsearch/es_snapshots_main_backup_${DATETIMESTR}.tgz ${BACKUP_DIR}/es_snapshots_main_backup_${DATETIMESTR}.tgz
+  oc exec --container elasticsearch iaf-system-elasticsearch-es-data-0 -it -- bash -c "rm /usr/share/elasticsearch/es_snapshots_main_backup_${DATETIMESTR}.tgz"
+  
   # After the backup, we also can delete these pods
   logInfo "Scaling down es pods..."
   logInfo $(oc scale statefulset.apps/iaf-system-elasticsearch-es-data --replicas=0);
   echo
   sleep 5
 fi
-
-#TODO: copy the snapshots from the pod, what should be copied ? Need clarification from document, Zhong Tao opened a case for this issue: https://jsw.ibm.com/browse/DBACLD-164204: Need clarification on how to copy ES/OS snapshots to another environment
 
 # TODO: We have to check if this could stay as is...we maybe want to wait here, till admin has removed the other pods, otherwise the backup will be incomplete / distributed onto multiple backups
 # Wait till all pods are gone
