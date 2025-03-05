@@ -724,7 +724,7 @@ if oc get insightsengine > /dev/null 2>&1; then
     logInfo "  Retrieving flink jobs..."
     FLINK_JOBS=$(curl -sk -u ${MANAGEMENT_USERNAME}:${MANAGEMENT_PASSWORD} $MANAGEMENT_URL/api/v1/processing/jobs/list)
     FLINK_JOBS_COUNT=$(echo $FLINK_JOBS |jq '.jobs' | jq 'length')
-    if [[ $FLINK_JOBS_COUNT == "0" ]]; then {
+    if [[ $FLINK_JOBS_COUNT == "0" || "$FLINK_JOBS_COUNT" == "" ]]; then {
       logError "    No flink jobs are running, please check !!"
     } else
       for ((i=0; i<$FLINK_JOBS_COUNT; i++)); do

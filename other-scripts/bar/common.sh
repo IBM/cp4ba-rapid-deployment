@@ -17,6 +17,12 @@ function logInfo() {
   echo "$(date +'%F %T.%3N %Z')   INFO    $*" >> $LOG_FILE
 }
 
+function logInfoValue() {
+  prompt=$1; shift
+  echo -e "$(date +'%F %T.%3N %Z')   INFO    $prompt \x1B[1m$*\x1B[0m"
+  echo "$(date +'%F %T.%3N %Z')   INFO    $prompt $*" >> $LOG_FILE
+}
+
 function logWarning() {
   echo "$(date +'%F %T.%3N %Z')   WARNING $*"
   echo "$(date +'%F %T.%3N %Z')   WARNING $*" >> $LOG_FILE
