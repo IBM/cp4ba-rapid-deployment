@@ -173,6 +173,133 @@ else
   fi
 fi
 
+echo
+logInfo "Processing Secrets"
+
+yamlFiles=()
+countYamlFiles=0
+
+# Assisted by watsonx Code Assistant 
+for yaml in $BACKUP_DIR/secrets/*.yaml; do
+  secretName=$(yq eval '.metadata.name' $yaml)
+  secretNamespace=$(yq eval '.metadata.namespace' $yaml)
+  if [[ "$secretName" != "null" ]]; then
+    if [[ "$secretNamespace" != "null" && "$secretNamespace" != "$backupNamespace" ]]; then
+      logWarning "Skipping Secret $secretName in file $(basename $yaml) it has a non-matching namespace: $secretNamespace"
+    else 
+      if oc diff -f $yaml > /dev/null 2> /dev/null; then
+        logWarning "Skipping Secret $secretName in file $(basename $yaml) it is already applied"
+      else
+        yamlFiles+=($yaml)
+	countYamlFiles=$(expr $countYamlFiles + 1)
+      fi
+    fi
+  fi
+done
+
+if [[ "$countYamlFiles" == "0" ]]; then
+	logInfo "All secrets have already been applied"
+else
+  echo
+  echo "The script will try to apply following secrets:"
+
+  for file in "${yamlFiles[@]}"; do
+    secretName=$(yq eval '.metadata.name' $file)
+    echo -e "\tSecret \x1B[1m$pvcName\x1B[0m  (File: $(basename $yaml))"
+  done
+
+  echo
+  printf "OK to apply these secret definitions? (Yes/No, default Yes): "
+  read -rp "" ans
+  case "$ans" in
+  "n"|"N"|"no"|"No"|"NO")
+     echo
+     echo -e "Exiting..."
+     echo
+     exit 0
+     ;;
+  *)
+     echo
+     echo -e "OK..."
+     ;;
+  esac
+
+  for file in "${yamlFiles[@]}"; do
+    secretName=$(yq eval '.metadata.name' $file)
+    logInfoValue "Defining Secret ${secretName}, running command " oc apply -f $(basename $file)
+    oc apply -f $file
+  done
+fi
+
+echo
+echo "Processing Persistent Volume Claims"
+
+yamlFiles=()
+countYamlFiles=0
+
+# Assisted by watsonx Code Assistant 
+for yaml in $BACKUP_DIR/pvc/*.yaml; do
+  pvcName=$(yq eval '.metadata.name' $yaml)
+  pvcNamespace=$(yq eval '.metadata.namespace' $yaml)
+  pvcStorageClass=$(yq eval '.spec.storageClassName' $yaml)
+
+  if [[ "$pvcName" != "null" ]]; then
+    if [[ "$pvcNamespace" != "null" && "$pvcNamespace" != "$backupNamespace" ]]; then
+      logWarning "Skipping Persistent Volume Claim $pvcName in file $(basename $yaml) it has a non-matching namespace: $secretNamespace"
+    else     
+      if [[ "$pvcStorageClass" == "null" ]]; then
+        logWarning "Skipping Persistent Volume Claim $pvcName in file $(basename $yaml) it does not reference a storage class"
+      else
+        if oc get storageclass "$pvcStorageClass" > /dev/null 2> /dev/null; then
+          if oc diff -f $yaml > /dev/null 2> /dev/null; then
+            logWarning "Skipping Persistent Volume Claim $pvcName in file $(basename $yaml) it is already defined"
+          else
+            yamlFiles+=($yaml)
+            countYamlFiles=$(expr $countYamlFiles + 1)
+          fi
+        else
+          logWarning "Skipping Persistent Volume Claim $pvcName in file $(basename $yaml) it refers to storage class $pvcStorageClass which does not exist."
+        fi
+      fi
+    fi
+  fi
+done
+
+if [[ "$countYamlFiles" == "0" ]]; then
+	logInfo "All Persistent Volume Claims have already been applied"
+else
+
+  echo
+  echo "The script will try to apply following Persistent Volume Claims (PVC):"
+
+  for file in "${yamlFiles[@]}"; do
+    pvcName=$(yq eval '.metadata.name' $file)
+    echo -e "\tPVC \x1B[1m$pvcName\x1B[0m  (File: $(basename $yaml))"
+  done
+  echo
+  printf "OK to apply these PVC definitions? (Yes/No, default Yes): "
+  read -rp "" ans
+  case "$ans" in
+  "n"|"N"|"no"|"No"|"NO")
+     echo
+     echo -e "Exiting..."
+     echo
+     exit 0
+     ;;
+  *)
+     echo
+     echo -e "OK..."
+     ;;
+  esac
+  
+  for file in "${yamlFiles[@]}"; do
+    pvcName=$(yq eval '.metadata.name' $file)
+    oc apply -f $file
+  done
+fi
+
+      
+
 
 
 
