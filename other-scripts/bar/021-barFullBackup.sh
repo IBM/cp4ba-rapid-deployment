@@ -322,10 +322,46 @@ done
 echo
 
 
+# Create the backup script header
+
+PV_BACKUP_DIR=${pvBackupDirectory}/$(basename $(dirname $BACKUP_DIR))/$(basename $BACKUP_DIR)
+
+cat > 023-backup-pvs.sh <<EOF
+#!/bin/bash
+
+# Assisted by watsonx Code Assistant 
+function perform_backup() {
+    namespace=\$1
+    policy=\$2
+    volumename=\$3
+    claimname=\$4
+
+    if [ "\$policy" == "nfs-client" ]; then
+        echo "Backing up PVC \$claimname"
+        directory="/export/\${namespace}-\${claimname}-\${volumename}"
+        if [ -d "\$directory" ]; then
+            (cd \$directory; tar cfz \$pvBackupDirectory/\${claimname}.tgz .)
+        else
+            echo "*** Error: Did not find persistent volume data in directory \$directory"
+        fi
+    else
+        echo "*** Error: Dont know how to backup storage policy named \$policy"
+    fi
+}
+
+pvBackupDirectory="${PV_BACKUP_DIR}"
+
+mkdir -p \$pvBackupDirectory
+
+EOF
+
+# Iterate over all persistent volume claims in the project
+oc get pvc -n $cp4baProjectName -o 'custom-columns=ns:.metadata.namespace,class:.spec.storageClassName,pv:.spec.volumeName,name:.metadata.name' --no-headers | sed 's/^/perform_backup /g' >> 023-backup-pvs.sh
+
 
 logInfo "All resources are backed up. Next, please back up:"
 logInfo "  - the databases"
-logInfo "  - the content of the PVs"
+logInfo "  - the content of the PVs (by running the script 023-backup-pvs.sh on the storage server using the root account)"
 logInfo "  - the binary document data of CPE"
 logInfo "Once those backups are complete, pls. scale up the deployment again."
 echo
