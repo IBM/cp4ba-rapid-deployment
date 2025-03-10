@@ -33,18 +33,25 @@ source ${CUR_DIR}/common.sh
 INPUT_PROPS_FILENAME="001-barParameters.sh"
 INPUT_PROPS_FILENAME_FULL="${CUR_DIR}/${INPUT_PROPS_FILENAME}"
 
+useToken=false
 if [[ -f $INPUT_PROPS_FILENAME_FULL ]]; then
    echo
    echo "Found ${INPUT_PROPS_FILENAME}. Reading in variables from that script."
    
    . $INPUT_PROPS_FILENAME_FULL
    
-   if [ $cp4baProjectName == "REQUIRED" ]; then
+   if [[ $cp4baProjectName == "REQUIRED" ]] || [[ $barTokenUser == "REQUIRED" ]] || [[ $barTokenPass == "REQUIRED" ]] || [[ $barTokenResolveCp4ba == "REQUIRED" ]] || [[ $barCp4baHost == "REQUIRED" ]]; then
       echo "File ${INPUT_PROPS_FILENAME} not fully updated. Pls. update all REQUIRED parameters."
       echo
       exit 1
    fi
-
+   
+   ##### Get Access Token if needed ###############################################
+   if [[ "$barTokenUser" != "" ]] || [[ "$barTokenPass" != "" ]] || [[ "$barTokenResolveCp4ba" != "" ]] || [[ "$barCp4baHost" != "" ]]; then
+     # get the access token
+     cp4batoken=$(curl -sk "$barCp4baHost/v1/preauth/validateAuth" -u $barTokenUser:$barTokenPass --resolve $barTokenResolveCp4ba | jq -r .accessToken)
+     useToken=true
+   fi
    echo "Done!"
 else
    echo
@@ -572,6 +579,7 @@ if [[ $CP4BA_VERSION =~ "24.0" ]]; then
   logInfo "Trying to connect to OpenSearch..."
   OPENSEARCH_ROUTE=$(oc get route opensearch-route -o jsonpath='{.spec.host}')
   OPENSEARCH_PASSWORD=$(oc get secret opensearch-ibm-elasticsearch-cred-secret --no-headers --ignore-not-found -o jsonpath={.data.elastic} | base64 -d)
+  # TODO: Curl might need an authoriziation token
   OPENSEARCH_CURL_RESULT=$(curl -sk -w "%{http_code}" -o /dev/null -u elastic:$OPENSEARCH_PASSWORD https://$OPENSEARCH_ROUTE)
   checkHTTPCode $OPENSEARCH_CURL_RESULT "200" $OPENSEARCH_ROUTE
   echo
@@ -581,12 +589,15 @@ else
     logInfo "Trying to connect to ElasticSearch..."
     ELASTICSEARCH_ROUTE=$(oc get route iaf-system-es -o jsonpath='{.spec.host}')
     ELASTICSEARCH_PASSWORD=$(oc get secret iaf-system-elasticsearch-es-default-user --no-headers --ignore-not-found -o jsonpath={.data.password} | base64 -d)
-    ELASTICSEARCH_CURL_RESULT=$(curl -sk -w "%{http_code}" -o /dev/null -u elasticsearch-admin:$ELASTICSEARCH_PASSWORD https://$ELASTICSEARCH_ROUTE)
+    if $useToken; then
+      ELASTICSEARCH_CURL_RESULT=$(curl -sk -w "%{http_code}" --header "Authorization: ${cp4batoken}" -o /dev/null -u elasticsearch-admin:$ELASTICSEARCH_PASSWORD https://$ELASTICSEARCH_ROUTE --resolve "${barTokenResolveCp4ba}")
+    else
+      ELASTICSEARCH_CURL_RESULT=$(curl -sk -w "%{http_code}" -o /dev/null -u elasticsearch-admin:$ELASTICSEARCH_PASSWORD https://$ELASTICSEARCH_ROUTE)
+    fi
     checkHTTPCode $ELASTICSEARCH_CURL_RESULT "200" $ELASTICSEARCH_ROUTE
     echo
   fi
 fi
-
 
 ##### Zen Resources ############################################################
 if [[ $CP4BA_VERSION =~ "21.0.3" ]]; then
@@ -722,7 +733,11 @@ if oc get insightsengine > /dev/null 2>&1; then
     MANAGEMENT_USERNAME=$(oc get secret ${MANAGEMENT_AUTH_SECRET} -o jsonpath='{.data.username}' | base64 -d)
     MANAGEMENT_PASSWORD=$(oc get secret ${MANAGEMENT_AUTH_SECRET} -o jsonpath='{.data.password}' | base64 -d)
     logInfo "  Retrieving flink jobs..."
-    FLINK_JOBS=$(curl -sk -u ${MANAGEMENT_USERNAME}:${MANAGEMENT_PASSWORD} $MANAGEMENT_URL/api/v1/processing/jobs/list)
+    if $useToken; then
+      FLINK_JOBS=$(curl -sk --header "Authorization: ${cp4batoken}" -u ${MANAGEMENT_USERNAME}:${MANAGEMENT_PASSWORD} $MANAGEMENT_URL/api/v1/processing/jobs/list --resolve "${barTokenResolveCp4ba}")
+    else
+      FLINK_JOBS=$(curl -sk -u ${MANAGEMENT_USERNAME}:${MANAGEMENT_PASSWORD} $MANAGEMENT_URL/api/v1/processing/jobs/list)
+    fi
     FLINK_JOBS_COUNT=$(echo $FLINK_JOBS |jq '.jobs' | jq 'length')
     if [[ $FLINK_JOBS_COUNT == "0" || "$FLINK_JOBS_COUNT" == "" ]]; then {
       logError "    No flink jobs are running, please check !!"
