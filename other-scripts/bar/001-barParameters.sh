@@ -35,7 +35,10 @@ barCp4baHost=REQUIRED
 pvBackupDirectory="\$HOME/backup"
 
 # Not all resources might be required to be backed up, specify here which to skip
-barSkipToBackupResourceKinds=event,event.events.k8s.io,packagemanifest.packages.operators.coreos.com
+barSkipToBackupResourceKinds=pod,event,event.events.k8s.io,packagemanifest.packages.operators.coreos.com
+
+# Name of the storage class used to create temp PVCs during backup/restore
+pvcStorageClassName="nfs-client"
 
 # -----------------------------------------------------
 # --- Parameters that usually do NOT need an update ---

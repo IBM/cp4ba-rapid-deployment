@@ -98,7 +98,7 @@ if [[ -f $propertiesfile ]]; then
   mv $propertiesfile $backupFile
 fi
 logInfo "Persisting scale down information in" $propertiesfile
-cp ${CUR_DIR}/propertiestemplate.sh $propertiesfile
+cp ${CUR_DIR}/templates/properties.template.sh $propertiesfile
 
 # Persist the project for which this backup is
 sed -i.bak "s|§cp4baProjectNamespace|$cp4baProjectName|g" $propertiesfile
@@ -187,7 +187,7 @@ sed -i.bak "s|§cp4baSuspendedCronJobs|$cronJobsProperty|g" $propertiesfile
 echo
 
 # Third, scale down all deployments
-# TODO: We want to be more speciffic here, scale down only the deployments we are aware of, not all.
+# TODO: We want to be more specific here, scale down only the deployments we are aware of, not all.
 logInfo "Scaling down deployments..."
 deployments=$(oc get deploy -o name)
 logInfo "deployments =" $deployments
@@ -203,7 +203,7 @@ done
 echo
 
 # Fourth, scale down all stateful sets
-# TODO: We want to be more speciffic here, scale down only the stateful sets we are aware of, not all.
+# TODO: We want to be more specific here, scale down only the stateful sets we are aware of, not all.
 logInfo "Scaling down stateful sets..."
 statefulSets=$(oc get sts -o name)
 kafkaIsSTS=false
@@ -212,25 +212,25 @@ zookeeperIsSTS=false
 zookeeperReplicas=0
 logInfo "statefulSets =" $statefulSets
 for s in $statefulSets; do
-   if [[ "$s" == "statefulset.apps/iaf-system-elasticsearch-es-data" ]]; then
-     # Don't scale down es now, needed while backup
-     logInfo "not scaled = $s"
+   if [[ "$s" == "statefulset.apps/iaf-system-elasticsearch-es-data" || "$s" == "statefulset.apps/icp-mongodb" || "$s" == "statefulset.apps/zen-metastoredb" ]]; then
+     # Don't scale down now, needed while backup
+     logInfo "Required for backup. Not scaled = $s"
    elif [[ "$s" == "statefulset.apps/iaf-system-kafka" ]]; then
      # Scale down kafka to one only, needed while backup
      kafkaReplicas=$(oc get $s -o 'custom-columns=NAME:.metadata.name,REPLICAS:.spec.replicas' --no-headers --ignore-not-found | awk '{print $2}')
      sed -i.bak "s|§cp4baKafkaReplicaSize|$kafkaReplicas|g" $propertiesfile
-     logInfo "scaling stateful set to 1 =" $s
+     logInfo "Scaling stateful set to 1 =" $s
      logInfo $(oc scale $s --replicas=1)
      kafkaIsSTS=true
    elif [[ "$s" == "statefulset.apps/iaf-system-zookeeper" ]]; then
      # Scale down zookeeper to one only, needed while backup
      zookeeperReplicas=$(oc get $s -o 'custom-columns=NAME:.metadata.name,REPLICAS:.spec.replicas' --no-headers --ignore-not-found | awk '{print $2}')
      sed -i.bak "s|§cp4baZookeeperReplicaSize|$zookeeperReplicas|g" $propertiesfile
-     logInfo "scaling stateful set to 1 =" $s
+     logInfo "Scaling stateful set to 1 =" $s
      logInfo $(oc scale $s --replicas=1)
      zookeeperIsSTS=true
    else
-     logInfo "scaling stateful set =" $s
+     logInfo "Scaling stateful set =" $s
      logInfo $(oc scale $s --replicas=0)
    fi
 done
