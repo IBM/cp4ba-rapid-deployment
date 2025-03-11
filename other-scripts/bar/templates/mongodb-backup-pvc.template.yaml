@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: cs-mongodump
+  namespace: §cp4baProjectNamespace
+  labels:
+    foundationservices.cloudpak.ibm.com: mongo-data
+spec:
+  storageClassName: §pvcStorageClass 
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+  volumeMode: Filesystem
