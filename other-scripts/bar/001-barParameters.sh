@@ -23,13 +23,13 @@ echo "  Reading 001-barParameters.sh ..."
 # --- Provide those BEFORE running any other bar script ---
 
 # OCP project name for CP4BA to backup/restore, for example ibm-cp4ba
-cp4baProjectName=ibm-cp4ba-dev
+cp4baProjectName=REQUIRED
 
 # If URLs are protected, provide here the information to be used to get the authorization token, if a token is not needed, remove REQUIRED
-barTokenUser=
-barTokenPass=
-barTokenResolveCp4ba=
-barCp4baHost=
+barTokenUser=REQUIRED
+barTokenPass=REQUIRED
+barTokenResolveCp4ba=REQUIRED
+barCp4baHost=REQUIRED
 
 # Name of a directory, in which the persistent volume backups should be stored on the storage server
 pvBackupDirectory="\$HOME/backup"
