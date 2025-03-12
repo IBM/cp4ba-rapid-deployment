@@ -34,9 +34,6 @@ barCp4baHost=REQUIRED
 # Name of a directory, in which the persistent volume backups should be stored on the storage server
 pvBackupDirectory="\$HOME/backup"
 
-# Not all resources might be required to be backed up, specify here which to skip
-barSkipToBackupResourceKinds=pod,event,event.events.k8s.io,packagemanifest.packages.operators.coreos.com
-
 # Name of the storage class used to create temp PVCs during backup/restore
 pvcStorageClassName="nfs-client"
 
@@ -45,6 +42,9 @@ pvcStorageClassName="nfs-client"
 # -----------------------------------------------------
 
 # --- If changes are needed here, provide those BEFORE running any other bar script ---
+
+# Not all resources might be required to be backed up, specify here which to skip
+barSkipToBackupResourceKinds=pod,event,event.events.k8s.io,packagemanifest.packages.operators.coreos.com
 
 
 
