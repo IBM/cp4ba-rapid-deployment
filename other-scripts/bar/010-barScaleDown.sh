@@ -28,7 +28,7 @@ if [[ -f $INPUT_PROPS_FILENAME_FULL ]]; then
    
    . $INPUT_PROPS_FILENAME_FULL
    
-   if [ $cp4baProjectName == "REQUIRED" ] || [ $barTokenUser == "REQUIRED" ] || [ $barTokenPass == "REQUIRED" ] || [ $barTokenResolveCp4ba == "REQUIRED" ] || [ $barCp4baHost == "REQUIRED" ]; then
+   if [[ $cp4baProjectName == "REQUIRED" ]] || [[ $barTokenUser == "REQUIRED" ]] || [[ $barTokenPass == "REQUIRED" ]] || [[ $barTokenResolveCp4ba == "REQUIRED" ]] || [[ $barCp4baHost == "REQUIRED" ]]; then
       echo "File ${INPUT_PROPS_FILENAME} not fully updated. Pls. update all REQUIRED parameters."
       echo
       exit 1

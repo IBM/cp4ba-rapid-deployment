@@ -37,17 +37,24 @@ INPUT_PROPS_FILENAME="001-barParameters.sh"
 INPUT_PROPS_FILENAME_FULL="${CUR_DIR}/${INPUT_PROPS_FILENAME}"
 echo
 
+useToken=false
 if [[ -f $INPUT_PROPS_FILENAME_FULL ]]; then
    echo "Found ${INPUT_PROPS_FILENAME}. Reading in variables from that script."
    
    . $INPUT_PROPS_FILENAME_FULL
    
-   if [ $cp4baProjectName == "REQUIRED" ] || [ $barTokenUser == "REQUIRED" ] || [ $barTokenPass == "REQUIRED" ] || [ $barTokenResolveCp4ba == "REQUIRED" ] || [ $barCp4baHost == "REQUIRED" ]; then
+   if [[ $cp4baProjectName == "REQUIRED" ]] || [[ $barTokenUser == "REQUIRED" ]] || [[ $barTokenPass == "REQUIRED" ]] || [[ $barTokenResolveCp4ba == "REQUIRED" ]] || [[ $barCp4baHost == "REQUIRED" ]]; then
       echo "File ${INPUT_PROPS_FILENAME} not fully updated. Pls. update all REQUIRED parameters."
       echo
       exit 1
    fi
-
+   
+   ##### Get Access Token if needed ###############################################
+   if [[ "$barTokenUser" != "" ]] || [[ "$barTokenPass" != "" ]] || [[ "$barTokenResolveCp4ba" != "" ]] || [[ "$barCp4baHost" != "" ]]; then
+     # get the access token
+     cp4batoken=$(curl -sk "$barCp4baHost/v1/preauth/validateAuth" -u $barTokenUser:$barTokenPass --resolve $barTokenResolveCp4ba | jq -r .accessToken)
+     useToken=true
+   fi
    echo "Done!"
 else
    echo "File ${INPUT_PROPS_FILENAME_FULL} not found. Pls. check."
@@ -204,7 +211,7 @@ if [[ $CP4BA_VERSION =~ "21.0.3" ]]; then
     logInfo "Backing up Zen Services from pod ${pod}..."
     oc exec $pod -it -- bash -c "/zen4/zen4-br.sh $cp4baProjectName true"
     # Go into directory where backup was created and compress into single file
-    oc exec $pod -it -- bash -c "cd /user-home && tar -cvf zen-metastoredb-backup.tar zen-metastoredb-backup"
+    oc exec $pod -it -- bash -c "cd /user-home && tar -cf zen-metastoredb-backup.tar zen-metastoredb-backup"
     oc cp $pod:/user-home/zen-metastoredb-backup.tar ${BACKUP_DIR}/zenbackup/zen-metastoredb-backup.tar
     break
   done
@@ -290,7 +297,11 @@ if [[ "$MANAGEMENT_POD" != "" ]]; then
   
   # Take savepoints and cancel the jobs
   logInfo "Creating flink savepoints and canceling the jobs..."
-  FLINK_SAVEPOINT_RESULTS=$(curl -X POST -sk -u ${MANAGEMENT_USERNAME}:${MANAGEMENT_PASSWORD} "${MANAGEMENT_URL}/api/v1/processing/jobs/savepoints?cancel-job=true")
+  if $useToken; then
+    FLINK_SAVEPOINT_RESULTS=$(curl -X POST -sk --header "Authorization: ${cp4batoken}" -u ${MANAGEMENT_USERNAME}:${MANAGEMENT_PASSWORD} "${MANAGEMENT_URL}/api/v1/processing/jobs/savepoints?cancel-job=true" --resolve "${barTokenResolveCp4ba}")
+  else
+    FLINK_SAVEPOINT_RESULTS=$(curl -X POST -sk -u ${MANAGEMENT_USERNAME}:${MANAGEMENT_PASSWORD} "${MANAGEMENT_URL}/api/v1/processing/jobs/savepoints?cancel-job=true")
+  fi
   if [[ $FLINK_SAVEPOINT_RESULTS == "" ]]; then
     FLINK_SAVEPOINT_COUNT=0
   else
@@ -315,18 +326,26 @@ if [[ $CP4BA_VERSION =~ "21.0.3" ]]; then
   logInfo "Declaring the location of the snapshot repository for ElasticSearch..."
   ELASTICSEARCH_ROUTE=$(oc get route iaf-system-es -o jsonpath='{.spec.host}')
   ELASTICSEARCH_PASSWORD=$(oc get secret iaf-system-elasticsearch-es-default-user --no-headers --ignore-not-found -o jsonpath={.data.password} | base64 -d)
-  curl -skl -u elasticsearch-admin:$ELASTICSEARCH_PASSWORD -XPUT "https://$ELASTICSEARCH_ROUTE/_snapshot/${DATETIMESTR}" -H "Content-Type: application/json" -d'{"type":"fs","settings":{"location": "/usr/share/elasticsearch/snapshots/main","compress": true}}'
+  if $useToken; then
+    curl -skl --header "Authorization: ${cp4batoken}" -u elasticsearch-admin:$ELASTICSEARCH_PASSWORD -XPUT "https://$ELASTICSEARCH_ROUTE/_snapshot/${DATETIMESTR}" --resolve "${barTokenResolveCp4ba}" -H "Content-Type: application/json" -d'{"type":"fs","settings":{"location": "/usr/share/elasticsearch/snapshots/main","compress": true}}'
+  else
+    curl -skl -u elasticsearch-admin:$ELASTICSEARCH_PASSWORD -XPUT "https://$ELASTICSEARCH_ROUTE/_snapshot/${DATETIMESTR}" -H "Content-Type: application/json" -d'{"type":"fs","settings":{"location": "/usr/share/elasticsearch/snapshots/main","compress": true}}'
+  fi
   # TODO: Test if we would be able to call the APIs from within the pod
   # oc exec --container elasticsearch iaf-system-elasticsearch-es-data-0 -it -- bash -c "curl -skl -u elasticsearch-admin:$ELASTICSEARCH_PASSWORD -XPUT \"localhost:${ELASTIC_CLIENT_PORT}/_snapshot/${DATETIMESTR}\" -H \"Content-Type: application/json\" -d'{\"type\":\"fs\",\"settings\":{\"location\": \"/usr/share/elasticsearch/snapshots/main\",\"compress\": true}}'"
   logInfo "Creating snapshot backup_${DATETIMESTR}..."
-  SNAPSHOT_RESULT=$(curl -skL -u elasticsearch-admin:${ELASTICSEARCH_PASSWORD} -XPUT "https://${ELASTICSEARCH_ROUTE}/_snapshot/${DATETIMESTR}/backup_${DATETIMESTR}?wait_for_completion=true&pretty=true")
+  if $useToken; then
+    SNAPSHOT_RESULT=$(curl -skL --header "Authorization: ${cp4batoken}" -u elasticsearch-admin:${ELASTICSEARCH_PASSWORD} -XPUT "https://${ELASTICSEARCH_ROUTE}/_snapshot/${DATETIMESTR}/backup_${DATETIMESTR}?wait_for_completion=true&pretty=true" --resolve "${barTokenResolveCp4ba}")
+  else
+    SNAPSHOT_RESULT=$(curl -skL -u elasticsearch-admin:${ELASTICSEARCH_PASSWORD} -XPUT "https://${ELASTICSEARCH_ROUTE}/_snapshot/${DATETIMESTR}/backup_${DATETIMESTR}?wait_for_completion=true&pretty=true")
+  fi
   SNAPSHOT_STATE=$(echo $SNAPSHOT_RESULT | jq -r ".snapshot.state")
   checkResult $SNAPSHOT_STATE "SUCCESS" "Snapshot state"
   echo
   
   # Snapshots are kept in the pod in directory /usr/share/elasticsearch/snapshots/main
   # TODO: Next commands produce some console output that we might want to get rid of
-  oc exec --container elasticsearch iaf-system-elasticsearch-es-data-0 -it -- bash -c "tar -cvf /usr/share/elasticsearch/es_snapshots_main_backup_${DATETIMESTR}.tgz /usr/share/elasticsearch/snapshots/main"
+  oc exec --container elasticsearch iaf-system-elasticsearch-es-data-0 -it -- bash -c "tar -cf /usr/share/elasticsearch/es_snapshots_main_backup_${DATETIMESTR}.tgz /usr/share/elasticsearch/snapshots/main"
   oc cp --container elasticsearch iaf-system-elasticsearch-es-data-0:/usr/share/elasticsearch/es_snapshots_main_backup_${DATETIMESTR}.tgz ${BACKUP_DIR}/es_snapshots_main_backup_${DATETIMESTR}.tgz
 
   # check if backup was taken successfully
@@ -334,8 +353,13 @@ if [[ $CP4BA_VERSION =~ "21.0.3" ]]; then
     logInfo "Elasticsearch backup completed successfully."
     # Clean up, delete the tar, the snapshot and the repository
     oc exec --container elasticsearch iaf-system-elasticsearch-es-data-0 -it -- bash -c "rm -f /usr/share/elasticsearch/es_snapshots_main_backup_${DATETIMESTR}.tgz"
-    curl -skL -u elasticsearch-admin:${ELASTICSEARCH_PASSWORD} -X DELETE "https://$ELASTICSEARCH_ROUTE/_snapshot/${DATETIMESTR}/backup_${DATETIMESTR}?pretty"
-    curl -skL -u elasticsearch-admin:${ELASTICSEARCH_PASSWORD} -X DELETE "https://$ELASTICSEARCH_ROUTE/_snapshot/${DATETIMESTR}?pretty"
+    if $useToken; then
+      curl -skL --header "Authorization: ${cp4batoken}" -u elasticsearch-admin:${ELASTICSEARCH_PASSWORD} -X DELETE "https://$ELASTICSEARCH_ROUTE/_snapshot/${DATETIMESTR}/backup_${DATETIMESTR}?pretty" --resolve "${barTokenResolveCp4ba}"
+      curl -skL --header "Authorization: ${cp4batoken}" -u elasticsearch-admin:${ELASTICSEARCH_PASSWORD} -X DELETE "https://$ELASTICSEARCH_ROUTE/_snapshot/${DATETIMESTR}?pretty" --resolve "${barTokenResolveCp4ba}"
+    else
+      curl -skL -u elasticsearch-admin:${ELASTICSEARCH_PASSWORD} -X DELETE "https://$ELASTICSEARCH_ROUTE/_snapshot/${DATETIMESTR}/backup_${DATETIMESTR}?pretty"
+      curl -skL -u elasticsearch-admin:${ELASTICSEARCH_PASSWORD} -X DELETE "https://$ELASTICSEARCH_ROUTE/_snapshot/${DATETIMESTR}?pretty"
+    fi
   else
     logError "Elasticsearch backup failed, check the logs!"
     exit 1
@@ -345,8 +369,10 @@ else # 24.0 and greater
   logInfo "Declaring the location of the snapshot repository for OpenSearch..."
   OPENSEARCH_ROUTE=$(oc get route opensearch-route -o jsonpath='{.spec.host}')
   OPENSEARCH_PASSWORD=$(oc get secret opensearch-ibm-elasticsearch-cred-secret --no-headers --ignore-not-found -o jsonpath={.data.elastic} | base64 -d)
+  # TODO: Curl might need an authoriziation token
   curl -skl -u elastic:$OPENSEARCH_PASSWORD -XPUT "https://$OPENSEARCH_ROUTE/_snapshot/${DATETIMESTR}" -H "Content-Type: application/json" -d'{"type":"fs","settings":{"location": "/workdir/snapshot_storage","compress": true}}'
   logInfo "Creating snapshot backup_${DATETIMESTR}..."
+  # TODO: Curl might need an authoriziation token
   SNAPSHOT_RESULT=$(curl -skL -u elastic:${OPENSEARCH_PASSWORD} -XPUT "https://${OPENSEARCH_ROUTE}/_snapshot/${DATETIMESTR}/backup_${DATETIMESTR}?wait_for_completion=true&pretty=true")
   SNAPSHOT_STATE=$(echo $SNAPSHOT_RESULT | jq -r ".snapshot.state")
   checkResult $SNAPSHOT_STATE "SUCCESS" "Snapshot state"
