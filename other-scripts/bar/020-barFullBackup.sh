@@ -417,7 +417,7 @@ echo
 logInfo "Creating 025-backup-pvs.sh..."
 PV_BACKUP_DIR=${pvBackupDirectory}/$(basename $(dirname $BACKUP_DIR))/$(basename $BACKUP_DIR)
 
-cat > ${CUR_DIR}/025-backup-pvs.sh <<EOF
+cat > $BACKUP_DIR/025-backup-pvs.sh <<EOF
 #!/bin/bash
 
 function perform_backup() {
@@ -446,8 +446,8 @@ mkdir -p \$pvBackupDirectory
 EOF
 
 # Iterate over all persistent volume claims in the project
-oc get pvc -n $cp4baProjectName -o 'custom-columns=ns:.metadata.namespace,class:.spec.storageClassName,pv:.spec.volumeName,name:.metadata.name' --no-headers | sed 's/^/perform_backup /g' >> ${CUR_DIR}/025-backup-pvs.sh
-chmod +x ${CUR_DIR}/025-backup-pvs.sh
+oc get pvc -n $cp4baProjectName -o 'custom-columns=ns:.metadata.namespace,class:.spec.storageClassName,pv:.spec.volumeName,name:.metadata.name' --no-headers | sed 's/^/perform_backup /g' >> $BACKUP_DIR/025-backup-pvs.sh
+chmod +x $BACKUP_DIR/025-backup-pvs.sh
 echo
 
 
@@ -548,7 +548,7 @@ rm ${CUR_DIR}/zen-backup-pvc.yaml
 rm ${CUR_DIR}/zen-backup-pvc.yaml.bak
 
 logInfo "All resources are backed up. Next, please back up:"
+logInfo "  - the content of the PVs (by running the just generated script $BACKUP_DIR/025-backup-pvs.sh on the storage server using the root account)"
 logInfo "  - the databases"
-logInfo "  - the content of the PVs (by running the just generated script 025-backup-pvs.sh on the storage server using the root account)"
 logInfo "  - the binary document data of CPE"
 echo
