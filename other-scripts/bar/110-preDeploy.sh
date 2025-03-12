@@ -93,7 +93,6 @@ function restore_this_pvc() {
   if [[ $pvcname == icn-cfgstore  ]]; then return 0; fi
   if [[ $pvcname == icn-pluginstore  ]]; then return 0; fi
   if [[ $pvcname == jms-pvc-CRNAME-bastudio-deployment-0  ]]; then return 0; fi
-  if [[ $pvcname == CRNAME-bai-pvc  ]]; then return 0; fi
   if [[ $pvcname == CRNAME-bastudio-dump-pvc  ]]; then return 0; fi
   if [[ $pvcname == CRNAME-bastudio-index-pvc  ]]; then return 0; fi
   if [[ $pvcname == CRNAME-dba-rr-pvc  ]]; then return 0; fi
@@ -103,7 +102,6 @@ function restore_this_pvc() {
   if [[ $pvcname == CRNAME-workflow-authoring-baw-index-storage-pvc  ]]; then return 0; fi
   if [[ $pvcname == CRNAME-workflow-authoring-baw-jms-data-vc-CRNAME-workflow-authoring-baw-jms-0  ]]; then return 0; fi
   if [[ $pvcname == CRNAME-workspace-aaeae-file-pvc  ]]; then return 0; fi
-  if [[ $pvcname == user-home-pvc ]]; then return 0; fi
 
   # If the name appears in the CR, then it is also part of what is needed.
   if grep $pvcname $BACKUP_DIR/CR.yaml > /dev/null 2>/dev/null; then return 0; fi
@@ -120,13 +118,11 @@ function restore_this_secret() {
   local secretname=$(echo ${secretname} | sed $sedexpr)
 
   if [[ $secretname == admin.registrykey  ]]; then return 0; fi
-  if [[ $secretname == admin-user-details  ]]; then return 0; fi
   if [[ $secretname == external-tls-secret  ]]; then return 0; fi
   if [[ $secretname == ibm-adp-secret  ]]; then return 0; fi
   if [[ $secretname == ibm-ban-secret  ]]; then return 0; fi
   if [[ $secretname == ibm-bawaut-admin-secret  ]]; then return 0; fi
   if [[ $secretname == ibm-bawaut-server-db-secret  ]]; then return 0; fi
-  if [[ $secretname == ibm-entitlement-key  ]]; then return 0; fi
   if [[ $secretname == ibm-fncm-secret  ]]; then return 0; fi
   if [[ $secretname == ibm-pfs-admin-secret  ]]; then return 0; fi
   if [[ $secretname == icp4adeploy-bas-admin-secret  ]]; then return 0; fi
@@ -134,6 +130,18 @@ function restore_this_secret() {
   if [[ $secretname == icp4a-root-ca  ]]; then return 0; fi
   if [[ $secretname == icp4a-shared-encryption-key  ]]; then return 0; fi
   if [[ $secretname == ldap-bind-secret  ]]; then return 0; fi
+  if [[ $secretname == auth-pdp-secret  ]]; then return 0; fi
+  if [[ $secretname == ibm-bawaut-server-db-secret  ]]; then return 0; fi
+  if [[ $secretname == icp-mongodb-admin  ]]; then return 0; fi
+  if [[ $secretname == icp-serviceid-apikey-secret  ]]; then return 0; fi
+  if [[ $secretname == icp4a-shared-encryption-key  ]]; then return 0; fi
+  if [[ $secretname == identity-provider-secret  ]]; then return 0; fi
+  if [[ $secretname == platform-api-secret  ]]; then return 0; fi
+  if [[ $secretname == platform-auth-secret  ]]; then return 0; fi
+  if [[ $secretname == platform-identity-management  ]]; then return 0; fi
+  if [[ $secretname == playback-server-admin-secret  ]]; then return 0; fi
+  if [[ $secretname == resource-registry-admin-secret  ]]; then return 0; fi
+
 
   # If the name appears in the CR, then it is also part of what is needed.
   if grep $secretname $BACKUP_DIR/CR.yaml > /dev/null 2>/dev/null; then return 0; fi
@@ -261,6 +269,18 @@ fi
 
 yamlFiles=()
 countYamlFiles=0
+existingSecrets=$(oc get secret -o custom-columns=name:.metadata.name --no-headers)
+
+function is_existing_secret() {
+  local existing_secret=""
+  local secret=$1
+  for existing_secret in $existingSecrets; do 
+    if [ "$existing_secret" == "$secret" ]; then
+      return 0
+    fi
+  done
+  return 1
+}
 
 for yaml in $BACKUP_DIR/secret/*.yaml; do
   secretName=$(yq eval '.metadata.name' $yaml)
@@ -270,12 +290,15 @@ for yaml in $BACKUP_DIR/secret/*.yaml; do
       logWarning "Skipping Secret $secretName in file $(basename $yaml) it has a non-matching namespace: $secretNamespace"
     else 
       if restore_this_secret $secretName $backupDeploymentName; then
-        yamlFiles+=($yaml)
-        countYamlFiles=$(expr $countYamlFiles + 1)
+        if is_existing_secret $secretName; then
+          logInfoValue "Secret already defined: " $secretName
+        else        
+          yamlFiles+=($yaml)
+          countYamlFiles=$(expr $countYamlFiles + 1)
+        fi
       fi
     fi
   fi
-  echo -n "."
 done
 
 echo
@@ -324,6 +347,18 @@ fi
 
 yamlFiles=()
 countYamlFiles=0
+existingPVCs=$(oc get pvc -o custom-columns=name:.metadata.name --no-headers)
+
+function is_existing_pvc() {
+  local existing_pvc=""
+  local pvc=$1
+  for existing_pvc in $existingPVCs; do 
+    if [ "$existing_pvc" == "$pvc" ]; then
+      return 0
+    fi
+  done
+  return 1
+}
 
 for yaml in $BACKUP_DIR/persistentvolumeclaim/*.yaml; do
   pvcName=$(yq eval '.metadata.name' $yaml)
@@ -339,8 +374,12 @@ for yaml in $BACKUP_DIR/persistentvolumeclaim/*.yaml; do
       else
         if oc get storageclass "$pvcStorageClass" > /dev/null 2> /dev/null; then
           if restore_this_pvc $pvcName $backupDeploymentName; then
-            yamlFiles+=($yaml)
-            countYamlFiles=$(expr $countYamlFiles + 1)
+            if is_existing_pvc $pvcName; then
+              logInfoValue "Persistent Volume Claim already defined: " $pvcName
+            else
+              yamlFiles+=($yaml)
+              countYamlFiles=$(expr $countYamlFiles + 1)
+            fi
           fi
         else
           logWarning "Skipping Persistent Volume Claim $pvcName in file $(basename $yaml) as it refers to storage class $pvcStorageClass which does not exist."
@@ -348,7 +387,6 @@ for yaml in $BACKUP_DIR/persistentvolumeclaim/*.yaml; do
       fi
     fi
   fi
-  echo -n "."
 done
 
 echo
@@ -383,9 +421,87 @@ else
   for file in "${yamlFiles[@]}"; do
     pvcName=$(yq eval '.metadata.name' $file)
     logInfoValue "Defining PVC " ${pvcName}
-    yq eval 'del(.metadata.annotations, .metadata.creationTimestamp, .metadata.resourceVersion, .metadata.uid, .metadata.finalizers, .status, .spec.volumeName)' $file | oc apply -f -
+    yq eval 'del(.metadata.annotations, .metadata.creationTimestamp, .metadata.resourceVersion, .metadata.uid, .metadata.finalizers, .status, .spec.volumeName)' $file | oc apply -f - -n $backupNamespace
   done
 fi
+
+waitUntilBound=20
+
+while [ $waitUntilBound -gt 0 ]; do 
+  numNotBound=$(oc get pvc -o custom-columns=name:.metadata.name,phase:.status.phase --no-headers -n $backupNamespace | grep -v Bound | wc -l)
+  if [ $numNotBound -eq 0 ]; then
+    break
+  fi
+  waitUntilBound=$((waitUntilBound - 1))
+  if [ $waitUntilBound -gt 0 ]; then
+    echo "PVCs not in bound status: $numNotBound, waiting 10s..."
+    sleep 10
+  else
+    echo "PVs still in bound status: $numNotBound, please check it. Aborting."
+    exit 1
+  fi
+done 
+
+logInfo "All PVCs are now in bound state"
+
+PV_BACKUP_DIR=${pvBackupDirectory}/$(basename $(dirname $BACKUP_DIR))/$(basename $BACKUP_DIR)
+logInfoValue "PV Backup Directory: " $PV_BACKUP_DIR
+
+BACKUP_UID=$(cat $BACKUP_DIR/namespace_uid)
+RESTORE_UID=$(oc describe project $cp4baProjectName | grep uid-range | cut -d"=" -f2 | cut -d"/" -f1)
+
+logInfoValue "PV UID in backup: " $BACKUP_UID
+logInfoValue "PV UID in restored project: " $RESTORE_UID
+
+cat > 111-restore-pvs.sh <<EOF
+#!/bin/bash
+
+function perform_restore() {
+    namespace=\$1
+    policy=\$2
+    volumename=\$3
+    claimname=\$4
+
+    if [ "\$policy" == "nfs-client" ]; then
+        echo "Restoring PVC \$claimname"
+        directory="/export/\${namespace}-\${claimname}-\${volumename}"
+        if [ ! -e \$pvBackupDirectory/\${claimname}.tgz ]; then
+            echo "*** Error: Did not find persistent volume backup in \$pvBackupDirectory/\${claimname}.tgz"
+        elif [ -d "\$directory" ]; then
+            (cd \$directory; tar xfz \$pvBackupDirectory/\${claimname}.tgz)
+            if [ "\$backupUid" == "\$restoreUid" ]; then
+                echo "    Skipping UID Conversion as they are equal"
+            else 
+                echo "    Reassigning files belonging to \$backupUid to changed owner \$restoreUid"
+                find \$directory -uid \$backupUid -exec chown \$restoreUid {} \; 
+            fi
+        else
+            echo "*** Error: Did not find persistent volume directory \$directory"
+        fi
+    else
+        echo "*** Error: Dont know how to restore storage policy named \$policy"
+    fi
+}
+
+pvBackupDirectory="${PV_BACKUP_DIR}"
+
+if [ ! -d \$pvBackupDirectory ]; then 
+    echo "**** Did not find PV Backup Directory \$pvBackupDirectory"
+    exit 1
+fi
+
+backupUid="${BACKUP_UID}"
+restoreUid="${RESTORE_UID}"
+
+EOF
+
+# Iterate over all persistent volume claims in the project
+oc get pvc -n $cp4baProjectName -o 'custom-columns=ns:.metadata.namespace,class:.spec.storageClassName,pv:.spec.volumeName,name:.metadata.name' --no-headers | sed 's/^/perform_restore /g' >> 111-restore-pvs.sh
+
+
+
+
+    
 
       
 
