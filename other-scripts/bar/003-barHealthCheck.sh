@@ -72,19 +72,19 @@ LOG_FILE="$BACKUP_ROOT_DIRECTORY_FULL/HealthCheck_$(date +'%Y%m%d_%H%M%S').log"
 logInfo "Details will be logged to $LOG_FILE."
 echo
 
-echo -e "\x1B[1mThis script will perform the health check for CP4BA environment deployed in ${cp4baProjectName}.\n \x1B[0m"
+echo -e "\x1B[1mThis script will perform a short health check for CP4BA environment deployed in namespace ${cp4baProjectName}.\n \x1B[0m"
 
 printf "Do you want to continue? (Yes/No, default: No): "
 read -rp "" ans
 case "$ans" in
 "y"|"Y"|"yes"|"Yes"|"YES")
    echo
-   echo -e "Checking CP4BA deployment in namespace ${cp4baProjectName}..."
+   logInfo "Checking CP4BA deployment in namespace ${cp4baProjectName}..."
    echo
    ;;
 *)
    echo
-   echo -e "Exiting..."
+   logInfo "Exiting..."
    echo
    exit 0
    ;;

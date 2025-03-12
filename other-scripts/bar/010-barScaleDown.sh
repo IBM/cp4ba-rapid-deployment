@@ -54,7 +54,7 @@ LOG_FILE="$BACKUP_ROOT_DIRECTORY_FULL/ScaleDownForBackup_$(date +'%Y%m%d_%H%M%S'
 logInfo "Details will be logged to $LOG_FILE."
 
 echo
-echo -e "\x1B[1mThis script prepares namespace ${cp4baProjectName} for taking a backup. It scales down all pods to zero. \n \x1B[0m"
+echo -e "\x1B[1mThis script prepares namespace ${cp4baProjectName} for taking a backup. It scales down all for the backup not needed pods to zero. \n \x1B[0m"
 
 printf "Do you want to continue? (Yes/No, default: No): "
 read -rp "" ans

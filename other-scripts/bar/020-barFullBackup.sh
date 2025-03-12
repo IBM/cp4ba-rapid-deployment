@@ -61,24 +61,6 @@ else
    echo
    exit 1
 fi
-echo
-
-echo -e "\x1B[1mThis script will backup the CP4BA environment deployed in ${cp4baProjectName}.\n \x1B[0m"
-
-printf "Do you want to continue? (Yes/No, default: No): "
-read -rp "" ans
-case "$ans" in
-"y"|"Y"|"yes"|"Yes"|"YES")
-   echo
-   echo -e "Backing up CP4BA deployment in namespace ${cp4baProjectName}..."
-   ;;
-*)
-   echo
-   echo -e "Exiting..."
-   echo
-   exit 0
-   ;;
-esac
 
 BACKUP_ROOT_DIRECTORY_FULL="${CUR_DIR}/${cp4baProjectName}"
 if [[ -d $BACKUP_ROOT_DIRECTORY_FULL ]]; then
@@ -91,6 +73,24 @@ fi
 LOG_FILE="$BACKUP_ROOT_DIRECTORY_FULL/Backup_${DATETIMESTR}.log"
 logInfo "Details will be logged to $LOG_FILE."
 echo
+
+echo -e "\x1B[1mThis script will backup the CP4BA environment deployed in ${cp4baProjectName}.\n \x1B[0m"
+
+printf "Do you want to continue? (Yes/No, default: No): "
+read -rp "" ans
+case "$ans" in
+"y"|"Y"|"yes"|"Yes"|"YES")
+   echo
+   logInfo "Backing up CP4BA deployment in namespace ${cp4baProjectName}..."
+   echo
+   ;;
+*)
+   echo
+   logInfo "Exiting..."
+   echo
+   exit 0
+   ;;
+esac
 
 
 
@@ -413,14 +413,13 @@ for i in $allResources; do
 done
 echo
 
-## Create the backup script header
-
+# Next, creating the script to backup the content of the PVs
+logInfo "Creating 025-backup-pvs.sh..."
 PV_BACKUP_DIR=${pvBackupDirectory}/$(basename $(dirname $BACKUP_DIR))/$(basename $BACKUP_DIR)
 
-cat > 023-backup-pvs.sh <<EOF
+cat > ${CUR_DIR}/025-backup-pvs.sh <<EOF
 #!/bin/bash
 
-# Assisted by watsonx Code Assistant 
 function perform_backup() {
     namespace=\$1
     policy=\$2
@@ -447,7 +446,10 @@ mkdir -p \$pvBackupDirectory
 EOF
 
 # Iterate over all persistent volume claims in the project
-oc get pvc -n $cp4baProjectName -o 'custom-columns=ns:.metadata.namespace,class:.spec.storageClassName,pv:.spec.volumeName,name:.metadata.name' --no-headers | sed 's/^/perform_backup /g' >> 023-backup-pvs.sh
+oc get pvc -n $cp4baProjectName -o 'custom-columns=ns:.metadata.namespace,class:.spec.storageClassName,pv:.spec.volumeName,name:.metadata.name' --no-headers | sed 's/^/perform_backup /g' >> ${CUR_DIR}/025-backup-pvs.sh
+chmod +x ${CUR_DIR}/025-backup-pvs.sh
+echo
+
 
 
 ##### Scale down ###########################################
@@ -455,11 +457,16 @@ printf "Do you want to scale down pods used during the backup? (Yes/No, default:
 read -rp "" ans
 case "$ans" in
 "y"|"Y"|"yes"|"Yes"|"YES")
-   echo -e "\nScaling down pods used during backup in namespace ${cp4baProjectName}..."
+   echo
+   logInfo "Scaling down pods used during backup in namespace ${cp4baProjectName}..."
+   echo
    ;;
 *)
-   echo -e "\nExiting...\n"
+   echo
+   logInfo "Exiting..."
+   echo
    logInfo "All resources were backed up."
+   echo
    exit 0
    ;;
 esac
@@ -522,8 +529,26 @@ else # 24.0 and greater
 fi
 echo
 
+# Removing generated files
+rm ${CUR_DIR}/mongodb-backup-deployment.yaml
+rm ${CUR_DIR}/mongodb-backup-deployment.yaml.bak
+rm ${CUR_DIR}/mongodb-backup-pvc.yaml
+rm ${CUR_DIR}/mongodb-backup-pvc.yaml.bak
+rm ${CUR_DIR}/zen4-br-scripts.yaml
+rm ${CUR_DIR}/zen4-br-scripts.yaml.bak
+rm ${CUR_DIR}/zen4-rolebinding.yaml
+rm ${CUR_DIR}/zen4-rolebinding.yaml.bak
+rm ${CUR_DIR}/zen4-role.yaml
+rm ${CUR_DIR}/zen4-role.yaml.bak
+rm ${CUR_DIR}/zen4-sa.yaml
+rm ${CUR_DIR}/zen4-sa.yaml.bak
+rm ${CUR_DIR}/zen-backup-deployment.yaml
+rm ${CUR_DIR}/zen-backup-deployment.yaml.bak
+rm ${CUR_DIR}/zen-backup-pvc.yaml
+rm ${CUR_DIR}/zen-backup-pvc.yaml.bak
+
 logInfo "All resources are backed up. Next, please back up:"
 logInfo "  - the databases"
-logInfo "  - the content of the PVs (by running the script 023-backup-pvs.sh on the storage server using the root account)"
+logInfo "  - the content of the PVs (by running the just generated script 025-backup-pvs.sh on the storage server using the root account)"
 logInfo "  - the binary document data of CPE"
 echo
