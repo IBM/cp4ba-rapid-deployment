@@ -354,7 +354,6 @@ if [[ $CP4BA_VERSION =~ "21.0.3" ]]; then
   checkResult $SNAPSHOT_STATE "SUCCESS" "Snapshot state"
   
   # Snapshots are kept in the pod in directory /usr/share/elasticsearch/snapshots/main
-  # TODO: Next commands produce some console output that we might want to get rid of
   oc exec --container elasticsearch iaf-system-elasticsearch-es-data-0 -it -- bash -c "tar -cf /usr/share/elasticsearch/es_snapshots_main_backup_${DATETIMESTR}.tgz /usr/share/elasticsearch/snapshots/main"
   oc cp --container elasticsearch iaf-system-elasticsearch-es-data-0:/usr/share/elasticsearch/es_snapshots_main_backup_${DATETIMESTR}.tgz ${BACKUP_DIR}/es_snapshots_main_backup_${DATETIMESTR}.tgz
 
