@@ -121,9 +121,6 @@ echo
 #   - Any other checks needed?
 # TODO
 
-# TODO: We on TechZone only have an authoring environment available. CTIE will also have Process Server environments where other pods / resources are there.
-# All bar scripts need to be tested with non-authoring environments, too.
-
 # First, scale down all operators
 logInfo "Scaling down operators..."
 logInfo $(oc scale deploy ibm-cp4a-operator --replicas=0)
