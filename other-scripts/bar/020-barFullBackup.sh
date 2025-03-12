@@ -120,10 +120,12 @@ echo
 logInfo "Creating backup directory..."
 BACKUP_DIR=$BACKUP_ROOT_DIRECTORY_FULL/backup_${DATETIMESTR}
 mkdir -p $BACKUP_DIR
+echo
 
 ## Get CP4BA deployment name
 CP4BA_NAME=$(oc get ICP4ACluster -o name |cut -d "/" -f 2)
 logInfo "CP4BA deployment name: $CP4BA_NAME"
+echo
 
 ## Get CP4BA version
 CP4BA_VERSION=$(oc get ICP4ACluster $CP4BA_NAME -o 'custom-columns=NAME:.metadata.name,VERSION:.spec.appVersion' --no-headers | awk '{print $2}')
@@ -134,8 +136,9 @@ echo
 NAMESPACE_UID=$(oc describe project $cp4baProjectName | grep uid-range | cut -d"=" -f2 | cut -d"/" -f1)
 logInfo "Namespace $cp4baProjectName uid: $NAMESPACE_UID"
 echo $NAMESPACE_UID > ${BACKUP_DIR}/namespace_uid
-##### CPfs #####################################################################
+echo
 
+##### CPfs #####################################################################
 if [[ $CP4BA_VERSION =~ "21.0.3" ]]; then
   ## Take MongoDB Backup 
   # Prime templates 
@@ -173,8 +176,10 @@ if [[ $CP4BA_VERSION =~ "21.0.3" ]]; then
     oc delete -f ${CUR_DIR}/mongodb-backup-pvc.yaml
   else
     logError "MongoDB backup failed, check logs!"
+    echo
     exit 1
   fi
+  echo
 
   ## Take Zen Services Backup
   # Prime templates 
@@ -228,12 +233,15 @@ if [[ $CP4BA_VERSION =~ "21.0.3" ]]; then
     oc delete -f ${CUR_DIR}/zen-backup-pvc.yaml
   else
     logError "Zen Services backup failed, check logs!"
+    echo
     exit 1
   fi
+  echo
 else
   # Backup implementation of CPfs for CP4BA versions 22, 23, and 24 is not developed yet. 
   # TODO: Backup CPfs for other versions of CP4BA specially 24
   logError "Do not know how to take backup of CPfs services for this Cloud Pak version $CP4BA_VERSION"
+  echo
   exit 1
 fi
 
@@ -254,8 +262,10 @@ if [ -e "${BACKUP_DIR}/postgresql/backup_btsdb.sql" ]; then
   oc exec --container postgres $pod -it -- bash -c "rm -f /var/lib/postgresql/data/backup_btsdb.sql"
 else
   logError "BTS PostgreSQL Database backup failed, check logs!"
+  echo
   exit 1
 fi
+echo
 
 ##### BAI ######################################################################
 # Take ES snapshot
@@ -318,6 +328,7 @@ if [[ "$MANAGEMENT_POD" != "" ]]; then
     logInfo "  Copying the savepoint to ${BACKUP_DIR}/flink/${FLINK_SAVEPOINT_LOCATION}..."
     oc cp --container management ${MANAGEMENT_POD}:${FLINK_SAVEPOINT_LOCATION} ${BACKUP_DIR}/flink${FLINK_SAVEPOINT_LOCATION}
   done
+  echo
 fi
 
 # Create ES/OS snapshots
@@ -341,7 +352,6 @@ if [[ $CP4BA_VERSION =~ "21.0.3" ]]; then
   fi
   SNAPSHOT_STATE=$(echo $SNAPSHOT_RESULT | jq -r ".snapshot.state")
   checkResult $SNAPSHOT_STATE "SUCCESS" "Snapshot state"
-  echo
   
   # Snapshots are kept in the pod in directory /usr/share/elasticsearch/snapshots/main
   # TODO: Next commands produce some console output that we might want to get rid of
@@ -362,8 +372,10 @@ if [[ $CP4BA_VERSION =~ "21.0.3" ]]; then
     fi
   else
     logError "Elasticsearch backup failed, check the logs!"
+    echo
     exit 1
   fi
+  echo
 else # 24.0 and greater
   # OpenSearch for 24.0 and later
   logInfo "Declaring the location of the snapshot repository for OpenSearch..."
@@ -452,6 +464,26 @@ echo
 
 
 
+##### Clean up ###########################################
+rm ${CUR_DIR}/mongodb-backup-deployment.yaml
+rm ${CUR_DIR}/mongodb-backup-deployment.yaml.bak
+rm ${CUR_DIR}/mongodb-backup-pvc.yaml
+rm ${CUR_DIR}/mongodb-backup-pvc.yaml.bak
+rm ${CUR_DIR}/zen4-br-scripts.yaml
+rm ${CUR_DIR}/zen4-br-scripts.yaml.bak
+rm ${CUR_DIR}/zen4-rolebinding.yaml
+rm ${CUR_DIR}/zen4-rolebinding.yaml.bak
+rm ${CUR_DIR}/zen4-role.yaml
+rm ${CUR_DIR}/zen4-role.yaml.bak
+rm ${CUR_DIR}/zen4-sa.yaml
+rm ${CUR_DIR}/zen4-sa.yaml.bak
+rm ${CUR_DIR}/zen-backup-deployment.yaml
+rm ${CUR_DIR}/zen-backup-deployment.yaml.bak
+rm ${CUR_DIR}/zen-backup-pvc.yaml
+rm ${CUR_DIR}/zen-backup-pvc.yaml.bak
+
+
+
 ##### Scale down ###########################################
 printf "Do you want to scale down pods used during the backup? (Yes/No, default: No): "
 read -rp "" ans
@@ -477,6 +509,7 @@ if [[ $CP4BA_VERSION =~ "21.0.3" ]]; then
   logInfo $(oc scale statefulset -l=app=icp-mongodb --replicas=0)
   logInfo "Scaling down MetastoreDB pods..."
   logInfo $(oc scale statefulset -l=component=zen-metastoredb --replicas=0);
+  echo
 else # 24.0 and greater
   #TODO: Scale down CPFS services in other versions of CP4BA.  
   # Not aborting excecution for this though 
@@ -528,24 +561,6 @@ else # 24.0 and greater
   logInfo $(oc scale statefulset -l=app.kubernetes.io/name=opensearch --replicas=0);
 fi
 echo
-
-# Removing generated files
-rm ${CUR_DIR}/mongodb-backup-deployment.yaml
-rm ${CUR_DIR}/mongodb-backup-deployment.yaml.bak
-rm ${CUR_DIR}/mongodb-backup-pvc.yaml
-rm ${CUR_DIR}/mongodb-backup-pvc.yaml.bak
-rm ${CUR_DIR}/zen4-br-scripts.yaml
-rm ${CUR_DIR}/zen4-br-scripts.yaml.bak
-rm ${CUR_DIR}/zen4-rolebinding.yaml
-rm ${CUR_DIR}/zen4-rolebinding.yaml.bak
-rm ${CUR_DIR}/zen4-role.yaml
-rm ${CUR_DIR}/zen4-role.yaml.bak
-rm ${CUR_DIR}/zen4-sa.yaml
-rm ${CUR_DIR}/zen4-sa.yaml.bak
-rm ${CUR_DIR}/zen-backup-deployment.yaml
-rm ${CUR_DIR}/zen-backup-deployment.yaml.bak
-rm ${CUR_DIR}/zen-backup-pvc.yaml
-rm ${CUR_DIR}/zen-backup-pvc.yaml.bak
 
 logInfo "All resources are backed up. Next, please back up:"
 logInfo "  - the content of the PVs (by running the just generated script $BACKUP_DIR/025-backup-pvs.sh on the storage server using the root account)"
