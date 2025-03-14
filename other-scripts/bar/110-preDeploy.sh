@@ -80,31 +80,39 @@ function restore_this_pvc() {
   local crname=$2
   local sedexpr=$(printf 's/%s/CRNAME/g' $crname)
   local pvcname=$(echo ${pvcname} | sed $sedexpr)
-  if [[ $pvcname == cmis-cfgstore ]]; then return 0; fi
-  if [[ $pvcname == cpe-bootstrapstore ]]; then return 0; fi 
-  if [[ $pvcname == cpe-cfgstore  ]]; then return 0; fi
-  if [[ $pvcname == cpe-filestore  ]]; then return 0; fi
-  if [[ $pvcname == cpe-icmrulesstore  ]]; then return 0; fi
-  if [[ $pvcname == cpe-textextstore   ]]; then return 0; fi
-  if [[ $pvcname == css-cfgstore  ]]; then return 0; fi
-  if [[ $pvcname == css-customstore  ]]; then return 0; fi
-  if [[ $pvcname == css-indexstore  ]]; then return 0; fi
-  if [[ $pvcname == icn-asperastore  ]]; then return 0; fi
+
+  # To be restored per the documentation on https://www.ibm.com/docs/en/cloud-paks/cp-biz-automation/21.0.3?topic=recovery-backing-up-your-environments
   if [[ $pvcname == icn-cfgstore  ]]; then return 0; fi
+
+  pattern="datadir-zen-metastoredb-.*"
+  if [[ $pvcname =~ $pattern  ]]; then return 0; fi
+
+  # Optional but nice to have, have amended to the list
+  if [[ $pvcname == cpe-cfgstore  ]]; then return 0; fi
+  if [[ $pvcname == cpe-bootstrapstore ]]; then return 0; fi 
   if [[ $pvcname == icn-pluginstore  ]]; then return 0; fi
-  if [[ $pvcname == jms-pvc-CRNAME-bastudio-deployment-0  ]]; then return 0; fi
-  if [[ $pvcname == CRNAME-bastudio-dump-pvc  ]]; then return 0; fi
-  if [[ $pvcname == CRNAME-bastudio-index-pvc  ]]; then return 0; fi
-  if [[ $pvcname == CRNAME-dba-rr-pvc  ]]; then return 0; fi
-  if [[ $pvcname == CRNAME-pbkae-file-pvc  ]]; then return 0; fi
-  if [[ $pvcname == CRNAME-workflow-authoring-baw-dump-storage-pvc  ]]; then return 0; fi
-  if [[ $pvcname == CRNAME-workflow-authoring-baw-file-storage-pvc  ]]; then return 0; fi
-  if [[ $pvcname == CRNAME-workflow-authoring-baw-index-storage-pvc  ]]; then return 0; fi
-  if [[ $pvcname == CRNAME-workflow-authoring-baw-jms-data-vc-CRNAME-workflow-authoring-baw-jms-0  ]]; then return 0; fi
-  if [[ $pvcname == CRNAME-workspace-aaeae-file-pvc  ]]; then return 0; fi
+
+  # According to https://www.ibm.com/docs/en/cloud-paks/cp-biz-automation/21.0.3?topic=environments-persistent-volume-claims-be-backed-up#ref_hadr_pvcs__ads
+
+  if [[ $pvcname == CRNAME-ads-runtime-storage-pvc  ]]; then return 0; fi
+
+  # This might sound crazy, but if the pattern is not stored in a variable, the regexp comparison will just not match
+  pattern="ibm-bts-cnpg-.*-cp4ba-bts-.*"
+  if [[ $pvcname =~ $pattern   ]]; then return 0; fi
+
+  # According to https://www.ibm.com/docs/en/cloud-paks/cp-biz-automation/21.0.3?topic=environments-persistent-volume-claims-be-backed-up#ref_hadr_pvcs__baw__title__1
+  pattern="CRNAME-.*-baw-file-storage-pvc"
+  if [[ $pvcname =~ $pattern   ]]; then return 0; fi
+  pattern="CRNAME-.*-baw-jms-data-vc-CRNAME-.*-baw-jms-0"
+  if [[ $pvcname =~ $pattern   ]]; then return 0; fi
+  if [[ $pvcname == CRNAME-bastudio-files-pvc ]]; then return 0; fi
+  pattern="jms-pvc-CRNAME-bastudio-deployment-.*"
+  if [[ $pvcname =~ $pattern  ]]; then return 0; fi
+  if [[ $pvcname == cpe-filestore  ]]; then return 0; fi
+  if [[ $pvcname == css-indexstore  ]]; then return 0; fi
 
   # If the name appears in the CR, then it is also part of what is needed.
-  if grep $pvcname $BACKUP_DIR/CR.yaml > /dev/null 2>/dev/null; then return 0; fi
+#  if grep $pvcname $CR_SPEC > /dev/null 2>/dev/null; then return 0; fi
 
   return 1
 }
@@ -117,37 +125,58 @@ function restore_this_secret() {
   local sedexpr=$(printf 's/%s/CRNAME/g' $crname)
   local secretname=$(echo ${secretname} | sed $sedexpr)
 
-  if [[ $secretname == admin.registrykey  ]]; then return 0; fi
-  if [[ $secretname == external-tls-secret  ]]; then return 0; fi
-  if [[ $secretname == ibm-adp-secret  ]]; then return 0; fi
-  if [[ $secretname == ibm-ban-secret  ]]; then return 0; fi
-  if [[ $secretname == ibm-bawaut-admin-secret  ]]; then return 0; fi
-  if [[ $secretname == ibm-bawaut-server-db-secret  ]]; then return 0; fi
-  if [[ $secretname == ibm-fncm-secret  ]]; then return 0; fi
-  if [[ $secretname == ibm-pfs-admin-secret  ]]; then return 0; fi
-  if [[ $secretname == icp4adeploy-bas-admin-secret  ]]; then return 0; fi
-  if [[ $secretname == icp4adeploy-workspace-aae-app-engine-admin-secret  ]]; then return 0; fi
-  if [[ $secretname == icp4a-root-ca  ]]; then return 0; fi
-  if [[ $secretname == icp4a-shared-encryption-key  ]]; then return 0; fi
+  # To be restored per the documentation on https://www.ibm.com/docs/en/cloud-paks/cp-biz-automation/21.0.3?topic=recovery-backing-up-your-environments
+  if [[ $secretname == CRNAME-cpe-oidc-secret  ]]; then return 0; fi
+  if [[ $secretname == admin-user-details  ]]; then return 0; fi
+  if [[ $secretname == ibm-entitlement-key  ]]; then return 0; fi
   if [[ $secretname == ldap-bind-secret  ]]; then return 0; fi
-  if [[ $secretname == auth-pdp-secret  ]]; then return 0; fi
-  if [[ $secretname == ibm-bawaut-server-db-secret  ]]; then return 0; fi
-  if [[ $secretname == icp-mongodb-admin  ]]; then return 0; fi
-  if [[ $secretname == icp-serviceid-apikey-secret  ]]; then return 0; fi
-  if [[ $secretname == icp4a-shared-encryption-key  ]]; then return 0; fi
-  if [[ $secretname == identity-provider-secret  ]]; then return 0; fi
-  if [[ $secretname == platform-api-secret  ]]; then return 0; fi
-  if [[ $secretname == platform-auth-secret  ]]; then return 0; fi
-  if [[ $secretname == platform-identity-management  ]]; then return 0; fi
+  # ldap-ssl-secret will, if used, appear in the CR. There is no default name for it. Below all secrets appearing the CR will be included for the restore
+  # Same counts for the db2 certificates.
+  if [[ $secretname == ibm-iaws-shared-key-secret  ]]; then return 0; fi
+  if [[ $secretname == ibm-baw-wfs-server-db-secret  ]]; then return 0; fi
+  if [[ $secretname == ibm-pfs-admin-secret  ]]; then return 0; fi
+  if [[ $secretname == icp4adeploy-workspace-aae-app-engine-admin-secret  ]]; then return 0; fi
+  if [[ $secretname == CRNAME-workspace-aae-app-engine-admin-secret  ]]; then return 0; fi
+  if [[ $secretname == icp4adeploy-rr-admin-secret  ]]; then return 0; fi
+  if [[ $secretname == CRNAME-rr-admin-secret    ]]; then return 0; fi
+  if [[ $secretname == ibm-ban-secret  ]]; then return 0; fi
+  if [[ $secretname == ibm-fncm-secret  ]]; then return 0; fi
+  if [[ $secretname == icp4adeploy-bas-admin-secret  ]]; then return 0; fi
+  if [[ $secretname == CRNAME-bas-admin-secret  ]]; then return 0; fi
   if [[ $secretname == playback-server-admin-secret  ]]; then return 0; fi
-  if [[ $secretname == resource-registry-admin-secret  ]]; then return 0; fi
+  if [[ $secretname == CRNAME-wfps-admin-secret  ]]; then return 0; fi
 
+  # This secret contains the Postgress Database password, no db access possible without it.
+  # See https://www.ibm.com/docs/en/cloud-paks/foundational-services/4.0?topic=service-backup-restore
+  if [[ $secretname == ibm-bts-cnpg-ibm-cp4ba-dev-cp4ba-bts-app  ]]; then return 0; fi
+
+  # To be restored following https://community.ibm.com/community/user/automation/blogs/dian-guo-zou/2022/10/12/backup-and-restore-baw-2103
+  if [[ $secretname == platform-oidc-credentials  ]]; then return 0; fi
 
   # If the name appears in the CR, then it is also part of what is needed.
-  if grep $secretname $BACKUP_DIR/CR.yaml > /dev/null 2>/dev/null; then return 0; fi
+  # This should get any LDAP or DB TLS secrets as well, or renamed secrets 
+  if grep $secretname $CR_SPEC > /dev/null 2>/dev/null; then return 0; fi
 
   return 1
 }
+
+# $1 PVC name to check
+# $2 CR NAME
+function restore_this_configmap() {
+  local configmapname=$1
+  local crname=$2
+  local sedexpr=$(printf 's/%s/CRNAME/g' $crname)
+  local configmapname=$(echo ${configmapname} | sed $sedexpr)
+
+  if [[ $configmapname == iaf-homepage-getting-started-extensions  ]]; then return 0; fi
+
+
+  # If the name appears in the CR, then it is also part of what is needed.
+  if grep $configmapname $CR_SPEC > /dev/null 2>/dev/null; then return 0; fi
+
+  return 1
+}
+
 
 # Check if directory is empty
 if [ "$(ls -A $BACKUP_ROOT_DIRECTORY_FULL)" ]; then
@@ -226,9 +255,6 @@ fi
 
 logInfoValue "The CR from the backup used deployment name: " $backupDeploymentName
 logInfoValue "The CR specification is for CP4BA Version: " $backupAppVersion
-
-sed 's/#[^\n]*//g' $CR_SPEC | yq eval 'del(.metadata.annotations, .metadata.creationTimestamp, .metadata.resourceVersion, .metadata.uid)' > $BACKUP_DIR/CR.yaml
-
 
 logInfo "Verifying OC CLI is connected to the OCP cluster..."
 WHOAMI=$(oc whoami)
@@ -333,11 +359,90 @@ else
   for file in "${yamlFiles[@]}"; do
     secretName=$(yq eval '.metadata.name' $file)
     logInfoValue "Defining Secret " ${secretName}
+    yq eval 'del(.status, .metadata.finalizers, .metadata.resourceVersion, .metadata.uid, .metadata.annotations, .metadata.creationTimestamp, .metadata.selfLink, .metadata.managedFields, .metadata.ownerReferences)' $file | oc apply -f - -n $backupNamespace
+
+  done
+fi
+
+echo
+if [ -d $BACKUP_DIR/configmap ]; then
+  logInfo "Processing Configmaps ($(ls -A $BACKUP_DIR/configmap | wc -l))"
+else
+  logInfo "Processing Configmaps (none)"
+fi
+
+yamlFiles=()
+countYamlFiles=0
+existingConfigmaps=$(oc get configmap -o custom-columns=name:.metadata.name --no-headers)
+
+function is_existing_configmap() {
+  local existing_configmap=""
+  local configmap=$1
+  for existing_configmap in $existingConfigmaps; do 
+    if [ "$existing_configmap" == "$configmap" ]; then
+      return 0
+    fi
+  done
+  return 1
+}
+
+for yaml in $BACKUP_DIR/configmap/*.yaml; do
+  configmapName=$(yq eval '.metadata.name' $yaml)
+  configmapNamespace=$(yq eval '.metadata.namespace' $yaml)
+  if [[ "$configmapName" != "null" ]]; then
+    if [[ "$configmapNamespace" != "null" && "$configmapNamespace" != "$backupNamespace" ]]; then
+      logWarning "Skipping Configmap $configmapName in file $(basename $yaml) it has a non-matching namespace: $configmapNamespace"
+    else 
+      if restore_this_configmap $configmapName $backupDeploymentName; then
+        if is_existing_configmap $configmapName; then
+          logInfoValue "Configmap already defined: " $configmapName
+        else        
+          yamlFiles+=($yaml)
+          countYamlFiles=$(expr $countYamlFiles + 1)
+        fi
+      fi
+    fi
+  fi
+done
+
+echo
+
+if [[ "$countYamlFiles" == "0" ]]; then
+	logInfo "All Configmaps have already been applied"
+else
+  echo
+  echo "The script will try to apply following Configmaps:"
+
+  for file in "${yamlFiles[@]}"; do
+    configmapName=$(yq eval '.metadata.name' $file)
+    echo -e "\tConfigmap \x1B[1m$configmapName\x1B[0m  (File: $(basename $file))"
+  done
+
+  echo
+  printf "OK to apply these Configmap definitions? (Yes/No, default Yes): "
+  read -rp "" ans
+  case "$ans" in
+  "n"|"N"|"no"|"No"|"NO")
+     echo
+     echo -e "Exiting..."
+     echo
+     exit 0
+     ;;
+  *)
+     echo
+     echo -e "OK..."
+     ;;
+  esac
+
+  for file in "${yamlFiles[@]}"; do
+    configmapName=$(yq eval '.metadata.name' $file)
+    logInfoValue "Defining Configmap " ${configmapName}
     yq eval 'del(.metadata.annotations, .metadata.creationTimestamp, .metadata.resourceVersion, .metadata.uid)' $file | oc apply -f - -n $backupNamespace
   done
 fi
 
 echo
+
 
 if [ -d $BACKUP_DIR/persistentvolumeclaim ]; then
   logInfo "Processing Persistent Volume Claims ($(ls -A $BACKUP_DIR/persistentvolumeclaim | wc -l))"
@@ -367,7 +472,7 @@ for yaml in $BACKUP_DIR/persistentvolumeclaim/*.yaml; do
 
   if [[ "$pvcName" != "null" ]]; then
     if [[ "$pvcNamespace" != "null" && "$pvcNamespace" != "$backupNamespace" ]]; then
-      logWarning "Skipping Persistent Volume Claim $pvcName in file $(basename $yaml) it has a non-matching namespace: $secretNamespace"
+      logWarning "Skipping Persistent Volume Claim $pvcName in file $(basename $yaml) it has a non-matching namespace: $pvcNamespace"
     else     
       if [[ "$pvcStorageClass" == "null" ]]; then
         logWarning "Skipping Persistent Volume Claim $pvcName in file $(basename $yaml) it does not reference a storage class"
@@ -400,7 +505,7 @@ else
 
   for file in "${yamlFiles[@]}"; do
     pvcName=$(yq eval '.metadata.name' $file)
-    echo -e "\tPVC \x1B[1m$pvcName\x1B[0m  (File: $(basename $yaml))"
+    echo -e "\tPVC \x1B[1m$pvcName\x1B[0m  (File: $(basename $file))"
   done
   echo
   printf "OK to apply these PVC definitions? (Yes/No, default Yes): "
@@ -421,7 +526,8 @@ else
   for file in "${yamlFiles[@]}"; do
     pvcName=$(yq eval '.metadata.name' $file)
     logInfoValue "Defining PVC " ${pvcName}
-    yq eval 'del(.metadata.annotations, .metadata.creationTimestamp, .metadata.resourceVersion, .metadata.uid, .metadata.finalizers, .status, .spec.volumeName)' $file | oc apply -f - -n $backupNamespace
+    yq eval 'del(.status, .metadata.finalizers, .metadata.resourceVersion, .metadata.uid, .metadata.annotations, .metadata.creationTimestamp, .metadata.selfLink, .metadata.managedFields, .metadata.ownerReferences, .spec.volumeMode, .spec.volumeName)' $file | oc apply -f - -n $backupNamespace
+
   done
 fi
 
@@ -497,6 +603,31 @@ EOF
 
 # Iterate over all persistent volume claims in the project
 oc get pvc -n $cp4baProjectName -o 'custom-columns=ns:.metadata.namespace,class:.spec.storageClassName,pv:.spec.volumeName,name:.metadata.name' --no-headers | sed 's/^/perform_restore /g' >> 111-restore-pvs.sh
+
+logInfoValue "PV Restore Script Generated: " 111-restore-pvs.sh
+
+echo
+echo "Run the generated PV Restore Script on the storage server with the root user."
+read -p "Press Return to continue, CTRL-C to abort" choice
+echo
+
+CP4BASubscription=$BACKUP_DIR/subscription.operators.coreos.com/ibm-cp4a-operator.yaml
+
+if [ ! -e $CP4BASubscription ]; then
+   logError "CP4BA Operator Subscription not found in backup : " $CP4BASubscription
+else
+   logInfoValue "CP4BA Operator Subscription: " $CP4BASubscription
+   cp4baVersion=$(yq eval '.status.currentCSV' $CP4BASubscription)
+   logInfoValue "Version used by backup: " $cp4baVersion
+fi
+
+echo "Creating CR for restore..."
+yq eval 'del(.metadata.annotations, .metadata.creationTimestamp, .metadata.generation, .metadata.resourceVersion, .metadata.uid, .spec.initialize_configuration)' $CR_SPEC > $(basename $CR_SPEC)
+yq eval '.spec.shared_configuration.sc_content_initialization = false' -i $(basename $CR_SPEC)
+
+echo "After deployment of the CP4BA Operator, you should be able to apply the CR from file"
+echo $(basename $CR_SPEC)
+
 
 
 
