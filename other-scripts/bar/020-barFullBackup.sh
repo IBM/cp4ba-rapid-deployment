@@ -449,7 +449,7 @@ function perform_backup() {
     volumename=\$3
     claimname=\$4
 
-    if [ "\$policy" == "nfs-client" ]; then
+    if [ "\$policy" == "${storageclass}" ]; then
         echo "Backing up PVC \$claimname"
         directory="$rootDirectory/\${namespace}-\${claimname}-\${volumename}"
         if [ -d "\$directory" ]; then
