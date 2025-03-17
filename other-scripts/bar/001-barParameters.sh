@@ -37,6 +37,26 @@ pvBackupDirectory="\$HOME/backup"
 # Name of the storage class used to create temp PVCs during backup/restore
 pvcStorageClassName="nfs-client"
 
+# Information for backup up Persistent Volumes
+
+# Name of the Storage classes
+barStorageClass=()
+
+# Backup method. For now support only ServerBackup
+barMethod=()
+
+# Further Information which is needed. Data formatted as JSON.
+barConfigData=()
+
+barStorageClass[0]="nfs-client"
+barMethod[0]="ServerBackup"
+barConfigData[0]='{ "rootDirectory": "/export"}'
+
+barStorageClass[1]="nfs-client-fast"
+barMethod[1]="ServerBackup"
+barConfigData[1]='{ "rootDirectory": "/faststorage"}'
+
+
 # -----------------------------------------------------
 # --- Parameters that usually do NOT need an update ---
 # -----------------------------------------------------

@@ -428,7 +428,19 @@ echo
 logInfo "Creating 025-backup-pvs.sh..."
 PV_BACKUP_DIR=${pvBackupDirectory}/$(basename $(dirname $BACKUP_DIR))/$(basename $BACKUP_DIR)
 
-cat > $BACKUP_DIR/025-backup-pvs.sh <<EOF
+index=0
+for storageclass in ${barStorageClass[@]}; do
+    method=${barMethod[$index]}
+    configData=${barConfigData[$index]}
+    index=$(( index + 1 ))
+
+    if [ "$method" == "ServerBackup" ]; then
+	logInfoValue "Backing Up PV data for PVs using StorageClass " $storageclass
+
+        rootDirectory=$(echo $configData | jq -r '.rootDirectory')        
+        PV_BACKUP_DIR=${pvBackupDirectory}/$(basename $(dirname $BACKUP_DIR))/$(basename $BACKUP_DIR)        
+
+        cat > $BACKUP_DIR/025-backup-pvs-${storageclass}.sh <<EOF
 #!/bin/bash
 
 function perform_backup() {
@@ -439,7 +451,7 @@ function perform_backup() {
 
     if [ "\$policy" == "nfs-client" ]; then
         echo "Backing up PVC \$claimname"
-        directory="/export/\${namespace}-\${claimname}-\${volumename}"
+        directory="$rootDirectory/\${namespace}-\${claimname}-\${volumename}"
         if [ -d "\$directory" ]; then
             (cd \$directory; tar cfz \$pvBackupDirectory/\${claimname}.tgz .)
         else
@@ -455,10 +467,19 @@ pvBackupDirectory="${PV_BACKUP_DIR}"
 mkdir -p \$pvBackupDirectory
 
 EOF
+        for pvc in $(oc get pvc -n $cp4baProjectName -o 'custom-columns=name:.metadata.name' --no-headers); do
+	        class=$(oc get pvc $pvc -o 'jsonpath={.spec.storageClassName}')
+	        if [ "$class" == "$storageclass" ]; then
+        	    namespace=$(oc get pvc $pvc -o 'jsonpath={.metadata.namespace}')
+	            pv=$(oc get pvc $pvc -o 'jsonpath={.spec.volumeName}')
+	            echo perform_backup $namespace $class $pv $pvc >> $BACKUP_DIR/025-backup-pvs-${storageclass}.sh
+        	    chmod +x $BACKUP_DIR/025-backup-pvs-${storageclass}.sh        
 
-# Iterate over all persistent volume claims in the project
-oc get pvc -n $cp4baProjectName -o 'custom-columns=ns:.metadata.namespace,class:.spec.storageClassName,pv:.spec.volumeName,name:.metadata.name' --no-headers | sed 's/^/perform_backup /g' >> $BACKUP_DIR/025-backup-pvs.sh
-chmod +x $BACKUP_DIR/025-backup-pvs.sh
+        	fi
+	    done
+    fi
+done
+
 echo
 
 
