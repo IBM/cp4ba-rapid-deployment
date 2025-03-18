@@ -559,7 +559,20 @@ RESTORE_UID=$(oc describe project $cp4baProjectName | grep uid-range | cut -d"="
 logInfoValue "PV UID in backup: " $BACKUP_UID
 logInfoValue "PV UID in restored project: " $RESTORE_UID
 
-cat > 111-restore-pvs.sh <<EOF
+
+index=0
+for storageclass in ${barStorageClass[@]}; do
+    method=${barMethod[$index]}
+    configData=${barConfigData[$index]}
+    index=$(( index + 1 ))
+
+    if [ "$method" == "ServerBackup" ]; then
+	logInfoValue "Restoring PV data for PVs using StorageClass " $storageclass
+
+        rootDirectory=$(echo $configData | jq -r '.rootDirectory')        
+        PV_BACKUP_DIR=${pvBackupDirectory}/$(basename $(dirname $BACKUP_DIR))/$(basename $BACKUP_DIR)        
+
+        cat > $BACKUP_DIR/111-restore-pvs-${storageclass}.sh <<EOF
 #!/bin/bash
 
 function perform_restore() {
@@ -568,9 +581,9 @@ function perform_restore() {
     volumename=\$3
     claimname=\$4
 
-    if [ "\$policy" == "nfs-client" ]; then
+    if [ "\$policy" == "${storageclass}" ]; then
         echo "Restoring PVC \$claimname"
-        directory="/export/\${namespace}-\${claimname}-\${volumename}"
+        directory="$rootDirectory/\${namespace}-\${claimname}-\${volumename}"
         if [ ! -e \$pvBackupDirectory/\${claimname}.tgz ]; then
             echo "*** Error: Did not find persistent volume backup in \$pvBackupDirectory/\${claimname}.tgz"
         elif [ -d "\$directory" ]; then
@@ -600,11 +613,21 @@ backupUid="${BACKUP_UID}"
 restoreUid="${RESTORE_UID}"
 
 EOF
+        for pvc in $(oc get pvc -n $cp4baProjectName -o 'custom-columns=name:.metadata.name' --no-headers); do
+	          class=$(oc get pvc $pvc -o 'jsonpath={.spec.storageClassName}')
+	          if [ "$class" == "$storageclass" ]; then
+        	      namespace=$(oc get pvc $pvc -o 'jsonpath={.metadata.namespace}')
+	              pv=$(oc get pvc $pvc -o 'jsonpath={.spec.volumeName}')
+	              echo perform_restore $namespace $class $pv $pvc >> $BACKUP_DIR/111-restore-pvs-${storageclass}.sh
+        	      chmod +x $BACKUP_DIR/111-restore-pvs-${storageclass}.sh     
 
-# Iterate over all persistent volume claims in the project
-oc get pvc -n $cp4baProjectName -o 'custom-columns=ns:.metadata.namespace,class:.spec.storageClassName,pv:.spec.volumeName,name:.metadata.name' --no-headers | sed 's/^/perform_restore /g' >> 111-restore-pvs.sh
+        	  fi
+	      done
+        logInfoValue "PV Restore Script Generated: " 111-restore-pvs-${storageclass}.sh        
+    fi
+done
 
-logInfoValue "PV Restore Script Generated: " 111-restore-pvs.sh
+
 
 echo
 echo "Run the generated PV Restore Script on the storage server with the root user."
