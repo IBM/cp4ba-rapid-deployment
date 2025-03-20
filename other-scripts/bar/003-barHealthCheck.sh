@@ -33,7 +33,6 @@ source ${CUR_DIR}/common.sh
 INPUT_PROPS_FILENAME="001-barParameters.sh"
 INPUT_PROPS_FILENAME_FULL="${CUR_DIR}/${INPUT_PROPS_FILENAME}"
 
-useToken=false
 if [[ -f $INPUT_PROPS_FILENAME_FULL ]]; then
    echo
    echo "Found ${INPUT_PROPS_FILENAME}. Reading in variables from that script."
@@ -47,11 +46,17 @@ if [[ -f $INPUT_PROPS_FILENAME_FULL ]]; then
    fi
    
    ##### Get Access Token if needed ###############################################
-   if [[ "$barTokenUser" != "" ]] || [[ "$barTokenPass" != "" ]] || [[ "$barTokenResolveCp4ba" != "" ]] || [[ "$barCp4baHost" != "" ]]; then
+   if $useTokenForInsightsengineManagementURL || $useTokenForElasticsearchRoute; then
      # get the access token
-     cp4batoken=$(curl -sk "$barCp4baHost/v1/preauth/validateAuth" -u $barTokenUser:$barTokenPass --resolve $barTokenResolveCp4ba | jq -r .accessToken)
-     useToken=true
+     if [[ "$barTokenUser" = "" ]] || [[ "$barTokenPass" = "" ]] || [[ "$barTokenResolveCp4ba" = "" ]] || [[ "$barCp4baHost" = "" ]]; then
+      echo "File ${INPUT_PROPS_FILENAME} not fully updated. Pls. update parameters barTokenUser, barTokenPass, barTokenResolveCp4ba and barCp4baHost."
+      echo
+      exit 1
+     else
+       cp4batoken=$(curl -sk "$barCp4baHost/v1/preauth/validateAuth" -u $barTokenUser:$barTokenPass --resolve $barTokenResolveCp4ba | jq -r .accessToken)
+     fi
    fi
+   
    echo "Done!"
 else
    echo
@@ -589,7 +594,7 @@ else
     logInfo "Trying to connect to ElasticSearch..."
     ELASTICSEARCH_ROUTE=$(oc get route iaf-system-es -o jsonpath='{.spec.host}')
     ELASTICSEARCH_PASSWORD=$(oc get secret iaf-system-elasticsearch-es-default-user --no-headers --ignore-not-found -o jsonpath={.data.password} | base64 -d)
-    if $useToken; then
+    if $useTokenForElasticsearchRoute; then
       ELASTICSEARCH_CURL_RESULT=$(curl -sk -w "%{http_code}" --header "Authorization: ${cp4batoken}" -o /dev/null -u elasticsearch-admin:$ELASTICSEARCH_PASSWORD https://$ELASTICSEARCH_ROUTE --resolve "${barTokenResolveCp4ba}")
     else
       ELASTICSEARCH_CURL_RESULT=$(curl -sk -w "%{http_code}" -o /dev/null -u elasticsearch-admin:$ELASTICSEARCH_PASSWORD https://$ELASTICSEARCH_ROUTE)
@@ -733,7 +738,7 @@ if oc get insightsengine > /dev/null 2>&1; then
     MANAGEMENT_USERNAME=$(oc get secret ${MANAGEMENT_AUTH_SECRET} -o jsonpath='{.data.username}' | base64 -d)
     MANAGEMENT_PASSWORD=$(oc get secret ${MANAGEMENT_AUTH_SECRET} -o jsonpath='{.data.password}' | base64 -d)
     logInfo "  Retrieving flink jobs..."
-    if $useToken; then
+    if $useTokenForInsightsengineManagementURL; then
       FLINK_JOBS=$(curl -sk --header "Authorization: ${cp4batoken}" -u ${MANAGEMENT_USERNAME}:${MANAGEMENT_PASSWORD} $MANAGEMENT_URL/api/v1/processing/jobs/list --resolve "${barTokenResolveCp4ba}")
     else
       FLINK_JOBS=$(curl -sk -u ${MANAGEMENT_USERNAME}:${MANAGEMENT_PASSWORD} $MANAGEMENT_URL/api/v1/processing/jobs/list)
