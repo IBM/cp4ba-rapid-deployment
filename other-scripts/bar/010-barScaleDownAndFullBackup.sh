@@ -198,15 +198,15 @@ echo
 
 # Scale down bastudio, navigator, baw, pfs, cpe and navigator related pods
 logInfo $(oc scale deployment $CP4BA_NAME-navigator-watcher --replicas=0)
+# TODO: cpe-watcher not always there
 logInfo $(oc scale deployment $CP4BA_NAME-cpe-watcher --replicas=0)
 echo
 
 # Scale to 1, wait till all other pods are gone, then scale to 0
 logInfo "Scaling major CP4BA components to 1..."
-bastudiosts=$(oc get sts -l=app.kubernetes.io/name=zookeeper --no-headers --ignore-not-found | awk '{print $1}')
+bastudiosts=$(oc get sts -l=app.kubernetes.io/name=bastudio --no-headers --ignore-not-found | awk '{print $1}')
 if [[ "$bastudiosts" != "" ]]; then
-  # TODO
-  echo "TODO"
+  logInfo $(oc scale statefulset $bastudiosts --replicas=1)
 fi
 logInfo $(oc scale deployment $CP4BA_NAME-navigator-deploy --replicas=1)
 bawserversts=$(oc get sts -l=app.kubernetes.io/name=workflow-server --no-headers --ignore-not-found | awk '{print $1}')
@@ -215,7 +215,6 @@ if [[ "$bawserversts" != "" ]]; then
     logInfo $(oc scale statefulset $i --replicas=1)
   done
 fi
-# TODO: oc scale workflowauthoring
 logInfo $(oc scale statefulset $CP4BA_NAME-pfs --replicas=1)
 logInfo $(oc scale deployment $CP4BA_NAME-cpe-deploy --replicas=1)
 echo
@@ -226,7 +225,22 @@ sleep 30
 logInfo "Scaling major CP4BA components to 0..."
 if [[ "$bastudiosts" != "" ]]; then
   logInfo "Scaling down BAStudio pods to 0..."
-  # TODO
+  logInfo $(oc scale statefulset $bastudiosts --replicas=0)
+  bastudiopod=$(oc get pod -l=app.kubernetes.io/name=bastudio -o name)
+  GONE=false
+  echo -n "  Waiting..."
+  while [[ $GONE == false ]]
+  do
+    if [[ $bastudiopod != "" ]]; then
+      echo -n "."
+      sleep 10
+      bastudiopod=$(oc get pod -l=app.kubernetes.io/name=bastudio -o name)
+    else
+      GONE=true
+      echo
+      logInfo "BAStudio pods scaled to 0"
+    fi
+  done
 fi
 logInfo "Scaling down Navigator pods to 0..."
 logInfo $(oc scale deployment $CP4BA_NAME-navigator-deploy --replicas=0)
@@ -266,7 +280,6 @@ if [[ "$bawserversts" != "" ]]; then
     fi
   done
 fi
-# TODO: oc scale workflowauthoring
 logInfo "Scaling down PFS pods to 0..."
 logInfo $(oc scale statefulset $CP4BA_NAME-pfs --replicas=0)
 logInfo $(oc scale deployment $CP4BA_NAME-pfs-dbareg --replicas=0)

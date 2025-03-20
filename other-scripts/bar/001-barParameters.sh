@@ -23,7 +23,7 @@ echo "  Reading 001-barParameters.sh ..."
 # --- Provide those BEFORE running any other bar script ---
 
 # OCP project name for CP4BA to backup/restore, for example ibm-cp4ba
-cp4baProjectName=ibm-cp4ba
+cp4baProjectName=ibm-cp4ba-dev
 
 # If URLs are protected, provide here the information to be used to get the authorization token, if a token is not needed, remove REQUIRED
 useTokenForInsightsengineManagementURL=false
