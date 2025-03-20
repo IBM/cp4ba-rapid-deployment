@@ -132,6 +132,8 @@ CP4BA_VERSION=$(oc get ICP4ACluster $CP4BA_NAME -o 'custom-columns=NAME:.metadat
 logInfo "Found CP4BA version: $CP4BA_VERSION"
 echo
 
+
+# TODO: Continue here with merge
 ##### Backup uid definition ####################################################
 NAMESPACE_UID=$(oc describe project $cp4baProjectName | grep uid-range | cut -d"=" -f2 | cut -d"/" -f1)
 logInfo "Namespace $cp4baProjectName uid: $NAMESPACE_UID"
