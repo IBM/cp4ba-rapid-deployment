@@ -186,5 +186,11 @@ do
 done
 echo
 
+# Sixth, set bts-316 replica size
+logInfo "Patching cp4ba-bts..."
+patchString="'{\"spec\":{\"replicas\":$cp4baBTS316ReplicaSize}}'"
+logInfo $(oc patch bts cp4ba-bts --type merge --patch $patchString)
+echo
+
 logInfo "Environment is scaled up. It will take some time till all needed pods are there and are Running and Ready. Please check in the OCP Web Console. Once all pods are there, pls. check that everything works as expected."
 echo

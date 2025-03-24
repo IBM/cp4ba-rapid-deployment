@@ -142,6 +142,10 @@ sed -i.bak "s|§cp4baProjectNamespace|$cp4baProjectName|g" $propertiesfile
 # Persist the replica size of the common-web-ui deployment
 commonWebUiReplicas=$(oc get pod -l=app.kubernetes.io/name=common-web-ui -o 'custom-columns=NAME:.metadata.name,PHASE:.status.phase,READY:.status.containerStatuses[0].ready,DELETED:.metadata.deletionTimestamp' --no-headers --ignore-not-found | grep 'Running' | grep 'true' | grep '<none>' | awk '{print $1}' | wc -l)
 sed -i.bak "s|§cp4baCommonWebUiReplicaSize|$commonWebUiReplicas|g" $propertiesfile
+
+# Persist the replica size of the bts-316 deployment
+cp4baBTS316ReplicaSize=$(oc get bts cp4ba-bts -o 'custom-columns=NAME:.metadata.name,REPLICAS:.spec.replicas' --no-headers | awk '{print $2}')
+sed -i.bak "s|§cp4baBTS316ReplicaSize|$cp4baBTS316ReplicaSize|g" $propertiesfile
 echo
 
 ## Get CP4BA deployment name
@@ -604,7 +608,12 @@ fi
 ##### Final scale down ##############################################################
 ## Remove flink job submitters
 logInfo "Removing flink job submitters..."
-oc get jobs -o custom-columns=NAME:.metadata.name | grep bai- | grep -v bai-setup | xargs oc delete job
+logInfo $(oc get jobs -o custom-columns=NAME:.metadata.name | grep bai- | grep -v bai-setup | xargs oc delete job)
+echo
+
+# Set replica size of the bts-316 deployment to 0 to prevent it gets scaled up again
+logInfo "Patching cp4ba-bts..."
+logInfo $(oc patch bts cp4ba-bts --type merge --patch '{"spec":{"replicas":0}}')
 echo
 
 # Scale down all deployments
