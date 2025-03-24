@@ -188,7 +188,7 @@ echo
 
 # Sixth, set bts-316 replica size
 logInfo "Patching cp4ba-bts..."
-patchString="'{\"spec\":{\"replicas\":$cp4baBTS316ReplicaSize}}'"
+patchString="{\"spec\":{\"replicas\":$cp4baBTS316ReplicaSize}}"
 logInfo $(oc patch bts cp4ba-bts --type merge --patch $patchString)
 echo
 

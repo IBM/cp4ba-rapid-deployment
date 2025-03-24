@@ -607,9 +607,11 @@ fi
 
 ##### Final scale down ##############################################################
 ## Remove flink job submitters
-logInfo "Removing flink job submitters..."
-logInfo $(oc get jobs -o custom-columns=NAME:.metadata.name | grep bai- | grep -v bai-setup | xargs oc delete job)
-echo
+if [[ "$MANAGEMENT_POD" != "" ]]; then
+  logInfo "Removing flink job submitters..."
+  logInfo $(oc get jobs -o custom-columns=NAME:.metadata.name | grep bai- | grep -v bai-setup | xargs oc delete job)
+  echo
+fi
 
 # Set replica size of the bts-316 deployment to 0 to prevent it gets scaled up again
 logInfo "Patching cp4ba-bts..."
@@ -695,10 +697,33 @@ for i in $completedpods; do
 done
 echo
 
+# Wait till all pods are gone
+allpods=$(oc get pod --no-headers)
+if [[ $allpods != "" ]]; then
+  logInfo "Waiting till all pods in project $cp4baProjectName are gone before taking full backup. This would run forever, so please manually check the remaining pods and get them removed manually if needed."
+  logInfo "Currently there are the following pods remaining:"
+  logInfo $allpods
+  GONE=false
+  echo -n "  Waiting..."
+  while [[ $GONE == false ]]
+  do
+    if [[ $allpods != "" ]]; then
+      echo -n "."
+      sleep 10
+      allpods=$(oc get pod --no-headers)
+    else
+      GONE=true
+      echo
+      logInfo "All pods are gone. Continuing with full backup."
+    fi
+  done
+fi
+echo
+
 
 
 ##### Final backup ##############################################################
-# Now that those backups are done, we can take a full backup of all resources in the namespace
+# Now that those backups are done and everything is scaled down, we can take a full backup of all resources in the namespace
 # In 001-barParameters.sh, one can specify which resources to skip, get that list first
 skipToBackupResourceKinds=$(echo $barSkipToBackupResourceKinds | tr "," "\n")
 logInfo "Collecting resources that need to be backed up..."
