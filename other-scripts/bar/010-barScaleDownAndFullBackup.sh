@@ -698,7 +698,7 @@ done
 echo
 
 # Wait till all pods are gone
-allpods=$(oc get pod --no-headers)
+allpods=$(oc get pod --no-headers --ignore-not-found)
 if [[ $allpods != "" ]]; then
   logInfo "Waiting till all pods in project $cp4baProjectName are gone before taking full backup. This would run forever, so please manually check the remaining pods and get them removed manually if needed."
   logInfo "Currently there are the following pods remaining:"
@@ -710,7 +710,7 @@ if [[ $allpods != "" ]]; then
     if [[ $allpods != "" ]]; then
       echo -n "."
       sleep 10
-      allpods=$(oc get pod --no-headers)
+      allpods=$(oc get pod --no-headers --ignore-not-found)
     else
       GONE=true
       echo
