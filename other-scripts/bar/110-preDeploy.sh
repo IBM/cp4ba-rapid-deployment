@@ -81,38 +81,15 @@ function restore_this_pvc() {
   local sedexpr=$(printf 's/%s/CRNAME/g' $crname)
   local pvcname=$(echo ${pvcname} | sed $sedexpr)
 
-  # To be restored per the documentation on https://www.ibm.com/docs/en/cloud-paks/cp-biz-automation/21.0.3?topic=recovery-backing-up-your-environments
-  if [[ $pvcname == icn-cfgstore  ]]; then return 0; fi
-
-  pattern="datadir-zen-metastoredb-.*"
-  if [[ $pvcname =~ $pattern  ]]; then return 0; fi
-
-  # Optional but nice to have, have amended to the list
-  if [[ $pvcname == cpe-cfgstore  ]]; then return 0; fi
-  if [[ $pvcname == cpe-bootstrapstore ]]; then return 0; fi 
-  if [[ $pvcname == icn-pluginstore  ]]; then return 0; fi
-
-  # According to https://www.ibm.com/docs/en/cloud-paks/cp-biz-automation/21.0.3?topic=environments-persistent-volume-claims-be-backed-up#ref_hadr_pvcs__ads
-
-  if [[ $pvcname == CRNAME-ads-runtime-storage-pvc  ]]; then return 0; fi
-
-  # This might sound crazy, but if the pattern is not stored in a variable, the regexp comparison will just not match
-  pattern="ibm-bts-cnpg-.*-cp4ba-bts-.*"
-  if [[ $pvcname =~ $pattern   ]]; then return 0; fi
-
-  # According to https://www.ibm.com/docs/en/cloud-paks/cp-biz-automation/21.0.3?topic=environments-persistent-volume-claims-be-backed-up#ref_hadr_pvcs__baw__title__1
-  pattern="CRNAME-.*-baw-file-storage-pvc"
-  if [[ $pvcname =~ $pattern   ]]; then return 0; fi
-  pattern="CRNAME-.*-baw-jms-data-vc-CRNAME-.*-baw-jms-0"
-  if [[ $pvcname =~ $pattern   ]]; then return 0; fi
-  if [[ $pvcname == CRNAME-bastudio-files-pvc ]]; then return 0; fi
-  pattern="jms-pvc-CRNAME-bastudio-deployment-.*"
-  if [[ $pvcname =~ $pattern  ]]; then return 0; fi
   if [[ $pvcname == cpe-filestore  ]]; then return 0; fi
   if [[ $pvcname == css-indexstore  ]]; then return 0; fi
+  if [[ $pvcname == icn-cfgstore  ]]; then return 0; fi
 
-  # If the name appears in the CR, then it is also part of what is needed.
-#  if grep $pvcname $CR_SPEC > /dev/null 2>/dev/null; then return 0; fi
+  pattern="CRNAME-workflow-authoring-baw-jms-data-vc-CRNAME-workflow-authoring-baw-jms-0"
+  if [[ $pvcname =~ $pattern   ]]; then return 0; fi
+  if [[ $pvcname == operator-shared-pvc ]];; then return 0; fi
+
+  # To be restored per the documentation on https://www.ibm.com/docs/en/cloud-paks/cp-biz-automation/21.0.3?topic=recovery-backing-up-your-environments
 
   return 1
 }
@@ -127,35 +104,51 @@ function restore_this_secret() {
 
   # To be restored per the documentation on https://www.ibm.com/docs/en/cloud-paks/cp-biz-automation/21.0.3?topic=recovery-backing-up-your-environments
   if [[ $secretname == CRNAME-cpe-oidc-secret  ]]; then return 0; fi
-  if [[ $secretname == admin-user-details  ]]; then return 0; fi
-  if [[ $secretname == ibm-entitlement-key  ]]; then return 0; fi
   if [[ $secretname == ldap-bind-secret  ]]; then return 0; fi
-  # ldap-ssl-secret will, if used, appear in the CR. There is no default name for it. Below all secrets appearing the CR will be included for the restore
-  # Same counts for the db2 certificates.
+  if [[ $secretname == icp4a-shared-encryption-key  ]]; then return 0; fi 
   if [[ $secretname == ibm-iaws-shared-key-secret  ]]; then return 0; fi
   if [[ $secretname == ibm-baw-wfs-server-db-secret  ]]; then return 0; fi
   if [[ $secretname == ibm-pfs-admin-secret  ]]; then return 0; fi
   if [[ $secretname == icp4adeploy-workspace-aae-app-engine-admin-secret  ]]; then return 0; fi
-  if [[ $secretname == CRNAME-workspace-aae-app-engine-admin-secret  ]]; then return 0; fi
-  if [[ $secretname == icp4adeploy-rr-admin-secret  ]]; then return 0; fi
-  if [[ $secretname == CRNAME-rr-admin-secret    ]]; then return 0; fi
+  if [[ $secretname == iaf-system-elasticsearch-es-default-user  ]]; then return 0; fi
+  if [[ $secretname == CRNAME-elasticsearch-admin-secret  ]]; then return 0; fi
   if [[ $secretname == ibm-ban-secret  ]]; then return 0; fi
   if [[ $secretname == ibm-fncm-secret  ]]; then return 0; fi
+  if [[ $secretname == CRNAME-global-function-id-secret  ]]; then return 0; fi
+  if [[ $secretname == CRNAME-ae-function-id-secret ]]; then return 0; fi
+  pattern="ibm-.*-admin-secret"
+  if [[ $secretname =~ $pattern   ]]; then return 0; fi
+  pattern="ibm-.*-server-db-secret"
+  if [[ $secretname =~ $pattern   ]]; then return 0; fi
+  if [[ $secretname == CRNAME-workflow-authoring-baw-server-encrypt-secret ]]; then return 0; fi
+  if [[ $secretname == CRNAME-workflow-authoring-baw-jms-encrypt-secret ]]; then return 0; fi
+  if [[ $secretname == CRNAME-pfs-encrypt-secret ]]; then return 0; fi
   if [[ $secretname == icp4adeploy-bas-admin-secret  ]]; then return 0; fi
   if [[ $secretname == CRNAME-bas-admin-secret  ]]; then return 0; fi
+  if [[ $secretname == platform-oidc-credentials  ]]; then return 0; fi
+  if [[ $secretname == oauth-client-secret  ]]; then return 0; fi
+  pattern="ibm-bts-cnpg-.*-cp4ba-bts-app"
+  if [[ $secretname =~ $pattern   ]]; then return 0; fi
+  if [[ $secretname == admin-user-details  ]]; then return 0; fi
+  if [[ $secretname == ibm-entitlement-key  ]]; then return 0; fi
+  if [[ $secretname == icp4adeploy-rr-admin-secret  ]]; then return 0; fi
+  if [[ $secretname == CRNAME-rr-admin-secret    ]]; then return 0; fi
+
   if [[ $secretname == playback-server-admin-secret  ]]; then return 0; fi
   if [[ $secretname == CRNAME-wfps-admin-secret  ]]; then return 0; fi
-
-  # This secret contains the Postgress Database password, no db access possible without it.
-  # See https://www.ibm.com/docs/en/cloud-paks/foundational-services/4.0?topic=service-backup-restore
-  if [[ $secretname == ibm-bts-cnpg-ibm-cp4ba-dev-cp4ba-bts-app  ]]; then return 0; fi
-
-  # To be restored following https://community.ibm.com/community/user/automation/blogs/dian-guo-zou/2022/10/12/backup-and-restore-baw-2103
-  if [[ $secretname == platform-oidc-credentials  ]]; then return 0; fi
 
   # If the name appears in the CR, then it is also part of what is needed.
   # This should get any LDAP or DB TLS secrets as well, or renamed secrets 
   if grep $secretname $CR_SPEC > /dev/null 2>/dev/null; then return 0; fi
+
+
+  # ldap-ssl-secret will, if used, appear in the CR. There is no default name for it. Below all secrets appearing the CR will be included for the restore
+  # Same counts for the db2 certificates.
+
+
+
+  # To be restored following https://community.ibm.com/community/user/automation/blogs/dian-guo-zou/2022/10/12/backup-and-restore-baw-2103
+
 
   return 1
 }
@@ -168,8 +161,7 @@ function restore_this_configmap() {
   local sedexpr=$(printf 's/%s/CRNAME/g' $crname)
   local configmapname=$(echo ${configmapname} | sed $sedexpr)
 
-  if [[ $configmapname == iaf-homepage-getting-started-extensions  ]]; then return 0; fi
-
+  if [[ $configmapname == registration-json  ]]; then return 0; fi
 
   # If the name appears in the CR, then it is also part of what is needed.
   if grep $configmapname $CR_SPEC > /dev/null 2>/dev/null; then return 0; fi
@@ -645,11 +637,12 @@ else
 fi
 
 echo "Creating CR for restore..."
-yq eval 'del(.metadata.annotations, .metadata.creationTimestamp, .metadata.generation, .metadata.resourceVersion, .metadata.uid, .spec.initialize_configuration)' $CR_SPEC > $(basename $CR_SPEC)
-yq eval '.spec.shared_configuration.sc_content_initialization = false' -i $(basename $CR_SPEC)
+yq eval 'del(.metadata.annotations, .metadata.creationTimestamp, .metadata.generation, .metadata.resourceVersion, .metadata.uid, .spec.initialize_configuration)' $CR_SPEC > $BACKUP_DIR/$(basename $CR_SPEC)
+yq eval '.spec.shared_configuration.sc_content_initialization = false' -i $BACKUP_DIR/$(basename $CR_SPEC)
+yq eval 'del(.status)' -i $BACKUP_DIR/$(basename $CR_SPEC)
 
 echo "After deployment of the CP4BA Operator, you should be able to apply the CR from file"
-echo $(basename $CR_SPEC)
+echo $BACKUP_DIR/$(basename $CR_SPEC)
 
 
 
