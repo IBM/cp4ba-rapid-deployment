@@ -179,3 +179,40 @@ for i in $allResources; do
    oc get $kind $name -o yaml > $RESOURCE_BACKUP_DIR/$name.yaml
 done
 echo
+
+
+
+##### Backup openshift-marketplace ##############################################################
+## Switch to openshift-marketplace project
+project=$(oc project --short)
+logInfo "project =" $project
+if [[ "$project" != "openshift-marketplace" ]]; then
+   logInfo "Switching to project openshift-marketplace..."
+   logInfo $(oc project openshift-marketplace)
+fi
+echo
+
+## Create backup directory
+logInfo "Creating backup directory..."
+BACKUP_DIR=$OTHER_PROJECTS_BACKUP_ROOT_DIRECTORY_FULL/backup_openshift-marketplace_${DATETIMESTR}
+mkdir -p $BACKUP_DIR
+echo
+
+## Backup
+logInfo "Collecting resources that need to be backed up..."
+allResources=$(oc api-resources --verbs=list --namespaced=true -o name | xargs -n 1 oc get --show-kind --ignore-not-found -n openshift-marketplace -o name)
+echo
+for i in $allResources; do
+   # Get the kind and the name
+   kind=$(echo $i | grep -oP '.*(?=/)')
+   name=$(echo $i | grep -oP '(?<=/).*')
+   
+   logInfo "Backing up resource =" $i
+   RESOURCE_BACKUP_DIR=$BACKUP_DIR/$kind
+   if [[ !(-d $RESOURCE_BACKUP_DIR) ]]; then
+     mkdir -p $RESOURCE_BACKUP_DIR
+   fi
+   
+   oc get $kind $name -o yaml > $RESOURCE_BACKUP_DIR/$name.yaml
+done
+echo
