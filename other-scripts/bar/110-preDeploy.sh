@@ -87,7 +87,7 @@ function restore_this_pvc() {
 
   pattern="CRNAME-workflow-authoring-baw-jms-data-vc-CRNAME-workflow-authoring-baw-jms-0"
   if [[ $pvcname =~ $pattern   ]]; then return 0; fi
-  if [[ $pvcname == operator-shared-pvc ]];; then return 0; fi
+  if [[ $pvcname == operator-shared-pvc ]]; then return 0; fi
 
   # To be restored per the documentation on https://www.ibm.com/docs/en/cloud-paks/cp-biz-automation/21.0.3?topic=recovery-backing-up-your-environments
 
@@ -429,7 +429,7 @@ else
   for file in "${yamlFiles[@]}"; do
     configmapName=$(yq eval '.metadata.name' $file)
     logInfoValue "Defining Configmap " ${configmapName}
-    yq eval 'del(.metadata.annotations, .metadata.creationTimestamp, .metadata.resourceVersion, .metadata.uid)' $file | oc apply -f - -n $backupNamespace
+    yq eval 'del(.status, .metadata.finalizers, .metadata.resourceVersion, .metadata.uid, .metadata.annotations, .metadata.creationTimestamp, .metadata.selfLink, .metadata.managedFields, .metadata.ownerReferences)' $file | oc apply -f - -n $backupNamespace
   done
 fi
 
