@@ -114,6 +114,7 @@ function restore_this_pvc() {
   if [[ $pvcname == CRNAME-bastudio-files-pvc ]]; then return 0; fi
   pattern="jms-pvc-CRNAME-bastudio-deployment-.*"
   if [[ $pvcname =~ $pattern  ]]; then return 0; fi
+  if [[ $pvcname == CRNAME-dba-rr-pvc ]]; then return 0; fi
   return 1
   
 }
