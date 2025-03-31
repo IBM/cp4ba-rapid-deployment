@@ -135,6 +135,7 @@ function restore_this_secret() {
   if [[ $secretname == ibm-baw-wfs-server-db-secret  ]]; then return 0; fi
   if [[ $secretname == ibm-pfs-admin-secret  ]]; then return 0; fi
   if [[ $secretname == icp4adeploy-workspace-aae-app-engine-admin-secret  ]]; then return 0; fi
+  if [[ $secretname == CRNAME-workspace-aae-app-engine-admin-secret  ]]; then return 0; fi
   if [[ $secretname == iaf-system-elasticsearch-es-default-user  ]]; then return 0; fi
   if [[ $secretname == CRNAME-elasticsearch-admin-secret  ]]; then return 0; fi
   if [[ $secretname == ibm-ban-secret  ]]; then return 0; fi
