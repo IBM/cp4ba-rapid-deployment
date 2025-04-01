@@ -102,9 +102,10 @@ function restore_this_pvc() {
   # According to https://www.ibm.com/docs/en/cloud-paks/cp-biz-automation/21.0.3?topic=environments-persistent-volume-claims-be-backed-up#ref_hadr_pvcs__ads
   if [[ $pvcname == CRNAME-ads-runtime-storage-pvc  ]]; then return 0; fi
 
-  # This might sound crazy, but if the pattern is not stored in a variable, the regexp comparison will just not match
-  pattern="ibm-bts-cnpg-.*-cp4ba-bts-.*"
-  if [[ $pvcname =~ $pattern   ]]; then return 0; fi
+  # Commented out for now: Postgres will not come up from the PVCs alone. 
+  ## This might sound crazy, but if the pattern is not stored in a variable, the regexp comparison will just not match
+  #pattern="ibm-bts-cnpg-.*-cp4ba-bts-.*"
+  #if [[ $pvcname =~ $pattern   ]]; then return 0; fi
 
   # According to https://www.ibm.com/docs/en/cloud-paks/cp-biz-automation/21.0.3?topic=environments-persistent-volume-claims-be-backed-up#ref_hadr_pvcs__baw__title__1
   pattern="CRNAME-.*-baw-file-storage-pvc"
