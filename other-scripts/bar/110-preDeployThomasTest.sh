@@ -626,7 +626,7 @@ else
   for file in "${yamlFiles[@]}"; do
     certmanageriocertificateName=$(yq eval '.metadata.name' $file)
     logInfoValue "Defining Cert-ManagerIO Certificate " ${certmanageriocertificateName}
-    yq eval 'del(.metadata.annotations, .metadata.creationTimestamp, .metadata.resourceVersion, .metadata.uid, .metadata.ownerReferences)' $file | oc apply -f - -n $backupNamespace
+    yq eval 'del(.metadata.creationTimestamp, .metadata.resourceVersion, .metadata.uid, .metadata.ownerReferences)' $file | oc apply -f - -n $backupNamespace
   done
 fi
 echo
@@ -706,7 +706,7 @@ else
   for file in "${yamlFiles[@]}"; do
     certmanagerk8scertificateName=$(yq eval '.metadata.name' $file)
     logInfoValue "Defining CertManagerK8S Certificate " ${certmanagerk8scertificateName}
-    yq eval 'del(.metadata.annotations, .metadata.creationTimestamp, .metadata.resourceVersion, .metadata.uid, .metadata.ownerReferences)' $file | oc apply -f - -n $backupNamespace
+    yq eval 'del(.metadata.creationTimestamp, .metadata.resourceVersion, .metadata.uid, .metadata.ownerReferences)' $file | oc apply -f - -n $backupNamespace
   done
 fi
 echo
