@@ -190,6 +190,17 @@ function restore_this_secret() {
   if [[ $secretname == platform-identity-management ]]; then return 0; fi
   if [[ $secretname == route-tls-secret ]]; then return 0; fi
   
+  # added for authoring env with bai
+  if [[ $secretname == iaf-insights-engine-management-cert ]]; then return 0; fi
+  if [[ $secretname == iaf-insights-engine-cockpit-cert ]]; then return 0; fi
+  if [[ $secretname == foundation-iaf-apicurio-ap-apicurio-cert ]]; then return 0; fi
+  pattern="iaf-insights-engine-.*-ss-cacert-kp"
+  if [[ $secretname =~ $pattern   ]]; then return 0; fi
+  pattern="iaf-insights-engine-.*-client-cert-kp"
+  if [[ $secretname =~ $pattern   ]]; then return 0; fi
+  pattern="iaf-insights-engine-.*-internal-cert-kp"
+  if [[ $secretname =~ $pattern   ]]; then return 0; fi
+  
   # If the name appears in the CR, then it is also part of what is needed.
   # This should get any LDAP or DB TLS secrets as well, or renamed secrets 
   if grep $secretname $CR_SPEC > /dev/null 2>/dev/null; then return 0; fi
