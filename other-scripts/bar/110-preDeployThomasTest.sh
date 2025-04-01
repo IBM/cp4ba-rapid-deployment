@@ -91,7 +91,33 @@ function restore_this_pvc() {
 
   # To be restored per the documentation on https://www.ibm.com/docs/en/cloud-paks/cp-biz-automation/21.0.3?topic=recovery-backing-up-your-environments
 
+  pattern="datadir-zen-metastoredb-.*"
+  if [[ $pvcname =~ $pattern  ]]; then return 0; fi
+
+  # Optional but nice to have, have amended to the list
+  if [[ $pvcname == cpe-cfgstore  ]]; then return 0; fi
+  if [[ $pvcname == cpe-bootstrapstore ]]; then return 0; fi 
+  if [[ $pvcname == icn-pluginstore  ]]; then return 0; fi
+
+  # According to https://www.ibm.com/docs/en/cloud-paks/cp-biz-automation/21.0.3?topic=environments-persistent-volume-claims-be-backed-up#ref_hadr_pvcs__ads
+  if [[ $pvcname == CRNAME-ads-runtime-storage-pvc  ]]; then return 0; fi
+
+  # Commented out for now: Postgres will not come up from the PVCs alone. 
+  ## This might sound crazy, but if the pattern is not stored in a variable, the regexp comparison will just not match
+  #pattern="ibm-bts-cnpg-.*-cp4ba-bts-.*"
+  #if [[ $pvcname =~ $pattern   ]]; then return 0; fi
+
+  # According to https://www.ibm.com/docs/en/cloud-paks/cp-biz-automation/21.0.3?topic=environments-persistent-volume-claims-be-backed-up#ref_hadr_pvcs__baw__title__1
+  pattern="CRNAME-.*-baw-file-storage-pvc"
+  if [[ $pvcname =~ $pattern   ]]; then return 0; fi
+  pattern="CRNAME-.*-baw-jms-data-vc-CRNAME-.*-baw-jms-0"
+  if [[ $pvcname =~ $pattern   ]]; then return 0; fi
+  if [[ $pvcname == CRNAME-bastudio-files-pvc ]]; then return 0; fi
+  pattern="jms-pvc-CRNAME-bastudio-deployment-.*"
+  if [[ $pvcname =~ $pattern  ]]; then return 0; fi
+  if [[ $pvcname == CRNAME-dba-rr-pvc ]]; then return 0; fi
   return 1
+  
 }
 
 # $1 Secret name to check
