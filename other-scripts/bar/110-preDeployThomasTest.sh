@@ -1009,6 +1009,10 @@ echo "Creating CR for restore..."
 yq eval 'del(.metadata.annotations, .metadata.creationTimestamp, .metadata.generation, .metadata.resourceVersion, .metadata.uid, .spec.initialize_configuration)' $CR_SPEC > $BACKUP_DIR/$(basename $CR_SPEC)
 yq eval '.spec.shared_configuration.sc_content_initialization = false' -i $BACKUP_DIR/$(basename $CR_SPEC)
 yq eval 'del(.status)' -i $BACKUP_DIR/$(basename $CR_SPEC)
+# TODO: Case event emitter does still cause some trouble, removing it for the moment!
+yq eval 'del(.spec.workflow_authoring_configuration.case.event_emitter)' -i $BACKUP_DIR/$(basename $CR_SPEC)
+# TODO: Disable Case event emitter for Runtime environment, too
+#yq eval 'del(.spec.workflow_authoring_configuration.case.event_emitter)' -i $BACKUP_DIR/$(basename $CR_SPEC)
 
 echo "After deployment of the CP4BA Operator, you should be able to apply the CR from file"
 echo $BACKUP_DIR/$(basename $CR_SPEC)
