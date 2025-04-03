@@ -163,6 +163,11 @@ function restore_this_secret() {
 
   if [[ $secretname == playback-server-admin-secret  ]]; then return 0; fi
   if [[ $secretname == CRNAME-wfps-admin-secret  ]]; then return 0; fi
+
+  # Commented out for now: Postgres will not come up from the PVCs alone. 
+  # Trying to restore more from Postgres, maybe it comes up.
+  #pattern='ibm-bts-cnpg-.*-cp4ba-bts-(server|replication|ca|app|superuser)'
+  #if [[ $secretname =~ $pattern   ]]; then return 0; fi
   
   # Secrets added by Thomas
   if [[ $secretname == cs-ca-certificate-secret ]]; then return 0; fi
@@ -190,6 +195,17 @@ function restore_this_secret() {
   if [[ $secretname == platform-identity-management ]]; then return 0; fi
   if [[ $secretname == route-tls-secret ]]; then return 0; fi
   
+  # added for authoring env with bai
+  if [[ $secretname == iaf-insights-engine-management-cert ]]; then return 0; fi
+  if [[ $secretname == iaf-insights-engine-cockpit-cert ]]; then return 0; fi
+  if [[ $secretname == foundation-iaf-apicurio-ap-apicurio-cert ]]; then return 0; fi
+  pattern="iaf-insights-engine-.*-ss-cacert-kp"
+  if [[ $secretname =~ $pattern   ]]; then return 0; fi
+  pattern="iaf-insights-engine-.*-client-cert-kp"
+  if [[ $secretname =~ $pattern   ]]; then return 0; fi
+  pattern="iaf-insights-engine-.*-internal-cert-kp"
+  if [[ $secretname =~ $pattern   ]]; then return 0; fi
+ 
   # If the name appears in the CR, then it is also part of what is needed.
   # This should get any LDAP or DB TLS secrets as well, or renamed secrets 
   if grep $secretname $CR_SPEC > /dev/null 2>/dev/null; then return 0; fi
@@ -626,7 +642,7 @@ else
   for file in "${yamlFiles[@]}"; do
     certmanageriocertificateName=$(yq eval '.metadata.name' $file)
     logInfoValue "Defining Cert-ManagerIO Certificate " ${certmanageriocertificateName}
-    yq eval 'del(.metadata.annotations, .metadata.creationTimestamp, .metadata.resourceVersion, .metadata.uid, .metadata.ownerReferences)' $file | oc apply -f - -n $backupNamespace
+    yq eval 'del(.metadata.creationTimestamp, .metadata.resourceVersion, .metadata.uid, .metadata.ownerReferences)' $file | oc apply -f - -n $backupNamespace
   done
 fi
 echo
@@ -706,7 +722,7 @@ else
   for file in "${yamlFiles[@]}"; do
     certmanagerk8scertificateName=$(yq eval '.metadata.name' $file)
     logInfoValue "Defining CertManagerK8S Certificate " ${certmanagerk8scertificateName}
-    yq eval 'del(.metadata.annotations, .metadata.creationTimestamp, .metadata.resourceVersion, .metadata.uid, .metadata.ownerReferences)' $file | oc apply -f - -n $backupNamespace
+    yq eval 'del(.metadata.creationTimestamp, .metadata.resourceVersion, .metadata.uid, .metadata.ownerReferences)' $file | oc apply -f - -n $backupNamespace
   done
 fi
 echo
@@ -998,9 +1014,19 @@ echo "Creating CR for restore..."
 yq eval 'del(.metadata.annotations, .metadata.creationTimestamp, .metadata.generation, .metadata.resourceVersion, .metadata.uid, .spec.initialize_configuration)' $CR_SPEC > $BACKUP_DIR/$(basename $CR_SPEC)
 yq eval '.spec.shared_configuration.sc_content_initialization = false' -i $BACKUP_DIR/$(basename $CR_SPEC)
 yq eval 'del(.status)' -i $BACKUP_DIR/$(basename $CR_SPEC)
+# TODO: Case event emitter does still cause some trouble, removing it for the moment!
+yq eval 'del(.spec.workflow_authoring_configuration.case.event_emitter)' -i $BACKUP_DIR/$(basename $CR_SPEC)
+# TODO: Disable Case event emitter for Runtime environment, too
+#yq eval 'del(.spec.workflow_authoring_configuration.case.event_emitter)' -i $BACKUP_DIR/$(basename $CR_SPEC)
 
 echo "After deployment of the CP4BA Operator, you should be able to apply the CR from file"
 echo $BACKUP_DIR/$(basename $CR_SPEC)
+
+# Save some data to Openshift for Post Deployment to pick it up
+oc create configmap cp4ba-backup-and-restore \
+  --from-literal backup-dir=$BACKUP_DIR \
+  --from-literal bar-version=$bar_version
+
 
 
 
