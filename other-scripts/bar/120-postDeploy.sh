@@ -106,11 +106,64 @@ echo
 logInfo "postDeploy will use backup directory $BACKUP_DIR"
 
 
+function bts-license() {
+  local cnpg_cluster_name=ibm-bts-cnpg-ibm-cp4ba-dev-cp4ba-bts
+
+  local licenseValid=$(oc get cluster $cnpg_cluster_name -o jsonpath={.status.licenseStatus.valid})
+
+  logInfo "License Status of BTS Postgres: $licenseValid"
+  if [[ "$licenseValid" == "false" || "$licenseValid" == "False" ]]; then
+    logInfo "Applying License Fix"
+    oc annotate secret postgresql-operator-controller-manager-config  ibm-bts/skip-updates="true"
+    oc get job create-postgres-license-config -o yaml | \
+      sed -e 's/operator.ibm.com\/opreq-control: "true"/operator.ibm.com\/opreq-control: "false"/' \
+          -e 's|\(image: \).*|\1"cp.icr.io/cp/cpd/edb-postgres-license-provider@sha256:c1670e7dd93c1e65a6659ece644e44aa5c2150809ac1089e2fd6be37dceae4ce"|' \
+          -e '/controller-uid:/d' | \
+    oc replace --force -f - 
+    echo
+    logInfo "Waiting for create-postgres-license-config job to be completed"
+    oc wait --for=condition=complete job/create-postgres-license-config
+    echo
+
+    waitCounter=10
+    while [ $waitCounter -gt 0 ]; do
+      licenseValid=$(oc get cluster $cnpg_cluster_name -o jsonpath={.status.licenseStatus.valid})
+      if [[ "$licenseValid" == "false" || "$licenseValid" == "False" ]]; then
+	waitCounter=$((waitCounter - 1))
+        if [ $waitCounter -gt 0 ]; then
+          logInfo "License not yet valid... waiting 10 seconds"
+          sleep 10
+	else
+          logInfo "License did not get valid..."
+	  return
+	fi
+      else
+	logInfo "License is now valid"
+	waitCounter=0
+      fi
+    done
+  fi
+}
+
 function bts-cnpg() {
   local bts_deployment_name=ibm-bts-cp4ba-bts-316-deployment
   local cnpg_cluster_name=ibm-bts-cnpg-ibm-cp4ba-dev-cp4ba-bts
 
-  logInfo "Executing BTS CNPG Post Deployment"
+  local btsServicesStatus=$(oc get businessteamsservices cp4ba-bts -o jsonpath={.status.serviceStatus})
+  local btsDeployStatus=$(oc get businessteamsservices cp4ba-bts -o jsonpath={.status.deployStatus})
+
+  logInfo "BTS Deploy Status: $btsDeployStatus"
+  logInfo "BTS Services Status: $btsServicesStatus"
+  if [[ "$btsDeployStatus" != "ready" ]]; then 
+    logInfo "BTS Deploy Status not ready, postgres database restore cannot be applied yet"
+    return
+  fi
+  if [[ "$btsServicesStatus" != "ready" ]]; then
+    logInfo "BTS Services Status not ready, postgres database restore cannot be applied yet"
+    return
+  fi
+
+  logInfo "Executing BTS CNPG Database Restore"
 
   logInfo "Shutting down BTS Operator..."
   oc scale deploy ibm-bts-operator-controller-manager --replicas=0 -n ${cp4baProjectName}
@@ -121,6 +174,9 @@ function bts-cnpg() {
   local btsReplicas=$(oc get deploy $bts_deployment_name -o 'jsonpath={.spec.replicas}')
   logInfo "BTS currently scaled to $btsReplicas -- scaling it down to zero..."
   oc scale deploy $bts_deployment_name -n ${cp4baProjectName} --replicas=0
+
+  echo
+  logInfo "Wait 10 seconds"
   sleep 10
 
   logInfo "Determining Postgres Cluster Health..."
@@ -139,17 +195,41 @@ function bts-cnpg() {
     oc cp $BACKUP_DIR/postgresql/backup_btsdb.sql $pgPrimary:/var/lib/postgresql/data/backup_btsdb.sql -c postgres
 
     logInfo "Restoring Database Backup..."
-    oc exec $pgPrimary -- psql -U postgres -f /var/lib/postgresql/data/backup_btsdb.sql -L /var/lib/postgresql/data/restore_btsdb.log -a >> $LOG_FILE 2>&1
-    oc cp $pgPrimary:/var/lib/postgresql/data/restore_btsdb.log restore_btsdb.log
-    oc exec $pgPrimary -- rm -f /var/lib/postgresql/data/restore_btsdb.log /var/lib/postgresql/data/backup_btsdb.sql
+    oc exec $pgPrimary -c postgres -- psql -U postgres -f /var/lib/postgresql/data/backup_btsdb.sql -L /var/lib/postgresql/data/restore_btsdb.log -a >> $LOG_FILE 2>&1
+    oc cp $pgPrimary:/var/lib/postgresql/data/restore_btsdb.log restore_btsdb.log -c postgres
+    oc exec $pgPrimary -c postgres -- rm -f /var/lib/postgresql/data/restore_btsdb.log /var/lib/postgresql/data/backup_btsdb.sql
   fi
-  
+
+  echo
   logInfo "Scaling up BTS again"
   oc scale deploy $bts_deployment_name -n ${cp4baProjectName} --replicas=$btsReplicas
   sleep 5
 
+  echo
   logInfo "Scaling up BTS Operator again"
   oc scale deploy ibm-bts-operator-controller-manager --replicas=1
+
+  echo
+  logInfo "Waiting up to 60 seconds for Operator to come up and update service status"
+  oc wait --for=jsonpath={.status.serviceStatus}=unready businessteamsservices/cp4ba-bts --timeout=60s
+
+  waitServiceReady=10
+  while [ $waitServiceReady -gt 0 ]; do
+    btsServicesStatus=$(oc get businessteamsservices cp4ba-bts -o jsonpath={.status.serviceStatus})
+    if [ "$btsServicesStatus" == "ready" ]; then
+      logInfo "BTS Serives Status: $btsServicesStatus"
+      waitServiceReady=0
+    else
+      waitServiceReady=$((waitServiceReady - 1))
+      if [ $waitServiceReady -gt 0 ]; then
+        logInfo "BTS Serives Status: $btsServicesStatus -- waiting up to 60 seconds for an update..."
+	oc wait --for=jsonpath={.status.serviceStatus}=ready businessteamsservices/cp4ba-bts --timeout=60s
+      else
+	logInfo "BTS Service didnt reach ready state, at least not yet"
+      fi
+    fi
+  done
+     
 }
 
 
@@ -160,14 +240,17 @@ while [[ $postDeployTerminating == "No" ]]; do
   echo 
   echo ================================================
   echo "Select Post Deploy task to execute"
-  echo "1: BTS Cloud Native Postgres Database restore"
+  echo "1: BTS Postgres License Fix"
+  echo "2: BTS Cloud Native Postgres Database restore"
   echo
   echo "99: Terminate Post Deploy Script"
   echo 
   read -p "Please Provide selection: " choice
+  echo
 
   case "$choice" in
-    1)  bts-cnpg ;;
+    1)  bts-license ;;
+    2)  bts-cnpg ;;
     99) postDeployTerminating=Yes ;;
   esac
 done

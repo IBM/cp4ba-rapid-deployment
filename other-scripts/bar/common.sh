@@ -44,7 +44,7 @@ function convertVersionNumber() {
 # $2 the expected value
 # $3 the message to be logged
 function checkResult() {
-  if [ $1 != $2 ]; then
+  if [ "$1" != "$2" ]; then
     logError "  $3: $1, please check !!"
     return 1
   else
