@@ -227,8 +227,19 @@ echo
 
 sleep 30
 
-# Now scale to 0
-logInfo "Scaling major CP4BA components to 0..."
+# Delete all completed pods so that they don't block scaling down bastudio or workflow
+logInfo "Deleting completed pods..."
+completedpods=$(oc get pod -o 'custom-columns=NAME:.metadata.name,PHASE:.status.phase' --no-headers --ignore-not-found | grep 'Succeeded' | awk '{print $1}')
+logInfo "completed pods = " $completedpods
+for i in $completedpods; do
+   logInfo "deleting pod =" $i;
+   logInfo $(oc delete pod $i)
+done
+echo
+
+# Now scale down bastudio, navigator, baw, pfs, cpe and navigator to 0
+logInfo "Scaling major CP4BA components to 0. This would wait forever! In that case please check manually why the pods do not get removed, or manually remove any Completed pods that could interfere here."
+echo
 if [[ "$bastudiosts" != "" ]]; then
   logInfo "Scaling down BAStudio pods to 0..."
   logInfo $(oc scale statefulset $bastudiosts --replicas=0)
@@ -247,7 +258,9 @@ if [[ "$bastudiosts" != "" ]]; then
       logInfo "BAStudio pods scaled to 0"
     fi
   done
+  echo
 fi
+
 logInfo "Scaling down Navigator pods to 0..."
 logInfo $(oc scale deployment $CP4BA_NAME-navigator-deploy --replicas=0)
 navigatorpod=$(oc get pod -l=app.kubernetes.io/name=$CP4BA_NAME-navigator-deploy -o name)
@@ -265,6 +278,8 @@ do
     logInfo "Navigator pods scaled to 0"
   fi
 done
+echo
+
 if [[ "$bawserversts" != "" ]]; then
   logInfo "Scaling down BAW Server pods to 0..."
   for i in $bawserversts; do
@@ -285,7 +300,9 @@ if [[ "$bawserversts" != "" ]]; then
       logInfo "BAW Server pods scaled to 0"
     fi
   done
+  echo
 fi
+
 logInfo "Scaling down PFS pods to 0..."
 logInfo $(oc scale statefulset $CP4BA_NAME-pfs --replicas=0)
 logInfo $(oc scale deployment $CP4BA_NAME-pfs-dbareg --replicas=0)
@@ -304,6 +321,8 @@ do
     logInfo "PFS pods scaled to 0"
   fi
 done
+echo
+
 logInfo "Scaling down CPE pods to 0..."
 logInfo $(oc scale deployment $CP4BA_NAME-cpe-deploy --replicas=0)
 cpepod=$(oc get pod -l=app.kubernetes.io/name=$CP4BA_NAME-cpe-deploy -o name)

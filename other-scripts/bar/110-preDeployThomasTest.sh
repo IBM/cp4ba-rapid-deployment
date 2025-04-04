@@ -116,6 +116,7 @@ function restore_this_pvc() {
   pattern="jms-pvc-CRNAME-bastudio-deployment-.*"
   if [[ $pvcname =~ $pattern  ]]; then return 0; fi
   if [[ $pvcname == CRNAME-dba-rr-pvc ]]; then return 0; fi
+  if [[ $pvcname == cp4a-shared-log-pvc ]]; then return 0; fi
   return 1
   
 }
@@ -189,6 +190,7 @@ function restore_this_secret() {
   if [[ $secretname == platform-auth-secret ]]; then return 0; fi
   if [[ $secretname == platform-identity-management ]]; then return 0; fi
   if [[ $secretname == route-tls-secret ]]; then return 0; fi
+  if [[ $secretname == admin.registrykey ]]; then return 0; fi
   
   # added for authoring env with bai
   if [[ $secretname == iaf-insights-engine-management-cert ]]; then return 0; fi
@@ -977,11 +979,13 @@ EOF
         for pvc in $(oc get pvc -n $cp4baProjectName -o 'custom-columns=name:.metadata.name' --no-headers); do
 	          class=$(oc get pvc $pvc -o 'jsonpath={.spec.storageClassName}')
 	          if [ "$class" == "$storageclass" ]; then
-        	      namespace=$(oc get pvc $pvc -o 'jsonpath={.metadata.namespace}')
-	              pv=$(oc get pvc $pvc -o 'jsonpath={.spec.volumeName}')
-	              echo perform_restore $namespace $class $pv $pvc >> $BACKUP_DIR/111-restore-pvs-${storageclass}.sh
-        	      chmod +x $BACKUP_DIR/111-restore-pvs-${storageclass}.sh     
-
+                      # exclude cp4a-shared-log-pvc here, we only need the PVC, not the data from it
+                      if [ "$pvc" != "cp4a-shared-log-pvc" ]; then
+        	          namespace=$(oc get pvc $pvc -o 'jsonpath={.metadata.namespace}')
+	                  pv=$(oc get pvc $pvc -o 'jsonpath={.spec.volumeName}')
+	                  echo perform_restore $namespace $class $pv $pvc >> $BACKUP_DIR/111-restore-pvs-${storageclass}.sh
+        	          chmod +x $BACKUP_DIR/111-restore-pvs-${storageclass}.sh
+                      fi
         	  fi
 	      done
         logInfoValue "PV Restore Script Generated: " 111-restore-pvs-${storageclass}.sh        
