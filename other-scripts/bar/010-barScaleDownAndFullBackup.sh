@@ -374,13 +374,14 @@ if [[ $CP4BA_VERSION =~ "21.0.3" ]]; then
     logInfo "Backing up MongoDB in from pod ${pod}..."
     # prep certs files that will be used to take the backup
     oc exec $pod -it -- bash -c 'cat /cred/mongo-certs/tls.crt /cred/mongo-certs/tls.key > /work-dir/mongo.pem; cat /cred/cluster-ca/tls.crt /cred/cluster-ca/tls.key > /work-dir/ca.pem'
-    oc exec $pod -it -- bash -c 'mongodump --oplog --archive=/dump/mongo.archive --host mongodb:$MONGODB_SERVICE_PORT --username $ADMIN_USER --password $ADMIN_PASSWORD --authenticationDatabase admin --ssl --sslCAFile /work-dir/ca.pem --sslPEMKeyFile /work-dir/mongo.pem'
-    oc cp $pod:/dump/mongo.archive ${BACKUP_DIR}/mongodb/mongo.archive
+    oc exec $pod -it -- bash -c 'mongodump --oplog --out /dump/dump --host mongodb:$MONGODB_SERVICE_PORT --username $ADMIN_USER --password $ADMIN_PASSWORD --authenticationDatabase admin --ssl --sslCAFile /work-dir/ca.pem --sslPEMKeyFile /work-dir/mongo.pem'
+    oc exec $pod -it -- bash -c 'cd /dump && tar -cf mongobackup.tar dump'
+    oc cp $pod:/dump/mongobackup.tar ${BACKUP_DIR}/mongodb/mongobackup.tar
     break
   done
 
   # check if backup was taken successfully
-  if [ -e "${BACKUP_DIR}/mongodb/mongo.archive" ]; then
+  if [ -e "${BACKUP_DIR}/mongodb/mongobackup.tar" ]; then
     # clean up pod storage and notify successful completion
     logInfo "MongoDB backup completed successfully."
     oc delete -f ${CUR_DIR}/mongodb-backup-deployment.yaml
