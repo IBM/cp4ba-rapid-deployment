@@ -591,15 +591,15 @@ if [[ $CP4BA_VERSION =~ "21.0.3" ]]; then
   # check if backup was taken successfully
   if [ -e "${BACKUP_DIR}/es_snapshots_main_backup_${DATETIMESTR}.tgz" ]; then
     logInfo "Elasticsearch backup completed successfully."
-    # Clean up, delete the tar, the snapshot and the repository
+    # Clean up, delete the tar, but not the snapshot and the repository
     oc exec --container elasticsearch iaf-system-elasticsearch-es-data-0 -it -- bash -c "rm -f /usr/share/elasticsearch/es_snapshots_main_backup_${DATETIMESTR}.tgz"
-    if $useTokenForElasticsearchRoute; then
-      curl -skL --header "Authorization: ${cp4batoken}" -u elasticsearch-admin:${ELASTICSEARCH_PASSWORD} -X DELETE "https://$ELASTICSEARCH_ROUTE/_snapshot/${DATETIMESTR}/backup_${DATETIMESTR}?pretty" --resolve "${barTokenResolveCp4ba}"
-      curl -skL --header "Authorization: ${cp4batoken}" -u elasticsearch-admin:${ELASTICSEARCH_PASSWORD} -X DELETE "https://$ELASTICSEARCH_ROUTE/_snapshot/${DATETIMESTR}?pretty" --resolve "${barTokenResolveCp4ba}"
-    else
-      curl -skL -u elasticsearch-admin:${ELASTICSEARCH_PASSWORD} -X DELETE "https://$ELASTICSEARCH_ROUTE/_snapshot/${DATETIMESTR}/backup_${DATETIMESTR}?pretty"
-      curl -skL -u elasticsearch-admin:${ELASTICSEARCH_PASSWORD} -X DELETE "https://$ELASTICSEARCH_ROUTE/_snapshot/${DATETIMESTR}?pretty"
-    fi
+#    if $useTokenForElasticsearchRoute; then
+#      curl -skL --header "Authorization: ${cp4batoken}" -u elasticsearch-admin:${ELASTICSEARCH_PASSWORD} -X DELETE "https://$ELASTICSEARCH_ROUTE/_snapshot/${DATETIMESTR}/backup_${DATETIMESTR}?pretty" --resolve "${barTokenResolveCp4ba}"
+#      curl -skL --header "Authorization: ${cp4batoken}" -u elasticsearch-admin:${ELASTICSEARCH_PASSWORD} -X DELETE "https://$ELASTICSEARCH_ROUTE/_snapshot/${DATETIMESTR}?pretty" --resolve "${barTokenResolveCp4ba}"
+#    else
+#      curl -skL -u elasticsearch-admin:${ELASTICSEARCH_PASSWORD} -X DELETE "https://$ELASTICSEARCH_ROUTE/_snapshot/${DATETIMESTR}/backup_${DATETIMESTR}?pretty"
+#      curl -skL -u elasticsearch-admin:${ELASTICSEARCH_PASSWORD} -X DELETE "https://$ELASTICSEARCH_ROUTE/_snapshot/${DATETIMESTR}?pretty"
+#    fi
   else
     logError "Elasticsearch backup failed, check the logs!"
     echo
