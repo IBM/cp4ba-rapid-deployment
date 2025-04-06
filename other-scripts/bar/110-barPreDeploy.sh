@@ -1033,6 +1033,9 @@ echo
 
 echo "Removing all lines containing null or empty string..."
 fileName=${BACKUP_DIR}/${backupDeploymentName}New.yaml
+if [ -f "$fileName" ]; then
+  rm -f $fileName
+fi
 pattern1="null"
 pattern2="\"\""
 pattern3="sc_run_as_user"
@@ -1052,11 +1055,13 @@ done < $BACKUP_DIR/$(basename $CR_SPEC)
 echo
 
 echo "After deployment of the CP4BA Operator, you should be able to apply the CR from file"
-echo $BACKUP_DIR/$(basename $CR_SPEC)
+echo "  " $BACKUP_DIR/$(basename $CR_SPEC)
+echo "Or"
+echo "  " $fileName
 echo
 
 # Save some data to Openshift for Post Deployment to pick it up
 oc create configmap cp4ba-backup-and-restore \
   --from-literal backup-dir=$BACKUP_DIR \
   --from-literal bar-version=$bar_version
-
+echo
