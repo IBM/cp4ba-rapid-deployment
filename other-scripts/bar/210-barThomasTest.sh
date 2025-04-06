@@ -138,7 +138,7 @@ if [[ ! -e $CR_SPEC ]]; then
 fi
 
 
-
+backupDeploymentName=$(yq eval '.metadata.name' $CR_SPEC)
 
 
 echo "Creating CR for restore..."
@@ -146,13 +146,9 @@ yq eval 'del(.metadata.annotations, .metadata.creationTimestamp, .metadata.gener
 yq eval 'del(.status)' -i $BACKUP_DIR/$(basename $CR_SPEC)
 echo
 
-echo "CR_SPEC=" $CR_SPEC
-echo "Basename=" $(basename $CR_SPEC)
-fileName=$BACKUP_DIR/$(basename $CR_SPEC)
-echo "FileName= " $fileName
-echo
-
-echo "Removing all lines containing null or empty string"
+echo "Removing all lines containing null or empty string..."
+fileName=${BACKUP_DIR}/${backupDeploymentName}New.yaml
+echo $fileName
 pattern1="null"
 pattern2="\"\""
 pattern3="sc_run_as_user"
@@ -161,14 +157,14 @@ do
   line=$(printf '%s\n' "$p")
   if [[ ! $line =~ $pattern2 ]]; then
     if [[ $line =~ $pattern3 ]]; then
-      echo "$line" >> myclusterNew.yaml
+      echo "$line" >> $fileName
     else
       if [[ ! $line =~ $pattern1 ]]; then
-        echo "$line" >> myclusterNew.yaml
+        echo "$line" >> $fileName
       fi
     fi
   fi
-done < $fileName
+done < $BACKUP_DIR/$(basename $CR_SPEC)
 
 # Now, filter out potential nulls
 csrfreferrer=$(yq '.spec.bastudio_configuration.csrf_referrer' myclusterNew.yaml)

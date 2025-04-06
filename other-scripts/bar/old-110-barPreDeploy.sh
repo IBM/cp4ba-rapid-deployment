@@ -100,7 +100,7 @@ function restore_this_pvc() {
   if [[ $pvcname == icn-pluginstore  ]]; then return 0; fi
 
   # According to https://www.ibm.com/docs/en/cloud-paks/cp-biz-automation/21.0.3?topic=environments-persistent-volume-claims-be-backed-up#ref_hadr_pvcs__ads
-  # if [[ $pvcname == CRNAME-ads-runtime-storage-pvc  ]]; then return 0; fi
+  if [[ $pvcname == CRNAME-ads-runtime-storage-pvc  ]]; then return 0; fi
 
   # Commented out for now: Postgres will not come up from the PVCs alone. 
   ## This might sound crazy, but if the pattern is not stored in a variable, the regexp comparison will just not match
@@ -117,13 +117,8 @@ function restore_this_pvc() {
   if [[ $pvcname =~ $pattern  ]]; then return 0; fi
   if [[ $pvcname == CRNAME-dba-rr-pvc ]]; then return 0; fi
   if [[ $pvcname == cp4a-shared-log-pvc ]]; then return 0; fi
-  
-  # Added by Thomas 4 ES & BAI
-  pattern="data-iaf-system-elasticsearch-es-data-.*"
-  if [[ $pvcname =~ $pattern  ]]; then return 0; fi
-  if [[ $pvcname == iaf-system-elasticsearch-es-snap-main-pvc ]]; then return 0; fi
-#  if [[ $pvcname == CRNAME-bai-pvc ]]; then return 0; fi
   return 1
+  
 }
 
 # $1 Secret name to check
@@ -207,11 +202,6 @@ function restore_this_secret() {
   if [[ $secretname =~ $pattern   ]]; then return 0; fi
   pattern="iaf-insights-engine-.*-internal-cert-kp"
   if [[ $secretname =~ $pattern   ]]; then return 0; fi
-  pattern="iaf-insights-engine-.*-admin-user"
-  if [[ $secretname =~ $pattern   ]]; then return 0; fi
-  
-  # secrets for ES
-  if [[ $secretname == icp4ba-es-auth ]]; then return 0; fi
   
   # If the name appears in the CR, then it is also part of what is needed.
   # This should get any LDAP or DB TLS secrets as well, or renamed secrets 
@@ -1020,12 +1010,11 @@ else
 fi
 
 echo "Creating CR for restore..."
-#yq eval 'del(.metadata.annotations, .metadata.creationTimestamp, .metadata.generation, .metadata.resourceVersion, .metadata.uid, .spec.initialize_configuration)' $CR_SPEC > $BACKUP_DIR/$(basename $CR_SPEC)
-yq eval 'del(.metadata.annotations, .metadata.creationTimestamp, .metadata.generation, .metadata.resourceVersion, .metadata.uid)' $CR_SPEC > $BACKUP_DIR/$(basename $CR_SPEC)
-#yq eval '.spec.shared_configuration.sc_content_initialization = false' -i $BACKUP_DIR/$(basename $CR_SPEC)
+yq eval 'del(.metadata.annotations, .metadata.creationTimestamp, .metadata.generation, .metadata.resourceVersion, .metadata.uid, .spec.initialize_configuration)' $CR_SPEC > $BACKUP_DIR/$(basename $CR_SPEC)
+yq eval '.spec.shared_configuration.sc_content_initialization = false' -i $BACKUP_DIR/$(basename $CR_SPEC)
 yq eval 'del(.status)' -i $BACKUP_DIR/$(basename $CR_SPEC)
 # TODO: Case event emitter does still cause some trouble, removing it for the moment!
-#yq eval 'del(.spec.workflow_authoring_configuration.case.event_emitter)' -i $BACKUP_DIR/$(basename $CR_SPEC)
+yq eval 'del(.spec.workflow_authoring_configuration.case.event_emitter)' -i $BACKUP_DIR/$(basename $CR_SPEC)
 # TODO: Disable Case event emitter for Runtime environment, too
 #yq eval 'del(.spec.workflow_authoring_configuration.case.event_emitter)' -i $BACKUP_DIR/$(basename $CR_SPEC)
 
