@@ -122,7 +122,12 @@ function restore_this_pvc() {
   pattern="data-iaf-system-elasticsearch-es-data-.*"
   if [[ $pvcname =~ $pattern  ]]; then return 0; fi
   if [[ $pvcname == iaf-system-elasticsearch-es-snap-main-pvc ]]; then return 0; fi
-#  if [[ $pvcname == CRNAME-bai-pvc ]]; then return 0; fi
+  if [[ $pvcname == CRNAME-bai-pvc ]]; then return 0; fi
+  pattern="data-iaf-system-kafka-.*"
+  if [[ $pvcname =~ $pattern  ]]; then return 0; fi
+  pattern="data-iaf-system-zookeeper-.*"
+  if [[ $pvcname =~ $pattern  ]]; then return 0; fi
+  
   return 1
 }
 
@@ -212,6 +217,10 @@ function restore_this_secret() {
   
   # secrets for ES
   if [[ $secretname == icp4ba-es-auth ]]; then return 0; fi
+  
+  # secrets for kafka
+  pattern="icp4ba-kafka-auth-.*"
+  if [[ $secretname =~ $pattern   ]]; then return 0; fi
   
   # If the name appears in the CR, then it is also part of what is needed.
   # This should get any LDAP or DB TLS secrets as well, or renamed secrets 
