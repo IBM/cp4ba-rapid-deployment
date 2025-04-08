@@ -244,6 +244,18 @@ function restore_this_secret() {
   return 1
 }
 
+function restore_secret() {
+  local secretName=$1
+  local secretFile=$2
+  local backupNamespace=$3
+  
+  secret=$(oc get secret $secretName --ignore-not-found)
+  if [[ "$secret" == "" ]]; then
+    logInfoValue "Defining Secret " ${secretName}
+    logInfo $(yq eval 'del(.status, .metadata.finalizers, .metadata.resourceVersion, .metadata.uid, .metadata.annotations, .metadata.creationTimestamp, .metadata.selfLink, .metadata.managedFields, .metadata.ownerReferences, .metadata.generation)' $secretFile | oc apply -f - -n $backupNamespace)
+  fi
+}
+
 # $1 ConfigMap name to check
 # $2 CR NAME
 function restore_this_configmap() {
@@ -473,8 +485,6 @@ for yaml in $BACKUP_DIR/secret/*.yaml; do
   fi
 done
 
-echo
-
 if [[ "$countYamlFiles" == "0" ]]; then
 	logInfo "All secrets have already been applied"
 else
@@ -501,11 +511,12 @@ else
      echo -e "OK..."
      ;;
   esac
-
+  
   for file in "${yamlFiles[@]}"; do
     secretName=$(yq eval '.metadata.name' $file)
-    logInfoValue "Defining Secret " ${secretName}
-    yq eval 'del(.status, .metadata.finalizers, .metadata.resourceVersion, .metadata.uid, .metadata.annotations, .metadata.creationTimestamp, .metadata.selfLink, .metadata.managedFields, .metadata.ownerReferences, .metadata.generation)' $file | oc apply -f - -n $backupNamespace
+    restore_secret $secretName $file $backupNamespace
+#    logInfoValue "Defining Secret " ${secretName}
+#    yq eval 'del(.status, .metadata.finalizers, .metadata.resourceVersion, .metadata.uid, .metadata.annotations, .metadata.creationTimestamp, .metadata.selfLink, .metadata.managedFields, .metadata.ownerReferences, .metadata.generation)' $file | oc apply -f - -n $backupNamespace
 
   done
 fi
