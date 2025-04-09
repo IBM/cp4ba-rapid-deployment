@@ -107,7 +107,7 @@ logInfo "postDeploy will use backup directory $BACKUP_DIR"
 
 
 function bts-license() {
-  local cnpg_cluster_name=ibm-bts-cnpg-ibm-cp4ba-dev-cp4ba-bts
+  local cnpg_cluster_name=ibm-bts-cnpg-${cp4baProjectName}-cp4ba-bts
 
   local licenseValid=$(oc get cluster $cnpg_cluster_name -o jsonpath={.status.licenseStatus.valid})
 
@@ -147,7 +147,7 @@ function bts-license() {
 
 function bts-cnpg() {
   local bts_deployment_name=ibm-bts-cp4ba-bts-316-deployment
-  local cnpg_cluster_name=ibm-bts-cnpg-ibm-cp4ba-dev-cp4ba-bts
+  local cnpg_cluster_name=ibm-bts-cnpg-${cp4baProjectName}-cp4ba-bts
 
   local btsServicesStatus=$(oc get businessteamsservices cp4ba-bts -o jsonpath={.status.serviceStatus})
   local btsDeployStatus=$(oc get businessteamsservices cp4ba-bts -o jsonpath={.status.deployStatus})
@@ -170,9 +170,12 @@ function bts-cnpg() {
   sleep 5
   echo
 
-  logInfo "Determing current number of BTS replicas..."
+  logInfo "Determing current number of BTS replicas and scale it down..."
+  local btsReplicaSize=$(oc get bts cp4ba-bts -o jsonpath={.spec.replicas})
+  
   local btsReplicas=$(oc get deploy $bts_deployment_name -o 'jsonpath={.spec.replicas}')
-  logInfo "BTS currently scaled to $btsReplicas -- scaling it down to zero..."
+  logInfo "BTS desired replicas $btsReplicaSize currently scaled to $btsReplicas -- scaling it down to zero..."
+  oc patch bts cp4ba-bts --type merge --patch '{"spec":{"replicas":0}}'
   oc scale deploy $bts_deployment_name -n ${cp4baProjectName} --replicas=0
 
   echo
@@ -187,7 +190,7 @@ function bts-cnpg() {
   else
     logInfo "Postgres Cluster is healthy."
     echo 
-    local pgPrimary=$(oc get cluster ibm-bts-cnpg-ibm-cp4ba-dev-cp4ba-bts -o jsonpath={.status.targetPrimary})
+    local pgPrimary=$(oc get cluster $cnpg_cluster_name -o jsonpath={.status.targetPrimary})
     logInfo "Primary Postgres Pod is currently: $pgPrimary"
     echo
 
@@ -196,12 +199,14 @@ function bts-cnpg() {
 
     logInfo "Restoring Database Backup..."
     oc exec $pgPrimary -c postgres -- psql -U postgres -f /var/lib/postgresql/data/backup_btsdb.sql -L /var/lib/postgresql/data/restore_btsdb.log -a >> $LOG_FILE 2>&1
-    oc cp $pgPrimary:/var/lib/postgresql/data/restore_btsdb.log restore_btsdb.log -c postgres
+    oc cp $pgPrimary:/var/lib/postgresql/data/restore_btsdb.log $BACKUP_DIR/restore_btsdb.log -c postgres
     oc exec $pgPrimary -c postgres -- rm -f /var/lib/postgresql/data/restore_btsdb.log /var/lib/postgresql/data/backup_btsdb.sql
   fi
 
   echo
   logInfo "Scaling up BTS again"
+  local btsScaleSpec=$(printf '{"spec":{"replicas":%s}}' $btsReplicaSize)
+  oc patch bts cp4ba-bts --type merge --patch $btsScaleSpec
   oc scale deploy $bts_deployment_name -n ${cp4baProjectName} --replicas=$btsReplicas
   sleep 5
 

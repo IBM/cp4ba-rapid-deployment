@@ -10,6 +10,8 @@
 #
 ###############################################################################
 
+bar_version=0.4
+
 # This script contains shared utility functions.
 
 function logInfo() {
