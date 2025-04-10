@@ -1082,17 +1082,20 @@ echo
 
 echo "Cleaning up now empty subtrees in the specification..."
 
+
 function cleanup_pattern() {
     local filename=$1
     local pattern=$2
     
     local result=$(yq eval "$pattern" $filename)
     
-    # logInfo "$pattern result \"$result\""
-    if [ "$result" == "null" ]; then
+    #echo "$pattern result \"$result\""
+    emptycontent='^[[:blank:]]*(null[[:blank:]]*|)$'
+    if [[ "$result" =~ $emptycontent ]]; then
       yq eval "del(${pattern})" -i $filename
 	    echo "    Removing empty context $pattern"
     fi
+    #echo
 }
 
 cleanup_contexts=()
@@ -1101,6 +1104,8 @@ cleanup_contexts[1]='.spec.bastudio_configuration.playback_server.content_securi
 cleanup_contexts[2]='.spec.pfs_configuration.custom_env_variables'
 cleanup_contexts[3]='.spec.pfs_configuration.security.sso'
 cleanup_contexts[4]='.spec.pfs_configuration.tls'
+cleanup_contexts[5]='.spec.bastudio_configuration.csrf_referrer'
+
 
 for p in ${cleanup_contexts[@]}; do
     cleanup_pattern $fileName $p
