@@ -35,6 +35,8 @@ spec:
         - mountPath: "/work-dir"
           name: tmp-mongodb
         env:
+          - name: NAMESPACE
+            value: §cp4baProjectNamespace
           - name: ADMIN_USER
             valueFrom:
               secretKeyRef:
