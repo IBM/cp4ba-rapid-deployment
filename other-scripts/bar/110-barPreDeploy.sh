@@ -15,12 +15,24 @@
 # restoring the persistent volumes and persistent volume claims, and creating the secrets.
 #    Only tested with CP4BA version: 21.0.3 IF034, dedicated common services set-up
 
+# Check if jq is installed
+type jq > /dev/null 2>&1
+if [ $? -eq 1 ]; then
+  echo "Please install jq to continue."
+  exit 1
+fi
+
+# Check if yq is installed
+type yq > /dev/null 2>&1
+if [ $? -eq 1 ]; then
+  echo "Please install yq (https://github.com/mikefarah/yq/releases) to continue."
+  exit 1
+fi
+
 CUR_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 # Import common utilities
 source ${CUR_DIR}/common.sh
-
-LOG_FILE="/dev/null"
 
 INPUT_PROPS_FILENAME="001-barParameters.sh"
 INPUT_PROPS_FILENAME_FULL="${CUR_DIR}/${INPUT_PROPS_FILENAME}"
@@ -45,32 +57,21 @@ else
    exit 1
 fi
 
-# Check if jq is installed
-type jq > /dev/null 2>&1
-if [ $? -eq 1 ]; then
-  echo "Please install jq to continue."
-  exit 1
-fi
-
-# Check if yq is installed
-type yq > /dev/null 2>&1
-if [ $? -eq 1 ]; then
-  echo "Please install yq (https://github.com/mikefarah/yq/releases) to continue."
-  exit 1
-fi
-
-logInfo "preDeploy will use project/namespace ${cp4baProjectName}"
-
 BACKUP_ROOT_DIRECTORY_FULL="${CUR_DIR}/${cp4baProjectName}"
 if [[ -d $BACKUP_ROOT_DIRECTORY_FULL ]]; then
    echo 
 else
+   echo
    logError "Backup Directory ${cp4baProjectName} does not exist"
+   echo
    exit 1
 fi
 
-LOG_FILE="$BACKUP_ROOT_DIRECTORY_FULL/preDeploy_$(date +'%Y%m%d_%H%M%S').log"
+LOG_FILE="$BACKUP_ROOT_DIRECTORY_FULL/PreDeploy_$(date +'%Y%m%d_%H%M%S').log"
 logInfo "Details will be logged to $LOG_FILE."
+echo
+
+logInfo "preDeploy will use project/namespace ${cp4baProjectName}"
 echo
 
 # $1 PVC name to check
@@ -89,25 +90,13 @@ function restore_this_pvc() {
   if [[ $pvcname =~ $pattern   ]]; then return 0; fi
   if [[ $pvcname == operator-shared-pvc ]]; then return 0; fi
 
-  # To be restored per the documentation on https://www.ibm.com/docs/en/cloud-paks/cp-biz-automation/21.0.3?topic=recovery-backing-up-your-environments
-
   pattern="datadir-zen-metastoredb-.*"
   if [[ $pvcname =~ $pattern  ]]; then return 0; fi
 
-  # Optional but nice to have, have amended to the list
   if [[ $pvcname == cpe-cfgstore  ]]; then return 0; fi
   if [[ $pvcname == cpe-bootstrapstore ]]; then return 0; fi 
   if [[ $pvcname == icn-pluginstore  ]]; then return 0; fi
 
-  # According to https://www.ibm.com/docs/en/cloud-paks/cp-biz-automation/21.0.3?topic=environments-persistent-volume-claims-be-backed-up#ref_hadr_pvcs__ads
-  # if [[ $pvcname == CRNAME-ads-runtime-storage-pvc  ]]; then return 0; fi
-
-  # Commented out for now: Postgres will not come up from the PVCs alone. 
-  ## This might sound crazy, but if the pattern is not stored in a variable, the regexp comparison will just not match
-  #pattern="ibm-bts-cnpg-.*-cp4ba-bts-.*"
-  #if [[ $pvcname =~ $pattern   ]]; then return 0; fi
-
-  # According to https://www.ibm.com/docs/en/cloud-paks/cp-biz-automation/21.0.3?topic=environments-persistent-volume-claims-be-backed-up#ref_hadr_pvcs__baw__title__1
   pattern="CRNAME-.*-baw-file-storage-pvc"
   if [[ $pvcname =~ $pattern   ]]; then return 0; fi
   pattern="CRNAME-.*-baw-jms-data-vc-CRNAME-.*-baw-jms-0"
@@ -118,7 +107,6 @@ function restore_this_pvc() {
   if [[ $pvcname == CRNAME-dba-rr-pvc ]]; then return 0; fi
   if [[ $pvcname == cp4a-shared-log-pvc ]]; then return 0; fi
   
-  # Added by Thomas 4 ES & BAI
   pattern="data-iaf-system-elasticsearch-es-data-.*"
   if [[ $pvcname =~ $pattern  ]]; then return 0; fi
   if [[ $pvcname == iaf-system-elasticsearch-es-snap-main-pvc ]]; then return 0; fi
@@ -128,7 +116,6 @@ function restore_this_pvc() {
   pattern="data-iaf-system-zookeeper-.*"
   if [[ $pvcname =~ $pattern  ]]; then return 0; fi
   
-  # Added by Thomas as best guess
   pattern=".*-pbkae-file-pvc"
   if [[ $pvcname =~ $pattern  ]]; then return 0; fi
   pattern=".*-aaeae-file-pvc"
@@ -144,8 +131,7 @@ function restore_this_secret() {
   local crname=$2
   local sedexpr=$(printf 's/%s/CRNAME/g' $crname)
   local secretname=$(echo ${secretname} | sed $sedexpr)
-
-  # To be restored per the documentation on https://www.ibm.com/docs/en/cloud-paks/cp-biz-automation/21.0.3?topic=recovery-backing-up-your-environments
+  
   if [[ $secretname == CRNAME-cpe-oidc-secret  ]]; then return 0; fi
   if [[ $secretname == ldap-bind-secret  ]]; then return 0; fi
   if [[ $secretname == icp4a-shared-encryption-key  ]]; then return 0; fi 
@@ -181,7 +167,6 @@ function restore_this_secret() {
   if [[ $secretname == playback-server-admin-secret  ]]; then return 0; fi
   if [[ $secretname == CRNAME-wfps-admin-secret  ]]; then return 0; fi
   
-  # Secrets added by Thomas
   if [[ $secretname == cs-ca-certificate-secret ]]; then return 0; fi
   if [[ $secretname == iaf-system-automationui-aui-zen-cert ]]; then return 0; fi
   if [[ $secretname == iaf-system-elasticsearch-es-client-cert-kp ]]; then return 0; fi
@@ -208,7 +193,6 @@ function restore_this_secret() {
   if [[ $secretname == route-tls-secret ]]; then return 0; fi
   if [[ $secretname == admin.registrykey ]]; then return 0; fi
   
-  # added for authoring env with bai
   if [[ $secretname == iaf-insights-engine-management-cert ]]; then return 0; fi
   if [[ $secretname == iaf-insights-engine-cockpit-cert ]]; then return 0; fi
   if [[ $secretname == foundation-iaf-apicurio-ap-apicurio-cert ]]; then return 0; fi
@@ -220,26 +204,13 @@ function restore_this_secret() {
   if [[ $secretname =~ $pattern   ]]; then return 0; fi
   pattern="iaf-insights-engine-.*-admin-user"
   if [[ $secretname =~ $pattern   ]]; then return 0; fi
-  
-  # secrets for ES
   if [[ $secretname == icp4ba-es-auth ]]; then return 0; fi
-  
-  # secrets for kafka
   pattern="icp4ba-kafka-auth-.*"
   if [[ $secretname =~ $pattern   ]]; then return 0; fi
   
   # If the name appears in the CR, then it is also part of what is needed.
   # This should get any LDAP or DB TLS secrets as well, or renamed secrets 
   if grep $secretname $CR_SPEC > /dev/null 2>/dev/null; then return 0; fi
-
-
-  # ldap-ssl-secret will, if used, appear in the CR. There is no default name for it. Below all secrets appearing the CR will be included for the restore
-  # Same counts for the db2 certificates.
-
-
-
-  # To be restored following https://community.ibm.com/community/user/automation/blogs/dian-guo-zou/2022/10/12/backup-and-restore-baw-2103
-
 
   return 1
 }
@@ -250,8 +221,8 @@ function restore_secret() {
   local backupNamespace=$3
   
   secret=$(oc get secret $secretName --ignore-not-found)
-  if [[ "$secret" == "" ]]; then
-    logInfoValue "Defining Secret " ${secretName}
+  if [[ "$secret" == "" ]] && [[ "$secretName" != "null" ]]; then
+    logInfoValue "Defining Secret" ${secretName}
     logInfo $(yq eval 'del(.status, .metadata.finalizers, .metadata.resourceVersion, .metadata.uid, .metadata.annotations, .metadata.creationTimestamp, .metadata.selfLink, .metadata.managedFields, .metadata.ownerReferences, .metadata.generation)' $secretFile | oc apply -f - -n $backupNamespace)
   fi
 }
@@ -265,8 +236,6 @@ function restore_this_configmap() {
   local configmapname=$(echo ${configmapname} | sed $sedexpr)
 
   if [[ $configmapname == registration-json  ]]; then return 0; fi
-
-  # ConfigMaps added by Thomas
   if [[ $configmapname == platform-auth-idp ]]; then return 0; fi
   
   # If the name appears in the CR, then it is also part of what is needed.
@@ -275,7 +244,6 @@ function restore_this_configmap() {
   return 1
 }
 
-# Added by Thomas
 # $1 Cert-ManagerIO Certificate name to check
 # $2 CR NAME
 function restore_this_certmanageriocertificate() {
@@ -285,17 +253,8 @@ function restore_this_certmanageriocertificate() {
   local certmanageriocertificatename=$(echo ${certmanageriocertificatename} | sed $sedexpr)
   
   return 0;
-  
-  ## For now, we'll restore all
-  # if [[ $certmanageriocertificatename == cs-ca-certificate-secret ]]; then return 0; fi
-
-  # If the name appears in the CR, then it is also part of what is needed.
-  # if grep $certmanageriocertificatename $CR_SPEC > /dev/null 2>/dev/null; then return 0; fi
-
-  # return 1
 }
 
-# Added by Thomas
 # $1 CertManagerK8S Certificate name to check
 # $2 CR NAME
 function restore_this_certmanagerk8scertificate() {
@@ -305,17 +264,8 @@ function restore_this_certmanagerk8scertificate() {
   local certmanagerk8scertificatename=$(echo ${certmanagerk8scertificatename} | sed $sedexpr)
   
   return 0;
-  
-  ## For now, we'll restore all
-  # if [[ $certmanagerk8scertificatename == <name> ]]; then return 0; fi
-
-  # If the name appears in the CR, then it is also part of what is needed.
-  # if grep $certmanagerk8scertificatename $CR_SPEC > /dev/null 2>/dev/null; then return 0; fi
-
-  # return 1
 }
 
-# Added by Thomas
 # $1 Issuer name to check
 # $2 CR NAME
 function restore_this_issuer() {
@@ -325,76 +275,78 @@ function restore_this_issuer() {
   local issuername=$(echo ${issuername} | sed $sedexpr)
   
   return 0;
-  
-  ## For now, we'll restore all
-  # if [[ $issuername == <name> ]]; then return 0; fi
-
-  # If the name appears in the CR, then it is also part of what is needed.
-  # if grep $issuername $CR_SPEC > /dev/null 2>/dev/null; then return 0; fi
-
-  # return 1
 }
 
-# Check if directory is empty
+# Check if backup root directory is empty
 if [ "$(ls -A $BACKUP_ROOT_DIRECTORY_FULL)" ]; then
-  # If directory is not empty, list subdirectories
-  echo "Available backups:"
-  count=0
-  echo
-  for dir in $BACKUP_ROOT_DIRECTORY_FULL/backup_*; do
-    if [ -d "$dir" ]; then
-      count=$(expr $count + 1)
-      echo "$count:    $(basename $dir)"
-    fi
-  done
-
-  # Prompt user to select a subdirectory
-  read -p "Enter the number of the subdirectory to choose: " choice
-  echo
-  if [ -z "$choice" ]; then
-    logError "No choice made, exiting."
-    exit 1
-  fi
-
-  # Check if choice is a number
-  if ! [[ $choice =~ ^[0-9]+$ ]]; then
-    logError "Choice must be a number, exiting."
-    exit 1
-  fi
-
-  # Check if choice is within range
-  if [ $choice -lt 1 ] || [ $choice -gt $count ]; then
-    logError "Choice is out of range, exiting"
-    exit 1
-  fi
-
-  # Get the selected subdirectory
-  count=0
-  for dir in $BACKUP_ROOT_DIRECTORY_FULL/backup_*; do
-    if [ -d "$dir" ]; then
-      count=$(expr $count + 1)
-      if [ "$count" == "$choice" ]; then
-        BACKUP_DIR="$BACKUP_ROOT_DIRECTORY_FULL/$(basename $dir)"
+  # If directory is not empty, check if there are backup_ subdirectories
+  if [[ "$(ls $BACKUP_ROOT_DIRECTORY_FULL | grep backup_)" != "" ]]; then
+    logInfo "This script will prepare a restore of a previously taken backup. Available backups:"
+    count=0
+    for dir in $BACKUP_ROOT_DIRECTORY_FULL/backup_*; do
+      if [ -d "$dir" ]; then
+        count=$(expr $count + 1)
+        logInfo "   $count:   $(basename $dir)"
       fi
+    done
+    echo
+    
+    # Prompt user to select a subdirectory
+    read -p "Enter the number of the backup to restore, or anything else to quit: " choice
+    echo
+    if [ -z "$choice" ]; then
+      logError "No choice made, exiting."
+      echo
+      exit 1
     fi
-  done
+    
+    # Check if choice is a number
+    if ! [[ $choice =~ ^[0-9]+$ ]]; then
+      logError "Choice must be a number, exiting."
+      echo
+      exit 1
+    fi
+    
+    # Check if choice is within range
+    if [ $choice -lt 1 ] || [ $choice -gt $count ]; then
+      logError "Choice is out of range, exiting"
+      echo
+      exit 1
+    fi
+    
+    # Get the selected subdirectory
+    count=0
+    for dir in $BACKUP_ROOT_DIRECTORY_FULL/backup_*; do
+      if [ -d "$dir" ]; then
+        count=$(expr $count + 1)
+        if [ "$count" == "$choice" ]; then
+          BACKUP_DIR="$BACKUP_ROOT_DIRECTORY_FULL/$(basename $dir)"
+          logInfo "Restoring backup found in:" $BACKUP_DIR
+        fi
+      fi
+    done
+  else
+    logError "No Backups found for project ${cp4baProjectName}. Exiting..."
+    echo
+    exit 1
+  fi
 else
-  logError "No Backups found for project ${cp4baProjectName}"
+  logError "No Backups found for project ${cp4baProjectName}. Exiting..."
   echo
   exit 1
 fi
-
-logInfo "preDeploy will use backup directory $BACKUP_DIR"
+echo
 
 if [[ -d $BACKUP_DIR/icp4acluster.icp4a.ibm.com ]]; then
   if [[ $(ls -A $BACKUP_DIR/icp4acluster.icp4a.ibm.com | wc -l) -eq 1 ]]; then
     CR_SPEC=$BACKUP_DIR/icp4acluster.icp4a.ibm.com/$(ls -A $BACKUP_DIR/icp4acluster.icp4a.ibm.com)
+  else
+    logError "No or too many CRs found in backup. Exiting..."
+    echo
+    exit 1
   fi
-fi
-
-# Note that below check will not succeed, if more than one CR was found. This is intended.
-if [[ ! -e $CR_SPEC ]]; then
-  logError "Could not find the CR in the backup directory $BACKUP_DIR"
+else
+  logError "CR not found in backup. Exiting..."
   echo
   exit 1
 fi
@@ -412,6 +364,12 @@ fi
 
 logInfoValue "The CR from the backup used deployment name: " $backupDeploymentName
 logInfoValue "The CR specification is for CP4BA Version: " $backupAppVersion
+if [[ "$backupAppVersion" != "21.0.3" ]]; then
+  logError "CP4BA Version not supported. Exiting..."
+  echo
+  exit 1
+fi
+echo
 
 logInfo "Verifying OC CLI is connected to the OCP cluster..."
 WHOAMI=$(oc whoami)
@@ -425,24 +383,26 @@ fi
 echo
 
 if oc get project $backupNamespace  > /dev/null 2>&1; then
-  logWarning "Backup Namespace is already existing"
-  logInfoValue "Running command " oc project $backupNamespace
-  oc project $backupNamespace > $LOG_FILE
+  logError "Backup Namespace is already existing on the cluster. Please run the delete deployment script before. Exiting..."
+  echo
+  exit 1
 else
   if [[ "$(oc auth can-i create project 2>/dev/null)" == "yes" ]]; then
     logInfo "Project $backupNamespace is not yet existing, but needs to be created."
     echo
     read -p "Press Return to continue, CTRL-C to abort" choice
     echo
-    logInfoValue "Running command " oc new-project $backupNamespace
+    logInfoValue "Running command" oc new-project $backupNamespace
     oc new-project $backupNamespace >> $LOG_FILE
   else
     logError "Project $backupNamespace is not yet existing, but logged on user $(oc whoami) has not enough rights to create it. Exiting..."
-  echo
+    echo
     exit 1
   fi
 fi
 echo
+
+
 
 ################ Restore Secrets ################
 if [ -d $BACKUP_DIR/secret ]; then
@@ -484,43 +444,43 @@ for yaml in $BACKUP_DIR/secret/*.yaml; do
     fi
   fi
 done
+echo
 
 if [[ "$countYamlFiles" == "0" ]]; then
-	logInfo "All secrets have already been applied"
+  logInfo "All secrets have already been applied"
 else
-  echo
-  echo "The script will try to apply following secrets:"
+  logInfo "The script will try to apply following secrets:"
 
   for file in "${yamlFiles[@]}"; do
     secretName=$(yq eval '.metadata.name' $file)
-    echo -e "\tSecret \x1B[1m$secretName\x1B[0m  (File: $(basename $file))"
+    logInfo "   Secret $secretName (File: $(basename $file))"
   done
-
   echo
+  
   printf "OK to apply these secret definitions? (Yes/No, default Yes): "
   read -rp "" ans
   case "$ans" in
   "n"|"N"|"no"|"No"|"NO")
      echo
-     echo -e "Exiting..."
+     logInfo "Exiting..."
      echo
      exit 0
      ;;
   *)
      echo
-     echo -e "OK..."
+     logInfo "OK..."
+     echo
      ;;
   esac
   
   for file in "${yamlFiles[@]}"; do
     secretName=$(yq eval '.metadata.name' $file)
     restore_secret $secretName $file $backupNamespace
-#    logInfoValue "Defining Secret " ${secretName}
-#    yq eval 'del(.status, .metadata.finalizers, .metadata.resourceVersion, .metadata.uid, .metadata.annotations, .metadata.creationTimestamp, .metadata.selfLink, .metadata.managedFields, .metadata.ownerReferences, .metadata.generation)' $file | oc apply -f - -n $backupNamespace
-
   done
 fi
 echo
+
+
 
 ################ Restore ConfigMaps ################
 if [ -d $BACKUP_DIR/configmap ]; then
@@ -562,47 +522,46 @@ for yaml in $BACKUP_DIR/configmap/*.yaml; do
     fi
   fi
 done
-
 echo
 
 if [[ "$countYamlFiles" == "0" ]]; then
-	logInfo "All Configmaps have already been applied"
+  logInfo "All Configmaps have already been applied"
 else
-  echo
-  echo "The script will try to apply following Configmaps:"
+  logInfo "The script will try to apply following Configmaps:"
 
   for file in "${yamlFiles[@]}"; do
     configmapName=$(yq eval '.metadata.name' $file)
-    echo -e "\tConfigmap \x1B[1m$configmapName\x1B[0m  (File: $(basename $file))"
+    logInfo "   Configmap $configmapName (File: $(basename $file))"
   done
-
   echo
+  
   printf "OK to apply these Configmap definitions? (Yes/No, default Yes): "
   read -rp "" ans
   case "$ans" in
   "n"|"N"|"no"|"No"|"NO")
      echo
-     echo -e "Exiting..."
+     logInfo "Exiting..."
      echo
      exit 0
      ;;
   *)
      echo
-     echo -e "OK..."
+     logInfo "OK..."
+     echo
      ;;
   esac
 
   for file in "${yamlFiles[@]}"; do
     configmapName=$(yq eval '.metadata.name' $file)
-    logInfoValue "Defining Configmap " ${configmapName}
-    yq eval 'del(.metadata.annotations, .metadata.creationTimestamp, .metadata.resourceVersion, .metadata.uid, .metadata.ownerReferences)' $file | oc apply -f - -n $backupNamespace
+    logInfoValue "Defining Configmap" ${configmapName}
+    logInfo $(yq eval 'del(.metadata.annotations, .metadata.creationTimestamp, .metadata.resourceVersion, .metadata.uid, .metadata.ownerReferences)' $file | oc apply -f - -n $backupNamespace)
   done
 fi
 echo
 
 
 
-################ Restore Cert-ManagerIO Certificates ################
+################ Restore Certificates of type certificate.cert-manager.io ################
 if [ -d $BACKUP_DIR/certificate.cert-manager.io ]; then
   logInfo "Processing Cert-ManagerIO Certificates ($(ls -A $BACKUP_DIR/certificate.cert-manager.io | wc -l))"
 else
@@ -634,7 +593,7 @@ for yaml in $BACKUP_DIR/certificate.cert-manager.io/*.yaml; do
       if restore_this_certmanageriocertificate $certmanageriocertificateName $backupDeploymentName; then
         if is_existing_certmanageriocertificate $certmanageriocertificateName; then
           logInfoValue "Cert-ManagerIO Certificate already defined: " $certmanageriocertificateName
-        else        
+        else
           yamlFiles+=($yaml)
           countYamlFiles=$(expr $countYamlFiles + 1)
         fi
@@ -642,47 +601,48 @@ for yaml in $BACKUP_DIR/certificate.cert-manager.io/*.yaml; do
     fi
   fi
 done
-
 echo
 
 if [[ "$countYamlFiles" == "0" ]]; then
-	logInfo "All Cert-ManagerIO Certificates have already been applied"
+  logInfo "All Cert-ManagerIO Certificates have already been applied"
 else
-  echo
-  echo "The script will try to apply following Cert-ManagerIO Certificates:"
+  logInfo "The script will try to apply following Cert-ManagerIO Certificates:"
   
   for file in "${yamlFiles[@]}"; do
     certmanageriocertificateName=$(yq eval '.metadata.name' $file)
-    echo -e "\tCert-ManagerIO Certificate \x1B[1m$certmanageriocertificateName\x1B[0m  (File: $(basename $file))"
+    logInfo "   Cert-ManagerIO Certificate $certmanageriocertificateName (File: $(basename $file))"
   done
-
   echo
+  
   printf "OK to apply these Cert-ManagerIO Certificate definitions? (Yes/No, default Yes): "
   read -rp "" ans
   case "$ans" in
   "n"|"N"|"no"|"No"|"NO")
      echo
-     echo -e "Exiting..."
+     logInfo "Exiting..."
      echo
      exit 0
      ;;
   *)
      echo
-     echo -e "OK..."
+     logInfo "OK..."
+     echo
      ;;
   esac
 
   for file in "${yamlFiles[@]}"; do
     certmanageriocertificateName=$(yq eval '.metadata.name' $file)
-    logInfoValue "Defining Cert-ManagerIO Certificate " ${certmanageriocertificateName}
-    yq eval 'del(.metadata.creationTimestamp, .metadata.resourceVersion, .metadata.uid, .metadata.ownerReferences)' $file | oc apply -f - -n $backupNamespace
+    certmanageriosecret=$(yq eval '.spec.secretName' $file)
+    restore_secret $certmanageriosecret $BACKUP_DIR/secret/$certmanageriosecret.yaml $backupNamespace
+    logInfoValue "Defining Cert-ManagerIO Certificate" ${certmanageriocertificateName}
+    logInfo $(yq eval 'del(.metadata.creationTimestamp, .metadata.resourceVersion, .metadata.uid, .metadata.ownerReferences)' $file | oc apply -f - -n $backupNamespace)
   done
 fi
 echo
 
 
 
-################ Restore CertManagerK8S Certificates ################
+################ Restore Certificates of type certificate.certmanager.k8s.io ################
 if [ -d $BACKUP_DIR/certificate.certmanager.k8s.io ]; then
   logInfo "Processing CertManagerK8S Certificates ($(ls -A $BACKUP_DIR/certificate.certmanager.k8s.io | wc -l))"
 else
@@ -722,47 +682,48 @@ for yaml in $BACKUP_DIR/certificate.certmanager.k8s.io/*.yaml; do
     fi
   fi
 done
-
 echo
 
 if [[ "$countYamlFiles" == "0" ]]; then
-	logInfo "All CertManagerK8S Certificates have already been applied"
+  logInfo "All CertManagerK8S Certificates have already been applied"
 else
-  echo
-  echo "The script will try to apply following CertManagerK8S Certificates:"
+  logInfo "The script will try to apply following CertManagerK8S Certificates:"
   
   for file in "${yamlFiles[@]}"; do
     certmanagerk8scertificateName=$(yq eval '.metadata.name' $file)
-    echo -e "\tCertManagerK8S Certificate \x1B[1m$certmanagerk8scertificateName\x1B[0m  (File: $(basename $file))"
+    logInfo "   CertManagerK8S Certificate $certmanagerk8scertificateName (File: $(basename $file))"
   done
-
   echo
+  
   printf "OK to apply these CertManagerK8S Certificate definitions? (Yes/No, default Yes): "
   read -rp "" ans
   case "$ans" in
   "n"|"N"|"no"|"No"|"NO")
      echo
-     echo -e "Exiting..."
+     logInfo "Exiting..."
      echo
      exit 0
      ;;
   *)
      echo
-     echo -e "OK..."
+     logInfo "OK..."
+     echo
      ;;
   esac
 
   for file in "${yamlFiles[@]}"; do
     certmanagerk8scertificateName=$(yq eval '.metadata.name' $file)
-    logInfoValue "Defining CertManagerK8S Certificate " ${certmanagerk8scertificateName}
-    yq eval 'del(.metadata.creationTimestamp, .metadata.resourceVersion, .metadata.uid, .metadata.ownerReferences)' $file | oc apply -f - -n $backupNamespace
+    certmanagerk8ssecret=$(yq eval '.spec.secretName' $file)
+    restore_secret $certmanagerk8ssecret $BACKUP_DIR/secret/$certmanagerk8ssecret.yaml $backupNamespace
+    logInfoValue "Defining CertManagerK8S Certificate" ${certmanagerk8scertificateName}
+    logInfo $(yq eval 'del(.metadata.creationTimestamp, .metadata.resourceVersion, .metadata.uid, .metadata.ownerReferences)' $file | oc apply -f - -n $backupNamespace)
   done
 fi
 echo
 
 
 
-################ Restore Issuers ################
+################ Restore Issuers of type issuer.cert-manager.io ################
 if [ -d $BACKUP_DIR/issuer.cert-manager.io ]; then
   logInfo "Processing Issuers ($(ls -A $BACKUP_DIR/issuer.cert-manager.io | wc -l))"
 else
@@ -802,40 +763,122 @@ for yaml in $BACKUP_DIR/issuer.cert-manager.io/*.yaml; do
     fi
   fi
 done
-
 echo
 
 if [[ "$countYamlFiles" == "0" ]]; then
-	logInfo "All Issuers have already been applied"
+  logInfo "All Issuers have already been applied"
 else
-  echo
-  echo "The script will try to apply following Issuers:"
+  logInfo "The script will try to apply following Issuers:"
   
   for file in "${yamlFiles[@]}"; do
     issuerName=$(yq eval '.metadata.name' $file)
-    echo -e "\tIssuer \x1B[1m$issuerName\x1B[0m  (File: $(basename $file))"
+    logInfo "   Issuer $issuerName (File: $(basename $file))"
   done
-
   echo
+  
   printf "OK to apply these Issuer definitions? (Yes/No, default Yes): "
   read -rp "" ans
   case "$ans" in
   "n"|"N"|"no"|"No"|"NO")
      echo
-     echo -e "Exiting..."
+     logInfo "Exiting..."
      echo
      exit 0
      ;;
   *)
      echo
-     echo -e "OK..."
+     logInfo "OK..."
+     echo
      ;;
   esac
 
   for file in "${yamlFiles[@]}"; do
     issuerName=$(yq eval '.metadata.name' $file)
-    logInfoValue "Defining Issuer " ${issuerName}
-    yq eval 'del(.metadata.annotations, .metadata.creationTimestamp, .metadata.resourceVersion, .metadata.uid, .metadata.ownerReferences)' $file | oc apply -f - -n $backupNamespace
+    issuersecret=$(yq eval '.spec.ca.secretName' $file)
+    restore_secret $issuersecret $BACKUP_DIR/secret/$issuersecret.yaml $backupNamespace
+    logInfoValue "Defining Issuer" ${issuerName}
+    logInfo $(yq eval 'del(.metadata.annotations, .metadata.creationTimestamp, .metadata.resourceVersion, .metadata.uid, .metadata.ownerReferences)' $file | oc apply -f - -n $backupNamespace)
+  done
+fi
+echo
+
+
+
+################ Restore Issuers of type issuer.certmanager.k8s.io ################
+if [ -d $BACKUP_DIR/issuer.certmanager.k8s.io ]; then
+  logInfo "Processing k8s Issuers ($(ls -A $BACKUP_DIR/issuer.certmanager.k8s.io | wc -l))"
+else
+  logInfo "Processing k8s Issuers (none)"
+fi
+
+yamlFiles=()
+countYamlFiles=0
+existingissuers=$(oc get issuer.certmanager.k8s.io -o custom-columns=name:.metadata.name --no-headers)
+
+function is_existing_issuer() {
+  local existing_issuer=""
+  local issuer=$1
+  for existing_issuer in $existingissuers; do 
+    if [ "$existing_issuer" == "$issuer" ]; then
+      return 0
+    fi
+  done
+  return 1
+}
+
+for yaml in $BACKUP_DIR/issuer.certmanager.k8s.io/*.yaml; do
+  issuerName=$(yq eval '.metadata.name' $yaml)
+  issuerNamespace=$(yq eval '.metadata.namespace' $yaml)
+  if [[ "$issuerName" != "null" ]]; then
+    if [[ "$issuerNamespace" != "null" && "$issuerNamespace" != "$backupNamespace" ]]; then
+      logWarning "Skipping k8s Issuer $issuerName in file $(basename $yaml) it has a non-matching namespace: $issuerNamespace"
+    else 
+      if restore_this_issuer $issuerName $backupDeploymentName; then
+        if is_existing_issuer $issuerName; then
+          logInfoValue "K8s Issuer already defined: " $issuerName
+        else
+          yamlFiles+=($yaml)
+          countYamlFiles=$(expr $countYamlFiles + 1)
+        fi
+      fi
+    fi
+  fi
+done
+echo
+
+if [[ "$countYamlFiles" == "0" ]]; then
+  logInfo "All k8s Issuers have already been applied"
+else
+  logInfo "The script will try to apply following k8s Issuers:"
+  
+  for file in "${yamlFiles[@]}"; do
+    issuerName=$(yq eval '.metadata.name' $file)
+    logInfo "   K8s Issuer $issuerName (File: $(basename $file))"
+  done
+  echo
+  
+  printf "OK to apply these k8s Issuer definitions? (Yes/No, default Yes): "
+  read -rp "" ans
+  case "$ans" in
+  "n"|"N"|"no"|"No"|"NO")
+     echo
+     logInfo "Exiting..."
+     echo
+     exit 0
+     ;;
+  *)
+     echo
+     logInfo "OK..."
+     echo
+     ;;
+  esac
+
+  for file in "${yamlFiles[@]}"; do
+    issuerName=$(yq eval '.metadata.name' $file)
+    issuersecret=$(yq eval '.spec.ca.secretName' $file)
+    restore_secret $issuersecret $BACKUP_DIR/secret/$issuersecret.yaml $backupNamespace
+    logInfoValue "Defining k8s Issuer" ${issuerName}
+    logInfo $(yq eval 'del(.metadata.annotations, .metadata.creationTimestamp, .metadata.resourceVersion, .metadata.uid, .metadata.ownerReferences)' $file | oc apply -f - -n $backupNamespace)
   done
 fi
 echo
@@ -892,46 +935,44 @@ for yaml in $BACKUP_DIR/persistentvolumeclaim/*.yaml; do
     fi
   fi
 done
-
 echo
 
 if [[ "$countYamlFiles" == "0" ]]; then
-	logInfo "All Persistent Volume Claims have already been applied"
+  logInfo "All Persistent Volume Claims have already been applied"
 else
-
-  echo
-  echo "The script will try to apply following Persistent Volume Claims (PVC):"
+  logInfo "The script will try to apply following Persistent Volume Claims (PVCs):"
 
   for file in "${yamlFiles[@]}"; do
     pvcName=$(yq eval '.metadata.name' $file)
-    echo -e "\tPVC \x1B[1m$pvcName\x1B[0m  (File: $(basename $file))"
+    logInfo "   PVC $pvcName (File: $(basename $file))"
   done
   echo
+  
   printf "OK to apply these PVC definitions? (Yes/No, default Yes): "
   read -rp "" ans
   case "$ans" in
   "n"|"N"|"no"|"No"|"NO")
      echo
-     echo -e "Exiting..."
+     logInfo "Exiting..."
      echo
      exit 0
      ;;
   *)
      echo
-     echo -e "OK..."
+     logInfo "OK..."
+     echo
      ;;
   esac
   
   for file in "${yamlFiles[@]}"; do
     pvcName=$(yq eval '.metadata.name' $file)
-    logInfoValue "Defining PVC " ${pvcName}
-    yq eval 'del(.status, .metadata.finalizers, .metadata.resourceVersion, .metadata.uid, .metadata.annotations, .metadata.creationTimestamp, .metadata.selfLink, .metadata.managedFields, .metadata.ownerReferences, .spec.volumeMode, .spec.volumeName)' $file | oc apply -f - -n $backupNamespace
-
+    logInfoValue "Defining PVC" ${pvcName}
+    logInfo $(yq eval 'del(.status, .metadata.finalizers, .metadata.resourceVersion, .metadata.uid, .metadata.annotations, .metadata.creationTimestamp, .metadata.selfLink, .metadata.managedFields, .metadata.ownerReferences, .spec.volumeMode, .spec.volumeName)' $file | oc apply -f - -n $backupNamespace)
   done
 fi
+echo
 
 waitUntilBound=20
-
 while [ $waitUntilBound -gt 0 ]; do 
   numNotBound=$(oc get pvc -o custom-columns=name:.metadata.name,phase:.status.phase --no-headers -n $backupNamespace | grep -v Bound | wc -l)
   if [ $numNotBound -eq 0 ]; then
@@ -939,25 +980,26 @@ while [ $waitUntilBound -gt 0 ]; do
   fi
   waitUntilBound=$((waitUntilBound - 1))
   if [ $waitUntilBound -gt 0 ]; then
-    echo "PVCs not in bound status: $numNotBound, waiting 10s..."
+    logInfo "PVCs not in bound status: $numNotBound, waiting 10s..."
     sleep 10
   else
-    echo "PVs still in bound status: $numNotBound, please check it. Aborting."
+    logInfo "PVCs still not in bound status: $numNotBound, please check it. Aborting..."
+    echo
     exit 1
   fi
-done 
+done
 
 logInfo "All PVCs are now in bound state"
+echo
 
 PV_BACKUP_DIR=${pvBackupDirectory}/$(basename $(dirname $BACKUP_DIR))/$(basename $BACKUP_DIR)
-logInfoValue "PV Backup Directory: " $PV_BACKUP_DIR
+logInfoValue "PV Backup Directory:" $PV_BACKUP_DIR
 
 BACKUP_UID=$(cat $BACKUP_DIR/namespace_uid)
 RESTORE_UID=$(oc describe project $cp4baProjectName | grep uid-range | cut -d"=" -f2 | cut -d"/" -f1)
 
-logInfoValue "PV UID in backup: " $BACKUP_UID
-logInfoValue "PV UID in restored project: " $RESTORE_UID
-
+logInfoValue "PV UID in backup:" $BACKUP_UID
+logInfoValue "PV UID in restored project:" $RESTORE_UID
 
 index=0
 for storageclass in ${barStorageClass[@]}; do
@@ -966,7 +1008,7 @@ for storageclass in ${barStorageClass[@]}; do
     index=$(( index + 1 ))
 
     if [ "$method" == "ServerBackup" ]; then
-	logInfoValue "Restoring PV data for PVs using StorageClass " $storageclass
+	logInfoValue "Restoring PV data for PVs using StorageClass" $storageclass
 
         rootDirectory=$(echo $configData | jq -r '.rootDirectory')        
         PV_BACKUP_DIR=${pvBackupDirectory}/$(basename $(dirname $BACKUP_DIR))/$(basename $BACKUP_DIR)        
@@ -1024,40 +1066,32 @@ EOF
                       fi
         	  fi
 	      done
-        logInfoValue "PV Restore Script Generated: " 111-restore-pvs-${storageclass}.sh        
+        logInfoValue "PV Restore Script Generated:" 111-restore-pvs-${storageclass}.sh        
     fi
 done
 
-
-
 echo
-echo "Run the generated PV Restore Script on the storage server with the root user."
+logInfo "Run the generated PV Restore Script on the storage server with the root user."
+echo
 read -p "Press Return to continue, CTRL-C to abort" choice
 echo
 
 CP4BASubscription=$BACKUP_DIR/subscription.operators.coreos.com/ibm-cp4a-operator.yaml
 
 if [ ! -e $CP4BASubscription ]; then
-   logError "CP4BA Operator Subscription not found in backup : " $CP4BASubscription
+   logError "CP4BA Operator Subscription not found in backup:" $CP4BASubscription
 else
-   logInfoValue "CP4BA Operator Subscription: " $CP4BASubscription
+   logInfoValue "CP4BA Operator Subscription:" $CP4BASubscription
    cp4baVersion=$(yq eval '.status.currentCSV' $CP4BASubscription)
-   logInfoValue "Version used by backup: " $cp4baVersion
+   logInfoValue "Version used by backup:" $cp4baVersion
 fi
 echo
 
-echo "Creating CR for restore..."
-#yq eval 'del(.metadata.annotations, .metadata.creationTimestamp, .metadata.generation, .metadata.resourceVersion, .metadata.uid, .spec.initialize_configuration)' $CR_SPEC > $BACKUP_DIR/$(basename $CR_SPEC)
+logInfo "Creating CR for restore..."
 yq eval 'del(.metadata.annotations, .metadata.creationTimestamp, .metadata.generation, .metadata.resourceVersion, .metadata.uid)' $CR_SPEC > $BACKUP_DIR/$(basename $CR_SPEC)
-#yq eval '.spec.shared_configuration.sc_content_initialization = false' -i $BACKUP_DIR/$(basename $CR_SPEC)
 yq eval 'del(.status)' -i $BACKUP_DIR/$(basename $CR_SPEC)
-# TODO: Case event emitter does still cause some trouble, removing it for the moment!
-#yq eval 'del(.spec.workflow_authoring_configuration.case.event_emitter)' -i $BACKUP_DIR/$(basename $CR_SPEC)
-# TODO: Disable Case event emitter for Runtime environment, too
-#yq eval 'del(.spec.workflow_authoring_configuration.case.event_emitter)' -i $BACKUP_DIR/$(basename $CR_SPEC)
-echo
 
-echo "Removing all lines containing null or empty string..."
+logInfo "Removing all lines containing null or empty string..."
 fileName=${BACKUP_DIR}/${backupDeploymentName}New.yaml
 if [ -f "$fileName" ]; then
   rm -f $fileName
@@ -1078,22 +1112,19 @@ do
     fi
   fi
 done < $BACKUP_DIR/$(basename $CR_SPEC)
-echo
 
-echo "Cleaning up empty subtrees in the specification..."
+logInfo "Finally cleaning up empty subtrees in the specification..."
 function cleanup_pattern() {
     local filename=$1
     local pattern=$2
     
     local result=$(yq eval "$pattern" $filename)
     
-    #echo "$pattern result \"$result\""
     emptycontent='^[[:blank:]]*(null[[:blank:]]*|)$'
     if [[ "$result" =~ $emptycontent ]]; then
       yq eval "del(${pattern})" -i $filename
-	    echo "    Removing empty context $pattern"
+        logInfo "    Removing empty context $pattern"
     fi
-    #echo
 }
 
 cleanup_contexts=()
@@ -1105,17 +1136,30 @@ cleanup_contexts[4]='.spec.pfs_configuration.tls'
 cleanup_contexts[5]='.spec.bastudio_configuration.csrf_referrer'
 
 for p in ${cleanup_contexts[@]}; do
-    cleanup_pattern $fileName $p
+  cleanup_pattern $fileName $p
 done
+echo
 
-echo "After deployment of the CP4BA Operator, you should be able to apply the CR from file"
-echo "  " $BACKUP_DIR/$(basename $CR_SPEC)
-echo "Or"
-echo "  " $fileName
+logInfo "After deployment of the CP4BA Operator, you should be able to apply the CR from file"
+# TODO Rename the file!
+logInfo "  " $fileName
 echo
 
 # Save some data to Openshift for Post Deployment to pick it up
-oc create configmap cp4ba-backup-and-restore \
+logInfo "Finally, creating a config map for post deployment scripts to pick up."
+logInfo $(oc create configmap cp4ba-backup-and-restore \
   --from-literal backup-dir=$BACKUP_DIR \
-  --from-literal bar-version=$bar_version
+  --from-literal bar-version=$bar_version)
 echo
+
+logInfo "Pre deploy is complete. Next, restore:"
+logInfo "  - the content of the PVs (for example by running the just generated script using the root account, see details above)"
+logInfo "  - the databases"
+logInfo "  - the binary document data of CPE"
+echo
+logInfo "Next, if needed, downgrade the catalog sources."
+logInfo "Then, install the CP4BA operator through the OCP Web console."
+logInfo "Finally, apply the generated CR (see details above) and run the post deployment steps."
+logInfo "For more details on the above steps, please also have a look into the documentation."
+echo
+
