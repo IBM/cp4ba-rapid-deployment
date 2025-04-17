@@ -132,6 +132,13 @@ function restore_this_secret() {
   local sedexpr=$(printf 's/%s/CRNAME/g' $crname)
   local secretname=$(echo ${secretname} | sed $sedexpr)
   
+  # when using custom zen route JDR
+  if [[ $secretname == zen-ca-cert-secret   ]]; then return 0; fi
+  # Metastore secret metastore-secret 
+  if [[ $secretname == metastore-secret  ]]; then return 0; fi
+  # CPD clientid oidc secret 
+  if [[ $secretname == cpd-oidcclient-secret  ]]; then return 0; fi
+
   if [[ $secretname == CRNAME-cpe-oidc-secret  ]]; then return 0; fi
   if [[ $secretname == ldap-bind-secret  ]]; then return 0; fi
   if [[ $secretname == icp4a-shared-encryption-key  ]]; then return 0; fi 
@@ -425,6 +432,18 @@ function is_existing_secret() {
   done
   return 1
 }
+
+# Zen custom route zecret
+secretName=$(yq eval '.spec.zenCustomRoute.route_secret' $BACKUP_DIR/zenservice.zen.cpd.ibm.com/iaf-zen-cpdservice.yaml)
+if [[ "$secretName" != "null" ]]; then
+  logInfo "Found zen custom route secret"
+  if is_existing_secret $secretName; then
+    logInfoValue "Secret already defined: " $secretName
+  else
+    yamlFiles+=($BACKUP_DIR/secret/$secretName.yaml)
+    countYamlFiles=$(expr $countYamlFiles + 1)
+  fi
+fi
 
 for yaml in $BACKUP_DIR/secret/*.yaml; do
   secretName=$(yq eval '.metadata.name' $yaml)
@@ -884,6 +903,41 @@ fi
 echo
 
 
+############ Restore Misc Resources ##########
+yamlFiles=()
+yamlFiles+=($BACKUP_DIR/commonservice.operator.ibm.com/common-service.yaml)
+yamlFiles+=($BACKUP_DIR/zenservice.zen.cpd.ibm.com/iaf-zen-cpdservice.yaml)
+echo
+echo "The script will try to apply following additional resources:"
+
+for file in "${yamlFiles[@]}"; do
+  rName=$(yq eval '.metadata.name' $file)
+  rKind=$(yq eval '.kind' $file)
+  echo -e "\tResource $rKind \x1B[1m$rNamee\x1B[0m  (File: $(basename $file))"
+done
+
+echo
+printf "OK to apply these resource definitions? (Yes/No, default Yes): "
+read -rp "" ans
+case "$ans" in
+"n"|"N"|"no"|"No"|"NO")
+   echo
+   echo -e "Exiting..."
+   echo
+   exit 0
+   ;;
+*)
+   echo
+   echo -e "OK..."
+   ;;
+esac
+
+for file in "${yamlFiles[@]}"; do
+  rName=$(yq eval '.metadata.name' $file)
+  rKind=$(yq eval '.kind' $file)
+  logInfoValue "Defining resource of type $rKind" ${rName}
+    yq eval 'del(.metadata.annotations, .metadata.creationTimestamp, .metadata.resourceVersion, .metadata.uid, .metadata.ownerReferences)' $file | oc apply -f - -n $backupNamespace --overwrite=true
+  done
 
 ################ Restore PVCs ################
 if [ -d $BACKUP_DIR/persistentvolumeclaim ]; then

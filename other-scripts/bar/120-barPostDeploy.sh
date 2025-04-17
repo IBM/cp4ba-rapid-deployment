@@ -237,7 +237,165 @@ function bts-cnpg() {
      
 }
 
+function mongoRestore()
+{
+  # Prime templates 
+  logInfo "Priming resources to restore MongoDB"
+  cp ${CUR_DIR}/templates/mongodb-backup-pvc.template.yaml ${CUR_DIR}/mongodb-backup-pvc.yaml
+  cp ${CUR_DIR}/templates/mongodb-backup-deployment.template.yaml ${CUR_DIR}/mongodb-backup-deployment.yaml
 
+  sed -i "s|§cp4baProjectNamespace|$cp4baProjectName|g; s|§pvcStorageClass|$pvcStorageClassName|g" ${CUR_DIR}/mongodb-backup-pvc.yaml
+  sed -i "s|§cp4baProjectNamespace|$cp4baProjectName|g" ${CUR_DIR}/mongodb-backup-deployment.yaml
+
+  # Create resources necessary to backup MongoDB 
+  oc apply -f ${CUR_DIR}/mongodb-backup-pvc.yaml
+  oc apply -f ${CUR_DIR}/mongodb-backup-deployment.yaml
+
+  # Wait indefinitely for deployment to be Available (pod Ready)
+  oc wait -f ${CUR_DIR}/mongodb-backup-deployment.yaml --for=condition=Available --timeout=-1s
+
+  mongodbpods=$(oc get pod -l=foundationservices.cloudpak.ibm.com=mongo-data --no-headers --ignore-not-found | awk '{print $1}' | sort)
+
+  for pod in ${mongodbpods[*]}
+  do
+    logInfo "Restoring MongoDB in from pod ${pod}..."
+    oc cp ${BACKUP_DIR}/mongodb/mongobackup.tar $pod:/dump/mongobackup.tar
+    # prep certs files that will be used to take the backup
+    oc exec $pod -it -- bash -c 'cat /cred/mongo-certs/tls.crt /cred/mongo-certs/tls.key > /work-dir/mongo.pem; cat /cred/cluster-ca/tls.crt /cred/cluster-ca/tls.key > /work-dir/ca.pem'
+    # extract mongo backup
+    oc exec $pod -it -- bash -c 'cd /dump && tar -xvf mongobackup.tar'
+    # run the actual restore
+    oc exec $pod -it -- bash -c 'mongorestore --db platform-db --host rs0/icp-mongodb-0.icp-mongodb.$NAMESPACE.svc.cluster.local,icp-mongodb-1.icp-mongodb.$NAMESPACE.svc.cluster.local,icp-mongodb-2.icp-mongodb.$NAMESPACE.svc.cluster.local --port $MONGODB_SERVICE_PORT --username $ADMIN_USER --password $ADMIN_PASSWORD --authenticationDatabase admin --ssl --sslCAFile /work-dir/ca.pem --sslPEMKeyFile /work-dir/mongo.pem /dump/dump/platform-db --drop'
+    break
+  done
+
+  # Restore secrets with apikeys that are overwritten during the installation
+  # This is required because these are registered in the MongoDB that has
+  # just been restored. Without these cp-console route will not work.
+
+  # oc delete secret ibm-iam-bindinfo-zen-serviceid-apikey-secret
+  # oc apply -f ${BACKUP_DIR}/secret/ibm-iam-bindinfo-zen-serviceid-apikey-secret.yaml
+  file=${BACKUP_DIR}/secret/ibm-iam-bindinfo-zen-serviceid-apikey-secret.yaml
+  yq eval 'del(.metadata.annotations, .metadata.creationTimestamp, .metadata.resourceVersion, .metadata.uid, .metadata.ownerReferences)' $file | oc apply -f - -n $cp4baProjectName --overwrite=true
+
+  # oc delete secret zen-serviceid-apikey-secret
+  # oc apply -f ${BACKUP_DIR}/secret/zen-serviceid-apikey-secret.yaml
+  file=${BACKUP_DIR}/secret/zen-serviceid-apikey-secret.yaml
+  yq eval 'del(.metadata.annotations, .metadata.creationTimestamp, .metadata.resourceVersion, .metadata.uid, .metadata.ownerReferences)' $file | oc apply -f - -n $cp4baProjectName --overwrite=true
+
+  # oc delete secret icp-serviceid-apikey-secret
+  # oc apply -f ${BACKUP_DIR}/secret/icp-serviceid-apikey-secret.yaml
+  file=${BACKUP_DIR}/secret/icp-serviceid-apikey-secret.yaml
+  yq eval 'del(.metadata.annotations, .metadata.creationTimestamp, .metadata.resourceVersion, .metadata.uid, .metadata.ownerReferences)' $file | oc apply -f - -n $cp4baProjectName --overwrite=true
+
+  #restart pods that require restarting 
+  logInfo "Restarting required pods..."
+  oc delete pod --selector='name=ibm-iam-operator'
+  oc delete pod --selector='app=secret-watcher'
+  oc delete pod --selector='component=usermgmt'
+
+  oc wait -f ${BACKUP_DIR}/deployment.apps/ibm-iam-operator.yaml --for=condition=Available --timeout=-1s 
+  oc wait -f ${BACKUP_DIR}/deployment.apps/secret-watcher.yaml --for=condition=Available --timeout=-1s
+  oc wait -f ${BACKUP_DIR}/deployment.apps/usermgmt.yaml --for=condition=Available --timeout=-1s
+
+  # clean up
+  logInfo "Cleaning up..."
+  oc delete -f ${CUR_DIR}/mongodb-backup-deployment.yaml
+  oc delete -f ${CUR_DIR}/mongodb-backup-pvc.yaml
+
+  rm -f ${CUR_DIR}/mongodb-backup-deployment.yaml
+  rm -f ${CUR_DIR}/mongodb-backup-pvc.yaml
+
+  logInfo "MongoDB restore completed."
+  logWarning "NEXT ACTION: You must restore Zen Services to properly access the CloudPak"
+}
+
+function restoreZen()
+{
+
+  ## Take Zen Services Backup
+  # Prime templates 
+  logInfo "Priming resources to restore Zen Services"
+  cp ${CUR_DIR}/templates/zen-backup-pvc.template.yaml ${CUR_DIR}/zen-backup-pvc.yaml
+  cp ${CUR_DIR}/templates/zen4-br-scripts.template.yaml ${CUR_DIR}/zen4-br-scripts.yaml
+  cp ${CUR_DIR}/templates/zen4-sa.template.yaml ${CUR_DIR}/zen4-sa.yaml
+  cp ${CUR_DIR}/templates/zen4-role.template.yaml ${CUR_DIR}/zen4-role.yaml
+  cp ${CUR_DIR}/templates/zen4-rolebinding.template.yaml ${CUR_DIR}/zen4-rolebinding.yaml
+  cp ${CUR_DIR}/templates/zen-backup-deployment.template.yaml ${CUR_DIR}/zen-backup-deployment.yaml
+
+  sed -i "s|§cp4baProjectNamespace|$cp4baProjectName|g; s|§pvcStorageClass|$pvcStorageClassName|g" ${CUR_DIR}/zen-backup-pvc.yaml
+  sed -i "s|§cp4baProjectNamespace|$cp4baProjectName|g" ${CUR_DIR}/zen4-br-scripts.yaml
+  sed -i "s|§cp4baProjectNamespace|$cp4baProjectName|g" ${CUR_DIR}/zen4-sa.yaml
+  sed -i "s|§cp4baProjectNamespace|$cp4baProjectName|g" ${CUR_DIR}/zen4-role.yaml
+  sed -i "s|§cp4baProjectNamespace|$cp4baProjectName|g" ${CUR_DIR}/zen4-rolebinding.yaml
+  sed -i "s|§cp4baProjectNamespace|$cp4baProjectName|g" ${CUR_DIR}/zen-backup-deployment.yaml
+
+  # Create resources necessary to backup Zen Services
+  oc apply -f ${CUR_DIR}/zen-backup-pvc.yaml
+  oc apply -f ${CUR_DIR}/zen4-br-scripts.yaml
+  oc apply -f ${CUR_DIR}/zen4-sa.yaml
+  oc apply -f ${CUR_DIR}/zen4-role.yaml
+  oc apply -f ${CUR_DIR}/zen4-rolebinding.yaml
+  oc apply -f ${CUR_DIR}/zen-backup-deployment.yaml
+
+  # Wait indefinitely for deployment to be Available (pod Ready)
+  oc wait -f ${CUR_DIR}/zen-backup-deployment.yaml --for=condition=Available --timeout=-1s
+
+  # Grab the values from the new cpd-oidcclient-secret and update zenbackup data with it
+  # This is required because the cpd-oidcclient-secret 
+  newClientSecret=$(oc extract secret/cpd-oidcclient-secret --to=- 2>&1 | grep -A1 CLIENT_SECRET | grep -v CLIENT_SECRET)
+  newClientID=$(oc extract secret/cpd-oidcclient-secret --to=- 2>&1 | grep -A1 CLIENT_ID | grep -v CLIENT_ID)
+
+  oldClientSecret=$(yq eval '(.data)' ${BACKUP_DIR}/secret/cpd-oidcclient-secret.yaml | grep CLIENT_SECRET | awk '{print $2'} | base64 -d)
+  oldClientID=$(yq eval '(.data)' ${BACKUP_DIR}/secret/cpd-oidcclient-secret.yaml | grep CLIENT_ID | awk '{print $2'} | base64 -d)
+
+
+  if [[  "$newClientSecret" == "" || "$newClientID" == "" || "$oldClientSecret" == "" || "$oldClientID" == "" ]]; then
+   # I think that cannot happen, but ok.
+   logError "Unable to retrieve new and old values for cpd-oidcclient-secret."
+   echo "Client secret from current install: " $newClientSecret
+   echo "Client ID from current install: " $newClientID
+   echo "Client secret from backup: " $oldClientSecret
+   echo "Client ID from backup: " $oldClientID
+   exit 1
+  fi
+
+  zenbkpods=$(oc get pod -l=foundationservices.cloudpak.ibm.com=zen-data --no-headers --ignore-not-found | awk '{print $1}')
+
+  for pod in ${zenbkpods[*]}
+  do
+    logInfo "Restoring Zen Services from pod ${pod}..."
+    oc cp ${BACKUP_DIR}/zenbackup/zen-metastoredb-backup.tar $pod:/user-home/zen-metastoredb-backup.tar
+    oc exec $pod -it -- bash -c "cd /user-home && tar -xvf zen-metastoredb-backup.tar"
+
+    # create sed script to switch new cpd oidc info 
+    oc exec $pod -it -- bash -c "cd /user-home && echo s/$oldClientSecret/$newClientSecret/g>switch.sed && echo s/$oldClientID/$newClientID/g>>switch.sed && cat switch.sed"
+    oc exec $pod -it -- bash -c "cd /user-home && sed -i -f switch.sed zen-metastoredb-backup/oidc/oidcConfig.json"
+   
+    # restore zen services
+    oc exec $pod -it -- bash -c "/zen4/zen4-br.sh $cp4baProjectName false"
+    break
+  done
+
+  # clean up    
+  logInfo "Cleaning up..."
+  oc delete -f ${CUR_DIR}/zen-backup-deployment.yaml
+  oc delete -f ${CUR_DIR}/zen4-rolebinding.yaml
+  oc delete -f ${CUR_DIR}/zen4-role.yaml
+  oc delete -f ${CUR_DIR}/zen4-sa.yaml
+  oc delete -f ${CUR_DIR}/zen4-br-scripts.yaml
+  oc delete -f ${CUR_DIR}/zen-backup-pvc.yaml
+
+  rm -f ${CUR_DIR}/zen-backup-deployment.yaml
+  rm -f ${CUR_DIR}/zen4-rolebinding.yaml
+  rm -f ${CUR_DIR}/zen4-role.yaml
+  rm -f ${CUR_DIR}/zen4-sa.yaml
+  rm -f ${CUR_DIR}/zen4-br-scripts.yaml
+  rm -f ${CUR_DIR}/zen-backup-pvc.yaml
+
+  logInfo "Zen Services restore completed."
+
+}
 postDeployTerminating=No
 
 while [[ $postDeployTerminating == "No" ]]; do
@@ -247,6 +405,8 @@ while [[ $postDeployTerminating == "No" ]]; do
   echo "Select Post Deploy task to execute"
   echo "1: BTS Postgres License Fix"
   echo "2: BTS Cloud Native Postgres Database restore"
+  echo "3: MongoDB restore (must restore before Zen Services)"
+  echo "4: Zen Services restore (must restore after MongoDB)"
   echo
   echo "99: Terminate Post Deploy Script"
   echo 
@@ -256,6 +416,8 @@ while [[ $postDeployTerminating == "No" ]]; do
   case "$choice" in
     1)  bts-license ;;
     2)  bts-cnpg ;;
+    3)  mongoRestore ;;
+    4)  restoreZen ;;
     99) postDeployTerminating=Yes ;;
   esac
 done
