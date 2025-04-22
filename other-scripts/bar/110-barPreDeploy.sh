@@ -97,6 +97,16 @@ function restore_this_pvc() {
   if [[ $pvcname == cpe-bootstrapstore ]]; then return 0; fi 
   if [[ $pvcname == icn-pluginstore  ]]; then return 0; fi
 
+  # Optional but nice to have, have amended to the list
+  if [[ $pvcname == cpe-logstore ]]; then return 0; fi
+  if [[ $pvcname == cpe-fnlogstore ]]; then return 0; fi
+  if [[ $pvcname == cpe-icmrulesstore ]]; then return 0; fi
+  if [[ $pvcname == cpe-textextstore ]]; then return 0; fi
+  if [[ $pvcname == css-cfgstore ]]; then return 0; fi
+  if [[ $pvcname == css-customstore ]]; then return 0; fi
+  if [[ $pvcname == cmis-cfgstore ]]; then return 0; fi
+  if [[ $pvcname == icn-asperastore ]]; then return 0; fi
+
   pattern="CRNAME-.*-baw-file-storage-pvc"
   if [[ $pvcname =~ $pattern   ]]; then return 0; fi
   pattern="CRNAME-.*-baw-jms-data-vc-CRNAME-.*-baw-jms-0"
