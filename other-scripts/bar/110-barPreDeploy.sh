@@ -372,15 +372,15 @@ backupNamespace=$(yq eval '.metadata.namespace' $CR_SPEC)
 backupDeploymentName=$(yq eval '.metadata.name' $CR_SPEC)
 backupAppVersion=$(yq eval '.spec.appVersion' $CR_SPEC)
 
-logInfoValue "Backup was made on project: " $backupNamespace
+logInfoValue "Backup was made on project:" $backupNamespace
 if [[ "$backupNamespace" != "$cp4baProjectName" ]]; then
   logError "Backup project name $backupNamespace differs from restore project name ${cp4baProjectName}, data inconsistent, exiting."
   echo
   exit 1
 fi
 
-logInfoValue "The CR from the backup used deployment name: " $backupDeploymentName
-logInfoValue "The CR specification is for CP4BA Version: " $backupAppVersion
+logInfoValue "The CR from the backup used deployment name:" $backupDeploymentName
+logInfoValue "The CR specification is for CP4BA Version:" $backupAppVersion
 if [[ "$backupAppVersion" != "21.0.3" ]]; then
   logError "CP4BA Version not supported. Exiting..."
   echo
@@ -913,32 +913,33 @@ fi
 echo
 
 
+
 ############ Restore Misc Resources ##########
 yamlFiles=()
 yamlFiles+=($BACKUP_DIR/commonservice.operator.ibm.com/common-service.yaml)
 yamlFiles+=($BACKUP_DIR/zenservice.zen.cpd.ibm.com/iaf-zen-cpdservice.yaml)
-echo
-echo "The script will try to apply following additional resources:"
+logInfo "The script will try to apply following additional resources:"
 
 for file in "${yamlFiles[@]}"; do
   rName=$(yq eval '.metadata.name' $file)
   rKind=$(yq eval '.kind' $file)
-  echo -e "\tResource $rKind \x1B[1m$rNamee\x1B[0m  (File: $(basename $file))"
+  logInfo "   Resource $rKind $rName (File: $(basename $file))"
 done
-
 echo
+
 printf "OK to apply these resource definitions? (Yes/No, default Yes): "
 read -rp "" ans
 case "$ans" in
 "n"|"N"|"no"|"No"|"NO")
    echo
-   echo -e "Exiting..."
+   logInfo "Exiting..."
    echo
    exit 0
    ;;
 *)
    echo
-   echo -e "OK..."
+   logInfo "OK..."
+   echo
    ;;
 esac
 
@@ -946,8 +947,10 @@ for file in "${yamlFiles[@]}"; do
   rName=$(yq eval '.metadata.name' $file)
   rKind=$(yq eval '.kind' $file)
   logInfoValue "Defining resource of type $rKind" ${rName}
-    yq eval 'del(.metadata.annotations, .metadata.creationTimestamp, .metadata.resourceVersion, .metadata.uid, .metadata.ownerReferences)' $file | oc apply -f - -n $backupNamespace --overwrite=true
-  done
+  logInfo $(yq eval 'del(.metadata.annotations, .metadata.creationTimestamp, .metadata.resourceVersion, .metadata.uid, .metadata.ownerReferences)' $file | oc apply -f - -n $backupNamespace --overwrite=true)
+done
+echo
+
 
 ################ Restore PVCs ################
 if [ -d $BACKUP_DIR/persistentvolumeclaim ]; then
@@ -1204,9 +1207,11 @@ for p in ${cleanup_contexts[@]}; do
 done
 echo
 
+rm -f $BACKUP_DIR/$(basename $CR_SPEC)
+mv $fileName $BACKUP_DIR/$(basename $CR_SPEC)
+
 logInfo "After deployment of the CP4BA Operator, you should be able to apply the CR from file"
-# TODO Rename the file!
-logInfo "  " $fileName
+logInfo "  " $BACKUP_DIR/$(basename $CR_SPEC)
 echo
 
 # Save some data to Openshift for Post Deployment to pick it up
