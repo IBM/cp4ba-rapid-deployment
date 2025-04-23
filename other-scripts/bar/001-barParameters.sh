@@ -12,7 +12,7 @@
 ###############################################################################
 
 # This script is for holding the Backup And Restore (BAR) parameters for a specific backup or restore.
-#    Only tested with CP4BA version: 21.0.3 IF034, dedicated common services set-up
+#    Only tested with CP4BA version: 21.0.3 IF029 and IF039, dedicated common services set-up
 
 echo "  Reading 001-barParameters.sh ..."
 
@@ -33,29 +33,37 @@ barTokenPass=REQUIRED
 barTokenResolveCp4ba=REQUIRED
 barCp4baHost=REQUIRED
 
-# Name of a directory, in which the persistent volume backups should be stored on the storage server
-pvBackupDirectory="\$HOME/backup"
-
 # Name of the storage class used to create temp PVCs during backup/restore
 pvcStorageClassName="nfs-client"
 
-# Information for backup up Persistent Volumes
-# Name of the Storage classes
+
+
+# Information for backing up or restoring Persistent Volumes
+
+# Name of a directory on the storage server, in which the persistent volume backups should be stored, or from where backups are restored
+pvBackupDirectory="\$HOME/backup"
+
+# Array of names of the Storage classes used in the entire deployment that need to get backed up / restored
 barStorageClass=()
 
-# Backup method. For now support only ServerBackup
+# Array of backup/restore methods to be used, for now only "ServerBackup" is supported
 barMethod=()
 
-# Further Information which is needed. Data formatted as JSON.
+# Array of additional configuration data formatted as JSON:
+# - "rootDirectory" - Required, the root directory on the storage server where the PVs to backup or restore can be found
 barConfigData=()
 
+# Example #1 for information for backup up Persistent Volumes, please adapt accordingly
 barStorageClass[0]="nfs-client"
 barMethod[0]="ServerBackup"
-barConfigData[0]='{ "rootDirectory": "/export"}'
+barConfigData[0]='{ "rootDirectory": "/export" }'
 
+# Example #2 for information for backup up Persistent Volumes, please adapt accordingly or remove if only one storage class is used
 barStorageClass[1]="nfs-client-fast"
 barMethod[1]="ServerBackup"
-barConfigData[1]='{ "rootDirectory": "/faststorage"}'
+barConfigData[1]='{ "rootDirectory": "/faststorage" }'
+
+# Add further array entries as needed here, if more than two storage classes are in use
 
 
 
