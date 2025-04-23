@@ -11,8 +11,8 @@
 #
 ###############################################################################
 
-# This script is for preparing the Backup And Restore (BAR) process, performing health check on all CP4BA components in the given namespace.
-#    Only tested with CP4BA version: 21.0.3 IF034, dedicated common services set-up
+# This script is for preparing the Backup And Restore (BAR) process, performing a health check on all supported CP4BA components in the given namespace.
+#    Only tested with CP4BA version: 21.0.3 IF029 and IF039, dedicated common services set-up
 
 # TODO: We also should check the subscritions, that they are set to manual approval. This is recommended if there are multiple CP deployments. If set to automatic approval, we might want to issue a warning, that user should set them to manual if multiple CPs are installed on this cluster.
 
@@ -21,7 +21,9 @@
 # Check if jq is installed
 type jq > /dev/null 2>&1
 if [ $? -eq 1 ]; then
+  echo
   echo "Please install jq to continue."
+  echo
   exit 1
 fi
 
@@ -108,7 +110,7 @@ if [[ "$WHOAMI" == "" ]]; then
 fi
 echo
 
-# switch to CP4BA project
+# Switch to CP4BA project
 project=$(oc project --short)
 logInfo "project =" $project
 if [[ "$project" != "$cp4baProjectName" ]]; then
@@ -184,7 +186,6 @@ echo
 
 ##### CP4BA component status ###################################################
 # Prereq
-
 logInfo "Checking Prereq..."
 CP4BA_PREREQ_IAF=$(jq -r .status.components.prereq.iafStatus ${BACKUP_ROOT_DIRECTORY_FULL}/CR.json)
 checkResult $CP4BA_PREREQ_IAF "Ready" "CP4BA Prereq iafStatus"
@@ -395,7 +396,7 @@ if [[ $CP4BA_COMPONENTS =~ "application" ]]; then
   fi
 fi
 
-##### decision_ads Pattern #####################################################
+##### Decision_ads Pattern #####################################################
 if [[ $CP4BA_OPTIONAL_COMPONENTS =~ "ads_runtime" ]]; then
   logInfo "Checking Automation Decision Service runtime service..."
   CP4BA_ADS_RUNTIME_SERVICE_DEPLOYMENT=$(jq -r .status.components.adsRuntimeService.adsRuntimeServiceDeployment ${BACKUP_ROOT_DIRECTORY_FULL}/CR.json)
@@ -485,7 +486,7 @@ if [[ $CP4BA_COMPONENTS =~ "workflow" ]]; then
       checkResult $CP4BA_BAW_AUTHORING_SERVICE "Ready" "CP4BA Business Automation Workflow Authoring service status"
       echo
     fi
- else
+  else
     logInfo "Checking Business Automation Workflow Runtime..."
     # BAW may have 1 or more instances.
     CP4BA_BAW_TYPE=$(jq -r .status.components.baw ${BACKUP_ROOT_DIRECTORY_FULL}/CR.json | jq 'type')
@@ -520,8 +521,8 @@ if [[ $CP4BA_COMPONENTS =~ "workflow" ]]; then
       done
     fi
   fi
-
-#TODO is it necessary to check BAML ?
+  
+  #TODO is it necessary to check BAML ?
 fi
 
 ##### Document Processing Pattern ##############################################
@@ -760,12 +761,12 @@ fi
 
 ##### OCP jobs #################################################################
 
+
 ##### OCP Node #################################################################
 
 
 ##### FileNet health ###########################################################
 #TODO ping page?
-
 
 ##### Workflow health ##########################################################
 #TODO check portal, case client connection ?
@@ -787,39 +788,38 @@ fi
 
 ##### Pod health ###############################################################
 logInfo "Checking Pod Health..."
-# logInfo $(oc get pod -o 'custom-columns=NAME:.metadata.name,PHASE:.status.phase,READY:.status.containerStatuses[0].ready' --no-headers --ignore-not-found)
 
-# Pending verified
+# Pending pods
 podsinpending=$(oc get pod -o 'custom-columns=NAME:.metadata.name,PHASE:.status.phase' --no-headers --ignore-not-found | grep 'Pending' | awk '{print $1}')
 if [[ $podsinpending != "" ]]; then
   logError "Pending pods found:" $podsinpending
 fi
 
-# Terminating verified
+# Terminating pods
 podsinterminating=$(oc get pod | grep 'Terminating' | awk '{print $1}')
 if [[ $podsinterminating != "" ]]; then
   logWarning "Terminating pods found:" $podsinterminating
 fi
 
-# CrashLoopBackOff verified
+# CrashLoopBackOff pods
 podsincrashloopbackoff=$(oc get pod --no-headers --ignore-not-found | grep 'CrashLoopBackOff' | awk '{print $1}')
 if [[ $podsincrashloopbackoff != "" ]]; then
   logError "CrashLoopBackOff pods found:" $podsincrashloopbackoff
 fi
 
-# Failed
+# Failed pods
 podsinfailed=$(oc get pod -o 'custom-columns=NAME:.metadata.name,PHASE:.status.phase' --no-headers --ignore-not-found | grep 'Error' | awk '{print $1}')
 if [[ $podsinfailed != "" ]]; then
   logWarning "Failed pods found:" $podsinfailed
 fi
 
-# Unknown
+# Unknown pods
 podsinunknown=$(oc get pod -o 'custom-columns=NAME:.metadata.name,PHASE:.status.phase' --no-headers --ignore-not-found | grep 'Unknown' | awk '{print $1}')
 if [[ $podsinunknown != "" ]]; then
   logWarning "Unknown pods found:" $podsinunknown
 fi
 
-# Running but not Ready verified
+# Running but not Ready pods
 podsnotready=$(oc get pod -o 'custom-columns=NAME:.metadata.name,PHASE:.status.phase,READY:.status.containerStatuses[0].ready' --no-headers --ignore-not-found | grep 'Running' | grep 'false' | awk '{print $1}')
 if [[ $podsnotready != "" ]]; then
   logError "Non-Ready pods found:" $podsnotready
@@ -827,6 +827,8 @@ fi
 echo
 
 
+
+##### Final Summary ###############################################################
 WARNING_COUNT=$(grep WARNING $LOG_FILE | wc -l)
 if [ $WARNING_COUNT -ne 0 ]; then
   logError "Found $WARNING_COUNT warning(s), please check the log for details."
