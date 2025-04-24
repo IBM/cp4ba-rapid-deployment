@@ -38,6 +38,7 @@ if [[ -f $INPUT_PROPS_FILENAME_FULL ]]; then
    fi
 
    echo "Done!"
+   echo
 else
    echo
    echo "File ${INPUT_PROPS_FILENAME_FULL} not found. Pls. check."
@@ -79,7 +80,7 @@ echo
 
 logInfo "postDeploy will use project/namespace ${cp4baProjectName}"
 oc project ${cp4baProjectName} > /dev/null
-logInfo "Current Project now is " $(oc project -q)
+logInfo "Current Project now is" $(oc project -q)
 
 BACKUP_DIR=$(oc get cm cp4ba-backup-and-restore -n ${cp4baProjectName} -o 'jsonpath={.data.backup-dir}' --ignore-not-found)
 
@@ -176,7 +177,7 @@ function bts-cnpg() {
   sleep 5
   echo
 
-  logInfo "Determing current number of BTS replicas and scale it down..."
+  logInfo "Determining current number of BTS replicas and scale it down..."
   local btsReplicaSize=$(oc get bts cp4ba-bts -o jsonpath={.spec.replicas})
   
   local btsReplicas=$(oc get deploy $bts_deployment_name -o 'jsonpath={.spec.replicas}')
@@ -201,12 +202,12 @@ function bts-cnpg() {
     echo
 
     logInfo "Copying Backup into Postgres Pod..."
-    logInfo $(oc cp $BACKUP_DIR/postgresql/backup_btsdb.sql $pgPrimary:/var/lib/postgresql/data/backup_btsdb.sql -c postgres)
+    oc cp $BACKUP_DIR/postgresql/backup_btsdb.sql $pgPrimary:/var/lib/postgresql/data/backup_btsdb.sql -c postgres
 
     logInfo "Restoring Database Backup..."
-    logInfo $(oc exec $pgPrimary -c postgres -- psql -U postgres -f /var/lib/postgresql/data/backup_btsdb.sql -L /var/lib/postgresql/data/restore_btsdb.log -a)
+    oc exec $pgPrimary -c postgres -- psql -U postgres -f /var/lib/postgresql/data/backup_btsdb.sql -L /var/lib/postgresql/data/restore_btsdb.log -a
     logInfo $(oc cp $pgPrimary:/var/lib/postgresql/data/restore_btsdb.log $BACKUP_DIR/restore_btsdb.log -c postgres)
-    logInfo $(oc exec $pgPrimary -c postgres -- rm -f /var/lib/postgresql/data/restore_btsdb.log /var/lib/postgresql/data/backup_btsdb.sql)
+    oc exec $pgPrimary -c postgres -- rm -f /var/lib/postgresql/data/restore_btsdb.log /var/lib/postgresql/data/backup_btsdb.sql
   fi
 
   echo
@@ -221,26 +222,25 @@ function bts-cnpg() {
   logInfo $(oc scale deploy ibm-bts-operator-controller-manager --replicas=1)
 
   echo
-  logInfo "Waiting up to 60 seconds for Operator to come up and update service status"
+  logInfo "Waiting up to 60 seconds for BTS Operator to come up and update service status"
   logInfo $(oc wait --for=jsonpath={.status.serviceStatus}=unready businessteamsservices/cp4ba-bts --timeout=60s)
 
   waitServiceReady=10
   while [ $waitServiceReady -gt 0 ]; do
     btsServicesStatus=$(oc get businessteamsservices cp4ba-bts -o jsonpath={.status.serviceStatus})
     if [ "$btsServicesStatus" == "ready" ]; then
-      logInfo "BTS Serives Status: $btsServicesStatus"
+      logInfo "BTS Service Status: $btsServicesStatus"
       waitServiceReady=0
     else
       waitServiceReady=$((waitServiceReady - 1))
       if [ $waitServiceReady -gt 0 ]; then
-        logInfo "BTS Serives Status: $btsServicesStatus -- waiting up to 60 seconds for an update..."
-	logInfo $(oc wait --for=jsonpath={.status.serviceStatus}=ready businessteamsservices/cp4ba-bts --timeout=60s)
+        logInfo "BTS Service Status: $btsServicesStatus -- waiting up to 60 seconds for an update..."
+	oc wait --for=jsonpath={.status.serviceStatus}=ready businessteamsservices/cp4ba-bts --timeout=60s
       else
-	logInfo "BTS Service didnt reach ready state, at least not yet"
+	logInfo "BTS Service did not reach ready state, at least not yet"
       fi
     fi
   done
-     
 }
 
 function mongoRestore()
@@ -253,7 +253,7 @@ function mongoRestore()
   sed -i "s|§cp4baProjectNamespace|$cp4baProjectName|g; s|§pvcStorageClass|$pvcStorageClassName|g" ${CUR_DIR}/mongodb-backup-pvc.yaml
   sed -i "s|§cp4baProjectNamespace|$cp4baProjectName|g" ${CUR_DIR}/mongodb-backup-deployment.yaml
 
-  # Create resources necessary to backup MongoDB 
+  # Create resources necessary to restore MongoDB 
   logInfo $(oc apply -f ${CUR_DIR}/mongodb-backup-pvc.yaml)
   logInfo $(oc apply -f ${CUR_DIR}/mongodb-backup-deployment.yaml)
 
@@ -264,7 +264,7 @@ function mongoRestore()
 
   for pod in ${mongodbpods[*]}
   do
-    logInfo "Restoring MongoDB in from pod ${pod}..."
+    logInfo "Restoring MongoDB using pod ${pod}..."
     logInfo $(oc cp ${BACKUP_DIR}/mongodb/mongobackup.tar $pod:/dump/mongobackup.tar)
     # prep certs files that will be used to restore the backup
     logInfo $(oc exec $pod -it -- bash -c 'cat /cred/mongo-certs/tls.crt /cred/mongo-certs/tls.key > /work-dir/mongo.pem; cat /cred/cluster-ca/tls.crt /cred/cluster-ca/tls.key > /work-dir/ca.pem')
@@ -318,8 +318,7 @@ function mongoRestore()
 
 function restoreZen()
 {
-
-  ## Take Zen Services Backup
+  ## Restore Zen Services Backup
   # Prime templates 
   logInfo "Priming resources to restore Zen Services"
   cp ${CUR_DIR}/templates/zen-backup-pvc.template.yaml ${CUR_DIR}/zen-backup-pvc.yaml
@@ -407,16 +406,16 @@ postDeployTerminating=No
 while [[ $postDeployTerminating == "No" ]]; do
 
   echo 
-  echo ================================================
-  echo "Select Post Deploy task to execute"
-  echo "1: BTS Postgres License Fix"
-  echo "2: BTS Cloud Native Postgres Database restore"
-  echo "3: MongoDB restore (must restore before Zen Services)"
-  echo "4: Zen Services restore (must restore after MongoDB)"
+  echo ========================================================
+  echo "Select Post Deploy task to execute:"
+  echo "   1: BTS Postgres License Fix"
+  echo "   2: BTS Cloud Native Postgres Database restore"
+  echo "   3: MongoDB restore (must restore before Zen Services)"
+  echo "   4: Zen Services restore (must restore after MongoDB)"
   echo
-  echo "99: Terminate Post Deploy Script"
+  echo "  99: Terminate Post Deploy Script"
   echo 
-  read -p "Please Provide selection: " choice
+  read -p "Please provide selection: " choice
   echo
 
   case "$choice" in
