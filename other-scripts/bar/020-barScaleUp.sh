@@ -13,7 +13,7 @@
 
 # This script is for scaling up the CP4BA deployment after you took a backup as part of the Backup And Restore (BAR) process.
 # It will scale up all CP4BA components in the given namespace.
-#    Only tested with CP4BA version: 21.0.3 IF034, dedicated common services set-up
+#    Only tested with CP4BA version: 21.0.3 IF029 and IF039, dedicated common services set-up
 
 CUR_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
@@ -53,8 +53,8 @@ fi
 
 LOG_FILE="$BACKUP_ROOT_DIRECTORY_FULL/ScaleUpAfterBackup_$(date +'%Y%m%d_%H%M%S').log"
 logInfo "Details will be logged to $LOG_FILE."
-
 echo
+
 echo -e "\x1B[1mThis script scales up namespace ${cp4baProjectName} after you took a backup. It scales up all needed pods. \n \x1B[0m"
 
 printf "Have you completed taking the required backups and do you want to continue? (Yes/No, default: No): "

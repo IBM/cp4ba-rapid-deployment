@@ -23,7 +23,9 @@
 # Check if jq is installed
 type jq > /dev/null 2>&1
 if [ $? -eq 1 ]; then
+  echo
   echo "Please install jq to continue."
+  echo
   exit 1
 fi
 
@@ -380,11 +382,11 @@ if [[ $CP4BA_VERSION =~ "21.0.3" ]]; then
   sed -i.bak "s|§cp4baProjectNamespace|$cp4baProjectName|g" ${CUR_DIR}/mongodb-backup-deployment.yaml
 
   # Create resources necessary to backup MongoDB 
-  oc apply -f ${CUR_DIR}/mongodb-backup-pvc.yaml
-  oc apply -f ${CUR_DIR}/mongodb-backup-deployment.yaml
+  logInfo $(oc apply -f ${CUR_DIR}/mongodb-backup-pvc.yaml)
+  logInfo $(oc apply -f ${CUR_DIR}/mongodb-backup-deployment.yaml)
 
   # Wait indefinitely for deployment to be Available (pod Ready)
-  oc wait -f ${CUR_DIR}/mongodb-backup-deployment.yaml --for=condition=Available --timeout=-1s
+  logInfo $(oc wait -f ${CUR_DIR}/mongodb-backup-deployment.yaml --for=condition=Available --timeout=-1s)
 
   mongodbpods=$(oc get pod -l=foundationservices.cloudpak.ibm.com=mongo-data --no-headers --ignore-not-found | awk '{print $1}' | sort)
 
@@ -392,10 +394,10 @@ if [[ $CP4BA_VERSION =~ "21.0.3" ]]; then
   do
     logInfo "Backing up MongoDB in from pod ${pod}..."
     # prep certs files that will be used to take the backup
-    oc exec $pod -it -- bash -c 'cat /cred/mongo-certs/tls.crt /cred/mongo-certs/tls.key > /work-dir/mongo.pem; cat /cred/cluster-ca/tls.crt /cred/cluster-ca/tls.key > /work-dir/ca.pem'
-    oc exec $pod -it -- bash -c 'mongodump --oplog --out /dump/dump --host mongodb:$MONGODB_SERVICE_PORT --username $ADMIN_USER --password $ADMIN_PASSWORD --authenticationDatabase admin --ssl --sslCAFile /work-dir/ca.pem --sslPEMKeyFile /work-dir/mongo.pem'
-    oc exec $pod -it -- bash -c 'cd /dump && tar -cf mongobackup.tar dump'
-    oc cp $pod:/dump/mongobackup.tar ${BACKUP_DIR}/mongodb/mongobackup.tar
+    logInfo $(oc exec $pod -it -- bash -c 'cat /cred/mongo-certs/tls.crt /cred/mongo-certs/tls.key > /work-dir/mongo.pem; cat /cred/cluster-ca/tls.crt /cred/cluster-ca/tls.key > /work-dir/ca.pem')
+    logInfo $(oc exec $pod -it -- bash -c 'mongodump --oplog --out /dump/dump --host mongodb:$MONGODB_SERVICE_PORT --username $ADMIN_USER --password $ADMIN_PASSWORD --authenticationDatabase admin --ssl --sslCAFile /work-dir/ca.pem --sslPEMKeyFile /work-dir/mongo.pem')
+    logInfo $(oc exec $pod -it -- bash -c 'cd /dump && tar -cf mongobackup.tar dump')
+    logInfo $(oc cp $pod:/dump/mongobackup.tar ${BACKUP_DIR}/mongodb/mongobackup.tar)
     break
   done
 
@@ -403,8 +405,8 @@ if [[ $CP4BA_VERSION =~ "21.0.3" ]]; then
   if [ -e "${BACKUP_DIR}/mongodb/mongobackup.tar" ]; then
     # clean up pod storage and notify successful completion
     logInfo "MongoDB backup completed successfully."
-    oc delete -f ${CUR_DIR}/mongodb-backup-deployment.yaml
-    oc delete -f ${CUR_DIR}/mongodb-backup-pvc.yaml
+    logInfo $(oc delete -f ${CUR_DIR}/mongodb-backup-deployment.yaml)
+    logInfo $(oc delete -f ${CUR_DIR}/mongodb-backup-pvc.yaml)
   else
     logError "MongoDB backup failed, check logs!"
     echo
@@ -430,25 +432,25 @@ if [[ $CP4BA_VERSION =~ "21.0.3" ]]; then
   sed -i.bak "s|§cp4baProjectNamespace|$cp4baProjectName|g" ${CUR_DIR}/zen-backup-deployment.yaml
 
   # Create resources necessary to backup Zen Services
-  oc apply -f ${CUR_DIR}/zen-backup-pvc.yaml
-  oc apply -f ${CUR_DIR}/zen4-br-scripts.yaml
-  oc apply -f ${CUR_DIR}/zen4-sa.yaml
-  oc apply -f ${CUR_DIR}/zen4-role.yaml
-  oc apply -f ${CUR_DIR}/zen4-rolebinding.yaml
-  oc apply -f ${CUR_DIR}/zen-backup-deployment.yaml
+  logInfo $(oc apply -f ${CUR_DIR}/zen-backup-pvc.yaml)
+  logInfo $(oc apply -f ${CUR_DIR}/zen4-br-scripts.yaml)
+  logInfo $(oc apply -f ${CUR_DIR}/zen4-sa.yaml)
+  logInfo $(oc apply -f ${CUR_DIR}/zen4-role.yaml)
+  logInfo $(oc apply -f ${CUR_DIR}/zen4-rolebinding.yaml)
+  logInfo $(oc apply -f ${CUR_DIR}/zen-backup-deployment.yaml)
 
   # Wait indefinitely for deployment to be Available (pod Ready)
-  oc wait -f ${CUR_DIR}/zen-backup-deployment.yaml --for=condition=Available --timeout=-1s
+  logInfo $(oc wait -f ${CUR_DIR}/zen-backup-deployment.yaml --for=condition=Available --timeout=-1s)
 
   zenbkpods=$(oc get pod -l=foundationservices.cloudpak.ibm.com=zen-data --no-headers --ignore-not-found | awk '{print $1}')
 
   for pod in ${zenbkpods[*]}
   do
     logInfo "Backing up Zen Services from pod ${pod}..."
-    oc exec $pod -it -- bash -c "/zen4/zen4-br.sh $cp4baProjectName true"
+    logInfo $(oc exec $pod -it -- bash -c "/zen4/zen4-br.sh $cp4baProjectName true")
     # Go into directory where backup was created and compress into single file
-    oc exec $pod -it -- bash -c "cd /user-home && tar -cf zen-metastoredb-backup.tar zen-metastoredb-backup"
-    oc cp $pod:/user-home/zen-metastoredb-backup.tar ${BACKUP_DIR}/zenbackup/zen-metastoredb-backup.tar
+    logInfo $(oc exec $pod -it -- bash -c "cd /user-home && tar -cf zen-metastoredb-backup.tar zen-metastoredb-backup")
+    logInfo $(oc cp $pod:/user-home/zen-metastoredb-backup.tar ${BACKUP_DIR}/zenbackup/zen-metastoredb-backup.tar)
     break
   done
 
@@ -456,12 +458,12 @@ if [[ $CP4BA_VERSION =~ "21.0.3" ]]; then
   if [ -e "${BACKUP_DIR}/zenbackup/zen-metastoredb-backup.tar" ]; then
     logInfo "Zen Services backup completed successfully."
 
-    oc delete -f ${CUR_DIR}/zen-backup-deployment.yaml
-    oc delete -f ${CUR_DIR}/zen4-rolebinding.yaml
-    oc delete -f ${CUR_DIR}/zen4-role.yaml
-    oc delete -f ${CUR_DIR}/zen4-sa.yaml
-    oc delete -f ${CUR_DIR}/zen4-br-scripts.yaml
-    oc delete -f ${CUR_DIR}/zen-backup-pvc.yaml
+    logInfo $(oc delete -f ${CUR_DIR}/zen-backup-deployment.yaml)
+    logInfo $(oc delete -f ${CUR_DIR}/zen4-rolebinding.yaml)
+    logInfo $(oc delete -f ${CUR_DIR}/zen4-role.yaml)
+    logInfo $(oc delete -f ${CUR_DIR}/zen4-sa.yaml)
+    logInfo $(oc delete -f ${CUR_DIR}/zen4-br-scripts.yaml)
+    logInfo $(oc delete -f ${CUR_DIR}/zen-backup-pvc.yaml)
   else
     logError "Zen Services backup failed, check logs!"
     echo
@@ -481,8 +483,8 @@ btscnpgpods=$(oc get pod -l=app.kubernetes.io/name=ibm-bts-cp4ba-bts --no-header
 for pod in ${btscnpgpods[*]}
 do
   logInfo "Backing up BTS PostgreSQL Database from pod ${pod}..."
-  oc exec --container postgres $pod -it -- bash -c "pg_dump -d BTSDB -U postgres -Fp -c -C --if-exists  -f /var/lib/postgresql/data/backup_btsdb.sql"
-  oc cp --container postgres ${pod}:/var/lib/postgresql/data/backup_btsdb.sql ${BACKUP_DIR}/postgresql/backup_btsdb.sql
+  logInfo $(oc exec --container postgres $pod -it -- bash -c "pg_dump -d BTSDB -U postgres -Fp -c -C --if-exists  -f /var/lib/postgresql/data/backup_btsdb.sql")
+  logInfo $(oc cp --container postgres ${pod}:/var/lib/postgresql/data/backup_btsdb.sql ${BACKUP_DIR}/postgresql/backup_btsdb.sql)
   break
 done
 
@@ -490,7 +492,7 @@ done
 if [ -e "${BACKUP_DIR}/postgresql/backup_btsdb.sql" ]; then
   logInfo "BTS PostgreSQL Database backup completed successfully."
   # clean up pod storage
-  oc exec --container postgres $pod -it -- bash -c "rm -f /var/lib/postgresql/data/backup_btsdb.sql"
+  logInfo $(oc exec --container postgres $pod -it -- bash -c "rm -f /var/lib/postgresql/data/backup_btsdb.sql")
 else
   logError "BTS PostgreSQL Database backup failed, check logs!"
   echo
@@ -533,9 +535,6 @@ if [[ "$MANAGEMENT_POD" != "" ]]; then
   FLINK_PASSWORD=$(oc get secret ${FLINK_AUTH_SECRET} -o jsonpath='{.data.password}' | base64 -d)
   logInfo "Retrieving flink jobs from $MANAGEMENT_URL/api/v1/processing/jobs/list..."
   
-  #FLINK_JOBS=$(curl -sk -u ${MANAGEMENT_USERNAME}:${MANAGEMENT_PASSWORD} $MANAGEMENT_URL/api/v1/processing/jobs/list)
-  #FLINK_JOBS_COUNT=$(echo $FLINK_JOBS |jq '.jobs' | jq 'length')
-  
   # Take savepoints and cancel the jobs
   logInfo "Creating flink savepoints and canceling the jobs..."
   if $useTokenForInsightsengineManagementURL; then
@@ -549,7 +548,6 @@ if [[ "$MANAGEMENT_POD" != "" ]]; then
     FLINK_SAVEPOINT_COUNT=$(echo $FLINK_SAVEPOINT_RESULTS | jq 'length')
   fi
   
-  # TODO: This sometimes does not work, needs further investigation
   for ((i=0; i<$FLINK_SAVEPOINT_COUNT; i++)); do
     FLINK_SAVEPOINT_NAME=$(echo $FLINK_SAVEPOINT_RESULTS | jq -r ".[$i].name")
     FLINK_SAVEPOINT_JID=$(echo $FLINK_SAVEPOINT_RESULTS | jq -r ".[$i].jid")
@@ -557,7 +555,7 @@ if [[ "$MANAGEMENT_POD" != "" ]]; then
     FLINK_SAVEPOINT_LOCATION=$(echo $FLINK_SAVEPOINT_RESULTS | jq -r ".[$i].location")
     logInfo "  Flink savepoint: $FLINK_SAVEPOINT_NAME, JID: $FLINK_SAVEPOINT_JID, STATE: $FLINK_SAVEPOINT_STATE, Location: $FLINK_SAVEPOINT_LOCATION"
     logInfo "  Copying the savepoint to ${BACKUP_DIR}/flink/${FLINK_SAVEPOINT_LOCATION}..."
-    oc cp --container management ${MANAGEMENT_POD}:${FLINK_SAVEPOINT_LOCATION} ${BACKUP_DIR}/flink${FLINK_SAVEPOINT_LOCATION}
+    logInfo $(oc cp --container management ${MANAGEMENT_POD}:${FLINK_SAVEPOINT_LOCATION} ${BACKUP_DIR}/flink${FLINK_SAVEPOINT_LOCATION})
   done
   echo
 fi
@@ -573,8 +571,6 @@ if [[ $CP4BA_VERSION =~ "21.0.3" ]]; then
   else
     curl -skl -u elasticsearch-admin:$ELASTICSEARCH_PASSWORD -XPUT "https://$ELASTICSEARCH_ROUTE/_snapshot/${DATETIMESTR}" -H "Content-Type: application/json" -d'{"type":"fs","settings":{"location": "/usr/share/elasticsearch/snapshots/main","compress": true}}'
   fi
-  # TODO: Test if we would be able to call the APIs from within the pod
-  # oc exec --container elasticsearch iaf-system-elasticsearch-es-data-0 -it -- bash -c "curl -skl -u elasticsearch-admin:$ELASTICSEARCH_PASSWORD -XPUT \"localhost:${ELASTIC_CLIENT_PORT}/_snapshot/${DATETIMESTR}\" -H \"Content-Type: application/json\" -d'{\"type\":\"fs\",\"settings\":{\"location\": \"/usr/share/elasticsearch/snapshots/main\",\"compress\": true}}'"
   logInfo "Creating snapshot backup_${DATETIMESTR}..."
   if $useTokenForElasticsearchRoute; then
     SNAPSHOT_RESULT=$(curl -skL --header "Authorization: ${cp4batoken}" -u elasticsearch-admin:${ELASTICSEARCH_PASSWORD} -XPUT "https://${ELASTICSEARCH_ROUTE}/_snapshot/${DATETIMESTR}/backup_${DATETIMESTR}?wait_for_completion=true&pretty=true" --resolve "${barTokenResolveCp4ba}")
@@ -585,21 +581,14 @@ if [[ $CP4BA_VERSION =~ "21.0.3" ]]; then
   checkResult $SNAPSHOT_STATE "SUCCESS" "Snapshot state"
   
   # Snapshots are kept in the pod in directory /usr/share/elasticsearch/snapshots/main
-  oc exec --container elasticsearch iaf-system-elasticsearch-es-data-0 -it -- bash -c "tar -cf /usr/share/elasticsearch/es_snapshots_main_backup_${DATETIMESTR}.tgz /usr/share/elasticsearch/snapshots/main"
-  oc cp --container elasticsearch iaf-system-elasticsearch-es-data-0:/usr/share/elasticsearch/es_snapshots_main_backup_${DATETIMESTR}.tgz ${BACKUP_DIR}/es_snapshots_main_backup_${DATETIMESTR}.tgz
+  logInfo $(oc exec --container elasticsearch iaf-system-elasticsearch-es-data-0 -it -- bash -c "tar -cf /usr/share/elasticsearch/es_snapshots_main_backup_${DATETIMESTR}.tgz /usr/share/elasticsearch/snapshots/main")
+  logInfo $(oc cp --container elasticsearch iaf-system-elasticsearch-es-data-0:/usr/share/elasticsearch/es_snapshots_main_backup_${DATETIMESTR}.tgz ${BACKUP_DIR}/es_snapshots_main_backup_${DATETIMESTR}.tgz)
 
   # check if backup was taken successfully
   if [ -e "${BACKUP_DIR}/es_snapshots_main_backup_${DATETIMESTR}.tgz" ]; then
     logInfo "Elasticsearch backup completed successfully."
     # Clean up, delete the tar, but not the snapshot and the repository
-    oc exec --container elasticsearch iaf-system-elasticsearch-es-data-0 -it -- bash -c "rm -f /usr/share/elasticsearch/es_snapshots_main_backup_${DATETIMESTR}.tgz"
-#    if $useTokenForElasticsearchRoute; then
-#      curl -skL --header "Authorization: ${cp4batoken}" -u elasticsearch-admin:${ELASTICSEARCH_PASSWORD} -X DELETE "https://$ELASTICSEARCH_ROUTE/_snapshot/${DATETIMESTR}/backup_${DATETIMESTR}?pretty" --resolve "${barTokenResolveCp4ba}"
-#      curl -skL --header "Authorization: ${cp4batoken}" -u elasticsearch-admin:${ELASTICSEARCH_PASSWORD} -X DELETE "https://$ELASTICSEARCH_ROUTE/_snapshot/${DATETIMESTR}?pretty" --resolve "${barTokenResolveCp4ba}"
-#    else
-#      curl -skL -u elasticsearch-admin:${ELASTICSEARCH_PASSWORD} -X DELETE "https://$ELASTICSEARCH_ROUTE/_snapshot/${DATETIMESTR}/backup_${DATETIMESTR}?pretty"
-#      curl -skL -u elasticsearch-admin:${ELASTICSEARCH_PASSWORD} -X DELETE "https://$ELASTICSEARCH_ROUTE/_snapshot/${DATETIMESTR}?pretty"
-#    fi
+    logInfo $(oc exec --container elasticsearch iaf-system-elasticsearch-es-data-0 -it -- bash -c "rm -f /usr/share/elasticsearch/es_snapshots_main_backup_${DATETIMESTR}.tgz")
   else
     logError "Elasticsearch backup failed, check the logs!"
     echo
@@ -856,7 +845,7 @@ rm $propertiesfile.bak
 
 ##### Finally... ###########################################
 logInfo "Environment is scaled down, all resources are backed up. Next, please back up:"
-logInfo "  - the content of the PVs (by running the just generated script $BACKUP_DIR/025-backup-pvs.sh on the storage server using the root account)"
+logInfo "  - the content of the PVs (by running the just generated script(s) $BACKUP_DIR/025-backup-pvs-<storageclass>.sh on the storage server using the root account)"
 logInfo "  - the databases"
 logInfo "  - the binary document data of CPE"
 echo
