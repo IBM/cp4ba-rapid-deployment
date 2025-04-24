@@ -12,20 +12,24 @@
 ###############################################################################
 
 # This script is for preparing the Restore (BAR) process, creating the cp4ba namespace,
-# restoring the persistent volumes and persistent volume claims, and creating the secrets.
-#    Only tested with CP4BA version: 21.0.3 IF034, dedicated common services set-up
+# restoring the persistent volumes and persistent volume claims, creating the secrets and other required resources.
+#    Only tested with CP4BA version: 21.0.3 IF029 and IF039, dedicated common services set-up
 
 # Check if jq is installed
 type jq > /dev/null 2>&1
 if [ $? -eq 1 ]; then
+  echo
   echo "Please install jq to continue."
+  echo
   exit 1
 fi
 
 # Check if yq is installed
 type yq > /dev/null 2>&1
 if [ $? -eq 1 ]; then
+  echo
   echo "Please install yq (https://github.com/mikefarah/yq/releases) to continue."
+  echo
   exit 1
 fi
 
@@ -62,7 +66,7 @@ if [[ -d $BACKUP_ROOT_DIRECTORY_FULL ]]; then
    echo 
 else
    echo
-   logError "Backup Directory ${cp4baProjectName} does not exist"
+   echo "Backup Directory ${cp4baProjectName} does not exist"
    echo
    exit 1
 fi
@@ -142,7 +146,7 @@ function restore_this_secret() {
   local sedexpr=$(printf 's/%s/CRNAME/g' $crname)
   local secretname=$(echo ${secretname} | sed $sedexpr)
   
-  # when using custom zen route JDR
+  # when using custom zen route
   if [[ $secretname == zen-ca-cert-secret   ]]; then return 0; fi
   # Metastore secret metastore-secret 
   if [[ $secretname == metastore-secret  ]]; then return 0; fi
@@ -232,6 +236,9 @@ function restore_this_secret() {
   return 1
 }
 
+# $1 SecretName name to restore
+# $2 SecretFile from where to restore
+# $3 Namespace where to restore the secret
 function restore_secret() {
   local secretName=$1
   local secretFile=$2
@@ -1114,6 +1121,7 @@ pvBackupDirectory="${PV_BACKUP_DIR}"
 
 if [ ! -d \$pvBackupDirectory ]; then 
     echo "**** Did not find PV Backup Directory \$pvBackupDirectory"
+    echo
     exit 1
 fi
 

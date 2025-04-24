@@ -11,9 +11,9 @@
 #
 ###############################################################################
 
-# This script is for preparing the Restore (BAR) process, creating the cp4ba namespace,
-# restoring the persistent volumes and persistent volume claims, and creating the secrets.
-#    Only tested with CP4BA version: 21.0.3 IF034, dedicated common services set-up
+# This script is for finalizing the Restore (BAR) process, applying the BTS postgres license fix,
+# restoring the BTS data, restoring mongo db data and restoring zen services data.
+#    Only tested with CP4BA version: 21.0.3 IF029 and IF039, dedicated common services set-up
 
 CUR_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
@@ -50,14 +50,18 @@ fi
 # Check if jq is installed
 type jq > /dev/null 2>&1
 if [ $? -eq 1 ]; then
+  echo
   echo "Please install jq to continue."
+  echo
   exit 1
 fi
 
 # Check if yq is installed
 type yq > /dev/null 2>&1
 if [ $? -eq 1 ]; then
+  echo
   echo "Please install yq (https://github.com/mikefarah/yq/releases) to continue."
+  echo
   exit 1
 fi
 
@@ -81,11 +85,13 @@ BACKUP_DIR=$(oc get cm cp4ba-backup-and-restore -n ${cp4baProjectName} -o 'jsonp
 
 if [[ -z $BACKUP_DIR ]]; then
    logError "Could not find configmap cp4ba-backup-and-restore."
+   echo
    exit 1
 fi
 
 if [[ ! -d $BACKUP_DIR ]]; then
    logError "Backup Directory does not exist: $BACKUP_DIR"
+   echo
    exit 1
 fi
 
@@ -94,12 +100,12 @@ BACKUP_ROOT_DIRECTORY_FULL=$(dirname $BACKUP_DIR)
 if [[ -d $BACKUP_ROOT_DIRECTORY_FULL ]]; then
    echo 
 else
-   # I think that cannot happen, but ok.
    logError "Backup Directory ${cp4baProjectName} does not exist"
+   echo
    exit 1
 fi
 
-LOG_FILE="$BACKUP_ROOT_DIRECTORY_FULL/postDeploy_$(date +'%Y%m%d_%H%M%S').log"
+LOG_FILE="$BACKUP_ROOT_DIRECTORY_FULL/PostDeploy_$(date +'%Y%m%d_%H%M%S').log"
 logInfo "Details will be logged to $LOG_FILE."
 echo
 
@@ -114,15 +120,15 @@ function bts-license() {
   logInfo "License Status of BTS Postgres: $licenseValid"
   if [[ "$licenseValid" == "false" || "$licenseValid" == "False" ]]; then
     logInfo "Applying License Fix"
-    oc annotate secret postgresql-operator-controller-manager-config  ibm-bts/skip-updates="true"
-    oc get job create-postgres-license-config -o yaml | \
+    logInfo $(oc annotate secret postgresql-operator-controller-manager-config  ibm-bts/skip-updates="true")
+    logInfo $(oc get job create-postgres-license-config -o yaml | \
       sed -e 's/operator.ibm.com\/opreq-control: "true"/operator.ibm.com\/opreq-control: "false"/' \
           -e 's|\(image: \).*|\1"cp.icr.io/cp/cpd/edb-postgres-license-provider@sha256:c1670e7dd93c1e65a6659ece644e44aa5c2150809ac1089e2fd6be37dceae4ce"|' \
           -e '/controller-uid:/d' | \
-    oc replace --force -f - 
+      oc replace --force -f -)
     echo
     logInfo "Waiting for create-postgres-license-config job to be completed"
-    oc wait --for=condition=complete job/create-postgres-license-config
+    logInfo $(oc wait --for=condition=complete job/create-postgres-license-config)
     echo
 
     waitCounter=10
@@ -166,7 +172,7 @@ function bts-cnpg() {
   logInfo "Executing BTS CNPG Database Restore"
 
   logInfo "Shutting down BTS Operator..."
-  oc scale deploy ibm-bts-operator-controller-manager --replicas=0 -n ${cp4baProjectName}
+  logInfo $(oc scale deploy ibm-bts-operator-controller-manager --replicas=0 -n ${cp4baProjectName})
   sleep 5
   echo
 
@@ -175,8 +181,8 @@ function bts-cnpg() {
   
   local btsReplicas=$(oc get deploy $bts_deployment_name -o 'jsonpath={.spec.replicas}')
   logInfo "BTS desired replicas $btsReplicaSize currently scaled to $btsReplicas -- scaling it down to zero..."
-  oc patch bts cp4ba-bts --type merge --patch '{"spec":{"replicas":0}}'
-  oc scale deploy $bts_deployment_name -n ${cp4baProjectName} --replicas=0
+  logInfo $(oc patch bts cp4ba-bts --type merge --patch '{"spec":{"replicas":0}}')
+  logInfo $(oc scale deploy $bts_deployment_name -n ${cp4baProjectName} --replicas=0)
 
   echo
   logInfo "Wait 10 seconds"
@@ -195,28 +201,28 @@ function bts-cnpg() {
     echo
 
     logInfo "Copying Backup into Postgres Pod..."
-    oc cp $BACKUP_DIR/postgresql/backup_btsdb.sql $pgPrimary:/var/lib/postgresql/data/backup_btsdb.sql -c postgres
+    logInfo $(oc cp $BACKUP_DIR/postgresql/backup_btsdb.sql $pgPrimary:/var/lib/postgresql/data/backup_btsdb.sql -c postgres)
 
     logInfo "Restoring Database Backup..."
-    oc exec $pgPrimary -c postgres -- psql -U postgres -f /var/lib/postgresql/data/backup_btsdb.sql -L /var/lib/postgresql/data/restore_btsdb.log -a >> $LOG_FILE 2>&1
-    oc cp $pgPrimary:/var/lib/postgresql/data/restore_btsdb.log $BACKUP_DIR/restore_btsdb.log -c postgres
-    oc exec $pgPrimary -c postgres -- rm -f /var/lib/postgresql/data/restore_btsdb.log /var/lib/postgresql/data/backup_btsdb.sql
+    logInfo $(oc exec $pgPrimary -c postgres -- psql -U postgres -f /var/lib/postgresql/data/backup_btsdb.sql -L /var/lib/postgresql/data/restore_btsdb.log -a)
+    logInfo $(oc cp $pgPrimary:/var/lib/postgresql/data/restore_btsdb.log $BACKUP_DIR/restore_btsdb.log -c postgres)
+    logInfo $(oc exec $pgPrimary -c postgres -- rm -f /var/lib/postgresql/data/restore_btsdb.log /var/lib/postgresql/data/backup_btsdb.sql)
   fi
 
   echo
   logInfo "Scaling up BTS again"
   local btsScaleSpec=$(printf '{"spec":{"replicas":%s}}' $btsReplicaSize)
-  oc patch bts cp4ba-bts --type merge --patch $btsScaleSpec
-  oc scale deploy $bts_deployment_name -n ${cp4baProjectName} --replicas=$btsReplicas
+  logInfo $(oc patch bts cp4ba-bts --type merge --patch $btsScaleSpec)
+  logInfo $(oc scale deploy $bts_deployment_name -n ${cp4baProjectName} --replicas=$btsReplicas)
   sleep 5
-
   echo
+  
   logInfo "Scaling up BTS Operator again"
-  oc scale deploy ibm-bts-operator-controller-manager --replicas=1
+  logInfo $(oc scale deploy ibm-bts-operator-controller-manager --replicas=1)
 
   echo
   logInfo "Waiting up to 60 seconds for Operator to come up and update service status"
-  oc wait --for=jsonpath={.status.serviceStatus}=unready businessteamsservices/cp4ba-bts --timeout=60s
+  logInfo $(oc wait --for=jsonpath={.status.serviceStatus}=unready businessteamsservices/cp4ba-bts --timeout=60s)
 
   waitServiceReady=10
   while [ $waitServiceReady -gt 0 ]; do
@@ -228,7 +234,7 @@ function bts-cnpg() {
       waitServiceReady=$((waitServiceReady - 1))
       if [ $waitServiceReady -gt 0 ]; then
         logInfo "BTS Serives Status: $btsServicesStatus -- waiting up to 60 seconds for an update..."
-	oc wait --for=jsonpath={.status.serviceStatus}=ready businessteamsservices/cp4ba-bts --timeout=60s
+	logInfo $(oc wait --for=jsonpath={.status.serviceStatus}=ready businessteamsservices/cp4ba-bts --timeout=60s)
       else
 	logInfo "BTS Service didnt reach ready state, at least not yet"
       fi
@@ -248,24 +254,24 @@ function mongoRestore()
   sed -i "s|§cp4baProjectNamespace|$cp4baProjectName|g" ${CUR_DIR}/mongodb-backup-deployment.yaml
 
   # Create resources necessary to backup MongoDB 
-  oc apply -f ${CUR_DIR}/mongodb-backup-pvc.yaml
-  oc apply -f ${CUR_DIR}/mongodb-backup-deployment.yaml
+  logInfo $(oc apply -f ${CUR_DIR}/mongodb-backup-pvc.yaml)
+  logInfo $(oc apply -f ${CUR_DIR}/mongodb-backup-deployment.yaml)
 
   # Wait indefinitely for deployment to be Available (pod Ready)
-  oc wait -f ${CUR_DIR}/mongodb-backup-deployment.yaml --for=condition=Available --timeout=-1s
+  logInfo $(oc wait -f ${CUR_DIR}/mongodb-backup-deployment.yaml --for=condition=Available --timeout=-1s)
 
   mongodbpods=$(oc get pod -l=foundationservices.cloudpak.ibm.com=mongo-data --no-headers --ignore-not-found | awk '{print $1}' | sort)
 
   for pod in ${mongodbpods[*]}
   do
     logInfo "Restoring MongoDB in from pod ${pod}..."
-    oc cp ${BACKUP_DIR}/mongodb/mongobackup.tar $pod:/dump/mongobackup.tar
-    # prep certs files that will be used to take the backup
-    oc exec $pod -it -- bash -c 'cat /cred/mongo-certs/tls.crt /cred/mongo-certs/tls.key > /work-dir/mongo.pem; cat /cred/cluster-ca/tls.crt /cred/cluster-ca/tls.key > /work-dir/ca.pem'
+    logInfo $(oc cp ${BACKUP_DIR}/mongodb/mongobackup.tar $pod:/dump/mongobackup.tar)
+    # prep certs files that will be used to restore the backup
+    logInfo $(oc exec $pod -it -- bash -c 'cat /cred/mongo-certs/tls.crt /cred/mongo-certs/tls.key > /work-dir/mongo.pem; cat /cred/cluster-ca/tls.crt /cred/cluster-ca/tls.key > /work-dir/ca.pem')
     # extract mongo backup
-    oc exec $pod -it -- bash -c 'cd /dump && tar -xvf mongobackup.tar'
+    logInfo $(oc exec $pod -it -- bash -c 'cd /dump && tar -xvf mongobackup.tar')
     # run the actual restore
-    oc exec $pod -it -- bash -c 'mongorestore --db platform-db --host rs0/icp-mongodb-0.icp-mongodb.$NAMESPACE.svc.cluster.local,icp-mongodb-1.icp-mongodb.$NAMESPACE.svc.cluster.local,icp-mongodb-2.icp-mongodb.$NAMESPACE.svc.cluster.local --port $MONGODB_SERVICE_PORT --username $ADMIN_USER --password $ADMIN_PASSWORD --authenticationDatabase admin --ssl --sslCAFile /work-dir/ca.pem --sslPEMKeyFile /work-dir/mongo.pem /dump/dump/platform-db --drop'
+    logInfo $(oc exec $pod -it -- bash -c 'mongorestore --db platform-db --host rs0/icp-mongodb-0.icp-mongodb.$NAMESPACE.svc.cluster.local,icp-mongodb-1.icp-mongodb.$NAMESPACE.svc.cluster.local,icp-mongodb-2.icp-mongodb.$NAMESPACE.svc.cluster.local --port $MONGODB_SERVICE_PORT --username $ADMIN_USER --password $ADMIN_PASSWORD --authenticationDatabase admin --ssl --sslCAFile /work-dir/ca.pem --sslPEMKeyFile /work-dir/mongo.pem /dump/dump/platform-db --drop')
     break
   done
 
@@ -276,32 +282,32 @@ function mongoRestore()
   # oc delete secret ibm-iam-bindinfo-zen-serviceid-apikey-secret
   # oc apply -f ${BACKUP_DIR}/secret/ibm-iam-bindinfo-zen-serviceid-apikey-secret.yaml
   file=${BACKUP_DIR}/secret/ibm-iam-bindinfo-zen-serviceid-apikey-secret.yaml
-  yq eval 'del(.metadata.annotations, .metadata.creationTimestamp, .metadata.resourceVersion, .metadata.uid, .metadata.ownerReferences)' $file | oc apply -f - -n $cp4baProjectName --overwrite=true
+  logInfo $(yq eval 'del(.metadata.annotations, .metadata.creationTimestamp, .metadata.resourceVersion, .metadata.uid, .metadata.ownerReferences)' $file | oc apply -f - -n $cp4baProjectName --overwrite=true)
 
   # oc delete secret zen-serviceid-apikey-secret
   # oc apply -f ${BACKUP_DIR}/secret/zen-serviceid-apikey-secret.yaml
   file=${BACKUP_DIR}/secret/zen-serviceid-apikey-secret.yaml
-  yq eval 'del(.metadata.annotations, .metadata.creationTimestamp, .metadata.resourceVersion, .metadata.uid, .metadata.ownerReferences)' $file | oc apply -f - -n $cp4baProjectName --overwrite=true
+  logInfo $(yq eval 'del(.metadata.annotations, .metadata.creationTimestamp, .metadata.resourceVersion, .metadata.uid, .metadata.ownerReferences)' $file | oc apply -f - -n $cp4baProjectName --overwrite=true)
 
   # oc delete secret icp-serviceid-apikey-secret
   # oc apply -f ${BACKUP_DIR}/secret/icp-serviceid-apikey-secret.yaml
   file=${BACKUP_DIR}/secret/icp-serviceid-apikey-secret.yaml
-  yq eval 'del(.metadata.annotations, .metadata.creationTimestamp, .metadata.resourceVersion, .metadata.uid, .metadata.ownerReferences)' $file | oc apply -f - -n $cp4baProjectName --overwrite=true
+  logInfo $(yq eval 'del(.metadata.annotations, .metadata.creationTimestamp, .metadata.resourceVersion, .metadata.uid, .metadata.ownerReferences)' $file | oc apply -f - -n $cp4baProjectName --overwrite=true)
 
   #restart pods that require restarting 
   logInfo "Restarting required pods..."
-  oc delete pod --selector='name=ibm-iam-operator'
-  oc delete pod --selector='app=secret-watcher'
-  oc delete pod --selector='component=usermgmt'
+  logInfo $(oc delete pod --selector='name=ibm-iam-operator')
+  logInfo $(oc delete pod --selector='app=secret-watcher')
+  logInfo $(oc delete pod --selector='component=usermgmt')
 
-  oc wait -f ${BACKUP_DIR}/deployment.apps/ibm-iam-operator.yaml --for=condition=Available --timeout=-1s 
-  oc wait -f ${BACKUP_DIR}/deployment.apps/secret-watcher.yaml --for=condition=Available --timeout=-1s
-  oc wait -f ${BACKUP_DIR}/deployment.apps/usermgmt.yaml --for=condition=Available --timeout=-1s
+  logInfo $(oc wait -f ${BACKUP_DIR}/deployment.apps/ibm-iam-operator.yaml --for=condition=Available --timeout=-1s)
+  logInfo $(oc wait -f ${BACKUP_DIR}/deployment.apps/secret-watcher.yaml --for=condition=Available --timeout=-1s)
+  logInfo $(oc wait -f ${BACKUP_DIR}/deployment.apps/usermgmt.yaml --for=condition=Available --timeout=-1s)
 
   # clean up
   logInfo "Cleaning up..."
-  oc delete -f ${CUR_DIR}/mongodb-backup-deployment.yaml
-  oc delete -f ${CUR_DIR}/mongodb-backup-pvc.yaml
+  logInfo $(oc delete -f ${CUR_DIR}/mongodb-backup-deployment.yaml)
+  logInfo $(oc delete -f ${CUR_DIR}/mongodb-backup-pvc.yaml)
 
   rm -f ${CUR_DIR}/mongodb-backup-deployment.yaml
   rm -f ${CUR_DIR}/mongodb-backup-pvc.yaml
@@ -330,16 +336,16 @@ function restoreZen()
   sed -i "s|§cp4baProjectNamespace|$cp4baProjectName|g" ${CUR_DIR}/zen4-rolebinding.yaml
   sed -i "s|§cp4baProjectNamespace|$cp4baProjectName|g" ${CUR_DIR}/zen-backup-deployment.yaml
 
-  # Create resources necessary to backup Zen Services
-  oc apply -f ${CUR_DIR}/zen-backup-pvc.yaml
-  oc apply -f ${CUR_DIR}/zen4-br-scripts.yaml
-  oc apply -f ${CUR_DIR}/zen4-sa.yaml
-  oc apply -f ${CUR_DIR}/zen4-role.yaml
-  oc apply -f ${CUR_DIR}/zen4-rolebinding.yaml
-  oc apply -f ${CUR_DIR}/zen-backup-deployment.yaml
+  # Create resources necessary to restore Zen Services
+  logInfo $(oc apply -f ${CUR_DIR}/zen-backup-pvc.yaml)
+  logInfo $(oc apply -f ${CUR_DIR}/zen4-br-scripts.yaml)
+  logInfo $(oc apply -f ${CUR_DIR}/zen4-sa.yaml)
+  logInfo $(oc apply -f ${CUR_DIR}/zen4-role.yaml)
+  logInfo $(oc apply -f ${CUR_DIR}/zen4-rolebinding.yaml)
+  logInfo $(oc apply -f ${CUR_DIR}/zen-backup-deployment.yaml)
 
   # Wait indefinitely for deployment to be Available (pod Ready)
-  oc wait -f ${CUR_DIR}/zen-backup-deployment.yaml --for=condition=Available --timeout=-1s
+  logInfo $(oc wait -f ${CUR_DIR}/zen-backup-deployment.yaml --for=condition=Available --timeout=-1s)
 
   # Grab the values from the new cpd-oidcclient-secret and update zenbackup data with it
   # This is required because the cpd-oidcclient-secret 
@@ -351,12 +357,12 @@ function restoreZen()
 
 
   if [[  "$newClientSecret" == "" || "$newClientID" == "" || "$oldClientSecret" == "" || "$oldClientID" == "" ]]; then
-   # I think that cannot happen, but ok.
    logError "Unable to retrieve new and old values for cpd-oidcclient-secret."
-   echo "Client secret from current install: " $newClientSecret
-   echo "Client ID from current install: " $newClientID
-   echo "Client secret from backup: " $oldClientSecret
-   echo "Client ID from backup: " $oldClientID
+   logError "Client secret from current install: " $newClientSecret
+   logError "Client ID from current install: " $newClientID
+   logError "Client secret from backup: " $oldClientSecret
+   logError "Client ID from backup: " $oldClientID
+   echo
    exit 1
   fi
 
@@ -365,26 +371,26 @@ function restoreZen()
   for pod in ${zenbkpods[*]}
   do
     logInfo "Restoring Zen Services from pod ${pod}..."
-    oc cp ${BACKUP_DIR}/zenbackup/zen-metastoredb-backup.tar $pod:/user-home/zen-metastoredb-backup.tar
-    oc exec $pod -it -- bash -c "cd /user-home && tar -xvf zen-metastoredb-backup.tar"
+    logInfo $(oc cp ${BACKUP_DIR}/zenbackup/zen-metastoredb-backup.tar $pod:/user-home/zen-metastoredb-backup.tar)
+    logInfo $(oc exec $pod -it -- bash -c "cd /user-home && tar -xvf zen-metastoredb-backup.tar")
 
     # create sed script to switch new cpd oidc info 
-    oc exec $pod -it -- bash -c "cd /user-home && echo s/$oldClientSecret/$newClientSecret/g>switch.sed && echo s/$oldClientID/$newClientID/g>>switch.sed && cat switch.sed"
-    oc exec $pod -it -- bash -c "cd /user-home && sed -i -f switch.sed zen-metastoredb-backup/oidc/oidcConfig.json"
+    logInfo $(oc exec $pod -it -- bash -c "cd /user-home && echo s/$oldClientSecret/$newClientSecret/g>switch.sed && echo s/$oldClientID/$newClientID/g>>switch.sed && cat switch.sed")
+    logInfo $(oc exec $pod -it -- bash -c "cd /user-home && sed -i -f switch.sed zen-metastoredb-backup/oidc/oidcConfig.json")
    
     # restore zen services
-    oc exec $pod -it -- bash -c "/zen4/zen4-br.sh $cp4baProjectName false"
+    logInfo $(oc exec $pod -it -- bash -c "/zen4/zen4-br.sh $cp4baProjectName false")
     break
   done
 
   # clean up    
   logInfo "Cleaning up..."
-  oc delete -f ${CUR_DIR}/zen-backup-deployment.yaml
-  oc delete -f ${CUR_DIR}/zen4-rolebinding.yaml
-  oc delete -f ${CUR_DIR}/zen4-role.yaml
-  oc delete -f ${CUR_DIR}/zen4-sa.yaml
-  oc delete -f ${CUR_DIR}/zen4-br-scripts.yaml
-  oc delete -f ${CUR_DIR}/zen-backup-pvc.yaml
+  logInfo $(oc delete -f ${CUR_DIR}/zen-backup-deployment.yaml)
+  logInfo $(oc delete -f ${CUR_DIR}/zen4-rolebinding.yaml)
+  logInfo $(oc delete -f ${CUR_DIR}/zen4-role.yaml)
+  logInfo $(oc delete -f ${CUR_DIR}/zen4-sa.yaml)
+  logInfo $(oc delete -f ${CUR_DIR}/zen4-br-scripts.yaml)
+  logInfo $(oc delete -f ${CUR_DIR}/zen-backup-pvc.yaml)
 
   rm -f ${CUR_DIR}/zen-backup-deployment.yaml
   rm -f ${CUR_DIR}/zen4-rolebinding.yaml
@@ -423,3 +429,4 @@ while [[ $postDeployTerminating == "No" ]]; do
 done
 
 logInfo "Have a nice day"
+echo

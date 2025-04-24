@@ -10,7 +10,7 @@
 #
 ###############################################################################
 
-bar_version=0.4
+bar_version=0.5
 
 # This script contains shared utility functions.
 
