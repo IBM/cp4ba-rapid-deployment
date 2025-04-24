@@ -183,10 +183,10 @@ echo
 logInfo "Deleting operandbindinfo"
 logInfo $(oc delete operandbindinfo --all -n "$cp4baProjectName")
 sleep 5
-logInfo "Deleteing operandrequest" 
+logInfo "Deleting operandrequest" 
 logInfo $(oc delete operandrequest --all -n "$cp4baProjectName")
 sleep 5
-logInfo "Deleting operandConfig"
+logInfo "Deleting operandconfig"
 logInfo $(oc delete operandconfig --all -n "$cp4baProjectName")
 sleep 5
 logInfo "Deleting operandregistry"
