@@ -12,7 +12,7 @@
 ###############################################################################
 
 # This script is for preparing a restore of the given namespace. It will delete all CP4BA components in the given namespace.
-#    Only tested with CP4BA version: 21.0.3 IF029 and 039, dedicated common services set-up
+#    Only tested with CP4BA version: 21.0.3 IF029 and IF039, dedicated common services set-up
 
 CUR_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
@@ -122,7 +122,7 @@ CR_NAME=$(oc get icp4acluster -n "$cp4baProjectName" -o jsonpath='{.items[*].met
 if [ -z "$CR_NAME" ]; then
   logInfo "No ICP4ACluster found in namespace $cp4baProjectName."
   echo
-  #exit 0
+  exit 1
 else
   # Delete the custom resource - icp4acluster
   logInfo "Deleting Custom Resource $CR_NAME in namespace $cp4baProjectName..."
@@ -193,10 +193,6 @@ logInfo "Deleting operandregistry"
 logInfo $(oc delete operandregistry --all -n "$cp4baProjectName")
 sleep 5
 echo
-
-#Deleting Operand-deployment-lifecycle-namager subscription
-#oc delete subscription "operand-deployment-lifecycle-manager-app" -n "$cp4baProjectName"
-#sleep 5
 
 logInfo "Deleting Common service, CSV and subscription"
 logInfo $(oc delete commonservice common-service -n "$cp4baProjectName" --ignore-not-found=true)
@@ -309,12 +305,13 @@ while true; do
   else
      ((count += 1))
      if ((count <= 10)); then
-  logInfo "Waiting for namespace $cp4baProjectName to be terminated.  ... Rechecking in  10 seconds"
-  sleep 10
+       logInfo "Waiting for namespace $cp4baProjectName to be terminated.  ... Rechecking in  10 seconds"
+       sleep 10
      else
-  logError "Deleting namespace $cp4baProjectName is taking too long and giving up"
-  logError $(oc get project "$cp4baProjectName" -o yaml)
-  exit 1
+       logError "Deleting namespace $cp4baProjectName is taking too long and giving up"
+       logError $(oc get project "$cp4baProjectName" -o yaml)
+       echo
+       exit 1
      fi
   fi
 done
