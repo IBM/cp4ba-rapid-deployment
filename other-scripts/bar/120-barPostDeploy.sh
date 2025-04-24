@@ -259,26 +259,29 @@ function mongoRestore()
 
   # Wait indefinitely for deployment to be Available (pod Ready)
   logInfo $(oc wait -f ${CUR_DIR}/mongodb-backup-deployment.yaml --for=condition=Available --timeout=-1s)
+  echo
 
   mongodbpods=$(oc get pod -l=foundationservices.cloudpak.ibm.com=mongo-data --no-headers --ignore-not-found | awk '{print $1}' | sort)
 
   for pod in ${mongodbpods[*]}
   do
     logInfo "Restoring MongoDB using pod ${pod}..."
-    logInfo $(oc cp ${BACKUP_DIR}/mongodb/mongobackup.tar $pod:/dump/mongobackup.tar)
+    oc cp ${BACKUP_DIR}/mongodb/mongobackup.tar $pod:/dump/mongobackup.tar
     # prep certs files that will be used to restore the backup
-    logInfo $(oc exec $pod -it -- bash -c 'cat /cred/mongo-certs/tls.crt /cred/mongo-certs/tls.key > /work-dir/mongo.pem; cat /cred/cluster-ca/tls.crt /cred/cluster-ca/tls.key > /work-dir/ca.pem')
+    oc exec $pod -it -- bash -c 'cat /cred/mongo-certs/tls.crt /cred/mongo-certs/tls.key > /work-dir/mongo.pem; cat /cred/cluster-ca/tls.crt /cred/cluster-ca/tls.key > /work-dir/ca.pem'
     # extract mongo backup
-    logInfo $(oc exec $pod -it -- bash -c 'cd /dump && tar -xvf mongobackup.tar')
+    oc exec $pod -it -- bash -c 'cd /dump && tar -xvf mongobackup.tar'
     # run the actual restore
-    logInfo $(oc exec $pod -it -- bash -c 'mongorestore --db platform-db --host rs0/icp-mongodb-0.icp-mongodb.$NAMESPACE.svc.cluster.local,icp-mongodb-1.icp-mongodb.$NAMESPACE.svc.cluster.local,icp-mongodb-2.icp-mongodb.$NAMESPACE.svc.cluster.local --port $MONGODB_SERVICE_PORT --username $ADMIN_USER --password $ADMIN_PASSWORD --authenticationDatabase admin --ssl --sslCAFile /work-dir/ca.pem --sslPEMKeyFile /work-dir/mongo.pem /dump/dump/platform-db --drop')
+    oc exec $pod -it -- bash -c 'mongorestore --db platform-db --host rs0/icp-mongodb-0.icp-mongodb.$NAMESPACE.svc.cluster.local,icp-mongodb-1.icp-mongodb.$NAMESPACE.svc.cluster.local,icp-mongodb-2.icp-mongodb.$NAMESPACE.svc.cluster.local --port $MONGODB_SERVICE_PORT --username $ADMIN_USER --password $ADMIN_PASSWORD --authenticationDatabase admin --ssl --sslCAFile /work-dir/ca.pem --sslPEMKeyFile /work-dir/mongo.pem /dump/dump/platform-db --drop'
     break
   done
+  echo
 
   # Restore secrets with apikeys that are overwritten during the installation
   # This is required because these are registered in the MongoDB that has
   # just been restored. Without these cp-console route will not work.
-
+  
+  logInfo "Restoring secrets..."
   # oc delete secret ibm-iam-bindinfo-zen-serviceid-apikey-secret
   # oc apply -f ${BACKUP_DIR}/secret/ibm-iam-bindinfo-zen-serviceid-apikey-secret.yaml
   file=${BACKUP_DIR}/secret/ibm-iam-bindinfo-zen-serviceid-apikey-secret.yaml
@@ -293,17 +296,20 @@ function mongoRestore()
   # oc apply -f ${BACKUP_DIR}/secret/icp-serviceid-apikey-secret.yaml
   file=${BACKUP_DIR}/secret/icp-serviceid-apikey-secret.yaml
   logInfo $(yq eval 'del(.metadata.annotations, .metadata.creationTimestamp, .metadata.resourceVersion, .metadata.uid, .metadata.ownerReferences)' $file | oc apply -f - -n $cp4baProjectName --overwrite=true)
-
+  echo
+  
   #restart pods that require restarting 
   logInfo "Restarting required pods..."
   logInfo $(oc delete pod --selector='name=ibm-iam-operator')
   logInfo $(oc delete pod --selector='app=secret-watcher')
   logInfo $(oc delete pod --selector='component=usermgmt')
-
+  
+  logInfo "Waiting till pods are back..."
   logInfo $(oc wait -f ${BACKUP_DIR}/deployment.apps/ibm-iam-operator.yaml --for=condition=Available --timeout=-1s)
   logInfo $(oc wait -f ${BACKUP_DIR}/deployment.apps/secret-watcher.yaml --for=condition=Available --timeout=-1s)
   logInfo $(oc wait -f ${BACKUP_DIR}/deployment.apps/usermgmt.yaml --for=condition=Available --timeout=-1s)
-
+  echo
+  
   # clean up
   logInfo "Cleaning up..."
   logInfo $(oc delete -f ${CUR_DIR}/mongodb-backup-deployment.yaml)
@@ -311,7 +317,8 @@ function mongoRestore()
 
   rm -f ${CUR_DIR}/mongodb-backup-deployment.yaml
   rm -f ${CUR_DIR}/mongodb-backup-pvc.yaml
-
+  echo
+  
   logInfo "MongoDB restore completed."
   logWarning "NEXT ACTION: You must restore Zen Services to properly access the CloudPak"
 }
@@ -345,16 +352,16 @@ function restoreZen()
 
   # Wait indefinitely for deployment to be Available (pod Ready)
   logInfo $(oc wait -f ${CUR_DIR}/zen-backup-deployment.yaml --for=condition=Available --timeout=-1s)
-
+  echo
+  
   # Grab the values from the new cpd-oidcclient-secret and update zenbackup data with it
   # This is required because the cpd-oidcclient-secret 
   newClientSecret=$(oc extract secret/cpd-oidcclient-secret --to=- 2>&1 | grep -A1 CLIENT_SECRET | grep -v CLIENT_SECRET)
   newClientID=$(oc extract secret/cpd-oidcclient-secret --to=- 2>&1 | grep -A1 CLIENT_ID | grep -v CLIENT_ID)
-
+  
   oldClientSecret=$(yq eval '(.data)' ${BACKUP_DIR}/secret/cpd-oidcclient-secret.yaml | grep CLIENT_SECRET | awk '{print $2'} | base64 -d)
   oldClientID=$(yq eval '(.data)' ${BACKUP_DIR}/secret/cpd-oidcclient-secret.yaml | grep CLIENT_ID | awk '{print $2'} | base64 -d)
-
-
+  
   if [[  "$newClientSecret" == "" || "$newClientID" == "" || "$oldClientSecret" == "" || "$oldClientID" == "" ]]; then
    logError "Unable to retrieve new and old values for cpd-oidcclient-secret."
    logError "Client secret from current install: " $newClientSecret
@@ -369,19 +376,20 @@ function restoreZen()
 
   for pod in ${zenbkpods[*]}
   do
-    logInfo "Restoring Zen Services from pod ${pod}..."
-    logInfo $(oc cp ${BACKUP_DIR}/zenbackup/zen-metastoredb-backup.tar $pod:/user-home/zen-metastoredb-backup.tar)
-    logInfo $(oc exec $pod -it -- bash -c "cd /user-home && tar -xvf zen-metastoredb-backup.tar")
+    logInfo "Restoring Zen Services using pod ${pod}..."
+    oc cp ${BACKUP_DIR}/zenbackup/zen-metastoredb-backup.tar $pod:/user-home/zen-metastoredb-backup.tar
+    oc exec $pod -it -- bash -c "cd /user-home && tar -xvf zen-metastoredb-backup.tar"
 
     # create sed script to switch new cpd oidc info 
-    logInfo $(oc exec $pod -it -- bash -c "cd /user-home && echo s/$oldClientSecret/$newClientSecret/g>switch.sed && echo s/$oldClientID/$newClientID/g>>switch.sed && cat switch.sed")
-    logInfo $(oc exec $pod -it -- bash -c "cd /user-home && sed -i -f switch.sed zen-metastoredb-backup/oidc/oidcConfig.json")
+    oc exec $pod -it -- bash -c "cd /user-home && echo s/$oldClientSecret/$newClientSecret/g>switch.sed && echo s/$oldClientID/$newClientID/g>>switch.sed && cat switch.sed"
+    oc exec $pod -it -- bash -c "cd /user-home && sed -i -f switch.sed zen-metastoredb-backup/oidc/oidcConfig.json"
    
     # restore zen services
-    logInfo $(oc exec $pod -it -- bash -c "/zen4/zen4-br.sh $cp4baProjectName false")
+    oc exec $pod -it -- bash -c "/zen4/zen4-br.sh $cp4baProjectName false"
     break
   done
-
+  echo
+  
   # clean up    
   logInfo "Cleaning up..."
   logInfo $(oc delete -f ${CUR_DIR}/zen-backup-deployment.yaml)
@@ -390,16 +398,16 @@ function restoreZen()
   logInfo $(oc delete -f ${CUR_DIR}/zen4-sa.yaml)
   logInfo $(oc delete -f ${CUR_DIR}/zen4-br-scripts.yaml)
   logInfo $(oc delete -f ${CUR_DIR}/zen-backup-pvc.yaml)
-
+  echo
+  
   rm -f ${CUR_DIR}/zen-backup-deployment.yaml
   rm -f ${CUR_DIR}/zen4-rolebinding.yaml
   rm -f ${CUR_DIR}/zen4-role.yaml
   rm -f ${CUR_DIR}/zen4-sa.yaml
   rm -f ${CUR_DIR}/zen4-br-scripts.yaml
   rm -f ${CUR_DIR}/zen-backup-pvc.yaml
-
+  
   logInfo "Zen Services restore completed."
-
 }
 postDeployTerminating=No
 
