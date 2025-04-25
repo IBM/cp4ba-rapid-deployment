@@ -205,7 +205,7 @@ function bts-cnpg() {
     oc cp $BACKUP_DIR/postgresql/backup_btsdb.sql $pgPrimary:/var/lib/postgresql/data/backup_btsdb.sql -c postgres
 
     logInfo "Restoring Database Backup..."
-    oc exec $pgPrimary -c postgres -- psql -U postgres -f /var/lib/postgresql/data/backup_btsdb.sql -L /var/lib/postgresql/data/restore_btsdb.log -a
+    oc exec $pgPrimary -c postgres -- psql -U postgres -f /var/lib/postgresql/data/backup_btsdb.sql -L /var/lib/postgresql/data/restore_btsdb.log -a >> $LOG_FILE 2>&1
     logInfo $(oc cp $pgPrimary:/var/lib/postgresql/data/restore_btsdb.log $BACKUP_DIR/restore_btsdb.log -c postgres)
     oc exec $pgPrimary -c postgres -- rm -f /var/lib/postgresql/data/restore_btsdb.log /var/lib/postgresql/data/backup_btsdb.sql
   fi
@@ -235,7 +235,7 @@ function bts-cnpg() {
       waitServiceReady=$((waitServiceReady - 1))
       if [ $waitServiceReady -gt 0 ]; then
         logInfo "BTS Service Status: $btsServicesStatus -- waiting up to 60 seconds for an update..."
-	oc wait --for=jsonpath={.status.serviceStatus}=ready businessteamsservices/cp4ba-bts --timeout=60s
+	oc wait --for=jsonpath={.status.serviceStatus}=ready businessteamsservices/cp4ba-bts --timeout=60s >> $LOG_FILE 2>&1
       else
 	logInfo "BTS Service did not reach ready state, at least not yet"
       fi
