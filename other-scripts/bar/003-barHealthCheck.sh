@@ -831,7 +831,7 @@ echo
 ##### Final Summary ###############################################################
 WARNING_COUNT=$(grep WARNING $LOG_FILE | wc -l)
 if [ $WARNING_COUNT -ne 0 ]; then
-  logError "Found $WARNING_COUNT warning(s), please check the log for details."
+  logWarning "Found $WARNING_COUNT warning(s), please check the log for details."
 else
   logInfo "No warnings found."
 fi
