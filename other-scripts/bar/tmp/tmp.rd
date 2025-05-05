@@ -11,5 +11,4 @@ oc get job create-postgres-license-config -o yaml | sed -e 's/operator.ibm.com\/
 Finally:
 --------
 - Create all needed bookmarks in FF
-- get https://www.ibm.com/support/pages/node/6576423#r21.0.3
 - Cleanup the system
