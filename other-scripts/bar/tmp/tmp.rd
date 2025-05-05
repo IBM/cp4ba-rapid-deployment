@@ -11,5 +11,4 @@ oc get job create-postgres-license-config -o yaml | sed -e 's/operator.ibm.com\/
 Finally:
 --------
 - Create all needed bookmarks in FF
-- download https://ibm-my.sharepoint.com/:u:/r/personal/thomasschulze_de_ibm_com/Documents/Attachments/ibm-cp4ba-dev.zip?csf=1&web=1&e=di9RL5
 - Cleanup the system
