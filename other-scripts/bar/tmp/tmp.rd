@@ -1,5 +1,8 @@
 ls -l
 
+oc project ibm-cp4ba-test
+oc project ibm-cp4ba-qa
+
 oc get pods | grep ibm-cp4a-operator- | awk '$1 {print$1}' | while read vol; do oc cp jdbc ${vol}:/opt/ansible/share/; done
 
 oc apply -f secrets.yaml
