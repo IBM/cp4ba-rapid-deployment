@@ -1,19 +1,19 @@
-To have BAI working properly, re-start the Flink jobs:
+kind: Secret
 
-Open Terminal
+apiVersion: v1
 
-Log in to oc CLI
+metadata:
 
-Run these commands:
+  name: admin.registrykey
 
-oc get job mycluster-bai-bpmn -o json | jq 'del(.spec.selector)' | jq 'del(.spec.template.metadata.labels)' | oc replace --force -f - 
+  namespace: ibm-cp4ba-test
 
-oc get job mycluster-bai-icm -o json | jq 'del(.spec.selector)' | jq 'del(.spec.template.metadata.labels)' | oc replace --force -f -
+data:
 
-oc get job mycluster-bai-content -o json | jq 'del(.spec.selector)' | jq 'del(.spec.template.metadata.labels)' | oc replace --force -f -
+  .dockerconfigjson: eyJhdXRocyI6eyJjcC5pY3IuaW8iOnsidXNlcm5hbWUiOiJjcCIsInBhc3N3b3JkIjoiZXlKaGJHY2lPaUpJVXpJMU5pSjkuZXlKcGMzTWlPaUpKUWswZ1RXRnlhMlYwY0d4aFkyVWlMQ0pwWVh
+RaU9qRTJNREl4TlRVM05UY3NJbXAwYVNJNkltWXpPRGt3TldWbE5HUmpNVFF3TlRsaE5UZzJaR1V3T0dNeE5XTm1ObVU0SW4wLm1iS1VPaXFTV2NYZi1XcjAtdWVrU1lhLTd3dndmQkJhLTdaOW1iZ1E5b1kiLCJlbWFpbCI6ImVjbXRlc3RAaWJtLmNvbSIsImF1dGgiOiJZM0E2WlhsS2FHSkhZMmxQYVVwSlZYcEpNVTVwU2prdVpYbEtjR016VFdsUGFVcEtVV3N3WjFSWFJubGhNbFl3WTBkNGFGa3lWV2xNUTBwd1dWaFJhVTlxUlRKTlJFbDRUbFJWTTA1VVkzTkpiWEF3WVZOSk5rbHRXWHBQUkd0M1RsZFdiRTVIVW1wTlZGRjNUbFJzYUU1VVp6SmFSMVYzVDBkTmVFNVhUbTFPYlZVMFNXNHdMbTFpUzFWUGFYRlRWMk5ZWmkxWGNqQXRkV1ZyVTFsaExUZDNkbmRtUWtKaExUZGFPVzFpWjFFNWIxaz0ifX19
 
-Run the health check script to make sure the deployment is healthy now, fix all remaining issues
+type: kubernetes.io/dockerconfigjson
 
-Get the yq tool:
 
-sudo wget https://github.com/mikefarah/yq/releases/download/v4.45.1/yq_linux_amd64 -O /usr/bin/yq && sudo chmod +x /usr/bin/yq
+
