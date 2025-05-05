@@ -1,36 +1,19 @@
-ssh db2inst1@10.100.1.2
+To have BAI working properly, re-start the Flink jobs:
 
-./createGCDDB.sh GCDDB2 db2inst1
-db2 activate database GCDDB2
-./createGCDDB.sh GCDDB3 db2inst1
-db2 activate database GCDDB3
+Open Terminal
 
-./createAPPDB.sh AEDB2 db2inst1
-db2 activate database AEDB2
-./createAPPDB.sh AEDB3 db2inst1
-db2 activate database AEDB3
+Log in to oc CLI
 
-./createBAWDB.sh BAWDB2 db2inst1
-db2 activate database BAWDB2
-./createBAWDB.sh BAWDB3 db2inst1
-db2 activate database BAWDB3
+Run these commands:
 
-./createICNDB.sh ICNDB2 db2inst1
-db2 activate database ICNDB2
-./createICNDB.sh ICNDB3 db2inst1
-db2 activate database ICNDB3
+oc get job mycluster-bai-bpmn -o json | jq 'del(.spec.selector)' | jq 'del(.spec.template.metadata.labels)' | oc replace --force -f - 
 
-./createOSDB.sh BAWTOS2 db2inst1
-db2 activate database BAWTOS2
-./createOSDB.sh BAWTOS3 db2inst1
-db2 activate database BAWTOS3
+oc get job mycluster-bai-icm -o json | jq 'del(.spec.selector)' | jq 'del(.spec.template.metadata.labels)' | oc replace --force -f -
 
-./createOSDB.sh BAWDOCS2 db2inst1
-db2 activate database BAWDOCS2
-./createOSDB.sh BAWDOCS3 db2inst1
-db2 activate database BAWDOCS3
+oc get job mycluster-bai-content -o json | jq 'del(.spec.selector)' | jq 'del(.spec.template.metadata.labels)' | oc replace --force -f -
 
-./createOSDB.sh BAWDOS2 db2inst1
-db2 activate database BAWDOS2
-./createOSDB.sh BAWDOS3 db2inst1
-db2 activate database BAWDOS3
+Run the health check script to make sure the deployment is healthy now, fix all remaining issues
+
+Get the yq tool:
+
+sudo wget https://github.com/mikefarah/yq/releases/download/v4.45.1/yq_linux_amd64 -O /usr/bin/yq && sudo chmod +x /usr/bin/yq
