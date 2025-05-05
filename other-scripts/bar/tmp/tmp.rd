@@ -1,6 +1,5 @@
-oc apply -f cr-ibm-cp4ba-qa.yaml / oc apply -f cr-ibm-cp4ba-test.yaml
+oc apply -f cr-ibm-cp4ba-qa.yaml
 
-cr-ibm-cp4ba-test.yaml
 ###############################################################################
 #
 # Licensed Materials - Property of IBM
@@ -16,7 +15,7 @@ cr-ibm-cp4ba-test.yaml
 apiVersion: icp4a.ibm.com/v1
 kind: ICP4ACluster
 metadata:
-  name: icp4adeploy
+  name: qaenvironment
   labels:
     app.kubernetes.io/instance: ibm-dba
     app.kubernetes.io/managed-by: ibm-dba
@@ -40,7 +39,7 @@ spec:
     external_tls_certificate_secret: 
 
     sc_deployment_patterns: "workflow"
-    sc_optional_components: "bai"
+    sc_optional_components: ""
 
     sc_deployment_context: "CP4A"
     sc_deployment_type: "Production"
@@ -114,7 +113,7 @@ spec:
       dc_common_icn_datasource_name: "ECMClientDS"
       database_servername: "10.100.1.2"
       database_port: "50000"
-      database_name: "ICNDB2"
+      database_name: "ICNDB3"
       connection_manager:
         min_pool_size: 0
         max_pool_size: 100
@@ -127,7 +126,7 @@ spec:
       dc_common_gcd_datasource_name: "FNGCDDS"
       dc_common_gcd_xa_datasource_name: "FNGCDDSXA"
       database_servername: "10.100.1.2"
-      database_name: "GCDDB2"
+      database_name: "GCDDB3"
       database_port: "50000"
       connection_manager:
         min_pool_size: 0
@@ -142,21 +141,21 @@ spec:
         dc_common_os_datasource_name: "BAWDOCSDS"
         dc_common_os_xa_datasource_name: "BAWDOCSDSXA"
         database_servername: "10.100.1.2"
-        database_name: "BAWDOCS2"
+        database_name: "BAWDOCS3"
         database_port: "50000"
       - dc_database_type: "db2"
         dc_os_label: "bawdos"
         dc_common_os_datasource_name: "BAWDOSDS"
         dc_common_os_xa_datasource_name: "BAWDOSDSXA"
         database_servername: "10.100.1.2"
-        database_name: "BAWDOS2"
+        database_name: "BAWDOS3"
         database_port: "50000"
       - dc_database_type: "db2"
         dc_os_label: "bawtos"
         dc_common_os_datasource_name: "BAWTOSDS"
         dc_common_os_xa_datasource_name: "BAWTOSDSXA"
         database_servername: "10.100.1.2"
-        database_name: "BAWTOS2"
+        database_name: "BAWTOS3"
         database_port: "50000"
 
   ##################################################################
@@ -171,7 +170,7 @@ spec:
       #   repository: cp.icr.io/cp/cp4a/aae/dba-etcd
       #   tag: 21.0.3-IF010
       
-#    admin_secret_name: resource-registry-admin-secret
+    admin_secret_name: resource-registry-admin-secret
 #    replica_size: 3
     probe:
       liveness:
@@ -244,8 +243,8 @@ spec:
       jvm_customize_options:
 
       icn_jndids_name: ECMClientDS
-      icn_schema: ICNDB2
-      icn_table_space: ICNDB2
+      icn_schema: ICNDB3
+      icn_table_space: ICNDB3
       allow_remote_plugins_via_http: false
 
     monitor_enabled: false
@@ -525,11 +524,11 @@ spec:
             - "cp4badmins"
             - "cp4badmin"
             - "cp4bausers"
-          oc_cpe_obj_store_enable_content_event_emitter: true
+          oc_cpe_obj_store_enable_content_event_emitter: false
           oc_cpe_obj_store_enable_workflow: true
           oc_cpe_obj_store_workflow_region_name: "bawtos_region_name"
           oc_cpe_obj_store_workflow_region_number: 1
-          oc_cpe_obj_store_workflow_data_tbl_space: "BAWTOS2_DATA_TBS"
+          oc_cpe_obj_store_workflow_data_tbl_space: "BAWTOS3_DATA_TBS"
           oc_cpe_obj_store_workflow_admin_group: "cp4badmins"
           oc_cpe_obj_store_workflow_config_group: "cp4bausers"
           oc_cpe_obj_store_workflow_pe_conn_point_name: "pe_conn_bawtos"
@@ -574,7 +573,7 @@ spec:
 
       database:
         host: "10.100.1.2"
-        name: "AEDB2"
+        name: "AEDB3"
         port: "50000"
         type: db2
         enable_ssl: false
@@ -677,7 +676,7 @@ spec:
   ########   IBM BAW configuration     ########
   ##############################################################################
   baw_configuration:
-  - name: testinst
+  - name: instance1
   #  service_type: "Route"
   # hostname: "{{ 'bawaut-' + shared_configuration.sc_deployment_hostname_suffix }}"
   #  port: 443
@@ -730,7 +729,7 @@ spec:
 
       type: "db2"
       server_name: "10.100.1.2"
-      database_name: "BAWDB2"
+      database_name: "BAWDB3"
       port: "50000"
       secret_name: "ibm-bawaut-server-db-secret"
 
@@ -767,10 +766,10 @@ spec:
       custom_package_names: ""
       custom_extension_names: ""
 
-      event_emitter:
-        date_sql: 20210401T010000Z
-        logical_unique_id: testinst
-        solution_list: "*"
+      #event_emitter:
+       # date_sql:
+        #logical_unique_id:
+        #solution_list:
 #        emitter_batch_size: 
 #        process_pe_events: 
 
@@ -892,12 +891,12 @@ spec:
 #    custom_xml_secret_name:
 #    lombardi_custom_xml_secret_name:
 
-    business_event:
-      enable: true
-      enable_task_record: true
-      enable_task_api: true
-      subscription:
-        - {'app_name': '*','version': '*','component_type': '*','component_name': '*','element_type': '*','element_name': '*','nature': '*'}
+ #   business_event:
+ #     enable: false
+ #     enable_task_record: false
+ #     enable_task_api: false
+ #     subscription:
+ #       - {'app_name': '*','version': '*','component_type': '*','component_name': '*','element_type': '*','element_name': '*','nature': '*'}
 
   ########################################################################
   ########   IBM Process Federation Server configuration          ########
@@ -1003,150 +1002,3 @@ spec:
       #   requests:
       #     memory: '512Mi'
       #     cpu: '200m'
-
-  ##############################################################################
-  ########      IBM Business Automation Insights (BAI) configuration    ########
-  ##############################################################################
-  bai_configuration:
-#    templating_debug: true
-    persistence:
-      useDynamicProvisioning: true
-#    bai_secret: ""
-    # image_credentials:
-    #   registry: cp.icr.io/cp/cp4a
-    image_pull_policy: "IfNotPresent"
-    sc_deployment_license: "production"
-
-    kafka:
-      auto_offset_reset: "latest"
-#      properties_config_map: ""
-      socket_timeout_ms: 10000
-
-    settings:
-      egress: true
-      hdfs: false
-      ingress_topic: "icp4ba-bai-ingress"
-      egress_topic: "icp4ba-bai-egress"
-      service_topic: "icp4ba-bai-service"
-
-    setup:
-      backoff_limit: 6
-      # resources:
-      #   requests:
-      #     memory: "50Mi"
-      #     cpu: "200m"
-      #   limits:
-      #     memory: "120Mi"
-      run_as_user: "{{ shared_configuration.sc_run_as_user }}"
-
-    admin:
-#      service_type: NodePort
-#      external_port: 
-#      hostname: "admin.bai.{{ shared_configuration.sc_deployment_hostname_suffix }}"
-#      replicas: 1
-#      username: admin
-#      password: passw0rd
-#      run_as_user: "{{ shared_configuration.sc_run_as_user }}"
-#      external_tls_secret_name: "{{ meta.name }}-bai-admin-external-tls-secret"
-#      external_tls_ca_secret_name: 
-
-    management:
-#      hostname: "management.bai.{{ shared_configuration.sc_deployment_hostname_suffix }}"
-#      replicas: 1
-#      external_tls_secret_name: "{{ meta.name }}-bai-management-external-tls-secret"
-#      external_tls_ca_secret_name: ""
-
-    flink_pv:
-      capacity: "20Gi"
-      storage_class_name: "{{ shared_configuration.storage_configuration.sc_medium_file_storage_classname }}"
-#      existing_claim_name: ""
-
-    flink:
-      log_level: 'warning'
-      task_manager_memory: 1728mb
-      task_manager_cpu: 1
-      job_manager_memory: 1728mb
-      job_checkpointing_interval: 5000
-      elasticsearch_flush_interval_ms: -1
-#      rocks_db_properties_config_map: ""
-      batch_size: 268435456
-      check_interval: 300000
-      bucket_threshold: 900000
-#      storage_bucket_url: ""
-#      hadoop_user: bai
-      init_storage_directory: true
-      create_route: true
-
-    ingestion:
-      install: false
-#      recovery_path: ""
-      parallelism: 1
-
-    bpmn:
-      install: true
-#      recovery_path: ""
-      parallelism: 1
-      end_aggregation_delay: 10000
-      force_elasticsearch_timeseries: true
-
-    bawadv:
-      install: false
-#      recovery_path: ""
-      parallelism: 1
-
-    icm:
-      install: true
-#      recovery_path: ""
-      parallelism: 1
-
-    odm:
-      install: false
-#      recovery_path: ""
-      parallelism: 1
-
-    content:
-      install: true
-#      recovery_path: ""
-      parallelism: 1
-
-    event_forwarder:
-#      recovery_path: ""
-      parallelism: 1
-#      configurations:
-#        - kafka_topic: ""
-#          elasticsearch_index: ""
-#          hdfs_bucket: ""
-
-#    kerberos:
-#      enabled_for_hdfs: false
-#      realm: ""
-#      kdc: ""
-#      principal: ""
-#      keytab: ""
-
-
-    business_performance_center:
-      install: true
-#      config_secret_name: ""
-#      external_port: 9443
-#      replicas: 1
-#      oidc:
-#        host: ""
-#        external_host: ""
-#        issuer_host: ""
-#        port: 443
-#      teamserver_host: ""
-#      scim_host: ""
-#      admin_team: ""
-      all_users_access: true
-#      redirect_uris: ""
-#      logout_redirect_uris: ""
-#      run_as_user: "{{ shared_configuration.sc_run_as_user }}"
-#      hostname: "business-performance-center-bai-{{ shared_configuration.sc_deployment_hostname_suffix }}"
-      # resources:
-      #   limits:
-      #     memory: "2Gi"
-      #     cpu: "2000m"
-#      auto_plugin: true
-      external_tls_secret_name: 
-#      external_tls_ca_secret_name: ""
