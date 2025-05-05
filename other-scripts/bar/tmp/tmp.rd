@@ -1,19 +1,56 @@
-kind: Secret
+PVC cp4a-shared-log-pvc
+
+kind: PersistentVolumeClaim
 
 apiVersion: v1
 
 metadata:
 
-  name: admin.registrykey
+  name: cp4a-shared-log-pvc
 
-  namespace: ibm-cp4ba-test
+  namespace: ibm-cp4ba-2
 
-data:
+spec:
 
-  .dockerconfigjson: eyJhdXRocyI6eyJjcC5pY3IuaW8iOnsidXNlcm5hbWUiOiJjcCIsInBhc3N3b3JkIjoiZXlKaGJHY2lPaUpJVXpJMU5pSjkuZXlKcGMzTWlPaUpKUWswZ1RXRnlhMlYwY0d4aFkyVWlMQ0pwWVh
-RaU9qRTJNREl4TlRVM05UY3NJbXAwYVNJNkltWXpPRGt3TldWbE5HUmpNVFF3TlRsaE5UZzJaR1V3T0dNeE5XTm1ObVU0SW4wLm1iS1VPaXFTV2NYZi1XcjAtdWVrU1lhLTd3dndmQkJhLTdaOW1iZ1E5b1kiLCJlbWFpbCI6ImVjbXRlc3RAaWJtLmNvbSIsImF1dGgiOiJZM0E2WlhsS2FHSkhZMmxQYVVwSlZYcEpNVTVwU2prdVpYbEtjR016VFdsUGFVcEtVV3N3WjFSWFJubGhNbFl3WTBkNGFGa3lWV2xNUTBwd1dWaFJhVTlxUlRKTlJFbDRUbFJWTTA1VVkzTkpiWEF3WVZOSk5rbHRXWHBQUkd0M1RsZFdiRTVIVW1wTlZGRjNUbFJzYUU1VVp6SmFSMVYzVDBkTmVFNVhUbTFPYlZVMFNXNHdMbTFpUzFWUGFYRlRWMk5ZWmkxWGNqQXRkV1ZyVTFsaExUZDNkbmRtUWtKaExUZGFPVzFpWjFFNWIxaz0ifX19
+  accessModes:
 
-type: kubernetes.io/dockerconfigjson
+    - ReadWriteMany
+
+  resources:
+
+    requests:
+
+      storage: 100Gi
+
+  storageClassName: nfs-client
+
+  volumeMode: Filesystem
 
 
+PVC operator-shared-pvc
 
+kind: PersistentVolumeClaim
+
+apiVersion: v1
+
+metadata:
+
+  name: operator-shared-pvc
+
+  namespace: ibm-cp4ba-2
+
+spec:
+
+  accessModes:
+
+    - ReadWriteMany
+
+  resources:
+
+    requests:
+
+      storage: 1Gi
+
+  storageClassName: nfs-client
+
+  volumeMode: Filesystem
