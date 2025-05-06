@@ -288,8 +288,9 @@ if [[ $CP4BA_COMPONENTS =~ "content" ]] || [[ $CP4BA_COMPONENTS =~ "workflow" ]]
     echo
   fi
 
-  # CSS
-  if [[ $CP4BA_OPTIONAL_COMPONENTS =~ "css" ]]; then
+  # CSS - optional component, but for some compments required, therefore first check if it's installed
+  CP4BA_CSS_DEPLOYMENT=$(jq -r .status.components.css.cssDeployment ${BACKUP_ROOT_DIRECTORY_FULL}/CR.json)
+  if [[ $CP4BA_CSS_DEPLOYMENT != "NotInstalled" ]]; then
     logInfo "Checking Content Search Service..."
     CP4BA_CSS_DEPLOYMENT=$(jq -r .status.components.css.cssDeployment ${BACKUP_ROOT_DIRECTORY_FULL}/CR.json)
     checkResult $CP4BA_CSS_DEPLOYMENT "Ready" "CP4BA Content Search Service Deployment"
@@ -302,8 +303,9 @@ if [[ $CP4BA_COMPONENTS =~ "content" ]] || [[ $CP4BA_COMPONENTS =~ "workflow" ]]
     echo
   fi
 
-  # CMIS
-  if [[ $CP4BA_OPTIONAL_COMPONENTS =~ "cmis" ]]; then
+  # CMIS - optional component, but for some compments required, therefore first check if it's installed
+  CP4BA_CMIS_DEPLOYMENT=$(jq -r .status.components.cmis.cmisDeployment ${BACKUP_ROOT_DIRECTORY_FULL}/CR.json)
+  if [[ $CP4BA_CMIS_DEPLOYMENT != "NotInstalled" ]]; then
     logInfo "Checking CMIS..."
     CP4BA_CMIS_DEPLOYMENT=$(jq -r .status.components.cmis.cmisDeployment ${BACKUP_ROOT_DIRECTORY_FULL}/CR.json)
     checkResult $CP4BA_CMIS_DEPLOYMENT "Ready" "CP4BA CMIS Deployment"
@@ -784,6 +786,140 @@ fi
 
 
 ##### ADP health ###############################################################
+
+
+##### Testing CP4BA end points #################################################
+
+#if [ -z ${cp4batoken} ]
+#then
+#  cp4batoken=$(curl -sk "https://$barCp4baHost/v1/preauth/validateAuth" -u $barTokenUser:$barTokenPass --resolve $barTokenResolveCp4ba | jq -r .accessToken)
+#fi
+
+if [[ $CP4BA_COMPONENTS =~ "content" ]] || [[ $CP4BA_COMPONENTS =~ "workflow" ]]; then
+  CPE_ROUTE=$(oc get route $CP4BA_NAME-cpe-route --ignore-not-found)
+  if [[ "$CPE_ROUTE" == "" ]]; then
+    logWarning "Legacy CPE Route not found. Unable to check end point."
+    echo
+  else
+    logInfo "Trying to connect to CPE using the legacy route..."
+    CPE_EXT_ROUTE=$(oc -n $cp4baProjectName get route $CP4BA_NAME-cpe-route -o jsonpath='{.spec.host}')
+    CPE_CURL_RESULT=$(curl -sk -w "%{http_code}" -o /dev/null https://$CPE_EXT_ROUTE/wsi/FNCEWS40MTOM)
+    checkHTTPCode $CPE_CURL_RESULT "200" "https://$CPE_EXT_ROUTE/wsi/FNCEWS40MTOM"
+    echo
+  fi
+fi
+
+
+if [[ $CP4BA_CMIS_DEPLOYMENT != "NotInstalled" ]]; then
+  CMIS_ROUTE=$(oc get route $CP4BA_NAME-cmis-route --ignore-not-found)
+  if [[ "$CMIS_ROUTE" == "" ]]; then
+    logWarning "Legacy CMIS Route not found. Unable to check end point."
+    echo
+  else
+    logInfo "Trying to connect to CMIS using the legacy route..."
+    CMIS_EXT_ROUTE=$(oc -n $cp4baProjectName get route $CP4BA_NAME-cmis-route -o jsonpath='{.spec.host}')
+    CMIS_CURL_RESULT=$(curl -sk -w "%{http_code}" -o /dev/null https://$CMIS_EXT_ROUTE/cmis/openfncmis_wlp/services11?wsdl)
+    checkHTTPCode $CMIS_CURL_RESULT "200" "https://$CMIS_EXT_ROUTE/cmis/openfncmis_wlp/services11?wsdl"
+    echo
+  fi
+fi
+
+if [[ $CP4BA_CSS_DEPLOYMENT != "NotInstalled" ]]; then
+  logInfo "Trying to connect to CSS (openssl on the service port)"
+  CSS_OC_RESULT=$(oc -n $cp4baProjectName exec deploy/ibm-cp4a-operator -- openssl s_client -connect $CP4BA_NAME-css-svc-1:8199 2>/dev/null)
+  if [[ $CSS_OC_RESULT == *"CONNECTED"* ]]; then
+    logInfo "  Successfully connected to CSS service."
+  else
+    logError "  Failed to connect to CSS service."
+  fi
+  echo
+fi
+
+CPD_ROUTE=$(oc get route cpd --ignore-not-found)
+if [[ "$CPD_ROUTE" == "" ]]; then
+  logWarning "CPD Route not found. Unable to check end points."
+  echo
+else
+  
+  ZEN_ROUTE=$(oc -n $cp4baProjectName get route cpd -o jsonpath='{.spec.host}')
+  
+  # Navigator
+  CP4BA_NAVIGATOR_DEPLOYMENT=$(jq -r .status.components.navigator.navigatorDeployment ${BACKUP_ROOT_DIRECTORY_FULL}/CR.json)
+  if [[ $CP4BA_NAVIGATOR_DEPLOYMENT != "NotInstalled" ]]; then
+    logInfo "Trying to connect to ICN using the Zen route..."
+    if $useTokenForZenRoute; then
+      ICN_CURL_RESULT=$(curl -L -sk -w "%{http_code}" --header "Authorization: Bearer ${cp4batoken}" -o /dev/null https://$ZEN_ROUTE/icn/navigator/ping.jsp --resolve $barTokenResolveCp4ba)
+    else
+      ICN_CURL_RESULT=$(curl -L -sk -w "%{http_code}" -o /dev/null https://$ZEN_ROUTE/icn/navigator/ping.jsp)
+    fi
+    checkHTTPCode $ICN_CURL_RESULT "200" "https://$ZEN_ROUTE/icn/navigator/ping.jsp"
+    echo
+  fi
+  
+  if [[ $CP4BA_COMPONENTS =~ "content" ]] || [[ $CP4BA_COMPONENTS =~ "workflow" ]]; then
+    
+    # CPE
+    logInfo "Trying to connect to CPE using the Zen route..."
+    if $useTokenForZenRoute; then
+      CPE_CURL_RESULT=$(curl -sk -w "%{http_code}" --header "Authorization: Bearer ${cp4batoken}" -o /dev/null https://$ZEN_ROUTE/cpe/wsi/FNCEWS40MTOM --resolve $barTokenResolveCp4ba)
+    else
+      CPE_CURL_RESULT=$(curl -sk -w "%{http_code}" -o /dev/null https://$ZEN_ROUTE/cpe/wsi/FNCEWS40MTOM)
+    fi
+    checkHTTPCode $CPE_CURL_RESULT "200" "https://$ZEN_ROUTE/cpe/wsi/FNCEWS40MTOM"
+    echo
+  fi
+  
+  if [[ $CP4BA_COMPONENTS =~ "workflow" ]]; then
+    if [[ $CP4BA_OPTIONAL_COMPONENTS =~ "baw_authoring" ]]; then
+      
+      # BAS
+      logInfo "Trying to connect to BAS ProcessAdmin using the Zen route..."
+      if $useTokenForZenRoute; then
+        PA_CURL_RESULT=$(curl -L -sk -w "%{http_code}" --header "Authorization: Bearer ${cp4batoken}" -o /dev/null https://$ZEN_ROUTE/bas/ProcessAdmin --resolve $barTokenResolveCp4ba)
+      else
+        PA_CURL_RESULT=$(curl -L -sk -w "%{http_code}" -o /dev/null https://$ZEN_ROUTE/bas/ProcessAdmin)
+      fi
+      checkHTTPCode $PA_CURL_RESULT "200" "https://$ZEN_ROUTE/bas/ProcessAdmin"
+      echo
+      
+      # BAWAuthoring
+      logInfo "Trying to connect to BAWAut ProcessPortal using the Zen route..."
+      if $useTokenForZenRoute; then
+        PP_CURL_RESULT=$(curl -L -sk -w "%{http_code}" --header "Authorization: Bearer ${cp4batoken}" -o /dev/null https://$ZEN_ROUTE/bawaut/ProcessPortal --resolve $barTokenResolveCp4ba)
+      else
+        PP_CURL_RESULT=$(curl -L -sk -w "%{http_code}" -o /dev/null https://$ZEN_ROUTE/bawaut/ProcessPortal)
+      fi
+      checkHTTPCode $PP_CURL_RESULT "200" "https://$ZEN_ROUTE/bawaut/ProcessPortal"
+      echo
+      
+    else
+      
+      # BAW
+      logInfo "Trying to connect to BAW ProcessPortal using the Zen route..."
+      #TODO: May have more than one instance
+      if $useTokenForZenRoute; then
+        PP_CURL_RESULT=$(curl -L -sk -w "%{http_code}" --header "Authorization: Bearer ${cp4batoken}" -o /dev/null https://$ZEN_ROUTE/baw-$CP4BA_BAW_NAME/ProcessPortal --resolve $barTokenResolveCp4ba)
+      else
+        PP_CURL_RESULT=$(curl -L -sk -w "%{http_code}" -o /dev/null https://$ZEN_ROUTE/baw-$CP4BA_BAW_NAME/ProcessPortal)
+      fi
+      checkHTTPCode $PP_CURL_RESULT "200" "https://$ZEN_ROUTE/baw-$CP4BA_BAW_NAME/ProcessPortal"
+      echo
+      
+    fi
+    
+    # BAA
+    logInfo "Trying to connect to Application Engine using the Zen route..."
+    #TODO: May have more than one instance
+    if $useTokenForZenRoute; then
+      AAE_CURL_RESULT=$(curl -L -sk -w "%{http_code}" --header "Authorization: Bearer ${cp4batoken}" -o /dev/null https://$ZEN_ROUTE/ae-workspace --resolve $barTokenResolveCp4ba)
+    else
+      AAE_CURL_RESULT=$(curl -L -sk -w "%{http_code}" -o /dev/null https://$ZEN_ROUTE/ae-workspace)
+    fi
+    checkHTTPCode $AAE_CURL_RESULT "200" "https://$ZEN_ROUTE/ae-workspace"
+    echo
+  fi
+fi
+
 
 
 ##### Pod health ###############################################################
