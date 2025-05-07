@@ -107,7 +107,7 @@ echo
 
 # Next, update the image pull secret
 echo "Updating secret ibm-entitlement-key in project $cp4baProjectName..."
-od delete secret ibm-entitlement-key
+oc delete secret ibm-entitlement-key
 EK="eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJJQk0gTWFya2V0cGxhY2UiLCJpYXQiOjE2MDIxNTU3NTcsImp0aSI6ImYzODkwNWVlNGRjMTQwNTlhNTg2ZGUwOGMxNWNmNmU4In0.mbKUOiqSWcXf-Wr0-uekSYa-7wvwfBBa-7Z9mbgQ9oY"
 EMAIL="me@here.com"
 DOCKER_REG_SERVER="cp.icr.io"
