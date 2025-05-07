@@ -110,8 +110,10 @@ echo
 # Third, start the pods of the CP4BA deployment that got scaled down before
 
 # Delete the es route, will get re-generated automatically
-echo "Deleting es route..."
+echo "Renewing es route..."
 oc delete route iaf-system-es
+esPod=$(oc get pods -o name | grep ibm-elastic-operator-controller-manager-)
+oc delete pod $esPod
 echo
 
 # Scale up the CP4BA operator first, so that he can create the dba-rr pods
