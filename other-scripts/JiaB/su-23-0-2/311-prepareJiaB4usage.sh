@@ -109,6 +109,11 @@ echo
 
 # Third, start the pods of the CP4BA deployment that got scaled down before
 
+# Delete the es route, will get re-generated automatically
+echo "Deleting es route..."
+oc delete route iaf-system-es
+echo
+
 # Scale up the CP4BA operator first, so that he can create the dba-rr pods
 echo "Scaling up the CP4BA operator..."
 oc scale deployment ibm-cp4a-operator --replicas=1
