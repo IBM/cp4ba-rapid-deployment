@@ -110,7 +110,21 @@ MAJOR_CP4BA_VERSION=$(cut -c 1-6 <<< $CP4BA_VERSION)
 if [[ $MAJOR_CP4BA_VERSION != "21.0.3" ]]; then
   logError "  CP4BA version not supported!"
   echo
-  exit 1
+  printf "Do you want to continue DELETING the CP4BA deployment in namespace ${cp4baProjectName}? (Yes/No, default: No): "
+  read -rp "" ans
+  case "$ans" in
+  "y"|"Y"|"yes"|"Yes"|"YES")
+     echo
+     logInfo "Ok, deleting the CP4BA deployment in namespace ${cp4baProjectName}..."
+     echo
+     ;;
+  *)
+     echo
+     logInfo "Exiting..."
+     echo
+     exit 0
+     ;;
+  esac
 fi
 
 ######Function#######
@@ -136,7 +150,21 @@ CR_NAME=$(oc get icp4acluster -n "$cp4baProjectName" -o jsonpath='{.items[*].met
 if [ -z "$CR_NAME" ]; then
   logInfo "No ICP4ACluster found in namespace $cp4baProjectName."
   echo
-#  exit 1
+  printf "Do you want to continue DELETING the deployment in namespace ${cp4baProjectName}? (Yes/No, default: No): "
+  read -rp "" ans
+  case "$ans" in
+  "y"|"Y"|"yes"|"Yes"|"YES")
+     echo
+     logInfo "Ok, deleting the CP4BA deployment in namespace ${cp4baProjectName}..."
+     echo
+     ;;
+  *)
+     echo
+     logInfo "Exiting..."
+     echo
+     exit 0
+     ;;
+  esac
 else
   # Delete the custom resource - icp4acluster
   logInfo "Deleting Custom Resource $CR_NAME in namespace $cp4baProjectName..."
