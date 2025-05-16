@@ -249,24 +249,23 @@ echo
 logInfo "Deleting namespacescope"
 patch_finalizers "namespacescope" "$cp4baProjectName"
 logInfo $(oc delete namespacescope --all -n "$cp4baProjectName")
-
+echo
 logInfo "Deleting Operand Deployment Lifecycle Manager operator"
 logInfo $(oc delete csv -l operators.coreos.com/ibm-odlm.$cp4baProjectName -n $cp4baProjectName --ignore-not-found=true)
 logInfo $(oc delete subscription -l operators.coreos.com/ibm-odlm.$cp4baProjectName -n $cp4baProjectName --ignore-not-found=true)
-
+echo
 logInfo "Uninstall IBM NAmespaceScope operator"
 logInfo $(oc delete csv -l operators.coreos.com/ibm-namespace-scope-operator.$cp4baProjectName -n $cp4baProjectName --ignore-not-found=true)
 logInfo $(oc delete subscription -l operators.coreos.com/ibm-namespace-scope-operator.$cp4baProjectName -n $cp4baProjectName --ignore-not-found=true)
 echo
-
 logInfo "Uninstall IBM Automation Foundation Core Operator"
 logInfo $(oc delete csv -l operators.coreos.com/ibm-automation-core.$cp4baProjectName -n $cp4baProjectName --ignore-not-found=true)
 logInfo $(oc delete subscription -l operators.coreos.com/ibm-automation-core.$cp4baProjectName -n $cp4baProjectName --ignore-not-found=true)
-
+echo
 logInfo "Uninstall IBM Automation Foundation Insights Engine Operator"
 logInfo $(oc delete csv -l operators.coreos.com/ibm-automation-insightsengine.$cp4baProjectName -n $cp4baProjectName --ignore-not-found=true)
 logInfo $(oc delete subscription -l operators.coreos.com/ibm-automation-insightsengine.$cp4baProjectName -n $cp4baProjectName --ignore-not-found=true)
-
+echo
 logInfo "Uninstall IBM Automation Foundation Operator"
 logInfo $(oc delete csv -l operators.coreos.com/ibm-automation.$cp4baProjectName -n $cp4baProjectName --ignore-not-found=true)
 logInfo $(oc delete subscription -l operators.coreos.com/ibm-automation.$cp4baProjectName -n $cp4baProjectName --ignore-not-found=true)
@@ -283,6 +282,7 @@ else
   for CSV in $CSV_LIST; do
     logInfo "Deleting ClusterServiceVersion: $CSV"
     logInfo $(oc delete csv "$CSV" -n "$cp4baProjectName")
+    echo
   done
   logInfo "All ClusterServiceVersions in namespace $cp4baProjectName have been deleted."
 fi
@@ -300,18 +300,40 @@ echo
 
 logInfo "Deleting all deployments"
 logInfo $(oc delete deployment --all -n $cp4baProjectName)
+echo
 logInfo "Deleting all jobs"
 logInfo $(oc delete job --all -n $cp4baProjectName)
+echo
+logInfo "Deleting all stateful sets"
+logInfo $(oc delete statefulset --all -n $cp4baProjectName)
+echo
 logInfo "Deleting all pods"
 logInfo $(oc delete pod --all -n $cp4baProjectName)
+echo
 logInfo "Deleting all services"
 logInfo $(oc delete svc --all -n $cp4baProjectName)
+echo
 logInfo "Deleting all network policies"
 logInfo $(oc delete networkpolicy --all -n $cp4baProjectName)
+echo
 logInfo "Deleting all PVCs"
+for pvc in $(oc get pvc -n $cp4baProjectName -o jsonpath='{range .items[*]}{.metadata.name}{"\n"}{end}' --ignore-not-found=true); do
+  pds=$(oc get pods -n $cp4baProjectName -o json | jq -r '.items[] | select(.spec.volumes[]?.persistentVolumeClaim.claimName=="my-pvc") | .metadata.name')
+  for i in $pds; do
+    logInfo $(oc delete pod $i -n $cp4baProjectName)
+  done
+  FINALIZER_COUNT=$(oc get pvc $pvc -n $cp4baProjectName -o json | jq '.metadata.finalizers | length')
+  if [[ $FINALIZER_COUNT -gt 0 ]]; then
+    logInfo "Removing finalizers..."
+    logInfo $(oc patch pvc $pvc -n $cp4baProjectName -p '{"metadata":{"finalizers":null}}')
+  fi
+  logInfo $(oc delete pvc $pvc -n $cp4baProjectName)
+done
 logInfo $(oc delete pvc --all -n $cp4baProjectName)
+echo
 logInfo "Deleting all service accounts"
 logInfo $(oc delete serviceaccount  --all -n $cp4baProjectName)
+echo
 logInfo "Deleting all roles"
 logInfo $(oc delete role --all -n $cp4baProjectName)
 echo
@@ -348,6 +370,8 @@ for i in $(oc api-resources --verbs=list --namespaced=true -o name | xargs -n 1 
    logInfo $(oc delete "${KIND}" ${NAME} -n "${cp4baProjectName}" --ignore-not-found=true)
 done
 
+#Use this commented lines if there are any which is preventing the project deletion.
+: <<'BLOCK_COMMENT'
 for i in $(oc api-resources --verbs=list --namespaced=true -o name | xargs -n 1 oc get --show-kind --ignore-not-found -n $cp4baProjectName -o name); do
    # Get the kind and the name
    KIND=$(echo $i | grep -oP '.*(?=/)')
@@ -357,6 +381,7 @@ for i in $(oc api-resources --verbs=list --namespaced=true -o name | xargs -n 1 
    logInfo $(oc patch ${KIND} ${NAME} -n "${cp4baProjectName}" --type=merge -p'{"metadata":{"finalizers":[]}}')
    logInfo $(oc delete "${KIND}" ${NAME} -n "${cp4baProjectName}" --ignore-not-found=true)
 done
+BLOCK_COMMENT
 
 logInfo "Finally, deleting the namespace $cp4baProjectName"
 oc delete project $cp4baProjectName
@@ -381,5 +406,3 @@ while true; do
   fi
 done
 echo
-
-
