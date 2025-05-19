@@ -90,32 +90,39 @@ echo
 project=$(oc project --short)
 logInfo "project =" $project
 if [[ "$project" != "$cp4baProjectName" ]]; then
-   logInfo "Switching to project ${cp4baProjectName}..."
-   logInfo $(oc project $cp4baProjectName)
+  if oc get project $cp4baProjectName  > /dev/null 2>&1; then
+    logInfo "Switching to project ${cp4baProjectName}..."
+    logInfo $(oc project $cp4baProjectName)
+  else
+    logError "Project ${cp4baProjectName} does not exist. Exiting..."
+    echo
+    exit 1
+  fi
 fi
 echo
 
-## Get CP4BA deployment name
-CP4BA_NAME=$(oc get ICP4ACluster -o name |cut -d "/" -f 2)
-logInfo "CP4BA deployment name: $CP4BA_NAME"
-echo
+## Look for CP4BA deployments
+CP4BA_DELPOYMENTS=$(oc get ICP4ACluster -o name)
+CP4BA_DELPOYMENTS_NAMES=
+CP4BA_DELPOYMENTS_COUNT=0
+for d in $CP4BA_DELPOYMENTS; do
+  CP4BA_DELPOYMENTS_COUNT=$((CP4BA_DELPOYMENTS_COUNT+1))
+  if [[ $CP4BA_DELPOYMENTS_COUNT == 1 ]]; then
+    CP4BA_DELPOYMENTS_NAMES=$(echo $d | cut -d "/" -f2)
+  else
+    CP4BA_DELPOYMENTS_NAMES=$CP4BA_DELPOYMENTS_NAMES", "$(echo $d | cut -d "/" -f2)
+  fi
+done
 
-## Get CP4BA version
-CP4BA_VERSION=$(oc get ICP4ACluster $CP4BA_NAME -o 'custom-columns=NAME:.metadata.name,VERSION:.spec.appVersion' --no-headers | awk '{print $2}')
-logInfo "Found CP4BA version: $CP4BA_VERSION"
-echo
-
-
-MAJOR_CP4BA_VERSION=$(cut -c 1-6 <<< $CP4BA_VERSION)
-if [[ $MAJOR_CP4BA_VERSION != "21.0.3" ]]; then
-  logError "  CP4BA version not supported!"
+if [[ $CP4BA_DELPOYMENTS_COUNT == 0 ]]; then
+  logWarning "No CP4BA Deployment found!"
   echo
-  printf "Do you want to continue DELETING the CP4BA deployment in namespace ${cp4baProjectName}? (Yes/No, default: No): "
+  printf "Do you want to continue DELETING namespace ${cp4baProjectName}? (Yes/No, default: No): "
   read -rp "" ans
   case "$ans" in
   "y"|"Y"|"yes"|"Yes"|"YES")
      echo
-     logInfo "Ok, deleting the CP4BA deployment in namespace ${cp4baProjectName}..."
+     logInfo "Ok, deleting namespace ${cp4baProjectName}..."
      echo
      ;;
   *)
@@ -125,37 +132,15 @@ if [[ $MAJOR_CP4BA_VERSION != "21.0.3" ]]; then
      exit 0
      ;;
   esac
-fi
-
-######Function#######
-patch_finalizers(){
- RESOURCES=$(oc get $1 -n $2 -o json | jq -r '.items[]|select(.metadata.finalizers != null)|.kind +"/"+.metadata.name')
-
-for i in $RESOURCES; do
-  KIND=$(echo $i | cut -d '/' -f1)
-  NAME=$(echo $i | cut -d '/' -f2)
-  
-  logInfo "Removing finalizers from $KIND/$NAME..."
-  oc patch $KIND $NAME -n $2 --type=merge -p '{"metadata":{"finalizers":[]}}'
-  logInfo "Deleting the Resource by $NAME"
-  logInfo $(oc delete ${KIND} ${NAME} -n ${2} --ignore-not-found=true)
-done
-}
-
-##### Delete the deployment ##############################################################
-logInfo "Retrieving the icp4a cluster instance"
-CR_NAME=$(oc get icp4acluster -n "$cp4baProjectName" -o jsonpath='{.items[*].metadata.name}' --ignore-not-found=true)
-
-#Check if the custom resource name exists
-if [ -z "$CR_NAME" ]; then
-  logInfo "No ICP4ACluster found in namespace $cp4baProjectName."
+elif [[ $CP4BA_DELPOYMENTS_COUNT > 1 ]]; then
+  logWarning "Multiple CP4BA Deployments found:" $CP4BA_DELPOYMENTS_NAMES
   echo
-  printf "Do you want to continue DELETING the deployment in namespace ${cp4baProjectName}? (Yes/No, default: No): "
+  printf "Do you want to continue DELETING all CP4BA deployments ($CP4BA_DELPOYMENTS_NAMES) in namespace ${cp4baProjectName} including the namespace? (Yes/No, default: No): "
   read -rp "" ans
   case "$ans" in
   "y"|"Y"|"yes"|"Yes"|"YES")
      echo
-     logInfo "Ok, deleting the CP4BA deployment in namespace ${cp4baProjectName}..."
+     logInfo "Ok, deleting all CP4BA deployments ($CP4BA_DELPOYMENTS_NAMES) in namespace ${cp4baProjectName} including the namespace..."
      echo
      ;;
   *)
@@ -166,15 +151,25 @@ if [ -z "$CR_NAME" ]; then
      ;;
   esac
 else
-  # Delete the custom resource - icp4acluster
-  logInfo "Deleting Custom Resource $CR_NAME in namespace $cp4baProjectName..."
-  logInfo $(oc delete ICP4ACluster "$CR_NAME" -n "$cp4baProjectName")
+  CP4BA_NAME=$(oc get ICP4ACluster -o name |cut -d "/" -f 2)
+  logInfo "CP4BA deployment name: $CP4BA_NAME"
+  echo
+fi
+
+if [[ $CP4BA_DELPOYMENTS_COUNT > 0 ]]; then
+  for d in $CP4BA_DELPOYMENTS; do
+    # Delete the custom resource - icp4acluster
+    CR_NAME=$(echo $d | cut -d "/" -f2)
+    logInfo "Deleting Custom Resource $CR_NAME in namespace $cp4baProjectName..."
+    logInfo $(oc delete ICP4ACluster "$CR_NAME" -n "$cp4baProjectName" --timeout=10s)
+  done
+  
   logInfo "   Waiting for 180 seconds..."
   sleep 180
   while true; do
     # Check if the pod exists
     STATUS=$(oc get pod -n $cp4baProjectName | egrep "ibm-zen-operator|ibm-commonui-operator")
-
+    
     if [ -z "$STATUS" ]; then
       logInfo "   ibm-zen-operator and ibm-commonui-operator pods are deleted, waiting for another 30 seconds to stablize..."
       echo
@@ -188,180 +183,11 @@ else
   done
 fi
 
-# Deleting ibm-cp4ba subscription
-SUB_NAME=$(oc get subscription "ibm-cp4a-operator" -n "$cp4baProjectName" --ignore-not-found=true)
-if [ -z "$SUB_NAME" ]; then
-  logInfo "ibm-cp4a subscription not found"
-else
-  logInfo "Deleting subscription ibm-cp4a-operator "
-  logInfo $(oc delete Subscription "ibm-cp4a-operator" -n "$cp4baProjectName")
-  logInfo "Waiting for ibm-cp4a-operator resources to be deleted"
-  sleep 15
-fi
-
-# Deleting the ibm-cp4a-operator-catalog-group
-OG_NAME=$(oc get operatorgroup "ibm-cp4a-operator-catalog-group" -n "$cp4baProjectName" --ignore-not-found=true)
-if [ -z "$OG_NAME" ]; then
-  logInfo "ibm-cp4a-operator-catalog-group is not found"
-else
-  logInfo "Deleting Operator group ibm-cp4a-operator-catalog-group"
-  logInfo $(oc delete operatorgroup "ibm-cp4a-operator-catalog-group" -n "$cp4baProjectName")
-  logInfo "Waiting for ibm-cp4a-operator-catalog-group resources to be deleted"
-  sleep 15
-fi
-
-# Deleting ibm-cp4ba workflow subscription
-SUB_NAME=$(oc get Subscription "ibm-cp4a-wfps-operator" -n "$cp4baProjectName" --ignore-not-found=true)
-if [ -z "$SUB_NAME" ]; then
-  logInfo "ibm-cp4a-wfps-operator not found"
-else
-  logInfo "Deleting subscription ibm-cp4a-wfps-operator "
-  logInfo $(oc delete Subscription "ibm-cp4a-wfps-operator" -n "$cp4baProjectName")
-  logInfo "Waiting for WFPS operator resources to be deleted"
-  sleep 15
-fi
-echo
-
-logInfo "Deleting operandbindinfo"
-patch_finalizers "operandbindinfo" "$cp4baProjectName"
-logInfo $(oc delete operandbindinfo --all -n "$cp4baProjectName")
-sleep 5
-logInfo "Deleting operandrequest" 
-patch_finalizers "operandrequest" "$cp4baProjectName"
-logInfo $(oc delete operandrequest --all -n "$cp4baProjectName")
-sleep 5
-logInfo "Deleting operandconfig"
-patch_finalizers "operandconfig" "$cp4baProjectName"
-logInfo $(oc delete operandconfig --all -n "$cp4baProjectName")
-sleep 5
-logInfo "Deleting operandregistry"
-patch_finalizers "operandregistry" "$cp4baProjectName"
-logInfo $(oc delete operandregistry --all -n "$cp4baProjectName")
-sleep 5
-echo
-
-logInfo "Deleting Common service, CSV and subscription"
-logInfo $(oc delete commonservice common-service -n "$cp4baProjectName" --ignore-not-found=true)
-logInfo $(oc delete csv -l operators.coreos.com/ibm-common-service-operator.$cp4baProjectName -n $cp4baProjectName --ignore-not-found=true)
-logInfo $(oc delete subscription -l operators.coreos.com/ibm-common-service-operator.$cp4baProjectName -n $cp4baProjectName --ignore-not-found=true)
-echo
-
-logInfo "Deleting namespacescope"
-patch_finalizers "namespacescope" "$cp4baProjectName"
-logInfo $(oc delete namespacescope --all -n "$cp4baProjectName")
-
-logInfo "Deleting Operand Deployment Lifecycle Manager operator"
-logInfo $(oc delete csv -l operators.coreos.com/ibm-odlm.$cp4baProjectName -n $cp4baProjectName --ignore-not-found=true)
-logInfo $(oc delete subscription -l operators.coreos.com/ibm-odlm.$cp4baProjectName -n $cp4baProjectName --ignore-not-found=true)
-
-logInfo "Uninstall IBM NAmespaceScope operator"
-logInfo $(oc delete csv -l operators.coreos.com/ibm-namespace-scope-operator.$cp4baProjectName -n $cp4baProjectName --ignore-not-found=true)
-logInfo $(oc delete subscription -l operators.coreos.com/ibm-namespace-scope-operator.$cp4baProjectName -n $cp4baProjectName --ignore-not-found=true)
-echo
-
-logInfo "Uninstall IBM Automation Foundation Core Operator"
-logInfo $(oc delete csv -l operators.coreos.com/ibm-automation-core.$cp4baProjectName -n $cp4baProjectName --ignore-not-found=true)
-logInfo $(oc delete subscription -l operators.coreos.com/ibm-automation-core.$cp4baProjectName -n $cp4baProjectName --ignore-not-found=true)
-
-logInfo "Uninstall IBM Automation Foundation Insights Engine Operator"
-logInfo $(oc delete csv -l operators.coreos.com/ibm-automation-insightsengine.$cp4baProjectName -n $cp4baProjectName --ignore-not-found=true)
-logInfo $(oc delete subscription -l operators.coreos.com/ibm-automation-insightsengine.$cp4baProjectName -n $cp4baProjectName --ignore-not-found=true)
-
-logInfo "Uninstall IBM Automation Foundation Operator"
-logInfo $(oc delete csv -l operators.coreos.com/ibm-automation.$cp4baProjectName -n $cp4baProjectName --ignore-not-found=true)
-logInfo $(oc delete subscription -l operators.coreos.com/ibm-automation.$cp4baProjectName -n $cp4baProjectName --ignore-not-found=true)
-echo
-
-logInfo "List all ClusterServiceVersions (CSV) in the namespace"
-CSV_LIST=$(oc get csv -n "$cp4baProjectName" -o jsonpath='{.items[*].metadata.name}' --ignore-not-found=true)
-# Check if there are any CSVs in the namespace
-if [ -z "$CSV_LIST" ]; then
-  logInfo "No ClusterServiceVersions found in namespace: $cp4baProjectName."
-else
-  logInfo "Delete each ClusterServiceVersion"
-  logInfo "Deleting ClusterServiceVersions in namespace: $cp4baProjectName..."
-  for CSV in $CSV_LIST; do
-    logInfo "Deleting ClusterServiceVersion: $CSV"
-    logInfo $(oc delete csv "$CSV" -n "$cp4baProjectName")
-  done
-  logInfo "All ClusterServiceVersions in namespace $cp4baProjectName have been deleted."
-fi
-
-#Searching and deleting remaining subscriptions
-# List all subscription names in the namespace
-subscriptions=$(oc get subscriptions -n $cp4baProjectName -o jsonpath='{range .items[*]}{.metadata.name}{"\n"}{end}' --ignore-not-found=true)
-for sub in $subscriptions; do
-  logInfo "Deleting subscription: $sub"
-  
-  #deleting subscription
-  logInfo $(oc delete subscription $sub -n $cp4baProjectName)
-done
-echo
-
-logInfo "Deleting all deployments"
-logInfo $(oc delete deployment --all -n $cp4baProjectName)
-logInfo "Deleting all jobs"
-logInfo $(oc delete job --all -n $cp4baProjectName)
-logInfo "Deleting all pods"
-logInfo $(oc delete pod --all -n $cp4baProjectName)
-logInfo "Deleting all services"
-logInfo $(oc delete svc --all -n $cp4baProjectName)
-logInfo "Deleting all network policies"
-logInfo $(oc delete networkpolicy --all -n $cp4baProjectName)
-logInfo "Deleting all PVCs"
-logInfo $(oc delete pvc --all -n $cp4baProjectName)
-logInfo "Deleting all service accounts"
-logInfo $(oc delete serviceaccount  --all -n $cp4baProjectName)
-logInfo "Deleting all roles"
-logInfo $(oc delete role --all -n $cp4baProjectName)
-echo
-
-# List all rolebindings in the namespace
-ROLEBINDINGS=$(oc get rolebindings -n "$cp4baProjectName" -o jsonpath='{.items[*].metadata.name}' --ignore-not-found=true)
-# Check if there are any rolebindings
-if [ -z "$ROLEBINDINGS" ]; then
-  logInfo "No RoleBindings found in namespace $cp4baProjectName."
-else
-  # Delete each RoleBinding
-  logInfo "Deleting RoleBindings in namespace: $cp4baProjectName"
-  for RB in $ROLEBINDINGS; do
-    if [[ $RB != "admin" && $RB != "edit" ]]; then
-      logInfo "Deleting RoleBinding: $RB"
-      logInfo $(oc delete rolebinding "$RB" -n "$cp4baProjectName")
-    fi
-  done
-fi
-
-patch_finalizers "rolebinding" "$cp4baProjectName"
-
-
-for i in $(oc api-resources --verbs=list --namespaced=true -o name | xargs -n 1 oc get --ignore-not-found -n ${cp4baProjectName} -o json | jq -r '.items[] | select(.metadata.finalizers != null) | .kind + "/" + .metadata.name'); do
-   # Get the kind and the name
-   if [[ "$i" == Cartridge* ]]; then
-     continue
-   fi
-   KIND=$(echo $i | cut -d '/' -f1)
-   NAME=$(echo $i | cut -d '/' -f2)
-   echo "KIND->"$KIND
-   echo "Name->"$NAME
-   logInfo $(oc patch ${KIND} ${NAME} -n "${cp4baProjectName}" --type=merge -p'{"metadata":{"finalizers":[]}}')
-   logInfo $(oc delete "${KIND}" ${NAME} -n "${cp4baProjectName}" --ignore-not-found=true)
-done
-
-for i in $(oc api-resources --verbs=list --namespaced=true -o name | xargs -n 1 oc get --show-kind --ignore-not-found -n $cp4baProjectName -o name); do
-   # Get the kind and the name
-   KIND=$(echo $i | grep -oP '.*(?=/)')
-   NAME=$(echo $i | grep -oP '(?<=/).*')  
-   echo "KIND->"$KIND
-   echo "Name->"$NAME
-   logInfo $(oc patch ${KIND} ${NAME} -n "${cp4baProjectName}" --type=merge -p'{"metadata":{"finalizers":[]}}')
-   logInfo $(oc delete "${KIND}" ${NAME} -n "${cp4baProjectName}" --ignore-not-found=true)
-done
-
-logInfo "Finally, deleting the namespace $cp4baProjectName"
-oc delete project $cp4baProjectName
-logInfo "Wait until namespace $cp4baProjectName is completely deleted."
+logInfo "Deleting the namespace $cp4baProjectName..."
+logInfo $(oc delete project $cp4baProjectName --timeout=10s)
+logInfo "Wait until namespace $cp4baProjectName is completely deleted..."
 count=0
+attempts=0
 while true; do
   EXISTS=$(oc get project "$cp4baProjectName" --ignore-not-found=true)
   if [ -z "$EXISTS" ]; then
@@ -369,17 +195,30 @@ while true; do
      break
   else
      ((count += 1))
-     if ((count <= 10)); then
-       logInfo "Waiting for namespace $cp4baProjectName to be terminated.  ... Rechecking in  10 seconds"
+     ((attempts += 1))
+     if ((count <= 6)); then
+       logInfo "  Waiting for namespace $cp4baProjectName to be terminated. Rechecking in 10 seconds..."
        sleep 10
      else
-       logError "Deleting namespace $cp4baProjectName is taking too long and giving up"
-       logError $(oc get project "$cp4baProjectName" -o yaml)
-       echo
-       exit 1
+       logWarning "  Deleting namespace $cp4baProjectName is taking too long. Patching all remaining finalizers..."
+       # for i in $(oc api-resources --verbs=list --namespaced=true -o name | xargs -n 1 oc get --show-kind --ignore-not-found -n $cp4baProjectName -o name); do
+       for i in $(oc api-resources --verbs=list --namespaced=true -o name | xargs -n 1 oc get --ignore-not-found -n ${cp4baProjectName} -o json | jq -r '.items[] | select(.metadata.finalizers != null) | .kind + "/" + .metadata.name'); do
+         # Get the kind and the name
+         KIND=$(echo $i | grep -oP '.*(?=/)')
+         NAME=$(echo $i | grep -oP '(?<=/).*')
+         # check if still exists
+         # RESOURCE_EXISTS=$(oc get ${KIND} ${NAME} --ignore-not-found=true)
+         # if [[ -z "$RESOURCE_EXISTS" ]]; then
+           logInfo "  "$(oc patch ${KIND} ${NAME} -n "${cp4baProjectName}" --type=merge -p'{"metadata":{"finalizers":[]}}')
+         # fi
+       done
+       if ((attempts <= 14)); then
+         count=3
+       else
+         logError "Namespace $cp4baProjectName can't be deleted by this script."
+         break
+       fi
      fi
   fi
 done
 echo
-
-
