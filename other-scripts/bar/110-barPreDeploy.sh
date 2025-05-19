@@ -161,9 +161,8 @@ function restore_this_secret() {
   if [[ $secretname == ibm-pfs-admin-secret  ]]; then return 0; fi
   
   # Pattern for AE admin secret is <CR name>-<AE name>-aae-app-engine-admin-secret
-  # notice the == operator covers the simple matching pattern that we are using here 
-  pattern="*-aae-app-engine-admin-secret"
-  if [[ $secretname == $pattern ]]; then return 0; fi
+  pattern=".*-aae-app-engine-admin-secret"
+  if [[ $secretname =~ $pattern ]]; then return 0; fi
 
   if [[ $secretname == CRNAME-workspace-aae-app-engine-admin-secret  ]]; then return 0; fi
   if [[ $secretname == iaf-system-elasticsearch-es-default-user  ]]; then return 0; fi
