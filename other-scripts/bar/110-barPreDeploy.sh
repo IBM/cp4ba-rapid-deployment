@@ -159,7 +159,12 @@ function restore_this_secret() {
   if [[ $secretname == ibm-iaws-shared-key-secret  ]]; then return 0; fi
   if [[ $secretname == ibm-baw-wfs-server-db-secret  ]]; then return 0; fi
   if [[ $secretname == ibm-pfs-admin-secret  ]]; then return 0; fi
-  # if [[ $secretname == icp4adeploy-workspace-aae-app-engine-admin-secret  ]]; then return 0; fi   # icp4adeploy is a custom name, secret referenced by CR, so we shoould get it by the last if in this function
+  
+  # Pattern for AE admin secret is <CR name>-<AE name>-aae-app-engine-admin-secret
+  # notice the == operator covers the simple matching pattern that we are using here 
+  pattern="*-aae-app-engine-admin-secret"
+  if [[ $secretname == $pattern ]]; then return 0; fi
+
   if [[ $secretname == CRNAME-workspace-aae-app-engine-admin-secret  ]]; then return 0; fi
   if [[ $secretname == iaf-system-elasticsearch-es-default-user  ]]; then return 0; fi
   if [[ $secretname == CRNAME-elasticsearch-admin-secret  ]]; then return 0; fi
@@ -174,7 +179,6 @@ function restore_this_secret() {
   if [[ $secretname == CRNAME-workflow-authoring-baw-server-encrypt-secret ]]; then return 0; fi
   if [[ $secretname == CRNAME-workflow-authoring-baw-jms-encrypt-secret ]]; then return 0; fi
   if [[ $secretname == CRNAME-pfs-encrypt-secret ]]; then return 0; fi
-  # if [[ $secretname == icp4adeploy-bas-admin-secret  ]]; then return 0; fi   # icp4adeploy is a custom name, secret referenced by CR, so we shoould get it by the last if in this function
   if [[ $secretname == CRNAME-bas-admin-secret  ]]; then return 0; fi
   if [[ $secretname == platform-oidc-credentials  ]]; then return 0; fi
   if [[ $secretname == oauth-client-secret  ]]; then return 0; fi
@@ -182,7 +186,6 @@ function restore_this_secret() {
   if [[ $secretname =~ $pattern   ]]; then return 0; fi
   if [[ $secretname == admin-user-details  ]]; then return 0; fi
   if [[ $secretname == ibm-entitlement-key  ]]; then return 0; fi
-  # if [[ $secretname == icp4adeploy-rr-admin-secret  ]]; then return 0; fi   # icp4adeploy is a custom name, secret referenced by CR, so we shoould get it by the last if in this function
   if [[ $secretname == CRNAME-rr-admin-secret    ]]; then return 0; fi
 
   if [[ $secretname == playback-server-admin-secret  ]]; then return 0; fi
