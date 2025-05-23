@@ -201,13 +201,15 @@ while true; do
        sleep 10
      else
        logWarning "  Deleting namespace $cp4baProjectName is taking too long. Patching all remaining finalizers..."
-       for i in $(oc api-resources --verbs=list --namespaced=true -o name | xargs -n 1 oc get --show-kind --ignore-not-found -n $cp4baProjectName -o name); do
-       # for in next line does not work, as it gives the kind with short name only, if there are two with the same short name trying to remove the finalizer might fail as resource is not found
-       # for i in $(oc api-resources --verbs=list --namespaced=true -o name | xargs -n 1 oc get --ignore-not-found -n ${cp4baProjectName} -o json | jq -r '.items[] | select(.metadata.finalizers != null) | .kind + "/" + .metadata.name'); do
+       for i in $(oc api-resources --verbs=list --namespaced=true -o name | xargs -n 1 oc get --ignore-not-found -n ${cp4baProjectName} -o json | jq -r '.items[] | select(.metadata.finalizers != null) | .kind + "." + .apiVersion + "/" + .metadata.name'); do
          # Get the kind and the name
          KIND=$(echo $i | grep -oP '.*(?=/)')
          NAME=$(echo $i | grep -oP '(?<=/).*')
-         # TODO: Do we need to check if the resource has a finalizer?
+         count2=$(grep -o '/' <<<"$KIND" | grep -c .)
+         if [[ $count2 == 1 ]]; then
+           KIND=$(echo $KIND | grep -oP '.*(?=/)')
+           NAME=$(echo $NAME | grep -oP '(?<=/).*')
+         fi
          logInfo "  "$(oc patch ${KIND} ${NAME} -n "${cp4baProjectName}" --type=merge -p'{"metadata":{"finalizers":[]}}')
        done
        if ((attempts <= 14)); then
