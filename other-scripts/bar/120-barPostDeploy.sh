@@ -112,6 +112,23 @@ echo
 
 logInfo "postDeploy will use backup directory $BACKUP_DIR"
 
+# Find name of deployment
+if [[ -d $BACKUP_DIR/icp4acluster.icp4a.ibm.com ]]; then
+  if [[ $(ls -A $BACKUP_DIR/icp4acluster.icp4a.ibm.com | wc -l) -eq 1 ]]; then
+    CR_SPEC=$BACKUP_DIR/icp4acluster.icp4a.ibm.com/$(ls -A $BACKUP_DIR/icp4acluster.icp4a.ibm.com)
+  else
+    logError "No or too many CRs found in backup. Exiting..."
+    echo
+    exit 1
+  fi 
+else
+  logError "CR not found in backup. Exiting..."
+  echo
+  exit 1
+fi
+
+backupDeploymentName=$(yq eval '.metadata.name' $CR_SPEC)
+
 
 function bts-license() {
   local cnpg_cluster_name=ibm-bts-cnpg-${cp4baProjectName}-cp4ba-bts
@@ -406,6 +423,33 @@ function restoreZen()
   rm -f ${CUR_DIR}/zen4-sa.yaml
   rm -f ${CUR_DIR}/zen4-br-scripts.yaml
   rm -f ${CUR_DIR}/zen-backup-pvc.yaml
+
+
+  # Logic required due to issue https://www.ibm.com/mysupport/s/defect/aCI3p0000000Ezz/dt213927?language=en_US
+  logInfo "Updating CockroachDB..."
+
+  zenMetaStorePods=$(oc get pod -l=component=zen-metastoredb --no-headers --ignore-not-found | awk '{print $1}' | sort)
+
+  for pod in ${zenMetaStorePods[*]}
+  do
+    logInfo "Fixing CockroachDB ownership issues from pod ${pod}..."
+    oc cp ${CUR_DIR}/templates/cockroach-script.sql $pod:/user-home/cockroach-script.sql
+    oc exec $pod -it -- bash -c "cp -r /certs/..data/ /tmp/certs && cd /tmp && chmod 0600 ./certs/*; "
+   
+    # restore zen services
+    oc exec $pod -it -- bash -c "cd /cockroach && ./cockroach sql --certs-dir=/tmp/certs/ --host=zen-metastoredb-0.zen-metastoredb -d zen --file /user-home/cockroach-script.sql"
+    break
+  done
+  echo
+
+  #restart pods that require restarting 
+  logInfo "Restarting and waiting for zen watcher pods to come up..."
+  logInfo $(oc delete pod --selector="component=zen-watcher")
+  logInfo $(oc wait -f ${BACKUP_DIR}/deployment.apps/zen-watcher.yaml --for=condition=Available --timeout=-1s)
+
+  logInfo "Restarting and waiting for Navigator pods to come up..."
+  logInfo $(oc delete pod --selector="app=${backupDeploymentName}-navigator-deploy")
+  logInfo $(oc wait -f ${BACKUP_DIR}/deployment.apps/${backupDeploymentName}-navigator-deploy.yaml --for=condition=Available --timeout=-1s)
   
   logInfo "Zen Services restore completed."
 }
