@@ -433,11 +433,13 @@ function restoreZen()
   for pod in ${zenMetaStorePods[*]}
   do
     logInfo "Fixing CockroachDB ownership issues from pod ${pod}..."
-    oc cp ${CUR_DIR}/templates/cockroach-script.sql $pod:/user-home/cockroach-script.sql
+    oc cp ${CUR_DIR}/templates/root-cockroach-script.sql $pod:/user-home/root-cockroach-script.sql
+    oc cp ${CUR_DIR}/templates/zen-user-cockroach-script.sql $pod:/user-home/zen-user-cockroach-script.sql
     oc exec $pod -it -- bash -c "cp -r /certs/..data/ /tmp/certs && cd /tmp && chmod 0600 ./certs/*; "
    
     # restore zen services
-    oc exec $pod -it -- bash -c "cd /cockroach && ./cockroach sql --certs-dir=/tmp/certs/ --host=zen-metastoredb-0.zen-metastoredb -d zen --file /user-home/cockroach-script.sql"
+    oc exec $pod -it -- bash -c "cd /cockroach && ./cockroach sql --certs-dir=/tmp/certs/ --host=zen-metastoredb-0.zen-metastoredb -d zen --file /user-home/root-cockroach-script.sql"
+    oc exec $pod -it -- bash -c "cd /cockroach && ./cockroach sql --certs-dir=/tmp/certs/ --host=zen-metastoredb-0.zen-metastoredb -d zen -u zen_user --file /user-home/zen-user-cockroach-script.sql"
     break
   done
   echo
