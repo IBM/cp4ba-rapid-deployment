@@ -165,22 +165,8 @@ if [[ $CP4BA_DELPOYMENTS_COUNT > 0 ]]; then
   done
   
   logInfo "   Waiting for 180 seconds..."
+  echo
   sleep 180
-  while true; do
-    # Check if the pod exists
-    STATUS=$(oc get pod -n $cp4baProjectName | egrep "ibm-zen-operator|ibm-commonui-operator")
-    
-    if [ -z "$STATUS" ]; then
-      logInfo "   ibm-zen-operator and ibm-commonui-operator pods are deleted, waiting for another 30 seconds to stablize..."
-      echo
-      sleep 30 
-      break
-    else
-      logInfo "   Checking after 5 seconds..."
-      # Wait for a few seconds before re-checking
-      sleep 5
-    fi
-  done
 fi
 
 logInfo "Deleting the namespace $cp4baProjectName..."
