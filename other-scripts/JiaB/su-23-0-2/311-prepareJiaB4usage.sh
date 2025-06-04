@@ -341,6 +341,18 @@ do
 done
 echo
 
+# Re-start running but not ready pods
+podsnotready=$(oc get pod -o 'custom-columns=NAME:.metadata.name,PHASE:.status.phase,READY:.status.containerStatuses[0].ready' --no-headers --ignore-not-found | grep 'Running' | grep 'false' | awk '{print $1}')
+for podnotready in $podsnotready; do
+  # Simply delete these pods
+  oc delete pod $podnotready
+done
+echo
+
+# Re-start navigator-watcher pod
+navwatcherpod=$(oc get pod -o name | grep "cp4adeploy-navigator-watcher-")
+oc delete $navwatcherpod
+
 
 
 echo "All critical components got scaled up / started. Environment is ready for final manual verification and usage. It might be that navigator is not yet working, but will become available after about 15 minutes (affects all navigator based desktops like Workplace or the Client Onboarding Desktop)."
