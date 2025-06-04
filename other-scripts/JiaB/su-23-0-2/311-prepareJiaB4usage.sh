@@ -352,6 +352,7 @@ echo
 # Re-start navigator-watcher pod
 navwatcherpod=$(oc get pod -o name | grep "cp4adeploy-navigator-watcher-")
 oc delete $navwatcherpod
+echo
 
 
 
