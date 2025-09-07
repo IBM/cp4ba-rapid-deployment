@@ -1,6 +1,6 @@
 #!/bin/bash
 ###############################################################################
-#
+# 
 # Licensed Materials - Property of IBM
 #
 # (C) Copyright IBM Corp. 2025. All Rights Reserved.
