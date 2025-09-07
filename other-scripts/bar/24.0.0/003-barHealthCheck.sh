@@ -140,8 +140,8 @@ fi
 echo
 
 MAJOR_CP4BA_VERSION=$(cut -c 1-6 <<< $CP4BA_VERSION)
-if [[ $MAJOR_CP4BA_VERSION != "21.0.3" ]]; then
-  logError "  CP4BA version not supported!"
+if [[ $MAJOR_CP4BA_VERSION != "24.0.0" ]]; then
+  logError "  CP4BA version not supported! $MAJOR_CP4BA_VERSION"
   echo
   exit 1
 fi
