@@ -15,7 +15,7 @@
         },
         "name": "mycluster",
         "namespace": "ibm-cp4ba-dev",
-        "resourceVersion": "276952399",
+        "resourceVersion": "276998624",
         "uid": "b3d84635-ee2c-4516-aa87-be1b0a3d3615"
     },
     "spec": {
@@ -1047,7 +1047,7 @@
             },
             "ae-mycluster-pbk": {
                 "adminSecret": "playback-server-admin-secret",
-                "reconcile": "Running",
+                "reconcile": "Finished",
                 "service": "Ready"
             },
             "ae-mycluster-workspace-aae": {
@@ -1061,7 +1061,7 @@
             "bai": {
                 "bai_deploy_status": "Ready",
                 "conditions": {
-                    "lastTransitionTime": "2025-09-08T12:34:41Z",
+                    "lastTransitionTime": "2025-09-08T13:01:45Z",
                     "message": "Check detail status from InsightsEngine mycluster CR if you need it.",
                     "reason": "InsightsEngine is Ready",
                     "status": true,
@@ -1083,7 +1083,7 @@
                     "pfs",
                     "workplace"
                 ],
-                "reconcile": "Running",
+                "reconcile": "Finished",
                 "service": "Ready"
             },
             "baw": {
@@ -1100,7 +1100,7 @@
                 "caStorageVerification": "NotInstalled",
                 "caZenRegistration": "NotInstalled",
                 "conditions": {
-                    "lastTransitionTime": "2025-09-08T12:20:51Z",
+                    "lastTransitionTime": "2025-09-08T13:01:45Z",
                     "message": "CA's Zen integration was removed",
                     "reason": "caZenRegistration",
                     "status": "True",
@@ -1113,7 +1113,7 @@
                 "cmisService": "Ready",
                 "cmisStorage": "Ready",
                 "cmisZenIntegration": "Ready",
-                "lastTransitionTime": "2025-09-08T12:29:11Z",
+                "lastTransitionTime": "2025-09-08T12:55:29Z",
                 "message": "",
                 "reason": ""
             },
@@ -1122,7 +1122,7 @@
                 "cdraPersistentVolume": "NotInstalled",
                 "cdraService": "NotInstalled",
                 "cdraZenIntegration": "NotInstalled",
-                "lastTransitionTime": "2025-09-08T12:29:11Z",
+                "lastTransitionTime": "2025-09-08T12:55:29Z",
                 "message": "",
                 "reason": ""
             },
@@ -1131,7 +1131,7 @@
                 "cdsPersistentVolume": "NotInstalled",
                 "cdsService": "NotInstalled",
                 "cdsZenIntegration": "NotInstalled",
-                "lastTransitionTime": "2025-09-08T12:29:11Z",
+                "lastTransitionTime": "2025-09-08T12:55:29Z",
                 "message": "",
                 "reason": ""
             },
@@ -1140,7 +1140,7 @@
                 "cpdsPersistentVolume": "NotInstalled",
                 "cpdsService": "NotInstalled",
                 "cpdsZenIntegration": "NotInstalled",
-                "lastTransitionTime": "2025-09-08T12:29:11Z",
+                "lastTransitionTime": "2025-09-08T12:55:29Z",
                 "message": "",
                 "reason": ""
             },
@@ -1151,7 +1151,7 @@
                 "cpeService": "Ready",
                 "cpeStorage": "Ready",
                 "cpeZenIntegration": "Ready",
-                "lastTransitionTime": "2025-09-08T12:29:11Z",
+                "lastTransitionTime": "2025-09-08T12:55:29Z",
                 "message": "",
                 "reason": ""
             },
@@ -1159,7 +1159,7 @@
                 "cssDeployment": "Ready",
                 "cssService": "Ready",
                 "cssStorage": "Ready",
-                "lastTransitionTime": "2025-09-08T12:29:11Z",
+                "lastTransitionTime": "2025-09-08T12:55:29Z",
                 "message": "",
                 "reason": ""
             },
@@ -1168,7 +1168,7 @@
                 "extshareRoute": "NotInstalled",
                 "extshareService": "NotInstalled",
                 "extshareStorage": "NotInstalled",
-                "lastTransitionTime": "2025-09-08T12:29:11Z",
+                "lastTransitionTime": "2025-09-08T12:55:29Z",
                 "message": "",
                 "reason": ""
             },
@@ -1176,7 +1176,7 @@
                 "gitsvcDeployment": "NotInstalled",
                 "gitsvcPersistentVolume": "NotInstalled",
                 "gitsvcService": "NotInstalled",
-                "lastTransitionTime": "2025-09-08T12:29:11Z",
+                "lastTransitionTime": "2025-09-08T12:55:29Z",
                 "message": "",
                 "reason": ""
             },
@@ -1202,7 +1202,7 @@
                 "ierStorageCheck": "NotInstalled"
             },
             "navigator": {
-                "lastTransitionTime": "2025-09-08T12:29:11Z",
+                "lastTransitionTime": "2025-09-08T12:55:29Z",
                 "message": "",
                 "navigatorDeployment": "Ready",
                 "navigatorService": "Ready",
@@ -1229,7 +1229,7 @@
                 "conditions": [],
                 "encryptionKeySecret": "icp4a-shared-encryption-key",
                 "iafStatus": "Ready",
-                "iamIntegrationStatus": "Ready",
+                "iamIntegrationStatus": "NotReady",
                 "rootCASecretName": "icp4a-root-ca",
                 "rootCAStatus": "Ready"
             },
@@ -1239,7 +1239,7 @@
                 "rrService": "Ready"
             },
             "tm": {
-                "lastTransitionTime": "2025-09-08T12:29:11Z",
+                "lastTransitionTime": "2025-09-08T12:55:29Z",
                 "message": "",
                 "reason": "",
                 "tmDeployment": "NotInstalled",
@@ -1273,12 +1273,6 @@
                 "reason": "Running",
                 "status": "True",
                 "type": "Running"
-            },
-            {
-                "message": "Prerequisites execution done.",
-                "reason": "Successful",
-                "status": "True",
-                "type": "PrereqReady"
             }
         ],
         "endpoints": [
