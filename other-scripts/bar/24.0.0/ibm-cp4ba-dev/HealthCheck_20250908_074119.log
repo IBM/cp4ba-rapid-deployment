@@ -1,0 +1,105 @@
+2025-09-08 07:41:19.022 CDT   INFO    Details will be logged to /home/cp4badmin/cp4ba-rapid-deployment/other-scripts/bar/24.0.0/ibm-cp4ba-dev/HealthCheck_20250908_074119.log.
+2025-09-08 07:41:21.223 CDT   INFO    Checking CP4BA deployment in namespace ibm-cp4ba-dev...
+2025-09-08 07:41:21.225 CDT   INFO    Verifying OC CLI is connected to the OCP cluster...
+2025-09-08 07:41:21.332 CDT   INFO    WHOAMI = ocpadmin
+2025-09-08 07:41:21.447 CDT   INFO    project = ibm-cp4ba-dev
+2025-09-08 07:41:21.449 CDT   INFO    Looking for CP4BA operator...
+2025-09-08 07:41:22.098 CDT   INFO      Found CP4BA operator clusterserviceversion.operators.coreos.com/ibm-cp4a-operator.v24.0.5
+2025-09-08 07:41:22.303 CDT   INFO      CP4BA Operator version: 24.0.5
+2025-09-08 07:41:22.308 CDT   INFO      CP4BA version: 24.0.0.5
+2025-09-08 07:41:22.518 CDT   INFO    CP4BA deployment name: mycluster
+2025-09-08 07:41:22.520 CDT   INFO    Saving CP4BA CR to /home/cp4badmin/cp4ba-rapid-deployment/other-scripts/bar/24.0.0/ibm-cp4ba-dev/CR.json...
+2025-09-08 07:41:22.680 CDT   INFO    Checking CP4BA Deployment overall status...
+2025-09-08 07:41:22.722 CDT   INFO      CP4BA deployment status: True
+2025-09-08 07:41:22.762 CDT   INFO      CP4BA reconciliation running: True
+2025-09-08 07:41:22.797 CDT   INFO      CP4BA prereq ready: True
+2025-09-08 07:41:22.799 CDT   INFO    Finding CP4BA components installed...
+2025-09-08 07:41:22.832 CDT   INFO      CP4BA deployment patterns: workflow,application
+2025-09-08 07:41:22.866 CDT   INFO      CP4BA optional components: baw_authoring,bai,app_designer,pfs
+2025-09-08 07:41:22.867 CDT   INFO    Checking Prereq...
+2025-09-08 07:41:22.902 CDT   INFO      CP4BA Prereq iafStatus: Ready
+2025-09-08 07:41:22.936 CDT   INFO      CP4BA Prereq iamIntegrationStatus: Ready
+2025-09-08 07:41:22.938 CDT   INFO    Checking Resource Registry...
+2025-09-08 07:41:23.119 CDT   INFO      CP4BA Resource Registry Service: Ready
+2025-09-08 07:41:23.121 CDT   INFO    Checking Navigator...
+2025-09-08 07:41:23.156 CDT   INFO      CP4BA Navigator Deployment: Ready
+2025-09-08 07:41:23.191 CDT   INFO      CP4BA Navigator Service: Ready
+2025-09-08 07:41:23.227 CDT   INFO      CP4BA Navigator Storage: Ready
+2025-09-08 07:41:23.262 CDT   INFO      CP4BA Navigator Zen Integration: Ready
+2025-09-08 07:41:23.264 CDT   INFO    Checking Business Team Service..
+2025-09-08 07:41:23.392 CDT   INFO      CP4BA Business Team Deploy Status: ready
+2025-09-08 07:41:23.551 CDT   INFO      CP4BA Business Team Service Status: ready
+2025-09-08 07:41:23.553 CDT   INFO    Checking BTS Cloud Native PostgreSQL Status...
+2025-09-08 07:41:23.695 CDT   INFO      CP4BA Cloud Native PostgreSQL cluster ready: True
+2025-09-08 07:41:23.697 CDT   INFO    Checking Business Automation Studio...
+2025-09-08 07:41:23.734 CDT   INFO      Business Automation Studio capabilities enabled: [
+  "app-designer",
+  "workflow",
+  "content-integration",
+  "case",
+  "bai",
+  "pfs",
+  "workplace"
+]
+2025-09-08 07:41:23.777 CDT   INFO      CP4BA Business Automation Studio service: Ready
+2025-09-08 07:41:23.779 CDT   INFO    Checking Business Automation Insights...
+2025-09-08 07:41:23.822 CDT   INFO      CP4BA Business Automation Insights deployment status: Ready
+2025-09-08 07:41:23.863 CDT   INFO      CP4BA Business Automation Insights Engine status: Ready
+2025-09-08 07:41:23.865 CDT   INFO    Checking Content Platform Engine...
+2025-09-08 07:41:23.901 CDT   INFO      CP4BA Content Platform Engine Deployment: Ready
+2025-09-08 07:41:23.939 CDT   INFO      CP4BA Content Platform Engine Service: Ready
+2025-09-08 07:41:23.976 CDT   INFO      CP4BA Content Platform Engine Storage: Ready
+2025-09-08 07:41:24.015 CDT   INFO      CP4BA Content Platform Engine Zen Integration: Ready
+2025-09-08 07:41:24.061 CDT   INFO    Checking GraphQL...
+2025-09-08 07:41:24.064 CDT   INFO      CP4BA GraphQL Deployment: Ready
+2025-09-08 07:41:24.101 CDT   INFO      CP4BA GraphQL Service: Ready
+2025-09-08 07:41:24.139 CDT   INFO      CP4BA GraphQL Storage: Ready
+2025-09-08 07:41:24.180 CDT   INFO    Checking Content Search Service...
+2025-09-08 07:41:24.221 CDT   INFO      CP4BA Content Search Service Deployment: Ready
+2025-09-08 07:41:24.257 CDT   INFO      CP4BA Content Search Service Service: Ready
+2025-09-08 07:41:24.293 CDT   INFO      CP4BA Content Search Service Storage: Ready
+2025-09-08 07:41:24.332 CDT   INFO    Checking CMIS...
+2025-09-08 07:41:24.375 CDT   INFO      CP4BA CMIS Deployment: Ready
+2025-09-08 07:41:24.412 CDT   INFO      CP4BA CMIS Service: Ready
+2025-09-08 07:41:24.458 CDT   INFO      CP4BA CMIS Storage: Ready
+2025-09-08 07:41:24.512 CDT   INFO      CP4BA CMIS Zen Integration: Ready
+2025-09-08 07:41:24.514 CDT   INFO    Checking application engine...
+2025-09-08 07:41:24.707 CDT   INFO      Application Engine instance count: 1
+2025-09-08 07:41:24.884 CDT   INFO      CP4BA Application Engine service: Ready
+2025-09-08 07:41:24.896 CDT   INFO    Checking Application Engine Playback Server...
+2025-09-08 07:41:25.030 CDT   INFO      CP4BA Application Engine Playback Server service: Ready
+2025-09-08 07:41:25.033 CDT   INFO    Trying to connect to OpenSearch...
+2025-09-08 07:41:25.319 CDT   INFO      Successfully connected to: opensearch-ibm-cp4ba-dev.apps.ocp.ibm.edu, HTTP 200 returned
+2025-09-08 07:41:25.324 CDT   INFO    Checking ZenService...
+2025-09-08 07:41:25.432 CDT   INFO      ZenService iaf-zen-cpdservice status: Completed
+2025-09-08 07:41:25.543 CDT   INFO      ZenService iaf-zen-cpdservice progress: 100%
+2025-09-08 07:41:25.825 CDT   INFO    Checking Kafka...
+2025-09-08 07:41:25.828 CDT   INFO      Kafka ready: True
+2025-09-08 07:41:25.948 CDT   INFO    Checking Flink Deployment...
+2025-09-08 07:41:26.067 CDT   INFO      Flink Job Manager Deployment Status: READY
+2025-09-08 07:41:26.187 CDT   INFO      Flink Lifecycle Status: STABLE
+2025-09-08 07:41:26.326 CDT   INFO      Flink Reconcile State: DEPLOYED
+2025-09-08 07:41:26.852 CDT   INFO      Insights Engine mycluster Management: https://cpd-ibm-cp4ba-dev.apps.ocp.ibm.edu/bai-management
+2025-09-08 07:41:27.170 CDT   INFO      Retrieving flink jobs...
+2025-09-08 07:41:27.407 CDT   INFO        FLINK JOB ID: "6738a19eae78ac4a402482d76ebfe8bf", Name: "dba/bai-icm", State: "RUNNING"
+2025-09-08 07:41:27.503 CDT   INFO        FLINK JOB ID: "131c2d1a13dc9cd478c66bad19c7bed8", Name: "dba/bai-content", State: "RUNNING"
+2025-09-08 07:41:27.599 CDT   INFO        FLINK JOB ID: "1a4769f1559fb00c7c71d1c71707c7a6", Name: "dba/bai-bpmn", State: "RUNNING"
+2025-09-08 07:41:27.704 CDT   INFO    Trying to connect to CPE using the legacy route...
+2025-09-08 07:41:27.890 CDT   INFO      Successfully connected to: https://cpe-ibm-cp4ba-dev.apps.ocp.ibm.edu/wsi/FNCEWS40MTOM, HTTP 200 returned
+2025-09-08 07:41:28.006 CDT   INFO    Trying to connect to CMIS using the legacy route...
+2025-09-08 07:41:28.209 CDT   INFO      Successfully connected to: https://cmis-ibm-cp4ba-dev.apps.ocp.ibm.edu/cmis/openfncmis_wlp/services11?wsdl, HTTP 200 returned
+2025-09-08 07:41:28.213 CDT   INFO    Trying to connect to CSS (openssl on the service port)
+2025-09-08 07:41:29.773 CDT   INFO      Successfully connected to CSS service.
+2025-09-08 07:41:30.036 CDT   INFO    Trying to connect to ICN using the Zen route...
+2025-09-08 07:41:30.130 CDT   INFO      Successfully connected to: https://cpd-ibm-cp4ba-dev.apps.ocp.ibm.edu/icn/navigator/ping.jsp, HTTP 200 returned
+2025-09-08 07:41:30.132 CDT   INFO    Trying to connect to CPE using the Zen route...
+2025-09-08 07:41:30.200 CDT   INFO      Successfully connected to: https://cpd-ibm-cp4ba-dev.apps.ocp.ibm.edu/cpe/wsi/FNCEWS40MTOM, HTTP 200 returned
+2025-09-08 07:41:30.202 CDT   INFO    Trying to connect to BAS ProcessAdmin using the Zen route...
+2025-09-08 07:41:30.260 CDT   INFO      Successfully connected to: https://cpd-ibm-cp4ba-dev.apps.ocp.ibm.edu/bas/ProcessAdmin, HTTP 200 returned
+2025-09-08 07:41:30.262 CDT   INFO    Trying to connect to BAWAut ProcessPortal using the Zen route...
+2025-09-08 07:41:30.343 CDT   INFO      Successfully connected to: https://cpd-ibm-cp4ba-dev.apps.ocp.ibm.edu/bas/ProcessPortal, HTTP 200 returned
+2025-09-08 07:41:30.345 CDT   INFO    Trying to connect to Application Engine using the Zen route...
+2025-09-08 07:41:30.407 CDT   INFO      Successfully connected to: https://cpd-ibm-cp4ba-dev.apps.ocp.ibm.edu/ae-workspace, HTTP 200 returned
+2025-09-08 07:41:30.410 CDT   INFO    Checking Pod Health...
+2025-09-08 07:41:32.632 CDT   INFO    No warnings found.
+2025-09-08 07:41:32.637 CDT   INFO    No errors found.
