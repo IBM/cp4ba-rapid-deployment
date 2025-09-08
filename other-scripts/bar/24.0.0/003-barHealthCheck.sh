@@ -522,7 +522,8 @@ if [[ $CP4BA_COMPONENTS =~ "workflow" ]]; then
         echo
       done
     fi
-  fi 
+  fi
+
   #TODO is it necessary to check BAML ?
 fi
 
