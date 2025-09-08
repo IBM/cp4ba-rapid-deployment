@@ -9,7 +9,7 @@
 # disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
 #
 ###############################################################################
-#
+##
 bar_version=1.1
 
 # This script contains shared utility functions.
