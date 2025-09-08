@@ -885,11 +885,11 @@ else
       # BAWAuthoring
       logInfo "Trying to connect to BAWAut ProcessPortal using the Zen route..."
       if $useTokenForZenRoute; then
-        PP_CURL_RESULT=$(curl -L -sk -w "%{http_code}" --header "Authorization: Bearer ${cp4batoken}" -o /dev/null https://$ZEN_ROUTE/bawaut/ProcessPortal --resolve $barTokenResolveCp4ba)
+        PP_CURL_RESULT=$(curl -L -sk -w "%{http_code}" --header "Authorization: Bearer ${cp4batoken}" -o /dev/null https://$ZEN_ROUTE/bas/ProcessPortal --resolve $barTokenResolveCp4ba)
       else
-        PP_CURL_RESULT=$(curl -L -sk -w "%{http_code}" -o /dev/null https://$ZEN_ROUTE/bawaut/ProcessPortal)
+        PP_CURL_RESULT=$(curl -L -sk -w "%{http_code}" -o /dev/null https://$ZEN_ROUTE/bas/ProcessPortal)
       fi
-      checkHTTPCode $PP_CURL_RESULT "200" "https://$ZEN_ROUTE/bawaut/ProcessPortal"
+      checkHTTPCode $PP_CURL_RESULT "200" "https://$ZEN_ROUTE/bas/ProcessPortal"
       echo
       
     else
