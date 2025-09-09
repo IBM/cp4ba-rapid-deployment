@@ -33,13 +33,11 @@ barTokenUser=cp4badmin               # example value: $(oc -n $cp4baProjectName 
 barTokenPass=passw0rd                # example value: $(oc -n $cp4baProjectName get secret ibm-fncm-secret -o jsonpath='{.data.appLoginPassword}' | base64 -d)
 barCp4baHost=cpd-ibm-cp4ba-dev.apps.ocp.ibm.edu           # example value: $(oc -n $cp4baProjectName get route cpd -o jsonpath="{.spec.host}")
 baw_cust_host=cpd-ibm-cp4ba-dev.apps.ocp.ibm.edu         # example value: $(oc -n $cp4baProjectName get route <your-custom-route-name> -o jsonpath="{.spec.host}")
-#resolve_ip=ibm-cp4ba-dev             # example value: $(getent hosts "$baw_cust_host" | awk '{ print $1 }')
-#barTokenResolveCp4ba=ibm-cp4ba-dev   # example value: ${barCp4baHost}:443:${resolve_ip}
+resolve_ip=REQUIRED             # example value: $(getent hosts "$baw_cust_host" | awk '{ print $1 }')
+barTokenResolveCp4ba=REQUIRED   # example value: ${barCp4baHost}:443:${resolve_ip}
 
 # Name of the storage class used to create temp PVCs during backup/restore
 pvcStorageClassName="nfs-client"
-
-
 
 # Information for backing up or restoring Persistent Volumes
 
