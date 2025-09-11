@@ -28,7 +28,7 @@ cp4baProjectName=REQUIRED
 # If URLs are protected, provide here the information to be used to get the authorization token, if a token is not needed, remove REQUIRED
 useTokenForZenRoute=false
 useTokenForInsightsengineManagementURL=false
-useTokenForElasticsearchRoute=false
+useTokenForOpensearchRoute=false
 barTokenUser=REQUIRED                # example value: $(oc -n $cp4baProjectName get secret ibm-fncm-secret -o jsonpath='{.data.appLoginUsername}' | base64 -d)
 barTokenPass=REQUIRED                # example value: $(oc -n $cp4baProjectName get secret ibm-fncm-secret -o jsonpath='{.data.appLoginPassword}' | base64 -d)
 barCp4baHost=REQUIRED                # example value: $(oc -n $cp4baProjectName get route cpd -o jsonpath="{.spec.host}")

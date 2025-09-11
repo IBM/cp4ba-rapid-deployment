@@ -12,7 +12,7 @@
 ###############################################################################
 
 # This script is for preparing the Backup And Restore (BAR) process, performing a health check on all supported CP4BA components in the given namespace.
-#    Only tested with CP4BA version: 21.0.3 IF029 and IF039, dedicated common services set-up
+#    Only tested with CP4BA version: 24.0.0 IF005, dedicated common services set-up
 
 # TODO: We also should check the subscritions, that they are set to manual approval. This is recommended if there are multiple CP deployments. If set to automatic approval, we might want to issue a warning, that user should set them to manual if multiple CPs are installed on this cluster.
 
@@ -48,7 +48,7 @@ if [[ -f $INPUT_PROPS_FILENAME_FULL ]]; then
    fi
    
    ##### Get Access Token if needed ###############################################
-   if $useTokenForInsightsengineManagementURL || $useTokenForElasticsearchRoute; then
+   if $useTokenForInsightsengineManagementURL || $useTokenForOpensearchRoute; then
      # get the access token
      if [[ "$barTokenUser" = "" ]] || [[ "$barTokenPass" = "" ]] || [[ "$barTokenResolveCp4ba" = "" ]] || [[ "$barCp4baHost" = "" ]]; then
       echo "File ${INPUT_PROPS_FILENAME} not fully updated. Pls. update parameters barTokenUser, barTokenPass, barTokenResolveCp4ba and barCp4baHost."
@@ -235,11 +235,8 @@ if [[ $CP4BA_COMPONENTS =~ "foundation" ]] || [[ $CP4BA_COMPONENTS =~ "workflow"
   # BAS
   if [[ $CP4BA_OPTIONAL_COMPONENTS =~ "bas" ]] || [[ $CP4BA_OPTIONAL_COMPONENTS =~ "baw_authoring" ]]; then
     logInfo "Checking Business Automation Studio..."
-    if [[ ! $CP4BA_VERSION =~ "21.0.3" ]]; then
-      # 21.0.3 doesn't have this property
-      CP4BA_BAS_CAPABILITIES=$(jq -r .status.components.bastudio.capabilities ${BACKUP_ROOT_DIRECTORY_FULL}/CR.json)
-      logInfo "  Business Automation Studio capabilities enabled: $CP4BA_BAS_CAPABILITIES"
-    fi
+    CP4BA_BAS_CAPABILITIES=$(jq -r .status.components.bastudio.capabilities ${BACKUP_ROOT_DIRECTORY_FULL}/CR.json)
+    logInfo "  Business Automation Studio capabilities enabled: $CP4BA_BAS_CAPABILITIES"
     CP4BA_BAS_STATUS=$(jq -r .status.components.bastudio.service ${BACKUP_ROOT_DIRECTORY_FULL}/CR.json)
     checkResult $CP4BA_BAS_STATUS "Ready" "CP4BA Business Automation Studio service"
     echo
@@ -481,13 +478,10 @@ fi
 ##### Workflow Pattern #########################################################
 if [[ $CP4BA_COMPONENTS =~ "workflow" ]]; then
   if [[ $CP4BA_OPTIONAL_COMPONENTS =~ "baw_authoring" ]]; then
-    #Workflow Authoring, only for 21.0.3
-    if [[ $CP4BA_VERSION =~ "21.0.3" ]]; then
-      logInfo "Checking Business Automation Workflow Authoring..."
-      CP4BA_BAW_AUTHORING_SERVICE=$(oc get ICP4ACluster $CP4BA_NAME -o 'jsonpath={.status.components.workflow-authoring.service}')
-      checkResult $CP4BA_BAW_AUTHORING_SERVICE "Ready" "CP4BA Business Automation Workflow Authoring service status"
-      echo
-    fi
+    logInfo "Checking Business Automation Workflow Authoring..."
+    CP4BA_BAW_AUTHORING_SERVICE=$(oc get ICP4ACluster $CP4BA_NAME -o 'jsonpath={.status.components.workflow-authoring.service}')
+    checkResult $CP4BA_BAW_AUTHORING_SERVICE "Ready" "CP4BA Business Automation Workflow Authoring service status"
+    echo
   else
     logInfo "Checking Business Automation Workflow Runtime..."
     # BAW may have 1 or more instances.
@@ -566,129 +560,47 @@ fi
 
 ##### Process Federation Server ################################################
 if [[ $CP4BA_OPTIONAL_COMPONENTS =~ "pfs" ]]; then
-  if [[ $CP4BA_VERSION =~ "21.0.3" ]]; then
-    # only check PFS on 21.0.3
-    logInfo "Checking Process Federation Server..."
-    CP4BA_PFS_DEPLOYMENT=$(jq -r .status.components.pfs.pfsDeployment ${BACKUP_ROOT_DIRECTORY_FULL}/CR.json)
-    checkResult $CP4BA_PFS_DEPLOYMENT "Ready" "CP4BA Process Federation Server deployment status"
+  echo
+  # TODO: Update to 24.0.0 needed
+#  if [[ $CP4BA_VERSION =~ "21.0.3" ]]; then
+#    # only check PFS on 21.0.3
+#    logInfo "Checking Process Federation Server..."
+#    CP4BA_PFS_DEPLOYMENT=$(jq -r .status.components.pfs.pfsDeployment ${BACKUP_ROOT_DIRECTORY_FULL}/CR.json)
+#    checkResult $CP4BA_PFS_DEPLOYMENT "Ready" "CP4BA Process Federation Server deployment status"
 
-    CP4BA_PFS_SERVICE=$(jq -r .status.components.pfs.pfsService ${BACKUP_ROOT_DIRECTORY_FULL}/CR.json)
-    checkResult $CP4BA_PFS_SERVICE "Ready" "CP4BA Process Federation Server service status"
+#    CP4BA_PFS_SERVICE=$(jq -r .status.components.pfs.pfsService ${BACKUP_ROOT_DIRECTORY_FULL}/CR.json)
+#    checkResult $CP4BA_PFS_SERVICE "Ready" "CP4BA Process Federation Server service status"
 
-    CP4BA_PFS_ZENINTEGRATION=$(jq -r .status.components.pfs.pfsZenIntegration ${BACKUP_ROOT_DIRECTORY_FULL}/CR.json)
-    checkResult $CP4BA_PFS_ZENINTEGRATION "Ready" "CP4BA Process Federation Server Zen integration status"
-  fi
+#    CP4BA_PFS_ZENINTEGRATION=$(jq -r .status.components.pfs.pfsZenIntegration ${BACKUP_ROOT_DIRECTORY_FULL}/CR.json)
+#    checkResult $CP4BA_PFS_ZENINTEGRATION "Ready" "CP4BA Process Federation Server Zen integration status"
+#  fi
 fi
 
-##### Elastic Search / Open Search #############################################
-#TODO is it always installed ?
+##### Open Search #############################################
+#TODO OpenSearch is not always installed, check needed!
 if [[ $CP4BA_VERSION =~ "24.0" ]]; then
   # OpenSearch for 24.0 and later
   logInfo "Trying to connect to OpenSearch..."
   OPENSEARCH_ROUTE=$(oc get route opensearch-route -o jsonpath='{.spec.host}')
   OPENSEARCH_PASSWORD=$(oc get secret opensearch-ibm-elasticsearch-cred-secret --no-headers --ignore-not-found -o jsonpath={.data.elastic} | base64 -d)
-  # TODO: Curl might need an authoriziation token
-  OPENSEARCH_CURL_RESULT=$(curl -sk -w "%{http_code}" -o /dev/null -u elastic:$OPENSEARCH_PASSWORD https://$OPENSEARCH_ROUTE)
+  if $useTokenForOpensearchRoute; then
+    OPENSEARCH_CURL_RESULT=$(curl -sk -w "%{http_code}" --header "Authorization: ${cp4batoken}" -o /dev/null -u elastic:$OPENSEARCH_PASSWORD https://$OPENSEARCH_ROUTE --resolve "${barTokenResolveCp4ba}")
+  else
+    OPENSEARCH_CURL_RESULT=$(curl -sk -w "%{http_code}" -o /dev/null -u elastic:$OPENSEARCH_PASSWORD https://$OPENSEARCH_ROUTE)
+  fi
   checkHTTPCode $OPENSEARCH_CURL_RESULT "200" $OPENSEARCH_ROUTE
   echo
-else
-  # ElasticSearch - always installed when workflow/pfs is installed, also needed for bai
-  if [[ $CP4BA_COMPONENTS =~ "workflow" ]] || [[ $CP4BA_OPTIONAL_COMPONENTS =~ "bai" ]]; then
-    logInfo "Trying to connect to ElasticSearch..."
-    ELASTICSEARCH_ROUTE=$(oc get route iaf-system-es -o jsonpath='{.spec.host}')
-    ELASTICSEARCH_PASSWORD=$(oc get secret iaf-system-elasticsearch-es-default-user --no-headers --ignore-not-found -o jsonpath={.data.password} | base64 -d)
-    if $useTokenForElasticsearchRoute; then
-      ELASTICSEARCH_CURL_RESULT=$(curl -sk -w "%{http_code}" --header "Authorization: ${cp4batoken}" -o /dev/null -u elasticsearch-admin:$ELASTICSEARCH_PASSWORD https://$ELASTICSEARCH_ROUTE --resolve "${barTokenResolveCp4ba}")
-    else
-      ELASTICSEARCH_CURL_RESULT=$(curl -sk -w "%{http_code}" -o /dev/null -u elasticsearch-admin:$ELASTICSEARCH_PASSWORD https://$ELASTICSEARCH_ROUTE)
-    fi
-    checkHTTPCode $ELASTICSEARCH_CURL_RESULT "200" $ELASTICSEARCH_ROUTE
-    echo
-  fi
 fi
 
 ##### Zen Resources ############################################################
-if [[ $CP4BA_VERSION =~ "21.0.3" ]]; then
-  logInfo "Checking Automation UIConfig..."
-  ZEN_AUTOMATIONUICONFIG_STATUS=$(oc get AutomationUIConfig iaf-system -o jsonpath='{.status.conditions}'|jq -r '.[] |select(.type == "Ready") | .status')
-  checkResult $ZEN_AUTOMATIONUICONFIG_STATUS "True" "Automation UIConfig iaf-system status"
-  echo
+# Check ZenService
+logInfo "Checking ZenService..."
+ZENSERVICE_STATUS=$(oc get ZenService iaf-zen-cpdservice -o jsonpath='{.status.zenStatus}')
+checkResult $ZENSERVICE_STATUS "Completed" "ZenService iaf-zen-cpdservice status"
 
-  logInfo "Checking Cartridge..."
-  ZEN_CARTRIDGE_READY=$(oc get Cartridge icp4ba -o jsonpath='{.status.conditions}' | jq -r '.[] |select(.type == "Ready") | .status')
-  checkResult $ZEN_CARTRIDGE_READY "True" "Cartridge icp4ba ready"
-
-  ZEN_CARTRIDGE_BEDROCK_READY=$(oc get Cartridge icp4ba -o jsonpath='{.status.conditions}' | jq -r '.[] |select(.type == "BedrockReady") | .status')
-  checkResult $ZEN_CARTRIDGE_BEDROCK_READY "True" "Cartridge icp4ba bedrock ready"
-
-  ZEN_CARTRIDGE_ZENREADY=$(oc get Cartridge icp4ba -o jsonpath='{.status.conditions}' | jq -r '.[] |select(.type == "ZenReady") | .status')
-  checkResult $ZEN_CARTRIDGE_ZENREADY "True" "Cartridge icp4ba zenready"
-  echo
-
-  logInfo "Checking AutomationBase..."
-  ZEN_AUTOMATIONBASE_READY=$(oc get AutomationBase foundation-iaf -o jsonpath='{.status.conditions}' | jq -r '.[] |select(.type == "Ready") |.status')
-  checkResult $ZEN_AUTOMATIONBASE_READY "True" "AutomationBase foundation-iaf ready"
-
-  ZEN_AUTOMATIONBASE_CS_READY=$(oc get AutomationBase foundation-iaf -o jsonpath='{.status.conditions}' | jq -r '.[] |select(.type == "CommonServicesReady") |.status')
-  # not always deployed
-  if [[ "$ZEN_AUTOMATIONBASE_CS_READY" != "" ]]; then
-    checkResult $ZEN_AUTOMATIONBASE_CS_READY "True" "AutomationBase foundation-iaf CommonService ready"
-  fi
-
-  ZEN_AUTOMATIONBASE_KAFKA_READY=$(oc get AutomationBase foundation-iaf -o jsonpath='{.status.conditions}' | jq -r '.[] |select(.type == "KafkaReady") |.status')
-  # not always deployed
-  if [[ "$ZEN_AUTOMATIONBASE_KAFKA_READY" != "" ]]; then
-    checkResult $ZEN_AUTOMATIONBASE_KAFKA_READY "True" "AutomationBase foundation-iaf Kafka ready"
-  fi
-
-  ZEN_AUTOMATIONBASE_ELASTIC_READY=$(oc get AutomationBase foundation-iaf -o jsonpath='{.status.conditions}' | jq -r '.[] |select(.type == "ElasticReady") |.status')
-  checkResult $ZEN_AUTOMATIONBASE_ELASTIC_READY "True" "AutomationBase foundation-iaf Elastic ready"
-
-  ZEN_AUTOMATIONBASE_APICURIO_READY=$(oc get AutomationBase foundation-iaf -o jsonpath='{.status.conditions}' | jq -r '.[] |select(.type == "ApicurioReady") |.status')
-  # not always deployed
-  if [[ "$ZEN_AUTOMATIONBASE_APICURIO_READY" != "" ]]; then
-    checkResult $ZEN_AUTOMATIONBASE_APICURIO_READY "True" "AutomationBase foundation-iaf Apicurio ready"
-  fi
-  echo
-
-  ZEN_CARTRIDGEREQUIREMENT_INSIGHTSENGINE_READY=$(oc get CartridgeRequirements insights-engine --ignore-not-found -o jsonpath='{.status.conditions}' | jq -r '.[] |select(.type == "Ready") |.status')
-  # not always deployed
-  if [[ "$ZEN_CARTRIDGEREQUIREMENT_INSIGHTSENGINE_READY" != "" ]]; then
-    logInfo "Checking CartridgeRequirement insights-engine..."
-    checkResult $ZEN_CARTRIDGEREQUIREMENT_INSIGHTSENGINE_READY "True" "CartridgeRequirement insights-engine ready"
-    
-    ZEN_CARTRIDGEREQUIREMENT_INSIGHTSENGINE_ELASTICUSER=$(oc get CartridgeRequirements insights-engine --ignore-not-found -o jsonpath='{.status.conditions}' | jq -r '.[] |select(.type == "ElasticUserReady") |.status')
-    checkResult $ZEN_CARTRIDGEREQUIREMENT_INSIGHTSENGINE_ELASTICUSER "True" "CartridgeRequirement insights-engine elastic user ready"
-    
-    ZEN_CARTRIDGEREQUIREMENT_INSIGHTSENGINE_KAFKAUSER=$(oc get CartridgeRequirements insights-engine --ignore-not-found -o jsonpath='{.status.conditions}' | jq -r '.[] |select(.type == "KafkaUserReady") |.status')
-    checkResult $ZEN_CARTRIDGEREQUIREMENT_INSIGHTSENGINE_KAFKAUSER "True" "CartridgeRequirement insights-engine kafka user ready"
-    echo
-  fi
-
-  logInfo "Checking CartridgeRequirement icp4ba..."
-  ZEN_CARTRIDGEREQUIREMENT_ICP4BA_READY=$(oc get CartridgeRequirements icp4ba -o jsonpath='{.status.conditions}' | jq -r '.[] |select(.type == "Ready") |.status')
-  checkResult $ZEN_CARTRIDGEREQUIREMENT_ICP4BA_READY "True" "CartridgeRequirement icp4ba ready"
-
-  ZEN_CARTRIDGEREQUIREMENT_ICP4BA_ELASTICUSER=$(oc get CartridgeRequirements icp4ba -o jsonpath='{.status.conditions}' | jq -r '.[] |select(.type == "ElasticUserReady") |.status')
-  checkResult $ZEN_CARTRIDGEREQUIREMENT_ICP4BA_ELASTICUSER "True" "CartridgeRequirement icp4ba elastic user ready"
-
-  ZEN_CARTRIDGEREQUIREMENT_ICP4BA_KAFKAUSER=$(oc get CartridgeRequirements icp4ba -o jsonpath='{.status.conditions}' | jq -r '.[] |select(.type == "KafkaUserReady") |.status')
-  # not always deployed
-  if [[ "$ZEN_CARTRIDGEREQUIREMENT_ICP4BA_KAFKAUSER" != "" ]]; then
-    checkResult $ZEN_CARTRIDGEREQUIREMENT_ICP4BA_KAFKAUSER "True" "CartridgeRequirement icp4ba kafka user ready"
-  fi
-  echo
-fi
-
-# only check ZenService for 24.0
-if [[ $CP4BA_VERSION =~ "24.0" ]]; then
-  logInfo "Checking ZenService..."
-  ZENSERVICE_STATUS=$(oc get ZenService iaf-zen-cpdservice -o jsonpath='{.status.zenStatus}')
-  checkResult $ZENSERVICE_STATUS "Completed" "ZenService iaf-zen-cpdservice status"
-
-  ZENSERVICE_PROGRESS=$(oc get ZenService iaf-zen-cpdservice -o jsonpath='{.status.Progress}')
-  checkResult $ZENSERVICE_PROGRESS "100%" "ZenService iaf-zen-cpdservice progress"
-fi
+ZENSERVICE_PROGRESS=$(oc get ZenService iaf-zen-cpdservice -o jsonpath='{.status.Progress}')
+checkResult $ZENSERVICE_PROGRESS "100%" "ZenService iaf-zen-cpdservice progress"
+echo
 
 
 ##### Kafka ####################################################################
@@ -716,18 +628,6 @@ if oc get FlinkDeployment $CP4BA_NAME"-insights-engine-flink" > /dev/null 2>&1; 
   FLINK_RECONCILE_STATE=$(oc get FlinkDeployment $CP4BA_NAME"-insights-engine-flink" -o 'jsonpath={.status.reconciliationStatus.state}')
   checkResult $FLINK_RECONCILE_STATE "DEPLOYED" "Flink Reconcile State"
   echo
-fi
-
-if oc get FlinkCluster > /dev/null 2>&1; then
-  # 21.0.3
-  FLINK_CLUSTER_NAME=$(oc get FlinkCluster --ignore-not-found --no-headers |awk {'print $1'})
-  # not always deployed
-  if [[ "$FLINK_CLUSTER_NAME" != "" ]]; then
-    logInfo "Checking Flink Cluster $FLINK_CLUSTER_NAME..."
-    FLINK_CLUSTER_TATUS=$(oc get FlinkCluster $FLINK_CLUSTER_NAME -o 'jsonpath={.status.state}')
-    checkResult $FLINK_CLUSTER_TATUS "Running" "Flink Cluster Status"
-    echo
-  fi
 fi
 
 # Insights Engine
