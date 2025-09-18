@@ -23,18 +23,18 @@ echo "  Reading 001-barParameters.sh ..."
 # --- Provide those BEFORE running any other bar script ---
 
 # OCP project name for CP4BA to backup/restore, for example ibm-cp4ba
-cp4baProjectName=REQUIRED
+cp4baProjectName=ibm-cp4ba-dev
 
 # If URLs are protected, provide here the information to be used to get the authorization token, if a token is not needed, remove REQUIRED
 useTokenForZenRoute=false
 useTokenForInsightsengineManagementURL=false
 useTokenForOpensearchRoute=false
-barTokenUser=REQUIRED                # example value: $(oc -n $cp4baProjectName get secret ibm-fncm-secret -o jsonpath='{.data.appLoginUsername}' | base64 -d)
-barTokenPass=REQUIRED                # example value: $(oc -n $cp4baProjectName get secret ibm-fncm-secret -o jsonpath='{.data.appLoginPassword}' | base64 -d)
-barCp4baHost=REQUIRED                # example value: $(oc -n $cp4baProjectName get route cpd -o jsonpath="{.spec.host}")
-baw_cust_host=REQUIRED               # example value: $(oc -n $cp4baProjectName get route <your-custom-route-name> -o jsonpath="{.spec.host}")
-resolve_ip=REQUIRED                  # example value: $(getent hosts "$baw_cust_host" | awk '{ print $1 }')
-barTokenResolveCp4ba=REQUIRED        # example value: ${barCp4baHost}:443:${resolve_ip}
+barTokenUser=cp4badmin               # example value: $(oc -n $cp4baProjectName get secret ibm-fncm-secret -o jsonpath='{.data.appLoginUsername}' | base64 -d)
+barTokenPass=passw0rd                # example value: $(oc -n $cp4baProjectName get secret ibm-fncm-secret -o jsonpath='{.data.appLoginPassword}' | base64 -d)
+barCp4baHost=cpd-ibm-cp4ba-dev.apps.ocp.ibm.edu      # example value: $(oc -n $cp4baProjectName get route cpd -o jsonpath="{.spec.host}")
+baw_cust_host=cpd-ibm-cp4ba-dev.apps.ocp.ibm.edu     # example value: $(oc -n $cp4baProjectName get route <your-custom-route-name> -o jsonpath="{.spec.host}")
+resolve_ip=10.100.1.2                  # example value: $(getent hosts "$baw_cust_host" | awk '{ print $1 }')
+barTokenResolveCp4ba=cpd-ibm-cp4ba-dev.apps.ocp.ibm.edu:443:10.100.1.2        # example value: ${barCp4baHost}:443:${resolve_ip}
 
 # Name of the storage class used to create temp PVCs during backup/restore
 pvcStorageClassName="nfs-client"
