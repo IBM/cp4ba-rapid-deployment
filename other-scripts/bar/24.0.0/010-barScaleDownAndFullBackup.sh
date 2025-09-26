@@ -15,10 +15,9 @@
 #    Only tested with CP4BA version: 21.0.3 IF029 and 039, dedicated common services set-up
 
 # Reference: 
-# - https://www.ibm.com/docs/en/cloud-paks/cp-biz-automation/21.0.3?topic=recovery-backing-up-your-environments
-# - https://www.ibm.com/docs/en/cloud-paks/cp-biz-automation/21.0.3?topic=elasticsearch-taking-restoring-snapshots-data
-# - https://community.ibm.com/community/user/automation/blogs/dian-guo-zou/2022/10/12/backup-and-restore-baw-2103
-# - https://www.ibm.com/docs/en/cloud-paks/foundational-services/3.23?topic=operator-foundational-services-backup-restore
+# - https://www.ibm.com/docs/en/cloud-paks/cp-biz-automation/24.0.0?topic=recovery-backing-up-your-environment
+# - https://www.ibm.com/docs/en/cloud-paks/cp-biz-automation/24.0.0?topic=data-taking-snapshots-by-using-snapshot-api
+# - https://www.ibm.com/docs/en/cloud-paks/cp-biz-automation/24.0.0?topic=data-restoring-snapshots-by-using-snapshot-api
 
 # Check if jq is installed
 type jq > /dev/null 2>&1
@@ -184,6 +183,10 @@ logInfo $(oc scale deploy ibm-ingress-nginx-operator --replicas=0)
 logInfo $(oc scale deploy ibm-iam-operator --replicas=0)
 logInfo $(oc scale deploy ibm-commonui-operator --replicas=0)
 logInfo $(oc scale deploy ibm-common-service-operator --replicas=0)
+logInfo $(oc scale deploy ibm-odm-operator --replicas=0)
+logInfo $(oc scale deploy zen-core --replicas=0)
+logInfo $(oc scale deploy zen-core-api --replicas=0)
+
 # not always deployed
 if oc get deployment iaf-system-entity-operator > /dev/null 2>&1; then
   logInfo $(oc scale deploy iaf-system-entity-operator --replicas=0)
@@ -371,112 +374,77 @@ echo $NAMESPACE_UID > ${BACKUP_DIR}/namespace_uid
 echo
 
 ##### CPfs backup #####################################################################
-if [[ $CP4BA_VERSION =~ "21.0.3" ]]; then
-  ## Take MongoDB Backup 
-  # Prime templates 
-  logInfo "Priming resources to take MongoDB backup"
-  cp ${CUR_DIR}/templates/mongodb-backup-pvc.template.yaml ${CUR_DIR}/mongodb-backup-pvc.yaml
-  cp ${CUR_DIR}/templates/mongodb-backup-deployment.template.yaml ${CUR_DIR}/mongodb-backup-deployment.yaml
+if [[ $CP4BA_VERSION =~ "24.0.0" ]]; then
 
-  sed -i.bak "s|§cp4baProjectNamespace|$cp4baProjectName|g; s|§pvcStorageClass|$pvcStorageClassName|g" ${CUR_DIR}/mongodb-backup-pvc.yaml
-  sed -i.bak "s|§cp4baProjectNamespace|$cp4baProjectName|g" ${CUR_DIR}/mongodb-backup-deployment.yaml
-
-  # Create resources necessary to backup MongoDB 
-  logInfo $(oc apply -f ${CUR_DIR}/mongodb-backup-pvc.yaml)
-  logInfo $(oc apply -f ${CUR_DIR}/mongodb-backup-deployment.yaml)
-
-  # Wait indefinitely for deployment to be Available (pod Ready)
-  logInfo $(oc wait -f ${CUR_DIR}/mongodb-backup-deployment.yaml --for=condition=Available --timeout=-1s)
-  echo
-
-  mongodbpods=$(oc get pod -l=foundationservices.cloudpak.ibm.com=mongo-data --no-headers --ignore-not-found | awk '{print $1}' | sort)
-
-  for pod in ${mongodbpods[*]}
+  ##### Backup CommonService-IM PostgreSQL Database ###########################################
+  csimpods=$(oc get pod -l=postgresql=common-service-db --no-headers --ignore-not-found | awk '{print $1}' | sort)
+  for pod in ${csimpods[*]}
   do
-    logInfo "Backing up MongoDB using pod ${pod}..."
-    # prep certs files that will be used to take the backup
-    oc exec $pod -it -- bash -c 'cat /cred/mongo-certs/tls.crt /cred/mongo-certs/tls.key > /work-dir/mongo.pem; cat /cred/cluster-ca/tls.crt /cred/cluster-ca/tls.key > /work-dir/ca.pem'
-    oc exec $pod -it -- bash -c 'mongodump --oplog --out /dump/dump --host mongodb:$MONGODB_SERVICE_PORT --username $ADMIN_USER --password $ADMIN_PASSWORD --authenticationDatabase admin --ssl --sslCAFile /work-dir/ca.pem --sslPEMKeyFile /work-dir/mongo.pem'
-    oc exec $pod -it -- bash -c 'cd /dump && tar -cf mongobackup.tar dump'
-    logInfo $(oc cp $pod:/dump/mongobackup.tar ${BACKUP_DIR}/mongodb/mongobackup.tar)
+    logInfo "Backing up CommonService-IM PostgreSQL Database using pod ${pod}..."
+    oc exec --container postgres $pod -it -- bash -c "pg_dump -d im -U postgres -Fp -c -C --if-exists  -f /var/lib/postgresql/data/backup_csimdb.sql"
+    logInfo $(oc cp --container postgres ${pod}:/var/lib/postgresql/data/backup_csimdb.sql ${BACKUP_DIR}/postgresql/backup_csimdb.sql)
     break
   done
-  echo
 
   # check if backup was taken successfully
-  if [ -e "${BACKUP_DIR}/mongodb/mongobackup.tar" ]; then
-    # clean up pod storage and notify successful completion
-    logInfo "MongoDB backup completed successfully. Cleaning up..."
-    logInfo $(oc delete -f ${CUR_DIR}/mongodb-backup-deployment.yaml)
-    logInfo $(oc delete -f ${CUR_DIR}/mongodb-backup-pvc.yaml)
+  if [ -e "${BACKUP_DIR}/postgresql/backup_csimdb.sql" ]; then
+    logInfo "CommonService-IM PostgreSQL Database backup completed successfully."
+    # clean up pod storage
+    oc exec --container postgres $pod -it -- bash -c "rm -f /var/lib/postgresql/data/backup_csimdb.sql"
   else
-    logError "MongoDB backup failed, check logs!"
+    logError "CommonService-IM PostgreSQL Database backup failed, check logs!"
     echo
     exit 1
   fi
   echo
 
-  ## Take Zen Services Backup
-  # Prime templates 
-  logInfo "Priming resources to take Zen Services backup"
-  cp ${CUR_DIR}/templates/zen-backup-pvc.template.yaml ${CUR_DIR}/zen-backup-pvc.yaml
-  cp ${CUR_DIR}/templates/zen4-br-scripts.template.yaml ${CUR_DIR}/zen4-br-scripts.yaml
-  cp ${CUR_DIR}/templates/zen4-sa.template.yaml ${CUR_DIR}/zen4-sa.yaml
-  cp ${CUR_DIR}/templates/zen4-role.template.yaml ${CUR_DIR}/zen4-role.yaml
-  cp ${CUR_DIR}/templates/zen4-rolebinding.template.yaml ${CUR_DIR}/zen4-rolebinding.yaml
-  cp ${CUR_DIR}/templates/zen-backup-deployment.template.yaml ${CUR_DIR}/zen-backup-deployment.yaml
-
-  sed -i.bak "s|§cp4baProjectNamespace|$cp4baProjectName|g; s|§pvcStorageClass|$pvcStorageClassName|g" ${CUR_DIR}/zen-backup-pvc.yaml
-  sed -i.bak "s|§cp4baProjectNamespace|$cp4baProjectName|g" ${CUR_DIR}/zen4-br-scripts.yaml
-  sed -i.bak "s|§cp4baProjectNamespace|$cp4baProjectName|g" ${CUR_DIR}/zen4-sa.yaml
-  sed -i.bak "s|§cp4baProjectNamespace|$cp4baProjectName|g" ${CUR_DIR}/zen4-role.yaml
-  sed -i.bak "s|§cp4baProjectNamespace|$cp4baProjectName|g" ${CUR_DIR}/zen4-rolebinding.yaml
-  sed -i.bak "s|§cp4baProjectNamespace|$cp4baProjectName|g" ${CUR_DIR}/zen-backup-deployment.yaml
-
-  # Create resources necessary to backup Zen Services
-  logInfo $(oc apply -f ${CUR_DIR}/zen-backup-pvc.yaml)
-  logInfo $(oc apply -f ${CUR_DIR}/zen4-br-scripts.yaml)
-  logInfo $(oc apply -f ${CUR_DIR}/zen4-sa.yaml)
-  logInfo $(oc apply -f ${CUR_DIR}/zen4-role.yaml)
-  logInfo $(oc apply -f ${CUR_DIR}/zen4-rolebinding.yaml)
-  logInfo $(oc apply -f ${CUR_DIR}/zen-backup-deployment.yaml)
-
-  # Wait indefinitely for deployment to be Available (pod Ready)
-  logInfo $(oc wait -f ${CUR_DIR}/zen-backup-deployment.yaml --for=condition=Available --timeout=-1s)
-  echo
-
-  zenbkpods=$(oc get pod -l=foundationservices.cloudpak.ibm.com=zen-data --no-headers --ignore-not-found | awk '{print $1}')
-
-  for pod in ${zenbkpods[*]}
+  ##### Backup Zen Metastore PostgreSQL Database ###########################################
+  zendbpgpods=$(oc get pod -l=postgresql=zen-metastore-edb --no-headers --ignore-not-found | awk '{print $1}' | sort)
+  for pod in ${zendbpgpods[*]}
   do
-    logInfo "Backing up Zen Services using pod ${pod}..."
-    oc exec $pod -it -- bash -c "/zen4/zen4-br.sh $cp4baProjectName true"
-    # Go into directory where backup was created and compress into single file
-    oc exec $pod -it -- bash -c "cd /user-home && tar -cf zen-metastoredb-backup.tar zen-metastoredb-backup"
-    logInfo $(oc cp $pod:/user-home/zen-metastoredb-backup.tar ${BACKUP_DIR}/zenbackup/zen-metastoredb-backup.tar)
+    logInfo "Backing up Zen Metastore DB PostgreSQL Database using pod ${pod}..."
+    oc exec --container postgres $pod -it -- bash -c "pg_dump -d zen -U postgres -Fp -c -C --if-exists  -f /var/lib/postgresql/data/backup_zendb.sql"
+    logInfo $(oc cp --container postgres ${pod}:/var/lib/postgresql/data/backup_zendb.sql ${BACKUP_DIR}/postgresql/backup_zendb.sql)
     break
   done
-  echo
-  
+
   # check if backup was taken successfully
-  if [ -e "${BACKUP_DIR}/zenbackup/zen-metastoredb-backup.tar" ]; then
-    logInfo "Zen Services backup completed successfully. Cleaning up..."
-    logInfo $(oc delete -f ${CUR_DIR}/zen-backup-deployment.yaml)
-    logInfo $(oc delete -f ${CUR_DIR}/zen4-rolebinding.yaml)
-    logInfo $(oc delete -f ${CUR_DIR}/zen4-role.yaml)
-    logInfo $(oc delete -f ${CUR_DIR}/zen4-sa.yaml)
-    logInfo $(oc delete -f ${CUR_DIR}/zen4-br-scripts.yaml)
-    logInfo $(oc delete -f ${CUR_DIR}/zen-backup-pvc.yaml)
+  if [ -e "${BACKUP_DIR}/postgresql/backup_zendb.sql" ]; then
+    logInfo "Zen Metastore PostgreSQL Database backup completed successfully."
+    # clean up pod storage
+    oc exec --container postgres $pod -it -- bash -c "rm -f /var/lib/postgresql/data/backup_zendb.sql"
   else
-    logError "Zen Services backup failed, check logs!"
+    logError "Zen Metastore PostgreSQL Database backup failed, check logs!"
     echo
     exit 1
   fi
   echo
+
+  # ##### Backup Keycloak PostgreSQL Database (Not always installed)###########################################
+  # kcedbpods=$(oc get pod -l=postgresql=keycloak-edb-cluster --no-headers --ignore-not-found | awk '{print $1}' | sort)
+  # for pod in ${kcedbpods[*]}
+  # do
+  #   logInfo "Backing up Keycloak PostgreSQL Database using pod ${pod}..."
+  #   oc exec --container postgres $pod -it -- bash -c "pg_dump -d keycloak -U postgres -Fp -c -C --if-exists  -f /var/lib/postgresql/data/backup_kcedb.sql"
+  #   logInfo $(oc cp --container postgres ${pod}:/var/lib/postgresql/data/backup_kcedb.sql ${BACKUP_DIR}/postgresql/backup_kcedb.sql)
+  #   break
+  # done
+
+  # # check if backup was taken successfully
+  # if [ -e "${BACKUP_DIR}/postgresql/backup_kcedb.sql" ]; then
+  #   logInfo "Keycloak PostgreSQL Database backup completed successfully."
+  #   # clean up pod storage
+  #   oc exec --container postgres $pod -it -- bash -c "rm -f /var/lib/postgresql/data/backup_kcedb.sql"
+  # else
+  #   logError "Keycloak PostgreSQL Database backup failed, check logs!"
+  #   echo
+  #   exit 1
+  # fi
+  # echo
+
 else
-  # Backup implementation of CPfs for CP4BA versions 22, 23, and 24 is not developed yet. 
-  # TODO: Backup CPfs for other versions of CP4BA specially 24
-  logError "Do not know how to take backup of CPfs services for this Cloud Pak version $CP4BA_VERSION"
+  # Backup implementation of CPfs for CP4BA versions 24.0.1, 25 is not developed yet. 
+  logError "Do not know how to take backup of CPFS services for this Cloud Pak version $CP4BA_VERSION"
   echo
   exit 1
 fi
@@ -564,43 +532,7 @@ if [[ "$MANAGEMENT_POD" != "" ]]; then
 fi
 
 # Create ES/OS snapshots
-if [[ $CP4BA_VERSION =~ "21.0.3" ]]; then
-  # ElasticSearch
-  logInfo "Declaring the location of the snapshot repository for ElasticSearch..."
-  ELASTICSEARCH_ROUTE=$(oc get route iaf-system-es -o jsonpath='{.spec.host}')
-  ELASTICSEARCH_PASSWORD=$(oc get secret iaf-system-elasticsearch-es-default-user --no-headers --ignore-not-found -o jsonpath={.data.password} | base64 -d)
-  if $useTokenForElasticsearchRoute; then
-    curl -skl --header "Authorization: ${cp4batoken}" -u elasticsearch-admin:$ELASTICSEARCH_PASSWORD -XPUT "https://$ELASTICSEARCH_ROUTE/_snapshot/${DATETIMESTR}" --resolve "${barTokenResolveCp4ba}" -H "Content-Type: application/json" -d'{"type":"fs","settings":{"location": "/usr/share/elasticsearch/snapshots/main","compress": true}}'
-  else
-    curl -skl -u elasticsearch-admin:$ELASTICSEARCH_PASSWORD -XPUT "https://$ELASTICSEARCH_ROUTE/_snapshot/${DATETIMESTR}" -H "Content-Type: application/json" -d'{"type":"fs","settings":{"location": "/usr/share/elasticsearch/snapshots/main","compress": true}}'
-  fi
-  echo
-  
-  logInfo "Creating snapshot backup_${DATETIMESTR}..."
-  if $useTokenForElasticsearchRoute; then
-    SNAPSHOT_RESULT=$(curl -skL --header "Authorization: ${cp4batoken}" -u elasticsearch-admin:${ELASTICSEARCH_PASSWORD} -XPUT "https://${ELASTICSEARCH_ROUTE}/_snapshot/${DATETIMESTR}/backup_${DATETIMESTR}?wait_for_completion=true&pretty=true" --resolve "${barTokenResolveCp4ba}")
-  else
-    SNAPSHOT_RESULT=$(curl -skL -u elasticsearch-admin:${ELASTICSEARCH_PASSWORD} -XPUT "https://${ELASTICSEARCH_ROUTE}/_snapshot/${DATETIMESTR}/backup_${DATETIMESTR}?wait_for_completion=true&pretty=true")
-  fi
-  SNAPSHOT_STATE=$(echo $SNAPSHOT_RESULT | jq -r ".snapshot.state")
-  checkResult $SNAPSHOT_STATE "SUCCESS" "Snapshot state"
-  
-  # Snapshots are kept in the pod in directory /usr/share/elasticsearch/snapshots/main
-  logInfo $(oc exec --container elasticsearch iaf-system-elasticsearch-es-data-0 -it -- bash -c "tar -cf /usr/share/elasticsearch/es_snapshots_main_backup_${DATETIMESTR}.tgz /usr/share/elasticsearch/snapshots/main")
-  logInfo $(oc cp --container elasticsearch iaf-system-elasticsearch-es-data-0:/usr/share/elasticsearch/es_snapshots_main_backup_${DATETIMESTR}.tgz ${BACKUP_DIR}/es_snapshots_main_backup_${DATETIMESTR}.tgz)
-
-  # check if backup was taken successfully
-  if [ -e "${BACKUP_DIR}/es_snapshots_main_backup_${DATETIMESTR}.tgz" ]; then
-    logInfo "Elasticsearch backup completed successfully."
-    # Clean up, delete the tar, but not the snapshot and the repository
-    oc exec --container elasticsearch iaf-system-elasticsearch-es-data-0 -it -- bash -c "rm -f /usr/share/elasticsearch/es_snapshots_main_backup_${DATETIMESTR}.tgz"
-  else
-    logError "Elasticsearch backup failed, check the logs!"
-    echo
-    exit 1
-  fi
-  echo
-else # 24.0 and greater
+if [[ $CP4BA_VERSION =~ "24.0.0" ]]; then
   # OpenSearch for 24.0 and later
   logInfo "Declaring the location of the snapshot repository for OpenSearch..."
   OPENSEARCH_ROUTE=$(oc get route opensearch-route -o jsonpath='{.spec.host}')
@@ -615,8 +547,9 @@ else # 24.0 and greater
   echo
   # TODO: copy the snapshots from the pod, what should be copied ? Need clarification from document, Zhong Tao opened a case for this issue: https://jsw.ibm.com/browse/DBACLD-164204: Need clarification on how to copy ES/OS snapshots to another environment
   # TODO: scale down os pods
+else # 25.0 / 24.0.1 and greater
+  # TODO: 
 fi
-
 
 
 ##### Final scale down ##############################################################
