@@ -548,7 +548,8 @@ if [[ $CP4BA_VERSION =~ "24.0.0" ]]; then
   # TODO: copy the snapshots from the pod, what should be copied ? Need clarification from document, Zhong Tao opened a case for this issue: https://jsw.ibm.com/browse/DBACLD-164204: Need clarification on how to copy ES/OS snapshots to another environment
   # TODO: scale down os pods
 else # 25.0 / 24.0.1 and greater
-  # TODO: 
+  # TODO:
+  echo
 fi
 
 
