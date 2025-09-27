@@ -165,21 +165,17 @@ echo
 # Scale down all operators
 logInfo "Scaling down operators..."
 logInfo $(oc scale deploy ibm-cp4a-operator --replicas=0)
-logInfo $(oc scale deploy ibm-cp4a-wfps-operator-controller-manager --replicas=0)
-logInfo $(oc scale deploy iaf-core-operator-controller-manager --replicas=0)
-logInfo $(oc scale deploy iaf-eventprocessing-operator-controller-manager --replicas=0)
-logInfo $(oc scale deploy iaf-flink-operator-controller-manager --replicas=0)
-logInfo $(oc scale deploy iaf-insights-engine-operator-controller-manager --replicas=0)
-logInfo $(oc scale deploy iaf-operator-controller-manager --replicas=0)
-#logInfo $(oc scale deploy ibm-bts-operator-controller-manager --replicas=0)
-logInfo $(oc scale deploy ibm-elastic-operator-controller-manager --replicas=0)
-logInfo $(oc scale deploy nginx-ingress-controller --replicas=0)
+logInfo $(oc scale deploy ibm-content-operator --replicas=0)
+logInfo $(oc scale deploy ibm-cp4a-wfps-operator --replicas=0)
+logInfo $(oc scale deploy ibm-dpe-operator --replicas=0)
+logInfo $(oc scale deploy ibm-insights-engine-operator --replicas=0)
+logInfo $(oc scale deploy flink-kubernetes-operator --replicas=0)
+logInfo $(oc scale deploy iaf-system-entity-operator --replicas=0)
+logInfo $(oc scale deploy ibm-ads-operator --replicas=0)
+logInfo $(oc scale deploy ibm-pfs-operator --replicas=0)
+logInfo $(oc scale deploy ibm-workflow-operator --replicas=0)
 logInfo $(oc scale deploy ibm-zen-operator --replicas=0)
-logInfo $(oc scale deploy ibm-platform-api-operator --replicas=0)
-logInfo $(oc scale deploy ibm-namespace-scope-operator --replicas=0)
-logInfo $(oc scale deploy ibm-mongodb-operator --replicas=0)
-logInfo $(oc scale deploy ibm-management-ingress-operator --replicas=0)
-logInfo $(oc scale deploy ibm-ingress-nginx-operator --replicas=0)
+logInfo $(oc scale deploy icp4a-foundation-operator --replicas=0)
 logInfo $(oc scale deploy ibm-iam-operator --replicas=0)
 logInfo $(oc scale deploy ibm-commonui-operator --replicas=0)
 logInfo $(oc scale deploy ibm-common-service-operator --replicas=0)
@@ -472,7 +468,7 @@ fi
 echo
 
 ##### BAI ######################################################################
-# Take ES snapshot
+# Take Opensearch snapshot
 
 # iaf-insights-engine-management needs to be up and running
 if [[ $CP4BA_VERSION =~ "21.0.3" ]]; then
@@ -542,6 +538,7 @@ if [[ $CP4BA_VERSION =~ "24.0.0" ]]; then
   logInfo "Creating snapshot backup_${DATETIMESTR}..."
   # TODO: Curl might need an authoriziation token
   SNAPSHOT_RESULT=$(curl -skL -u elastic:${OPENSEARCH_PASSWORD} -XPUT "https://${OPENSEARCH_ROUTE}/_snapshot/${DATETIMESTR}/backup_${DATETIMESTR}?wait_for_completion=true&pretty=true")
+  logInfo $SNAPSHOT_RESULT
   SNAPSHOT_STATE=$(echo $SNAPSHOT_RESULT | jq -r ".snapshot.state")
   checkResult $SNAPSHOT_STATE "SUCCESS" "Snapshot state"
   echo
