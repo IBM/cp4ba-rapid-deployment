@@ -171,7 +171,7 @@ logInfo $(oc scale deploy iaf-eventprocessing-operator-controller-manager --repl
 logInfo $(oc scale deploy iaf-flink-operator-controller-manager --replicas=0)
 logInfo $(oc scale deploy iaf-insights-engine-operator-controller-manager --replicas=0)
 logInfo $(oc scale deploy iaf-operator-controller-manager --replicas=0)
-logInfo $(oc scale deploy ibm-bts-operator-controller-manager --replicas=0)
+#logInfo $(oc scale deploy ibm-bts-operator-controller-manager --replicas=0)
 logInfo $(oc scale deploy ibm-elastic-operator-controller-manager --replicas=0)
 logInfo $(oc scale deploy nginx-ingress-controller --replicas=0)
 logInfo $(oc scale deploy ibm-zen-operator --replicas=0)
@@ -201,8 +201,8 @@ if [[ "$eventsOperatorDeployment" != "" ]]; then
   logInfo $(oc scale deploy $eventsOperatorDeployment --replicas=0)
 fi
 postgresqlOperatorDeployment=$(oc get deployment -l=app.kubernetes.io/name=cloud-native-postgresql -o 'custom-columns=NAME:.metadata.name' --no-headers --ignore-not-found | awk '{print $1}')
-logInfo $(oc scale deploy $postgresqlOperatorDeployment --replicas=0)
-sleep 20
+#logInfo $(oc scale deploy $postgresqlOperatorDeployment --replicas=0)
+#sleep 20
 echo
 
 # Scale down bastudio, navigator, baw, pfs, cpe and navigator related pods
@@ -564,6 +564,17 @@ fi
 # Set replica size of the bts-316 deployment to 0 to prevent it gets scaled up again
 logInfo "Patching cp4ba-bts..."
 logInfo $(oc patch bts cp4ba-bts --type merge --patch '{"spec":{"replicas":0}}')
+logInfo $(oc scale deploy ibm-bts-operator-controller-manager --replicas=0)
+echo
+
+# Scale down all postgresql db zen-metastore-edb, common-service-db
+logInfo $(oc annotate cluster zen-metastore-edb --overwrite k8s.enterprisedb.io/hibernation=on)
+logInfo $(oc annotate cluster common-service-db --overwrite k8s.enterprisedb.io/hibernation=on)
+echo
+
+# Scale down postgres-operator
+logInfo $(oc scale deploy $postgresqlOperatorDeployment --replicas=0)
+sleep 20
 echo
 
 # Scale down all deployments
