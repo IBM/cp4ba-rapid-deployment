@@ -42,4 +42,4 @@ oc scale deploy mycluster-insights-engine-management --replicas=1
 oc scale deploy mycluster-insights-engine-cockpit --replicas=1
 oc scale deploy mycluster-pbk-ae-deployment --replicas=1
 oc scale deploy mycluster-workspace-aae-ae-deployment --replicas=1
-oc scale sts mycluster-bastudio-deployment-0 --replicas=1
+oc scale sts mycluster-bastudio-deployment --replicas=1
