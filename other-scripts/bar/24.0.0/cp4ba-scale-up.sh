@@ -10,19 +10,22 @@ oc scale deploy ibm-content-operator --replicas=1
 oc scale deploy ibm-dpe-operator --replicas=1
 oc scale deploy ibm-cp4a-wfps-operator --replicas=1
 oc scale deploy ibm-insights-engine-operator --replicas=1
-oc scale deploy flink-kubernetes-operator --replicas1
+oc scale deploy flink-kubernetes-operator --replicas=1
 oc scale deploy iaf-system-entity-operator --replicas=1
 oc scale deploy ibm-ads-operator --replicas=1
 oc scale deploy ibm-pfs-operator --replicas=1
 oc scale deploy ibm-workflow-operator --replicas=1
 oc scale deploy icp4a-foundation-operator --replicas=1
+oc scale deploy ibm-elasticsearch-operator-ibm-es-controller-manager --replicas=1
 oc scale deploy operand-deployment-lifecycle-manager --replicas=1
 oc scale deploy postgresql-operator-controller-manager-1-22-7 --replicas=1
 oc scale deploy ibm-events-operator-v5.0.1 --replicas=1
+sleep 20
 oc annotate cluster zen-metastore-edb --overwrite k8s.enterprisedb.io/hibernation=off 
 oc annotate cluster common-service-db --overwrite k8s.enterprisedb.io/hibernation=off
 oc annotate cluster ibm-bts-cnpg-ibm-cp4ba-dev-cp4ba-bts --overwrite k8s.enterprisedb.io/hibernation=off
 oc scale deploy ibm-bts-operator-controller-manager --replicas=1
+sleep 20
 oc patch bts cp4ba-bts --type merge --patch '{"spec":{"replicas":1}}'
 oc scale deploy ibm-nginx --replicas=2
 oc scale deploy ibm-nginx-tester --replicas=1
@@ -39,3 +42,4 @@ oc scale deploy mycluster-insights-engine-management --replicas=1
 oc scale deploy mycluster-insights-engine-cockpit --replicas=1
 oc scale deploy mycluster-pbk-ae-deployment --replicas=1
 oc scale deploy mycluster-workspace-aae-ae-deployment --replicas=1
+oc scale sts mycluster-bastudio-deployment-0 --replicas=1

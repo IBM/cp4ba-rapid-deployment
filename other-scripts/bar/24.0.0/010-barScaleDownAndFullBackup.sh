@@ -170,7 +170,6 @@ logInfo $(oc scale deploy ibm-cp4a-wfps-operator --replicas=0)
 logInfo $(oc scale deploy ibm-dpe-operator --replicas=0)
 logInfo $(oc scale deploy ibm-insights-engine-operator --replicas=0)
 logInfo $(oc scale deploy flink-kubernetes-operator --replicas=0)
-logInfo $(oc scale deploy iaf-system-entity-operator --replicas=0)
 logInfo $(oc scale deploy ibm-ads-operator --replicas=0)
 logInfo $(oc scale deploy ibm-pfs-operator --replicas=0)
 logInfo $(oc scale deploy ibm-workflow-operator --replicas=0)
@@ -182,12 +181,12 @@ logInfo $(oc scale deploy ibm-common-service-operator --replicas=0)
 logInfo $(oc scale deploy ibm-odm-operator --replicas=0)
 logInfo $(oc scale deploy zen-core --replicas=0)
 logInfo $(oc scale deploy zen-core-api --replicas=0)
+logInfo $(oc scale deploy ibm-elasticsearch-operator-ibm-es-controller-manager --replicas=0)
 
 # not always deployed
 if oc get deployment iaf-system-entity-operator > /dev/null 2>&1; then
   logInfo $(oc scale deploy iaf-system-entity-operator --replicas=0)
 fi
-logInfo $(oc scale deploy iam-policy-controller --replicas=0)
 logInfo $(oc scale deploy operand-deployment-lifecycle-manager --replicas=0)
 
 # these two operator deployments do have the version in their name, therefore we have to get the deployment name first
@@ -551,6 +550,8 @@ fi
 
 
 ##### Final scale down ##############################################################
+
+
 ## Remove flink job submitters
 if [[ "$MANAGEMENT_POD" != "" ]]; then
   logInfo "Removing flink job submitters..."
@@ -561,12 +562,14 @@ fi
 # Set replica size of the bts-316 deployment to 0 to prevent it gets scaled up again
 logInfo "Patching cp4ba-bts..."
 logInfo $(oc patch bts cp4ba-bts --type merge --patch '{"spec":{"replicas":0}}')
+sleep 10
 logInfo $(oc scale deploy ibm-bts-operator-controller-manager --replicas=0)
 echo
 
 # Scale down all postgresql db zen-metastore-edb, common-service-db
 logInfo $(oc annotate cluster zen-metastore-edb --overwrite k8s.enterprisedb.io/hibernation=on)
 logInfo $(oc annotate cluster common-service-db --overwrite k8s.enterprisedb.io/hibernation=on)
+sleep 60
 echo
 
 # Scale down postgres-operator
@@ -652,6 +655,12 @@ for i in $completedpods; do
    logInfo $(oc delete pod $i)
 done
 echo
+
+# Take backup of catalog sources before deleting catalog source pods
+logInfo "Take backup of catalog sources before deleting catalog source pods"
+logInfo $(oc get catalogsource -o yaml > ${BACKUP_DIR}/catalogsource.yaml)
+logInfo "Delete Catalog sources"
+logInfo $(oc delete catalogsource -n ${cp4baProjectName} --all)
 
 # Wait till all pods are gone
 allpods=$(oc get pod --no-headers --ignore-not-found)
@@ -770,30 +779,13 @@ echo
 
 
 
-##### Clean up ###########################################
-rm ${CUR_DIR}/mongodb-backup-deployment.yaml
-rm ${CUR_DIR}/mongodb-backup-deployment.yaml.bak
-rm ${CUR_DIR}/mongodb-backup-pvc.yaml
-rm ${CUR_DIR}/mongodb-backup-pvc.yaml.bak
-rm ${CUR_DIR}/zen4-br-scripts.yaml
-rm ${CUR_DIR}/zen4-br-scripts.yaml.bak
-rm ${CUR_DIR}/zen4-rolebinding.yaml
-rm ${CUR_DIR}/zen4-rolebinding.yaml.bak
-rm ${CUR_DIR}/zen4-role.yaml
-rm ${CUR_DIR}/zen4-role.yaml.bak
-rm ${CUR_DIR}/zen4-sa.yaml
-rm ${CUR_DIR}/zen4-sa.yaml.bak
-rm ${CUR_DIR}/zen-backup-deployment.yaml
-rm ${CUR_DIR}/zen-backup-deployment.yaml.bak
-rm ${CUR_DIR}/zen-backup-pvc.yaml
-rm ${CUR_DIR}/zen-backup-pvc.yaml.bak
 rm $propertiesfile.bak
 
 
 
 ##### Finally... ###########################################
 logInfo "Environment is scaled down, all resources are backed up. Next, please back up:"
-logInfo "  - the content of the PVs (for example by running the just generated script(s) $BACKUP_DIR/025-backup-pvs-<storageclass>.sh on the storage server using the root account)"
+logInfo "  - the content of the PVs (For exmaple, if storage class is nfs-client, use the generated the just generated script(s) $BACKUP_DIR/025-backup-pvs-<storageclass>.sh on the storage server using the root account)"
 logInfo "  - the databases"
 logInfo "  - the binary document data of CPE"
 echo
