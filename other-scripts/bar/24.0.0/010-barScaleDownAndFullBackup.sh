@@ -50,7 +50,7 @@ if [[ -f $INPUT_PROPS_FILENAME_FULL ]]; then
    fi
    
    ##### Get Access Token if needed ###############################################
-   if $useTokenForInsightsengineManagementURL || $useTokenForElasticsearchRoute; then
+   if $useTokenForInsightsengineManagementURL || $useTokenForOpensearchRoute; then
      # get the access token
      if [[ "$barTokenUser" = "" ]] || [[ "$barTokenPass" = "" ]] || [[ "$barTokenResolveCp4ba" = "" ]] || [[ "$barCp4baHost" = "" ]]; then
       echo "File ${INPUT_PROPS_FILENAME} not fully updated. Pls. update parameters barTokenUser, barTokenPass, barTokenResolveCp4ba and barCp4baHost."
