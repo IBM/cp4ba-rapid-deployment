@@ -488,31 +488,21 @@ if [[ $CP4BA_COMPONENTS =~ "workflow" ]]; then
     CP4BA_BAW_TYPE=$(jq -r .status.components.baw ${BACKUP_ROOT_DIRECTORY_FULL}/CR.json | jq 'type')
     if [[ "$CP4BA_BAW_TYPE" == "object" ]]; then
       # only 1 baw instance
-        CP4BA_BAW_DEPLOYMENT=$(jq -r .status.components.baw.bawDeployment ${BACKUP_ROOT_DIRECTORY_FULL}/CR.json)
-        checkResult $CP4BA_BAW_DEPLOYMENT "Ready" "CP4BA Business Automation Workflow Runtime deployment status"
-
-        CP4BA_BAW_SERVICE=$(jq -r .status.components.baw.bawService ${BACKUP_ROOT_DIRECTORY_FULL}/CR.json)
-        checkResult $CP4BA_BAW_SERVICE "Ready" "CP4BA Business Automation Workflow Runtime service status"
-
-        CP4BA_BAW_ZENINTEGRATION=$(jq -r .status.components.baw.bawZenIntegration ${BACKUP_ROOT_DIRECTORY_FULL}/CR.json)
-        checkResult $CP4BA_BAW_ZENINTEGRATION "Ready" "CP4BA Business Automation Workflow Runtime Zen Integration status"
+        CP4BA_BAW_NAME=$(jq -r .spec.baw_configuration.name ${BACKUP_ROOT_DIRECTORY_FULL}/CR.json)
+        
+        CP4BA_BAW_CUSTOM_RESOURCE=$(jq -r .status.components.baw.bawCustomResource ${BACKUP_ROOT_DIRECTORY_FULL}/CR.json)
+        checkResult $CP4BA_BAW_CUSTOM_RESOURCE "Ready" "CP4BA Business Automation Workflow Custom Resource status"
         echo
     else
       # check how many instances
       CP4BA_BAW_INSTANCE_COUNT=$(jq -r .status.components.baw ${BACKUP_ROOT_DIRECTORY_FULL}/CR.json | jq 'length')
       echo
       for ((i=0; i<$CP4BA_BAW_INSTANCE_COUNT; i++)); do
-        CP4BA_BAW_NAME=$(jq -r .status.components.baw[$i].name ${BACKUP_ROOT_DIRECTORY_FULL}/CR.json)
+        CP4BA_BAW_NAME=$(jq -r .spec.baw_configuration[$i].name ${BACKUP_ROOT_DIRECTORY_FULL}/CR.json)
         logInfo "  Business Automation Workflow Runtime instance name: $CP4BA_BAW_NAME"
-
-        CP4BA_BAW_DEPLOYMENT=$(jq -r .status.components.baw[$i].bawDeployment ${BACKUP_ROOT_DIRECTORY_FULL}/CR.json)
-        checkResult $CP4BA_BAW_DEPLOYMENT "Ready" "CP4BA Business Automation Workflow Runtime deployment status"
-
-        CP4BA_BAW_SERVICE=$(jq -r .status.components.baw[$i].bawService ${BACKUP_ROOT_DIRECTORY_FULL}/CR.json)
-        checkResult $CP4BA_BAW_SERVICE "Ready" "CP4BA Business Automation Workflow Runtime service status"
-
-        CP4BA_BAW_ZENINTEGRATION=$(jq -r .status.components.baw[$i].bawZenIntegration ${BACKUP_ROOT_DIRECTORY_FULL}/CR.json)
-        checkResult $CP4BA_BAW_ZENINTEGRATION "Ready" "CP4BA Business Automation Workflow Runtime Zen Integration status"
+        
+        CP4BA_BAW_CUSTOM_RESOURCE=$(jq -r .status.components.baw[$i].bawCustomResource ${BACKUP_ROOT_DIRECTORY_FULL}/CR.json)
+        checkResult $CP4BA_BAW_CUSTOM_RESOURCE "Ready" "  CP4BA Business Automation Workflow Custom Resource status"
         echo
       done
     fi
