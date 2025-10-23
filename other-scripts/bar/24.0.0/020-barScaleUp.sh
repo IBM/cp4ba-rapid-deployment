@@ -150,7 +150,7 @@ oc scale deploy zen-core --replicas=1
 oc scale deploy zen-core-api --replicas=1
 oc scale deploy zen-watcher --replicas=1
 oc scale deployment zen-audit --replicas=1
-oc scale deploy common-web-ui --replicas=1
+#Removed
 oc scale deploy mycluster-insights-engine-flink --replicas=2
 oc scale deploy mycluster-insights-engine-flink-taskmanager --replicas=1
 oc scale deploy mycluster-insights-engine-management --replicas=1
