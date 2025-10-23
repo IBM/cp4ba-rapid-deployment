@@ -184,6 +184,174 @@ CP4BA_OPTIONAL_COMPONENTS=$(jq -r .spec.shared_configuration.sc_optional_compone
 logInfo "  CP4BA optional components: $CP4BA_OPTIONAL_COMPONENTS"
 echo
 
+
+
+# TODO START this section is under construction
+
+# Prereq Services Installed
+isLicenseServiceInstalled=false
+isCertificateManagerInstalled=false
+isZenInstalled=false
+isIMInstalled=false
+isCommonWebUIServiceInstalled=false
+
+isBTSInstalled=false
+
+isOpenSearchInstalled=false
+isKafkaInstalled=false
+isFlinkInstalled=false
+isBAIInstalled=false
+
+isRRInstalled=false
+isNavigatorInstalled=false
+isBASInstalled=false
+
+# CP4BA Components Installed
+isBAWAuthoringInstalled=false
+isBAWRuntimeInstalled=false
+numberOfBAWRuntimesInstalled=0
+isBAWJMSExternal=false
+isCPEInstalled=false
+isCMISInstalled=false
+isGraphQLInstalled=false
+isCSSInstalled=false
+isBAAInstalled=false
+numberOfBAAsInstalled=0
+isBAAPBKInstalled=false
+isAppDesignerInstalled=false
+
+# Now, set the flags to true according to what's configured in the CR based on the sc_deployment_patterns parameter
+CP4BA_COMPONENTS_LIST=$(echo $CP4BA_COMPONENTS | tr "," "\n")
+for component in $CP4BA_COMPONENTS_LIST
+do
+#  logInfo "CP4BA_COMPONENT:" $component
+  case "$component" in
+  "foundation")
+    isRRInstalled=true
+    isNavigatorInstalled=true
+    isLicenseServiceInstalled=true
+    isCertificateManagerInstalled=true
+    isZenInstalled=true
+    isIMInstalled=true
+    isCommonWebUIServiceInstalled=true
+    ;;
+  "content")
+    isCPEInstalled=true
+    isGraphQLInstalled=true
+    isNavigatorInstalled=true
+    isRRInstalled=true
+    isZenInstalled=true
+    isIMInstalled=true
+    isCommonWebUIServiceInstalled=true
+    isLicenseServiceInstalled=true
+    isCertificateManagerInstalled=true
+    ;;
+  "workflow")
+    isBAWRuntimeInstalled=true # Could be changed later on to false again when going through the optional components
+    ;;
+  "application")
+    isBAAInstalled=true
+    isRRInstalled=true
+    isNavigatorInstalled=true
+    isBTSInstalled=true
+    isLicenseServiceInstalled=true
+    isCertificateManagerInstalled=true
+    isZenInstalled=true
+    isIMInstalled=true
+    isCommonWebUIServiceInstalled=true
+    ;;
+  *)
+    logWarning "Component detected that is not yet covered by this version of the Health-Check script:" $component
+    echo
+  esac
+done
+
+# Now, set the flags to true according to what's configured in the CR based on the sc_optional_components parameter
+# TODO iterate through CP4BA_OPTIONAL_COMPONENTS
+CP4BA_OPTIONAL_COMPONENTS_LIST=$(echo $CP4BA_OPTIONAL_COMPONENTS | tr "," "\n")
+for optionalComponent in $CP4BA_OPTIONAL_COMPONENTS_LIST
+do
+#  logInfo "CP4BA_OPTIONAL_COMPONENT:" $optionalComponent
+  case "$optionalComponent" in
+  "baw_authoring")
+    if $isBAWRuntimeInstalled; then
+      isBAWRuntimeInstalled=false
+      isBAWAuthoringInstalled=true
+    else
+      # TODO Check if this is possible
+      logWarning "Optional component baw_authoring is configured, but component workflow is NOT configured! Assuming isBAWAuthoringInstalled=true"
+      echo
+      isBAWAuthoringInstalled=true
+    fi
+    ;;
+  "bai")
+    isBAIInstalled=true
+    isKafkaInstalled=true
+    isFlinkInstalled=true
+    isOpenSearchInstalled=true
+    isBTSInstalled=true
+    ;;
+  "app_designer")
+    isAppDesignerInstalled=true
+    isBASInstalled=true
+    ;;
+  "pfs")
+    # no longer resulting in a deployment, from previous versions, PFS requires an own deployment on top of CP4BA now with it's own CR
+    ;;
+  "opensearch")
+    isOpenSearchInstalled=true
+    ;;
+  "css")
+    isCSSInstalled=true
+    ;;
+  "cmis")
+    isCMISInstalled=true
+    ;;
+  *)
+    logWarning "Optional component detected that is not yet covered by this version of the Health-Check script:" $component
+    echo
+  esac
+done
+
+# Set flags for BAW now
+if $isBAWRuntimeInstalled; then
+  isCPEInstalled=true
+  isCMISInstalled=true
+  isGraphQLInstalled=true
+  isNavigatorInstalled=true
+  isRRInstalled=true
+  isZenInstalled=true
+  isIMInstalled=true
+  isCommonWebUIServiceInstalled=true
+  isLicenseServiceInstalled=true
+  isCertificateManagerInstalled=true
+elif $isBAWAuthoringInstalled; then
+  isCPEInstalled=true
+  isCMISInstalled=true
+  isGraphQLInstalled=true
+  isNavigatorInstalled=true
+  isBASInstalled=true
+  isRRInstalled=true
+  isZenInstalled=true
+  isIMInstalled=true
+  isCommonWebUIServiceInstalled=true
+  isLicenseServiceInstalled=true
+  isCertificateManagerInstalled=true
+fi
+
+#Now, set the flags to true according to what's configured in the CR based on the settings in the spec: section
+# TODO CR, iterate through spec: section
+# TODO: Workflow Runtime + full text search enabled -> OpenSearch is required!
+# TODO: set numberOfBAWRuntimesInstalled=0
+# TODO: set isBAWJMSExternal=false
+# TODO: set numberOfBAAsInstalled=0
+
+
+
+# TODO END this section is under construction
+
+
+
 ##### CP4BA component status ###################################################
 # Prereq
 logInfo "Checking Prereq..."
@@ -546,24 +714,6 @@ if [[ $CP4BA_COMPONENTS =~ "document_processing" ]]; then
     CP4BA_ADP_CDRA_ZENINTEGRATION=$(jq -r .status.components.contentDesignerRepoAPI.cdraZenIntegration ${BACKUP_ROOT_DIRECTORY_FULL}/CR.json)
     checkResult $CP4BA_ADP_CDRA_ZENINTEGRATION "Ready" "CP4BA Automation Document Processing Content Designer Repo API Zen integration status"
   fi
-fi
-
-##### Process Federation Server ################################################
-if [[ $CP4BA_OPTIONAL_COMPONENTS =~ "pfs" ]]; then
-  echo
-  # TODO: Update to 24.0.0 needed
-#  if [[ $CP4BA_VERSION =~ "21.0.3" ]]; then
-#    # only check PFS on 21.0.3
-#    logInfo "Checking Process Federation Server..."
-#    CP4BA_PFS_DEPLOYMENT=$(jq -r .status.components.pfs.pfsDeployment ${BACKUP_ROOT_DIRECTORY_FULL}/CR.json)
-#    checkResult $CP4BA_PFS_DEPLOYMENT "Ready" "CP4BA Process Federation Server deployment status"
-
-#    CP4BA_PFS_SERVICE=$(jq -r .status.components.pfs.pfsService ${BACKUP_ROOT_DIRECTORY_FULL}/CR.json)
-#    checkResult $CP4BA_PFS_SERVICE "Ready" "CP4BA Process Federation Server service status"
-
-#    CP4BA_PFS_ZENINTEGRATION=$(jq -r .status.components.pfs.pfsZenIntegration ${BACKUP_ROOT_DIRECTORY_FULL}/CR.json)
-#    checkResult $CP4BA_PFS_ZENINTEGRATION "Ready" "CP4BA Process Federation Server Zen integration status"
-#  fi
 fi
 
 ##### Open Search #############################################
