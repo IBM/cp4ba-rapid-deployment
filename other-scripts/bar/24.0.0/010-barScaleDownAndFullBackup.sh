@@ -526,25 +526,45 @@ if [[ "$MANAGEMENT_POD" != "" ]]; then
   echo
 fi
 
+# TODO:
+isOpenSearchInstalled=false
+
 # Create ES/OS snapshots
-if [[ $CP4BA_VERSION =~ "24.0.0" ]]; then
-  # OpenSearch for 24.0 and later
+if $isOpenSearchInstalled; then
   logInfo "Declaring the location of the snapshot repository for OpenSearch..."
   OPENSEARCH_ROUTE=$(oc get route opensearch-route -o jsonpath='{.spec.host}')
   OPENSEARCH_PASSWORD=$(oc get secret opensearch-ibm-elasticsearch-cred-secret --no-headers --ignore-not-found -o jsonpath={.data.elastic} | base64 -d)
-  # TODO: Curl might need an authoriziation token
-  curl -skl -u elastic:$OPENSEARCH_PASSWORD -XPUT "https://$OPENSEARCH_ROUTE/_snapshot/${DATETIMESTR}" -H "Content-Type: application/json" -d'{"type":"fs","settings":{"location": "/workdir/snapshot_storage","compress": true}}'
+  if $useTokenForOpensearchRoute; then
+    curl -skl --header "Authorization: ${cp4batoken}" -u elastic:$OPENSEARCH_PASSWORD -XPUT "https://$OPENSEARCH_ROUTE/_snapshot/${DATETIMESTR}" --resolve "${barTokenResolveCp4ba}" -H "Content-Type: application/json" -d'{"type":"fs","settings":{"location": "/workdir/snapshot_storage","compress": true}}'
+  else
+    curl -skl -u elastic:$OPENSEARCH_PASSWORD -XPUT "https://$OPENSEARCH_ROUTE/_snapshot/${DATETIMESTR}" -H "Content-Type: application/json" -d'{"type":"fs","settings":{"location": "/workdir/snapshot_storage","compress": true}}'
+  fi
+  echo
+  
   logInfo "Creating snapshot backup_${DATETIMESTR}..."
-  # TODO: Curl might need an authoriziation token
-  SNAPSHOT_RESULT=$(curl -skL -u elastic:${OPENSEARCH_PASSWORD} -XPUT "https://${OPENSEARCH_ROUTE}/_snapshot/${DATETIMESTR}/backup_${DATETIMESTR}?wait_for_completion=true&pretty=true")
-  logInfo $SNAPSHOT_RESULT
+  if $useTokenForOpensearchRoute; then
+    SNAPSHOT_RESULT=$(curl -skL --header "Authorization: ${cp4batoken}" -u elastic:${OPENSEARCH_PASSWORD} -XPUT "https://${OPENSEARCH_ROUTE}/_snapshot/${DATETIMESTR}/backup_${DATETIMESTR}?wait_for_completion=true&pretty=true" --resolve "${barTokenResolveCp4ba}")
+  else
+    SNAPSHOT_RESULT=$(curl -skL -u elastic:${OPENSEARCH_PASSWORD} -XPUT "https://${OPENSEARCH_ROUTE}/_snapshot/${DATETIMESTR}/backup_${DATETIMESTR}?wait_for_completion=true&pretty=true")
+  fi
   SNAPSHOT_STATE=$(echo $SNAPSHOT_RESULT | jq -r ".snapshot.state")
   checkResult $SNAPSHOT_STATE "SUCCESS" "Snapshot state"
-  echo
-  # TODO: copy the snapshots from the pod, what should be copied ? Need clarification from document, Zhong Tao opened a case for this issue: https://jsw.ibm.com/browse/DBACLD-164204: Need clarification on how to copy ES/OS snapshots to another environment
-  # TODO: scale down os pods
-else # 25.0 / 24.0.1 and greater
-  # TODO:
+  
+  # Snapshots are kept in the pod in directory /workdir/snapshot_storage
+  # TODO:POD-Name & not yet final!
+#  logInfo $(oc exec --container elasticsearch TODO:POD-Name -it -- bash -c "tar -cf /usr/share/elasticsearch/es_snapshots_main_backup_${DATETIMESTR}.tgz /usr/share/elasticsearch/snapshots/main")
+#  logInfo $(oc cp --container elasticsearch TODO:POD-Name:/usr/share/elasticsearch/es_snapshots_main_backup_${DATETIMESTR}.tgz ${BACKUP_DIR}/es_snapshots_main_backup_${DATETIMESTR}.tgz)
+
+  # check if backup was taken successfully
+#  if [ -e "${BACKUP_DIR}/es_snapshots_main_backup_${DATETIMESTR}.tgz" ]; then
+#    logInfo "Elasticsearch backup completed successfully."
+    # Clean up, delete the tar, but not the snapshot and the repository
+#    oc exec --container elasticsearch iaf-system-elasticsearch-es-data-0 -it -- bash -c "rm -f /usr/share/elasticsearch/es_snapshots_main_backup_${DATETIMESTR}.tgz"
+#  else
+#    logError "Elasticsearch backup failed, check the logs!"
+#    echo
+#    exit 1
+#  fi
   echo
 fi
 

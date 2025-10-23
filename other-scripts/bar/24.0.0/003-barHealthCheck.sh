@@ -267,7 +267,6 @@ do
 done
 
 # Now, set the flags to true according to what's configured in the CR based on the sc_optional_components parameter
-# TODO iterate through CP4BA_OPTIONAL_COMPONENTS
 CP4BA_OPTIONAL_COMPONENTS_LIST=$(echo $CP4BA_OPTIONAL_COMPONENTS | tr "," "\n")
 for optionalComponent in $CP4BA_OPTIONAL_COMPONENTS_LIST
 do
@@ -340,7 +339,7 @@ elif $isBAWAuthoringInstalled; then
 fi
 
 #Now, set the flags to true according to what's configured in the CR based on the settings in the spec: section
-# TODO CR, iterate through spec: section
+# TODO: CR, iterate through spec: section
 # TODO: Workflow Runtime + full text search enabled -> OpenSearch is required!
 # TODO: set numberOfBAWRuntimesInstalled=0
 # TODO: set isBAWJMSExternal=false
@@ -717,19 +716,20 @@ if [[ $CP4BA_COMPONENTS =~ "document_processing" ]]; then
 fi
 
 ##### Open Search #############################################
-#TODO OpenSearch is not always installed, check needed!
 if [[ $CP4BA_VERSION =~ "24.0" ]]; then
   # OpenSearch for 24.0 and later
-  logInfo "Trying to connect to OpenSearch..."
-  OPENSEARCH_ROUTE=$(oc get route opensearch-route -o jsonpath='{.spec.host}')
-  OPENSEARCH_PASSWORD=$(oc get secret opensearch-ibm-elasticsearch-cred-secret --no-headers --ignore-not-found -o jsonpath={.data.elastic} | base64 -d)
-  if $useTokenForOpensearchRoute; then
-    OPENSEARCH_CURL_RESULT=$(curl -sk -w "%{http_code}" --header "Authorization: ${cp4batoken}" -o /dev/null -u elastic:$OPENSEARCH_PASSWORD https://$OPENSEARCH_ROUTE --resolve "${barTokenResolveCp4ba}")
-  else
-    OPENSEARCH_CURL_RESULT=$(curl -sk -w "%{http_code}" -o /dev/null -u elastic:$OPENSEARCH_PASSWORD https://$OPENSEARCH_ROUTE)
+  if $isOpenSearchInstalled; then
+    logInfo "Trying to connect to OpenSearch..."
+    OPENSEARCH_ROUTE=$(oc get route opensearch-route -o jsonpath='{.spec.host}')
+    OPENSEARCH_PASSWORD=$(oc get secret opensearch-ibm-elasticsearch-cred-secret --no-headers --ignore-not-found -o jsonpath={.data.elastic} | base64 -d)
+    if $useTokenForOpensearchRoute; then
+      OPENSEARCH_CURL_RESULT=$(curl -sk -w "%{http_code}" --header "Authorization: ${cp4batoken}" -o /dev/null -u elastic:$OPENSEARCH_PASSWORD https://$OPENSEARCH_ROUTE --resolve "${barTokenResolveCp4ba}")
+    else
+      OPENSEARCH_CURL_RESULT=$(curl -sk -w "%{http_code}" -o /dev/null -u elastic:$OPENSEARCH_PASSWORD https://$OPENSEARCH_ROUTE)
+    fi
+    checkHTTPCode $OPENSEARCH_CURL_RESULT "200" $OPENSEARCH_ROUTE
+    echo
   fi
-  checkHTTPCode $OPENSEARCH_CURL_RESULT "200" $OPENSEARCH_ROUTE
-  echo
 fi
 
 ##### Zen Resources ############################################################
