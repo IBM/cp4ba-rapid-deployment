@@ -526,8 +526,19 @@ if [[ "$MANAGEMENT_POD" != "" ]]; then
   echo
 fi
 
-# TODO:
+# OpenSearch: There is in 24.0.0 no status in CP4BA's CR for that. In addition to that, there are various conditions under which OpenSearch will get installed, for example
+# when requested exlicitely by optional components bai or opensearch, or when requested implicitely when enabling full text search in BAW or when PFS is installed in addition.
+# We therefore here check if an OpenSearch cluster is installed, and if yes we back it up.
+
+# TODO: In our dtq test environment we don't have a deployment without opensearch deployed. This is due to all deployments had elasticsearch in 21.0.3 due to PFS being always
+# there when BAW is installed in 21.0.3.
+# In 24.0.0 PFS is no longer installed by default, needs explicit deployment. We have to remove OpenSearch in -qa environment to cover this new variation.
+
 isOpenSearchInstalled=false
+OPENSEARCH_CLUSTER=$(oc get ElasticsearchClusters opensearch --ignore-not-found)
+if [[ "$OPENSEARCH_CLUSTER" != "" ]]; then
+  isOpenSearchInstalled=true
+fi
 
 # Create ES/OS snapshots
 if $isOpenSearchInstalled; then

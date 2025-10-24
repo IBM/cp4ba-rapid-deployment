@@ -260,6 +260,8 @@ do
     isIMInstalled=true
     isCommonWebUIServiceInstalled=true
     ;;
+  "null")
+    ;;
   *)
     logWarning "Component detected that is not yet covered by this version of the Health-Check script:" $component
     echo
@@ -306,8 +308,10 @@ do
   "cmis")
     isCMISInstalled=true
     ;;
+  "null")
+    ;;
   *)
-    logWarning "Optional component detected that is not yet covered by this version of the Health-Check script:" $component
+    logWarning "Optional component detected that is not yet covered by this version of the Health-Check script:" $optionalComponent
     echo
   esac
 done
@@ -341,9 +345,10 @@ fi
 #Now, set the flags to true according to what's configured in the CR based on the settings in the spec: section
 # TODO: CR, iterate through spec: section
 # TODO: Workflow Runtime + full text search enabled -> OpenSearch is required!
-# TODO: set numberOfBAWRuntimesInstalled=0
-# TODO: set isBAWJMSExternal=false
-# TODO: set numberOfBAAsInstalled=0
+# TODO: OpenSearch will also be there if PFS is deployed! -> Need to decide on this as we don't have test environments with PFS.
+# TODO: set numberOfBAWRuntimesInstalled=0 and test with multiple BAW runtimes deployed
+# TODO: set isBAWJMSExternal=false and test with external JMS (warning if JMS is not externalized in production environment)
+# TODO: set numberOfBAAsInstalled=0 and test with multiple BAA runtimes deployed
 
 
 
