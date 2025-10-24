@@ -591,11 +591,13 @@ if [[ "$MANAGEMENT_POD" != "" ]]; then
 fi
 
 # Set replica size of the bts-316 deployment to 0 to prevent it gets scaled up again
-logInfo "Patching cp4ba-bts..."
-logInfo $(oc patch bts cp4ba-bts --type merge --patch '{"spec":{"replicas":0}}')
-sleep 10
-logInfo $(oc scale deploy ibm-bts-operator-controller-manager --replicas=0)
-echo
+# This section is commented because BTS EDB pod is now scaled down using hibernation=on annotation
+
+# logInfo "Patching cp4ba-bts..."
+# logInfo $(oc patch bts cp4ba-bts --type merge --patch '{"spec":{"replicas":0}}')
+# sleep 10
+# logInfo $(oc scale deploy ibm-bts-operator-controller-manager --replicas=0)
+# echo
 
 # Scale down all postgresql db zen-metastore-edb, common-service-db
 logInfo $(oc annotate cluster zen-metastore-edb --overwrite k8s.enterprisedb.io/hibernation=on)
@@ -689,7 +691,7 @@ echo
 
 # Take backup of catalog sources before deleting catalog source pods
 logInfo "Take backup of catalog sources before deleting catalog source pods"
-logInfo $(oc get catalogsource -o yaml > ${BACKUP_DIR}/catalogsource.yaml)
+logInfo $(oc get catalogsource -o yaml > $BACKUP_ROOT_DIRECTORY_FULL/catalogsource.yaml)
 logInfo "Delete Catalog sources"
 logInfo $(oc delete catalogsource -n ${cp4baProjectName} --all)
 
