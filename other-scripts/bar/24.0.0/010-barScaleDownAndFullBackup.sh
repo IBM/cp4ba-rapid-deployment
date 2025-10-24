@@ -362,6 +362,7 @@ echo
 
 
 ##### Initial backup ##############################################################
+
 ##### Backup uid definition ####################################################
 NAMESPACE_UID=$(oc describe project $cp4baProjectName | grep uid-range | cut -d"=" -f2 | cut -d"/" -f1)
 logInfo "Namespace $cp4baProjectName uid: $NAMESPACE_UID"
@@ -561,27 +562,13 @@ if $isOpenSearchInstalled; then
   SNAPSHOT_STATE=$(echo $SNAPSHOT_RESULT | jq -r ".snapshot.state")
   checkResult $SNAPSHOT_STATE "SUCCESS" "Snapshot state"
   
-  # Snapshots are kept in the pod in directory /workdir/snapshot_storage
-  # TODO:POD-Name & not yet final!
-#  logInfo $(oc exec --container elasticsearch TODO:POD-Name -it -- bash -c "tar -cf /usr/share/elasticsearch/es_snapshots_main_backup_${DATETIMESTR}.tgz /usr/share/elasticsearch/snapshots/main")
-#  logInfo $(oc cp --container elasticsearch TODO:POD-Name:/usr/share/elasticsearch/es_snapshots_main_backup_${DATETIMESTR}.tgz ${BACKUP_DIR}/es_snapshots_main_backup_${DATETIMESTR}.tgz)
-
-  # check if backup was taken successfully
-#  if [ -e "${BACKUP_DIR}/es_snapshots_main_backup_${DATETIMESTR}.tgz" ]; then
-#    logInfo "Elasticsearch backup completed successfully."
-    # Clean up, delete the tar, but not the snapshot and the repository
-#    oc exec --container elasticsearch iaf-system-elasticsearch-es-data-0 -it -- bash -c "rm -f /usr/share/elasticsearch/es_snapshots_main_backup_${DATETIMESTR}.tgz"
-#  else
-#    logError "Elasticsearch backup failed, check the logs!"
-#    echo
-#    exit 1
-#  fi
+  # Snapshots are incremental, we therefore leave it on the snapshot PVC without copying it onto the bastion host. It will get backed up when the PVCs are backed up.
   echo
 fi
 
 
-##### Final scale down ##############################################################
 
+##### Final scale down ##############################################################
 
 ## Remove flink job submitters
 if [[ "$MANAGEMENT_POD" != "" ]]; then
