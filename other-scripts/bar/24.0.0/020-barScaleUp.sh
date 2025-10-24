@@ -113,7 +113,16 @@ else
 fi
 echo
 
-# First, scale up all operators
+
+# ScaleUp Catalog Sources
+logInfo "Scale Up all Catalog Source Pods"
+logInfo $(oc apply -f $BACKUP_ROOT_DIRECTORY_FULL/catalogsource.yaml)
+echo
+
+sleep 10
+
+
+# Scale up all operators
 logInfo "Scaling up all operators..."
 logInfo $(oc scale deploy ibm-cp4a-operator --replicas=1)
 logInfo $(oc scale deploy ibm-content-operator --replicas=1)
@@ -181,10 +190,10 @@ done
 echo
 
 # Sixth, set bts-316 replica size
-logInfo "Patching cp4ba-bts..."
-patchString="{\"spec\":{\"replicas\":$cp4baBTS316ReplicaSize}}"
-logInfo $(oc patch bts cp4ba-bts --type merge --patch $patchString)
-echo
+# logInfo "Patching cp4ba-bts..."
+# patchString="{\"spec\":{\"replicas\":$cp4baBTS316ReplicaSize}}"
+# logInfo $(oc patch bts cp4ba-bts --type merge --patch $patchString)
+# echo
 
-logInfo "Environment is scaled up. It will take some time till all needed pods are there and are Running and Ready. Please check in the OCP Web Console. Once all pods are there, pls. check that everything works as expected."
+logInfo "Environment is scaled up. It will take some time(approx 30-45 mins) till all needed pods are there and are Running and Ready. Please check in the OCP Web Console. Once all pods are there, pls. check that everything works as expected."
 echo
