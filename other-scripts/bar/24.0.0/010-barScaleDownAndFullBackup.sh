@@ -160,7 +160,22 @@ logInfo "Found CP4BA version: $CP4BA_VERSION"
 echo
 
 ## Get all deployment / sts and pod counts before scaling down
-logInfo $(echo "=== Pods ===" && oc get pods -n $cp4baProjectName && echo -e "\n=== Deployments ===" && oc get deployments -n $cp4baProjectName && echo -e "\n=== StatefulSets ===" && oc get sts -n $cp4baProjectName && echo -e "\n=== PostgreSQL Clusters ===" && oc get cluster.postgresql -n $cp4baProjectName && echo -e "\n=== Generic Clusters ===" && oc get cluster -n $cp4baProjectName && echo -e "\n=== Strimzi Pod Set  ===" && oc get strimzipodset -n $cp4baProjectName)
+logInfo "Get current running state & count of all pod, deployment, sts counts before scaling down"
+logInfo "=== Pods ==="
+logInfo $(oc get pods -n $cp4baProjectName)
+logInfo "=== Deployments ==="
+logInfo $(oc get deployments -n $cp4baProjectName)
+logInfo "=== Stateful Sets ==="
+logInfo $(oc get sts -n $cp4baProjectName)
+logInfo "=== PostgreSQL Cluster ==="
+logInfo $(oc get cluster.postgresql -n $cp4baProjectName)
+logInfo "=== Strimzi Pod Set ==="
+logInfo $(oc get strimzipodset -n $cp4baProjectName)
+logInfo "=== CronJobs ==="
+logInfo $(oc get cronjobs -n $cp4baProjectName)
+logInfo "=== Jobs ==="
+logInfo $(oc get jobs -n $cp4baProjectName)
+
 
 ##### Initial scale down ##############################################################
 # Scale down all operators
