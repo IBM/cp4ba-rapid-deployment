@@ -116,63 +116,29 @@ echo
 # First, scale up all operators
 logInfo "Scaling up all operators..."
 logInfo $(oc scale deploy ibm-cp4a-operator --replicas=1)
-logInfo $(oc scale deploy ibm-zen-operator --replicas=1)
-logInfo $(oc scale deploy ibm-iam-operator --replicas=1)
-logInfo $(oc scale deploy ibm-commonui-operator --replicas=1)
-logInfo $(oc scale deploy ibm-common-service-operator --replicas=1)
-logInfo $(oc scale deploy ibm-odm-operator --replicas=1)
-logInfo $(oc scale deploy zen-core --replicas=1)
-logInfo $(oc scale deploy zen-core-api --replicas=1)
 logInfo $(oc scale deploy ibm-content-operator --replicas=1)
-logInfo $(oc scale deploy ibm-dpe-operator --replicas=1)
 logInfo $(oc scale deploy ibm-cp4a-wfps-operator --replicas=1)
+logInfo $(oc scale deploy ibm-dpe-operator --replicas=1)
 logInfo $(oc scale deploy ibm-insights-engine-operator --replicas=1)
 logInfo $(oc scale deploy flink-kubernetes-operator --replicas=1)
 logInfo $(oc scale deploy ibm-ads-operator --replicas=1)
 logInfo $(oc scale deploy ibm-pfs-operator --replicas=1)
 logInfo $(oc scale deploy ibm-workflow-operator --replicas=1)
+logInfo $(oc scale deploy ibm-zen-operator --replicas=1)
 logInfo $(oc scale deploy icp4a-foundation-operator --replicas=1)
+logInfo $(oc scale deploy ibm-iam-operator --replicas=1)
+logInfo $(oc scale deploy ibm-commonui-operator --replicas=1)
+logInfo $(oc scale deploy ibm-common-service-operator --replicas=1)
+logInfo $(oc scale deploy ibm-odm-operator --replicas=1)
 logInfo $(oc scale deploy ibm-elasticsearch-operator-ibm-es-controller-manager --replicas=1)
-logInfo $(oc scale deploy postgresql-operator-controller-manager-1-22-7 --replicas=1)
-logInfo $(oc scale deploy ibm-events-operator-v5.0.1 --replicas=1)
-sleep 20
-oc annotate cluster zen-metastore-edb --overwrite k8s.enterprisedb.io/hibernation=off
-oc annotate cluster common-service-db --overwrite k8s.enterprisedb.io/hibernation=off
-oc annotate cluster ibm-bts-cnpg-ibm-cp4ba-dev-cp4ba-bts --overwrite k8s.enterprisedb.io/hibernation=off
-oc scale deploy ibm-bts-operator-controller-manager --replicas=1
-sleep 20
+logInfo $(oc scale deploy operand-deployment-lifecycle-manager --replicas=1)
+logInfo $(oc scale deploy ibm-bts-operator-controller-manager --replicas=1)
 
-## Get CP4BA deployment name
-CP4BA_NAME=$(oc get ICP4ACluster -o name |cut -d "/" -f 2)
-logInfo "CP4BA deployment name: $CP4BA_NAME"
-echo
-
-# Removed RefLine:219
-oc scale deploy ibm-nginx --replicas=2
-oc scale deploy ibm-nginx-tester --replicas=1
-oc scale deploy usermgmt --replicas=1
-oc scale deploy zen-core --replicas=1
-oc scale deploy zen-core-api --replicas=1
-oc scale deploy zen-watcher --replicas=1
-oc scale deploy zen-audit --replicas=1
-#Removed RefLine:186
-oc scale deploy mycluster-insights-engine-flink --replicas=2
-oc scale deploy mycluster-insights-engine-flink-taskmanager --replicas=1
-oc scale deploy mycluster-insights-engine-management --replicas=1
-oc scale deploy mycluster-insights-engine-cockpit --replicas=1
-oc scale deploy mycluster-pbk-ae-deployment --replicas=1
-oc scale deploy mycluster-workspace-aae-ae-deployment --replicas=1
-oc scale sts zen-minio --replicas=3
-oc scale sts mycluster-bastudio-deployment --replicas=1
-
-# not always deployed
+# Not always deployed - This is for BAI KAFKA Events
 if oc get deployment iaf-system-entity-operator > /dev/null 2>&1; then
   logInfo $(oc scale deploy iaf-system-entity-operator --replicas=1)
 fi
-logInfo $(oc scale deploy iam-policy-controller --replicas=1)
-logInfo $(oc scale deploy operand-deployment-lifecycle-manager --replicas=1)
-
-# these two operator deployments do have the version in their name, therefore we have to get the deployment name first
+# These two operator deployments do have the version in their name, therefore we have to get the deployment name first
 eventsOperatorDeployment=$(oc get deployment -o 'custom-columns=NAME:.metadata.name,SELECTOR:.spec.selector.matchLabels.name' --no-headers --ignore-not-found | grep 'ibm-events-operator' | awk '{print $1}')
 # not always deployed
 if [[ "$eventsOperatorDeployment" != "" ]]; then
@@ -180,23 +146,20 @@ if [[ "$eventsOperatorDeployment" != "" ]]; then
 fi
 postgresqlOperatorDeployment=$(oc get deployment -l=app.kubernetes.io/name=cloud-native-postgresql -o 'custom-columns=NAME:.metadata.name' --no-headers --ignore-not-found | awk '{print $1}')
 logInfo $(oc scale deploy $postgresqlOperatorDeployment --replicas=1)
-sleep 30
 echo
 
-# Second, scale up common-web-ui, and if stateful set also kafka and zookeeper
+# Scale up all PostgresDB pods
+logInfo $(oc annotate cluster zen-metastore-edb --overwrite k8s.enterprisedb.io/hibernation=off)
+logInfo $(oc annotate cluster common-service-db --overwrite k8s.enterprisedb.io/hibernation=off)
+logInfo $(oc annotate cluster ibm-bts-cnpg-$cp4baProjectNamespace-cp4ba-bts --overwrite k8s.enterprisedb.io/hibernation=off)
+echo
+sleep 60
+
+# Scale up common-web-ui, Kafka and Zookeeper are not STS in 24.0.0, they are SPS(StrimziPodSet) it will be scaledup automatically through iaf-system-entity-operator
 logInfo "Scaling up common-web-ui..."
 logInfo $(oc scale deploy common-web-ui --replicas=$cp4baCommonWebUiReplicaSize)
-if [[ "$(oc get statefulset.apps/iaf-system-zookeeper -o name --ignore-not-found)" != "" ]]; then
-  logInfo "Scaling up zookeeper..."
-  logInfo $(oc scale statefulset.apps/iaf-system-zookeeper --replicas=$cp4baZookeeperReplicaSize);
-fi
-if [[ "$(oc get statefulset.apps/iaf-system-kafka -o name --ignore-not-found)" != "" ]]; then
-  logInfo "Scaling up kafka..."
-  logInfo $(oc scale statefulset.apps/iaf-system-kafka --replicas=$cp4baKafkaReplicaSize);
-fi
-echo
 
-# Third, Zen's cpdservice needs to be modified to get back all zen pods -> add "flag: true/false"
+# Zen's cpdservice needs to be modified to get back all zen pods -> add "flag: true/false"
 logInfo "Re-enabling ZEN..."
 flag=$(oc get ZenService iaf-zen-cpdservice -o 'custom-columns=NAME:.metadata.name,FLAG:.spec.flag' --no-headers --ignore-not-found | awk '{print $2}')
 if [[ $flag == null || $flag == "true" ]]; then
@@ -206,7 +169,7 @@ else
 fi
 echo
 
-# Fourth, re-enable all suspended cron jobs
+# Re-enable all suspended cron jobs
 logInfo "Re-enabling suspended cron jobs..."
 suspendedCronJobs=$(echo $cp4baSuspendedCronJobs | tr "," "\n")
 for job in $suspendedCronJobs
