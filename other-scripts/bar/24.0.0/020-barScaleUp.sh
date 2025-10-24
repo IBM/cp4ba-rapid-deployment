@@ -148,6 +148,8 @@ postgresqlOperatorDeployment=$(oc get deployment -l=app.kubernetes.io/name=cloud
 logInfo $(oc scale deploy $postgresqlOperatorDeployment --replicas=1)
 echo
 
+sleep 30
+
 # Scale up all PostgresDB pods
 logInfo $(oc annotate cluster zen-metastore-edb --overwrite k8s.enterprisedb.io/hibernation=off)
 logInfo $(oc annotate cluster common-service-db --overwrite k8s.enterprisedb.io/hibernation=off)
