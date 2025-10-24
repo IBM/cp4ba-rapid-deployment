@@ -195,5 +195,5 @@ echo
 # logInfo $(oc patch bts cp4ba-bts --type merge --patch $patchString)
 # echo
 
-logInfo "Environment is scaled up. It will take some time(approx 30-45 mins) till all needed pods are there and are Running and Ready. Please check in the OCP Web Console. Once all pods are there, pls. check that everything works as expected."
+logInfo "Environment is scaled up. It will take some time(approx 45-60 mins) till all needed pods are there and are Running and Ready. Please check in the OCP Web Console. Once all pods are there, pls. check that everything works as expected."
 echo
