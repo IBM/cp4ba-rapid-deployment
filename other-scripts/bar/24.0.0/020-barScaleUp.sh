@@ -141,22 +141,28 @@ oc annotate cluster common-service-db --overwrite k8s.enterprisedb.io/hibernatio
 oc annotate cluster ibm-bts-cnpg-ibm-cp4ba-dev-cp4ba-bts --overwrite k8s.enterprisedb.io/hibernation=off
 oc scale deploy ibm-bts-operator-controller-manager --replicas=1
 sleep 20
-oc patch bts cp4ba-bts --type merge --patch '{"spec":{"replicas":1}}'
+
+## Get CP4BA deployment name
+CP4BA_NAME=$(oc get ICP4ACluster -o name |cut -d "/" -f 2)
+logInfo "CP4BA deployment name: $CP4BA_NAME"
+echo
+
+# Removed RefLine:219
 oc scale deploy ibm-nginx --replicas=2
 oc scale deploy ibm-nginx-tester --replicas=1
-oc scale sts zen-minio --replicas=3
 oc scale deploy usermgmt --replicas=1
 oc scale deploy zen-core --replicas=1
 oc scale deploy zen-core-api --replicas=1
 oc scale deploy zen-watcher --replicas=1
-oc scale deployment zen-audit --replicas=1
-#Removed
+oc scale deploy zen-audit --replicas=1
+#Removed RefLine:186
 oc scale deploy mycluster-insights-engine-flink --replicas=2
 oc scale deploy mycluster-insights-engine-flink-taskmanager --replicas=1
 oc scale deploy mycluster-insights-engine-management --replicas=1
 oc scale deploy mycluster-insights-engine-cockpit --replicas=1
 oc scale deploy mycluster-pbk-ae-deployment --replicas=1
 oc scale deploy mycluster-workspace-aae-ae-deployment --replicas=1
+oc scale sts zen-minio --replicas=3
 oc scale sts mycluster-bastudio-deployment --replicas=1
 
 # not always deployed
