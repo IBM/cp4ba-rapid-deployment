@@ -28,11 +28,7 @@ cp4baSuspendedCronJobs=§cp4baSuspendedCronJobs
 
 cp4baCommonWebUiReplicaSize=§cp4baCommonWebUiReplicaSize
 
-cp4baBTS316ReplicaSize=§cp4baBTS316ReplicaSize
-
-cp4baKafkaReplicaSize=§cp4baKafkaReplicaSize
-
-cp4baZookeeperReplicaSize=§cp4baZookeeperReplicaSize
+cp4baInsightsEngineFlinkTaskmanagerReplicaSize=§cp4baInsightsEngineFlinkTaskmanagerReplicaSize
 
 # --- end of file ---
 
