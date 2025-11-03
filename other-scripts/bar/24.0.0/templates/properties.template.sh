@@ -24,6 +24,8 @@ echo "  Reading properties.sh ..."
 
 cp4baProjectNamespace=§cp4baProjectNamespace
 
+cp4baClusterName=§cp4baClusterName
+
 cp4baSuspendedCronJobs=§cp4baSuspendedCronJobs
 
 cp4baCommonWebUiReplicaSize=§cp4baCommonWebUiReplicaSize

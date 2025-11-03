@@ -191,16 +191,12 @@ echo
 
 sleep 30
  
-CP4BA_NAME=$(oc get ICP4ACluster -o name |cut -d "/" -f 2)
-logInfo "CP4BA deployment name: $CP4BA_NAME"
-echo
-
 # Scale up ibm insights engine and insights engine flink task manager.
-logInfo "Scaling up $CP4BA_NAME-insights-engine-flink-taskmanager..."
-logInfo $(oc scale deploy $CP4BA_NAME-insights-engine-flink-taskmanager --replicas=§cp4baInsightsEngineFlinkTaskmanagerReplicaSize)
+logInfo "Scaling up $cp4baClusterName-insights-engine-flink-taskmanager..."
+logInfo $(oc scale deploy $cp4baClusterName-insights-engine-flink-taskmanager --replicas=§cp4baInsightsEngineFlinkTaskmanagerReplicaSize)
 sleep 30
-logInfo "Scaling up $CP4BA_NAME-insights-engine-flink..."
-logInfo $(oc scale deploy $CP4BA_NAME-insights-engine-flink --replicas=1)
+logInfo "Scaling up $cp4baClusterName-insights-engine-flink..."
+logInfo $(oc scale deploy $cp4baClusterName-insights-engine-flink --replicas=1)
 echo
 
 

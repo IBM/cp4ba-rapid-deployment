@@ -148,8 +148,8 @@ echo
 ## Get CP4BA deployment name
 CP4BA_NAME=$(oc get ICP4ACluster -o name |cut -d "/" -f 2)
 logInfo "CP4BA deployment name: $CP4BA_NAME"
+sed -i.bak "s|§cp4baClusterName|$CP4BA_NAME|g" $propertiesfile
 echo
-
 
 # Persist replica size of insights engine task manager pods
 # not always deployed
