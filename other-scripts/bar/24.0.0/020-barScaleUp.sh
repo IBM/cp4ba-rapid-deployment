@@ -166,7 +166,7 @@ logInfo $(oc annotate cluster ibm-bts-cnpg-$cp4baProjectNamespace-cp4ba-bts --ov
 echo
 sleep 60
 
-# Scale up common-web-ui, Kafka and Zookeeper are not STS in 24.0.0, they are SPS(StrimziPodSet) it will be scaledup automatically through iaf-system-entity-operator
+# Scale up common-web-ui.
 logInfo "Scaling up common-web-ui..."
 logInfo $(oc scale deploy common-web-ui --replicas=$cp4baCommonWebUiReplicaSize)
 
@@ -189,11 +189,20 @@ do
 done
 echo
 
-# Sixth, set bts-316 replica size
-# logInfo "Patching cp4ba-bts..."
-# patchString="{\"spec\":{\"replicas\":$cp4baBTS316ReplicaSize}}"
-# logInfo $(oc patch bts cp4ba-bts --type merge --patch $patchString)
-# echo
+sleep 30
+ 
+CP4BA_NAME=$(oc get ICP4ACluster -o name |cut -d "/" -f 2)
+logInfo "CP4BA deployment name: $CP4BA_NAME"
+echo
+
+# Scale up ibm insights engine and insights engine flink task manager.
+logInfo "Scaling up $CP4BA_NAME-insights-engine-flink-taskmanager..."
+logInfo $(oc scale deploy $CP4BA_NAME-insights-engine-flink-taskmanager --replicas=§cp4baInsightsEngineFlinkTaskmanagerReplicaSize)
+sleep 30
+logInfo "Scaling up $CP4BA_NAME-insights-engine-flink..."
+logInfo $(oc scale deploy $CP4BA_NAME-insights-engine-flink --replicas=1)
+echo
+
 
 logInfo "Environment is scaled up. It will take some time(approx 45-60 mins) till all needed pods are there and are Running and Ready. Please check in the OCP Web Console. Once all pods are there, pls. check that everything works as expected."
 echo

@@ -143,15 +143,21 @@ sed -i.bak "s|§cp4baProjectNamespace|$cp4baProjectName|g" $propertiesfile
 # Persist the replica size of the common-web-ui deployment
 commonWebUiReplicas=$(oc get pod -l=app.kubernetes.io/name=common-web-ui -o 'custom-columns=NAME:.metadata.name,PHASE:.status.phase,READY:.status.containerStatuses[0].ready,DELETED:.metadata.deletionTimestamp' --no-headers --ignore-not-found | grep 'Running' | grep 'true' | grep '<none>' | awk '{print $1}' | wc -l)
 sed -i.bak "s|§cp4baCommonWebUiReplicaSize|$commonWebUiReplicas|g" $propertiesfile
-
-# Persist the replica size of the bts-316 deployment
-cp4baBTS316ReplicaSize=$(oc get bts cp4ba-bts -o 'custom-columns=NAME:.metadata.name,REPLICAS:.spec.replicas' --no-headers | awk '{print $2}')
-sed -i.bak "s|§cp4baBTS316ReplicaSize|$cp4baBTS316ReplicaSize|g" $propertiesfile
 echo
 
 ## Get CP4BA deployment name
 CP4BA_NAME=$(oc get ICP4ACluster -o name |cut -d "/" -f 2)
 logInfo "CP4BA deployment name: $CP4BA_NAME"
+echo
+
+
+# Persist replica size of insights engine task manager pods
+# not always deployed
+if oc get deployment $CP4BA_NAME-insights-engine-flink-taskmanager > /dev/null 2>&1; then
+  insightsEngineFlinkTaskManagerReplicaSize=$(oc get deployment $CP4BA_NAME-insights-engine-flink-taskmanager -o=jsonpath='{.spec.replicas}')
+  log.info('insightsEngineFlinkTaskManagerReplicaSize' + $insightsEngineFlinkTaskManagerReplicaSize)
+  sed -i.bak "s|§cp4baInsightsEngineFlinkTaskmanagerReplicaSize|$insightsEngineFlinkTaskManagerReplicaSize|g" $propertiesfile
+fi
 echo
 
 ## Get CP4BA version
@@ -195,8 +201,6 @@ logInfo $(oc scale deploy ibm-iam-operator --replicas=0)
 logInfo $(oc scale deploy ibm-commonui-operator --replicas=0)
 logInfo $(oc scale deploy ibm-common-service-operator --replicas=0)
 logInfo $(oc scale deploy ibm-odm-operator --replicas=0)
-logInfo $(oc scale deploy zen-core --replicas=0)
-logInfo $(oc scale deploy zen-core-api --replicas=0)
 logInfo $(oc scale deploy ibm-elasticsearch-operator-ibm-es-controller-manager --replicas=0)
 
 # not always deployed
@@ -318,26 +322,6 @@ if [[ "$bawserversts" != "" ]]; then
   done
   echo
 fi
-
-logInfo "Scaling down PFS pods to 0..."
-logInfo $(oc scale statefulset $CP4BA_NAME-pfs --replicas=0)
-logInfo $(oc scale deployment $CP4BA_NAME-pfs-dbareg --replicas=0)
-pfspod=$(oc get pod -l=app.kubernetes.io/name=$CP4BA_NAME-pfs -o name)
-GONE=false
-echo -n "  Waiting..."
-while [[ $GONE == false ]]
-do
-  if [[ $pfspod != "" ]]; then
-    echo -n "."
-    sleep 10
-    pfspod=$(oc get pod -l=app.kubernetes.io/name=$CP4BA_NAME-pfs -o name)
-  else
-    GONE=true
-    echo
-    logInfo "PFS pods scaled to 0"
-  fi
-done
-echo
 
 logInfo "Scaling down CPE pods to 0..."
 logInfo $(oc scale deployment $CP4BA_NAME-cpe-deploy --replicas=0)
@@ -593,15 +577,6 @@ if [[ "$MANAGEMENT_POD" != "" ]]; then
   echo
 fi
 
-# Set replica size of the bts-316 deployment to 0 to prevent it gets scaled up again
-# This section is commented because BTS EDB pod is now scaled down using hibernation=on annotation
-
-# logInfo "Patching cp4ba-bts..."
-# logInfo $(oc patch bts cp4ba-bts --type merge --patch '{"spec":{"replicas":0}}')
-# sleep 10
-# logInfo $(oc scale deploy ibm-bts-operator-controller-manager --replicas=0)
-# echo
-
 # Scale down all postgresql db zen-metastore-edb, common-service-db
 logInfo $(oc annotate cluster zen-metastore-edb --overwrite k8s.enterprisedb.io/hibernation=on)
 logInfo $(oc annotate cluster common-service-db --overwrite k8s.enterprisedb.io/hibernation=on)
@@ -621,30 +596,6 @@ logInfo "deployments =" $deployments
 for i in $deployments; do
    logInfo "scaling deployment =" $i
    logInfo $(oc scale $i --replicas=0)
-done
-echo
-
-# Scale down all stateful sets
-# TODO: We want to be more specific here, scale down only the stateful sets we are aware of, not all.
-logInfo "Scaling down stateful sets..."
-statefulSets=$(oc get sts -o name)
-kafkaIsSTS=false
-kafkaReplicas=0
-zookeeperIsSTS=false
-zookeeperReplicas=0
-logInfo "statefulSets =" $statefulSets
-for s in $statefulSets; do
-  if [[ "$s" == "statefulset.apps/iaf-system-kafka" ]]; then
-    kafkaReplicas=$(oc get $s -o 'custom-columns=NAME:.metadata.name,REPLICAS:.spec.replicas' --no-headers --ignore-not-found | awk '{print $2}')
-    sed -i.bak "s|§cp4baKafkaReplicaSize|$kafkaReplicas|g" $propertiesfile
-    kafkaIsSTS=true
-  elif [[ "$s" == "statefulset.apps/iaf-system-zookeeper" ]]; then
-    zookeeperReplicas=$(oc get $s -o 'custom-columns=NAME:.metadata.name,REPLICAS:.spec.replicas' --no-headers --ignore-not-found | awk '{print $2}')
-    sed -i.bak "s|§cp4baZookeeperReplicaSize|$zookeeperReplicas|g" $propertiesfile
-    zookeeperIsSTS=true
-  fi
-  logInfo "Scaling stateful set =" $s
-  logInfo $(oc scale $s --replicas=0)
 done
 echo
 
