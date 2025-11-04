@@ -155,7 +155,7 @@ echo
 # not always deployed
 if oc get deployment $CP4BA_NAME-insights-engine-flink-taskmanager > /dev/null 2>&1; then
   insightsEngineFlinkTaskManagerReplicaSize=$(oc get deployment $CP4BA_NAME-insights-engine-flink-taskmanager -o=jsonpath='{.spec.replicas}')
-  log.info('insightsEngineFlinkTaskManagerReplicaSize' + $insightsEngineFlinkTaskManagerReplicaSize)
+  log.info("insightsEngineFlinkTaskManagerReplicaSize: $insightsEngineFlinkTaskManagerReplicaSize")
   sed -i.bak "s|§cp4baInsightsEngineFlinkTaskmanagerReplicaSize|$insightsEngineFlinkTaskManagerReplicaSize|g" $propertiesfile
 fi
 echo
