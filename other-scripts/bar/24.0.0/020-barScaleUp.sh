@@ -194,7 +194,7 @@ sleep 30
 # Scale up ibm insights engine and insights engine flink task manager.
 if oc get deployment $cp4baClusterName-insights-engine-flink-taskmanager > /dev/null 2>&1; then
   logInfo "Scaling up $cp4baClusterName-insights-engine-flink-taskmanager..."
-  logInfo $(oc scale deploy $cp4baClusterName-insights-engine-flink-taskmanager --replicas=§cp4baInsightsEngineFlinkTaskmanagerReplicaSize)
+  logInfo $(oc scale deploy $cp4baClusterName-insights-engine-flink-taskmanager --replicas=$cp4baInsightsEngineFlinkTaskmanagerReplicaSize)
   sleep 30
 fi
 if oc get deployment $cp4baClusterName-insights-engine-flink > /dev/null 2>&1; then
