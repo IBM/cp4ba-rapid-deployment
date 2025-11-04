@@ -168,19 +168,19 @@ echo
 ## Get all deployment / sts and pod counts before scaling down
 logInfo "Get current running state & count of all pod, deployment, sts counts before scaling down"
 logInfo "=== Pods ==="
-echo $(oc get pods -n $cp4baProjectName)
+oc get pods -n $cp4baProjectName
 logInfo "=== Deployments ==="
-echo $(oc get deployments -n $cp4baProjectName)
+oc get deployments -n $cp4baProjectName
 logInfo "=== Stateful Sets ==="
-echo $(oc get sts -n $cp4baProjectName)
+oc get sts -n $cp4baProjectName
 logInfo "=== PostgreSQL Cluster ==="
-echo $(oc get cluster.postgresql -n $cp4baProjectName)
+oc get cluster.postgresql -n $cp4baProjectName
 logInfo "=== Strimzi Pod Set ==="
-echo $(oc get strimzipodset -n $cp4baProjectName)
+oc get strimzipodset -n $cp4baProjectName
 logInfo "=== CronJobs ==="
-echo $(oc get cronjobs -n $cp4baProjectName)
+oc get cronjobs -n $cp4baProjectName
 logInfo "=== Jobs ==="
-echo $(oc get jobs -n $cp4baProjectName)
+oc get jobs -n $cp4baProjectName
 
 
 ##### Initial scale down ##############################################################
