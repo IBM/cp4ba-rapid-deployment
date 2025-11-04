@@ -598,6 +598,18 @@ for i in $deployments; do
 done
 echo
 
+
+# Scale down all stateful sets
+# TODO: We want to be more specific here, scale down only the stateful sets we are aware of, not all.
+logInfo "Scaling down stateful sets..."
+statefulSets=$(oc get sts -o name)
+logInfo "statefulSets =" $statefulSets
+for s in $statefulSets; do
+  logInfo "Scaling stateful set =" $s
+  logInfo $(oc scale $s --replicas=0)
+done
+echo
+
 # Delete all remaing running pods that we know
 logInfo "Deleting all remaing running CP4BA pods..."
 if [[ "$kafkaIsSTS" = "false" ]]; then
