@@ -612,23 +612,19 @@ echo
 
 # Delete all remaing running pods that we know
 logInfo "Deleting all remaing running CP4BA pods..."
-if [[ "$kafkaIsSTS" = "false" ]]; then
-  kafkapods=$(oc get pod -l=app.kubernetes.io/name=kafka --no-headers --ignore-not-found | awk '{print $1}')
-  for pod in ${kafkapods[*]}
-  do
-    logInfo $(oc delete pod $pod)
-  done
-  sleep 10
-fi
+kafkapods=$(oc get pod -l=app.kubernetes.io/name=kafka --no-headers --ignore-not-found | awk '{print $1}')
+for pod in ${kafkapods[*]}
+do
+  logInfo $(oc delete pod $pod)
+done
+sleep 10
 
-if [[ "$zookeeperIsSTS" = "false" ]]; then
-  zookeeperpods=$(oc get pod -l=app.kubernetes.io/name=zookeeper --no-headers --ignore-not-found | awk '{print $1}')
-  for pod in ${zookeeperpods[*]}
-  do
-    logInfo $(oc delete pod $pod)
-  done
-  sleep 10
-fi
+zookeeperpods=$(oc get pod -l=app.kubernetes.io/name=zookeeper --no-headers --ignore-not-found | awk '{print $1}')
+for pod in ${zookeeperpods[*]}
+do
+  logInfo $(oc delete pod $pod)
+done
+sleep 10
 
 btscnpgpods=$(oc get pod -l=app.kubernetes.io/name=ibm-bts-cp4ba-bts --no-headers --ignore-not-found | awk '{print $1}')
 for pod in ${btscnpgpods[*]}
