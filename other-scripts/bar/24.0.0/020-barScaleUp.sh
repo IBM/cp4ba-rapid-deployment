@@ -192,12 +192,16 @@ echo
 sleep 30
  
 # Scale up ibm insights engine and insights engine flink task manager.
-logInfo "Scaling up $cp4baClusterName-insights-engine-flink-taskmanager..."
-logInfo $(oc scale deploy $cp4baClusterName-insights-engine-flink-taskmanager --replicas=§cp4baInsightsEngineFlinkTaskmanagerReplicaSize)
-sleep 30
-logInfo "Scaling up $cp4baClusterName-insights-engine-flink..."
-logInfo $(oc scale deploy $cp4baClusterName-insights-engine-flink --replicas=1)
-echo
+if oc get deployment $cp4baClusterName-insights-engine-flink-taskmanager > /dev/null 2>&1; then
+  logInfo "Scaling up $cp4baClusterName-insights-engine-flink-taskmanager..."
+  logInfo $(oc scale deploy $cp4baClusterName-insights-engine-flink-taskmanager --replicas=§cp4baInsightsEngineFlinkTaskmanagerReplicaSize)
+  sleep 30
+fi
+if oc get deployment $cp4baClusterName-insights-engine-flink > /dev/null 2>&1; then
+  logInfo "Scaling up $cp4baClusterName-insights-engine-flink..."
+  logInfo $(oc scale deploy $cp4baClusterName-insights-engine-flink --replicas=1)
+  echo
+fi
 
 
 logInfo "Environment is scaled up. It will take some time(approx 45-60 mins) till all needed pods are there and are Running and Ready. Please check in the OCP Web Console. Once all pods are there, pls. check that everything works as expected."

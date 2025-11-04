@@ -168,19 +168,19 @@ echo
 ## Get all deployment / sts and pod counts before scaling down
 logInfo "Get current running state & count of all pod, deployment, sts counts before scaling down"
 logInfo "=== Pods ==="
-logInfo $(oc get pods -n $cp4baProjectName)
+echo $(oc get pods -n $cp4baProjectName)
 logInfo "=== Deployments ==="
-logInfo $(oc get deployments -n $cp4baProjectName)
+echo $(oc get deployments -n $cp4baProjectName)
 logInfo "=== Stateful Sets ==="
-logInfo $(oc get sts -n $cp4baProjectName)
+echo $(oc get sts -n $cp4baProjectName)
 logInfo "=== PostgreSQL Cluster ==="
-logInfo $(oc get cluster.postgresql -n $cp4baProjectName)
+echo $(oc get cluster.postgresql -n $cp4baProjectName)
 logInfo "=== Strimzi Pod Set ==="
-logInfo $(oc get strimzipodset -n $cp4baProjectName)
+echo $(oc get strimzipodset -n $cp4baProjectName)
 logInfo "=== CronJobs ==="
-logInfo $(oc get cronjobs -n $cp4baProjectName)
+echo $(oc get cronjobs -n $cp4baProjectName)
 logInfo "=== Jobs ==="
-logInfo $(oc get jobs -n $cp4baProjectName)
+echo $(oc get jobs -n $cp4baProjectName)
 
 
 ##### Initial scale down ##############################################################
@@ -220,7 +220,7 @@ postgresqlOperatorDeployment=$(oc get deployment -l=app.kubernetes.io/name=cloud
 #sleep 20
 echo
 
-# Scale down bastudio, navigator, baw, pfs, cpe and navigator related pods
+# Scale down bastudio, navigator, baw, cpe and navigator related pods
 logInfo $(oc scale deployment $CP4BA_NAME-navigator-watcher --replicas=0)
 cpewatcherdeployment=$(oc get deployment -l=app.kubernetes.io/name=$CP4BA_NAME-cpe-watcher --no-headers --ignore-not-found | awk '{print $1}')
 if [[ "$cpewatcherdeployment" != "" ]]; then
@@ -241,7 +241,6 @@ if [[ "$bawserversts" != "" ]]; then
     logInfo $(oc scale statefulset $i --replicas=1)
   done
 fi
-logInfo $(oc scale statefulset $CP4BA_NAME-pfs --replicas=1)
 logInfo $(oc scale deployment $CP4BA_NAME-cpe-deploy --replicas=1)
 echo
 
