@@ -167,20 +167,29 @@ echo
 
 ## Get all deployment / sts and pod counts before scaling down
 logInfo "Get current running state & count of all pod, deployment, sts counts before scaling down"
+echo
 logInfo "=== Pods ==="
 oc get pods -n $cp4baProjectName
+echo
 logInfo "=== Deployments ==="
 oc get deployments -n $cp4baProjectName
+echo
 logInfo "=== Stateful Sets ==="
 oc get sts -n $cp4baProjectName
+echo
 logInfo "=== PostgreSQL Cluster ==="
 oc get cluster.postgresql -n $cp4baProjectName
+echo
 logInfo "=== Strimzi Pod Set ==="
 oc get strimzipodset -n $cp4baProjectName
+echo
 logInfo "=== CronJobs ==="
 oc get cronjobs -n $cp4baProjectName
+echo
 logInfo "=== Jobs ==="
 oc get jobs -n $cp4baProjectName
+echo
+
 
 
 ##### Initial scale down ##############################################################
@@ -652,9 +661,10 @@ echo
 
 # Take backup of catalog sources before deleting catalog source pods
 logInfo "Take backup of catalog sources before deleting catalog source pods"
-logInfo $(oc get catalogsource -o yaml > $BACKUP_ROOT_DIRECTORY_FULL/catalogsource.yaml)
+oc get catalogsource -o yaml > $BACKUP_ROOT_DIRECTORY_FULL/catalogsource.yaml
 logInfo "Delete Catalog sources"
 logInfo $(oc delete catalogsource -n ${cp4baProjectName} --all)
+echo
 
 # Wait till all pods are gone
 allpods=$(oc get pod --no-headers --ignore-not-found)

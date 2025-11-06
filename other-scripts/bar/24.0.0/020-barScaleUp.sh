@@ -169,6 +169,7 @@ sleep 60
 # Scale up common-web-ui.
 logInfo "Scaling up common-web-ui..."
 logInfo $(oc scale deploy common-web-ui --replicas=$cp4baCommonWebUiReplicaSize)
+echo
 
 # Zen's cpdservice needs to be modified to get back all zen pods -> add "flag: true/false"
 logInfo "Re-enabling ZEN..."
