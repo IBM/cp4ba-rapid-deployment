@@ -157,8 +157,8 @@ if oc get deployment $CP4BA_NAME-insights-engine-flink-taskmanager > /dev/null 2
   insightsEngineFlinkTaskManagerReplicaSize=$(oc get deployment $CP4BA_NAME-insights-engine-flink-taskmanager -o=jsonpath='{.spec.replicas}')
   logInfo "insightsEngineFlinkTaskManagerReplicaSize: $insightsEngineFlinkTaskManagerReplicaSize"
   sed -i.bak "s|§cp4baInsightsEngineFlinkTaskmanagerReplicaSize|$insightsEngineFlinkTaskManagerReplicaSize|g" $propertiesfile
+  echo
 fi
-echo
 
 ## Get CP4BA version
 CP4BA_VERSION=$(oc get ICP4ACluster $CP4BA_NAME -o 'custom-columns=NAME:.metadata.name,VERSION:.spec.appVersion' --no-headers | awk '{print $2}')
@@ -200,7 +200,10 @@ logInfo $(oc scale deploy ibm-content-operator --replicas=0)
 logInfo $(oc scale deploy ibm-cp4a-wfps-operator --replicas=0)
 logInfo $(oc scale deploy ibm-dpe-operator --replicas=0)
 logInfo $(oc scale deploy ibm-insights-engine-operator --replicas=0)
-logInfo $(oc scale deploy flink-kubernetes-operator --replicas=0)
+# Not always deployed - This is for BAI
+if oc get deployment flink-kubernetes-operator > /dev/null 2>&1; then
+  logInfo $(oc scale deploy flink-kubernetes-operator --replicas=0)
+fi
 logInfo $(oc scale deploy ibm-ads-operator --replicas=0)
 logInfo $(oc scale deploy ibm-pfs-operator --replicas=0)
 logInfo $(oc scale deploy ibm-workflow-operator --replicas=0)

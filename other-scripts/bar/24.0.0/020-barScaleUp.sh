@@ -129,7 +129,10 @@ logInfo $(oc scale deploy ibm-content-operator --replicas=1)
 logInfo $(oc scale deploy ibm-cp4a-wfps-operator --replicas=1)
 logInfo $(oc scale deploy ibm-dpe-operator --replicas=1)
 logInfo $(oc scale deploy ibm-insights-engine-operator --replicas=1)
-logInfo $(oc scale deploy flink-kubernetes-operator --replicas=1)
+# Not always deployed - This is for BAI
+if oc get deployment flink-kubernetes-operator > /dev/null 2>&1; then
+  logInfo $(oc scale deploy flink-kubernetes-operator --replicas=1)
+fi
 logInfo $(oc scale deploy ibm-ads-operator --replicas=1)
 logInfo $(oc scale deploy ibm-pfs-operator --replicas=1)
 logInfo $(oc scale deploy ibm-workflow-operator --replicas=1)
