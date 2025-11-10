@@ -12,7 +12,7 @@
 ###############################################################################
 
 # This script is for preparing and performing a full backup of the given namespace. It will backup and scale down all CP4BA components in the given namespace.
-#    Only tested with CP4BA version: 21.0.3 IF029 and 039, dedicated common services set-up
+#    Only tested with CP4BA version: 24.0.0 IF005, dedicated common services set-up
 
 # Reference: 
 # - https://www.ibm.com/docs/en/cloud-paks/cp-biz-automation/24.0.0?topic=recovery-backing-up-your-environment

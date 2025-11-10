@@ -14,7 +14,7 @@
 # DO NOT CHANGE THIS FILE
 
 # This script is for holding the Backup And Restore (BAR) properties generated when scaling down a deployment.
-#    Only tested with CP4BA version: 24.0.0, dedicated common services set-up
+#    Only tested with CP4BA version: 24.0.0 IF005, dedicated common services set-up
 
 echo "  Reading properties.sh ..."
 
@@ -31,6 +31,8 @@ cp4baSuspendedCronJobs=§cp4baSuspendedCronJobs
 cp4baCommonWebUiReplicaSize=§cp4baCommonWebUiReplicaSize
 
 cp4baInsightsEngineFlinkTaskmanagerReplicaSize=§cp4baInsightsEngineFlinkTaskmanagerReplicaSize
+
+
 
 # --- end of file ---
 

@@ -13,7 +13,7 @@
 
 # This script is for scaling up the CP4BA deployment after you took a backup as part of the Backup And Restore (BAR) process.
 # It will scale up all CP4BA components in the given namespace.
-#    Only tested with CP4BA version: 24.0.0, dedicated common services set-up
+#    Only tested with CP4BA version: 24.0.0 IF005, dedicated common services set-up
 
 CUR_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 

@@ -12,7 +12,7 @@
 ###############################################################################
 
 # This script is for holding the Backup And Restore (BAR) parameters for a specific backup or restore.
-#    Only tested with CP4BA version: 21.0.3 IF029 and IF039, dedicated common services set-up
+#    Only tested with CP4BA version: 24.0.0 IF005, dedicated common services set-up
 
 echo "  Reading 001-barParameters.sh ..."
 
