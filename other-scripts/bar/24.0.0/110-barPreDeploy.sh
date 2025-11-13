@@ -390,7 +390,7 @@ fi
 
 logInfoValue "The CR from the backup used deployment name:" $backupDeploymentName
 logInfoValue "The CR specification is for CP4BA Version:" $backupAppVersion
-if [[ "$backupAppVersion" != "21.0.3" ]]; then
+if [[ "$backupAppVersion" != "24.0.0" ]]; then
   logError "CP4BA Version not supported. Exiting..."
   echo
   exit 1
@@ -1230,6 +1230,12 @@ logInfo $(oc create configmap cp4ba-backup-and-restore \
   --from-literal backup-dir=$BACKUP_DIR \
   --from-literal bar-version=$bar_version)
 echo
+
+# ScaleUp Catalog Sources
+logInfo "Scale Up all Catalog Source Pods"
+logInfo $(oc apply -f $BACKUP_ROOT_DIRECTORY_FULL/catalogsource.yaml)
+echo
+
 
 logInfo "Pre deploy is complete. Next, restore:"
 logInfo "  - the content of the PVs (for example by running the just generated script using the root account, see details above)"
