@@ -263,6 +263,7 @@ function restore_this_configmap() {
 
   if [[ $configmapname == registration-json  ]]; then return 0; fi
   if [[ $configmapname == platform-auth-idp ]]; then return 0; fi
+  if [[ $configmapname == ibm-zen-metastore-edb-cm ]]; then return 0; fi
   
   # If the name appears in the CR, then it is also part of what is needed.
   if grep $configmapname $CR_SPEC > /dev/null 2>/dev/null; then return 0; fi
@@ -927,6 +928,8 @@ echo
 yamlFiles=()
 yamlFiles+=($BACKUP_DIR/commonservice.operator.ibm.com/common-service.yaml)
 yamlFiles+=($BACKUP_DIR/zenservice.zen.cpd.ibm.com/iaf-zen-cpdservice.yaml)
+yamlFiles+=($BACKUP_DIR/cluster.postgresql.k8s.enterprisedb.io/zen-metastore-edb.yaml)
+
 logInfo "The script will try to apply following additional resources:"
 
 for file in "${yamlFiles[@]}"; do
