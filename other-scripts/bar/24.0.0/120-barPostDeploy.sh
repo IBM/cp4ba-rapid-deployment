@@ -227,6 +227,9 @@ function zen-restore() {
   logInfo "Determining Postgres Cluster Health..."
   local zen_edb_health=$(oc get cluster $zen_edb_cluster_name -o 'jsonpath={.status.phase}')
 
+  ## Need to add this line at the top of backup_zendb.sql, this is to terminate all connections to db before restoring the data
+  ## "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'zen' AND pid <> pg_backend_pid();"
+  
   if [[ $zen_edb_health != "Cluster in healthy state" ]]; then
     logError "Zen Metastore EDB Cluster unhealthy: $zen_edb_health"
   else
@@ -247,6 +250,35 @@ function zen-restore() {
 
 }
 
+
+function cs-restore() {
+  local cs_cluster_name="common-service-db"
+  logInfo "Determining Postgres Cluster Health..."
+  local cs_health=$(oc get cluster $cs_cluster_name -o 'jsonpath={.status.phase}')
+
+  ## Need to add this line at the top of backup_csimdb.sql, this is to terminate all connections to db before restoring the data
+  ## "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'im' AND pid <> pg_backend_pid();"
+
+  if [[ $cs_health != "Cluster in healthy state" ]]; then
+    logError "Common Service DB Cluster unhealthy: $cs_health"
+  else
+    logInfo "Postgres Cluster is healthy."
+    echo 
+    local csPrimary=$(oc get cluster $cs_cluster_name -o jsonpath={.status.targetPrimary})
+    logInfo "Primary Postgres Pod is currently: $csPrimary"
+    echo
+
+    logInfo "Copying Backup into Postgres Pod..."
+    oc cp $BACKUP_DIR/postgresql/backup_csimdb.sql $csPrimary:/var/lib/postgresql/data/backup_csimdb.sql -c postgres
+
+    logInfo "Restoring Database Backup..."
+    oc exec $csPrimary -c postgres -- psql -U postgres -f /var/lib/postgresql/data/backup_csimdb.sql -L /var/lib/postgresql/data/restore_csimdb.log -a >> $LOG_FILE 2>&1
+    logInfo $(oc cp $csPrimary:/var/lib/postgresql/data/restore_csimdb.log $BACKUP_DIR/restore_csimdb.log -c postgres)
+    oc exec $csPrimary -c postgres -- rm -f /var/lib/postgresql/data/restore_csimdb.log /var/lib/postgresql/data/backup_csimdb.sql
+  fi
+
+}
+
 postDeployTerminating=No
 
 while [[ $postDeployTerminating == "No" ]]; do
@@ -254,8 +286,9 @@ while [[ $postDeployTerminating == "No" ]]; do
   echo 
   echo ========================================================
   echo "Select Post Deploy task to execute:"
-  echo "   1: BTS Cloud Native Postgres Database restore"
+  echo "   1: Common Service DB Postgres Database restore"
   echo "   2: Zen Metastore EDB Postgres Database restore"
+  echo "   3: BTS Cloud Native Postgres Database restore"
   echo
   echo "  99: Terminate Post Deploy Script"
   echo 
@@ -263,8 +296,9 @@ while [[ $postDeployTerminating == "No" ]]; do
   echo
 
   case "$choice" in
-    1)  bts-cnpg ;;
+    1)  cs-restore ;;
     2)  zen-restore ;;
+    3)  bts-cnpg ;;
     99) postDeployTerminating=Yes ;;
   esac
 done
