@@ -79,23 +79,28 @@ LOG_FILE="$BACKUP_ROOT_DIRECTORY_FULL/HealthCheck_$(date +'%Y%m%d_%H%M%S').log"
 logInfo "Details will be logged to $LOG_FILE."
 echo
 
-echo -e "\x1B[1mThis script will perform a short health check for CP4BA environment deployed in namespace ${cp4baProjectName}.\n \x1B[0m"
+echo -e "\x1B[1mThis script will perform a short health check for CP4BA environment deployed in namespace ${cp4baProjectName}. \x1B[0m"
 
-printf "Do you want to continue? (Yes/No, default: No): "
-read -rp "" ans
-case "$ans" in
-"y"|"Y"|"yes"|"Yes"|"YES")
-   echo
-   logInfo "Checking CP4BA deployment in namespace ${cp4baProjectName}..."
-   echo
-   ;;
-*)
-   echo
-   logInfo "Exiting..."
-   echo
-   exit 0
-   ;;
-esac
+if $suppressConfirmations; then
+  echo
+else
+  echo
+  printf "Do you want to continue? (Yes/No, default: No): "
+  read -rp "" ans
+  case "$ans" in
+  "y"|"Y"|"yes"|"Yes"|"YES")
+    echo
+    logInfo "Checking CP4BA deployment in namespace ${cp4baProjectName}..."
+    echo
+    ;;
+  *)
+    echo
+    logInfo "Exiting..."
+    echo
+    exit 0
+    ;;
+  esac
+fi
 
 ##### Preparation ##############################################################
 # Verify OCP Connecction
@@ -162,7 +167,24 @@ logInfo "Checking CP4BA Deployment overall status..."
 CP4BA_DEPLOYMENT_STATUS=$(jq -r .status.conditions ${BACKUP_ROOT_DIRECTORY_FULL}/CR.json | jq -r '.[] |select(.type == "Ready") | .status')
 checkResult $CP4BA_DEPLOYMENT_STATUS "True" "CP4BA deployment status"
 
-CP4BA_RECONCILIATION_STATUS=$(jq -r .status.conditions ${BACKUP_ROOT_DIRECTORY_FULL}/CR.json | jq -r '.[] |select(.type == "Running") | .status')
+# CP4BA reconcilation status sometimes is not "True", wait for some time to allow to become "True"
+count=0
+while true; do
+  CP4BA_RECONCILIATION_STATUS=$(jq -r .status.conditions ${BACKUP_ROOT_DIRECTORY_FULL}/CR.json | jq -r '.[] |select(.type == "Running") | .status')
+  if [[ $CP4BA_RECONCILIATION_STATUS == "True" ]]; then
+    break
+  else
+    ((count += 1))
+    if ((count <= 12)); then
+      logInfo "  Waiting for CP4BA reconcilation status to become \"True\". Rechecking in 10 seconds..."
+      sleep 10
+      # Refresh CR
+      oc get ICP4ACluster $CP4BA_NAME -o json > ${BACKUP_ROOT_DIRECTORY_FULL}/CR.json
+    else
+      break
+    fi
+  fi
+done
 checkResult $CP4BA_RECONCILIATION_STATUS "True" "CP4BA reconciliation running"
 
 CP4BA_PREREQ_STATUS=$(jq -r .status.conditions ${BACKUP_ROOT_DIRECTORY_FULL}/CR.json | jq -r '.[] |select(.type == "PrereqReady") | .status')
@@ -362,7 +384,24 @@ logInfo "Checking Prereq..."
 CP4BA_PREREQ_IAF=$(jq -r .status.components.prereq.iafStatus ${BACKUP_ROOT_DIRECTORY_FULL}/CR.json)
 checkResult $CP4BA_PREREQ_IAF "Ready" "CP4BA Prereq iafStatus"
 
-CP4BA_PREREQ_IAM=$(jq -r .status.components.prereq.iamIntegrationStatus ${BACKUP_ROOT_DIRECTORY_FULL}/CR.json)
+# IAM integration status sometimes is not "Ready", wait for some time to allow to become "Ready"
+count=0
+while true; do
+  CP4BA_PREREQ_IAM=$(jq -r .status.components.prereq.iamIntegrationStatus ${BACKUP_ROOT_DIRECTORY_FULL}/CR.json)
+  if [[ $CP4BA_PREREQ_IAM == "Ready" ]]; then
+    break
+  else
+    ((count += 1))
+    if ((count <= 12)); then
+      logInfo "  Waiting for IAM integration status to become \"Ready\". Rechecking in 10 seconds..."
+      sleep 10
+      # Refresh CR
+      oc get ICP4ACluster $CP4BA_NAME -o json > ${BACKUP_ROOT_DIRECTORY_FULL}/CR.json
+    else
+      break
+    fi
+  fi
+done
 checkResult $CP4BA_PREREQ_IAM "Ready" "CP4BA Prereq iamIntegrationStatus"
 echo
 
@@ -766,8 +805,23 @@ if oc get FlinkDeployment $CP4BA_NAME"-insights-engine-flink" > /dev/null 2>&1; 
   logInfo "Checking Flink Deployment..."
   FLINK_JOBS_TATUS=$(oc get FlinkDeployment $CP4BA_NAME"-insights-engine-flink" -o 'jsonpath={.status.jobManagerDeploymentStatus}')
   checkResult $FLINK_JOBS_TATUS "READY" "Flink Job Manager Deployment Status"
-
-  FLINK_LIFECYCLE_STATE=$(oc get FlinkDeployment $CP4BA_NAME"-insights-engine-flink" -o 'jsonpath={.status.lifecycleState}')
+  
+  # Flink lifecycle state sometimes is not "STABLE", wait for some time to allow to become "STABLE"
+  count=0
+  while true; do
+    FLINK_LIFECYCLE_STATE=$(oc get FlinkDeployment $CP4BA_NAME"-insights-engine-flink" -o 'jsonpath={.status.lifecycleState}')
+    if [[ $FLINK_LIFECYCLE_STATE == "STABLE" ]]; then
+      break
+    else
+      ((count += 1))
+      if ((count <= 12)); then
+        logInfo "  Waiting for flink lifecycle state to become \"STABLE\". Rechecking in 10 seconds..."
+        sleep 10
+      else
+        break
+      fi
+    fi
+  done
   checkResult $FLINK_LIFECYCLE_STATE "STABLE" "Flink Lifecycle Status"
 
   FLINK_RECONCILE_STATE=$(oc get FlinkDeployment $CP4BA_NAME"-insights-engine-flink" -o 'jsonpath={.status.reconciliationStatus.state}')
@@ -970,8 +1024,22 @@ fi
 ##### Pod health ###############################################################
 logInfo "Checking Pod Health..."
 
-# Pending pods
-podsinpending=$(oc get pod -o 'custom-columns=NAME:.metadata.name,PHASE:.status.phase' --no-headers --ignore-not-found | grep 'Pending' | awk '{print $1}')
+# Pending pods - give some time till pending pods are Ready
+count=0
+while true; do
+  podsinpending=$(oc get pod -o 'custom-columns=NAME:.metadata.name,PHASE:.status.phase' --no-headers --ignore-not-found | grep 'Pending' | awk '{print $1}')
+  if [[ $podsinpending == "" ]]; then
+    break
+  else
+    ((count += 1))
+    if ((count <= 12)); then
+      logInfo "  Waiting for Pending pods to become Ready. Rechecking in 10 seconds..."
+      sleep 10
+    else
+      break
+    fi
+  fi
+done
 if [[ $podsinpending != "" ]]; then
   logError "Pending pods found:" $podsinpending
 fi

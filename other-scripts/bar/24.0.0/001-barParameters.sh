@@ -25,6 +25,9 @@ echo "  Reading 001-barParameters.sh ..."
 # OCP project name for CP4BA to backup/restore, for example ibm-cp4ba
 cp4baProjectName=REQUIRED
 
+# Suppress confirmation questions while running the bar scripts
+suppressConfirmations=false
+
 # If URLs are protected, provide here the information to be used to get the authorization token, if a token is not needed, remove REQUIRED
 useTokenForZenRoute=false
 useTokenForInsightsengineManagementURL=false
