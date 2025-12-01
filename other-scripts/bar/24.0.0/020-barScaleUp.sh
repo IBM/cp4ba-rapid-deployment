@@ -55,23 +55,28 @@ LOG_FILE="$BACKUP_ROOT_DIRECTORY_FULL/ScaleUpAfterBackup_$(date +'%Y%m%d_%H%M%S'
 logInfo "Details will be logged to $LOG_FILE."
 echo
 
-echo -e "\x1B[1mThis script scales up namespace ${cp4baProjectName} after you took a backup. It scales up all needed pods. \n \x1B[0m"
+echo -e "\x1B[1mThis script scales up namespace ${cp4baProjectName} after you took a backup. It scales up all needed pods. \x1B[0m"
 
-printf "Have you completed taking the required backups and do you want to continue? (Yes/No, default: No): "
-read -rp "" ans
-case "$ans" in
-"y"|"Y"|"yes"|"Yes"|"YES")
-   echo
-   logInfo "Ok, scaling up the CP4BA deployment in namespace ${cp4baProjectName}..."
-   echo
-   ;;
-*)
-   echo
-   logInfo "Exiting..."
-   echo
-   exit 0
-   ;;
-esac
+if $suppressConfirmations; then
+  echo
+else
+  echo
+  printf "Have you completed taking the required backups and do you want to continue? (Yes/No, default: No): "
+  read -rp "" ans
+  case "$ans" in
+  "y"|"Y"|"yes"|"Yes"|"YES")
+    echo
+    logInfo "Ok, scaling up the CP4BA deployment in namespace ${cp4baProjectName}..."
+    echo
+    ;;
+  *)
+    echo
+    logInfo "Exiting..."
+    echo
+    exit 0
+    ;;
+  esac
+fi
 
 logInfo "Verifying OC CLI is connected to the OCP cluster..."
 WHOAMI=$(oc whoami)

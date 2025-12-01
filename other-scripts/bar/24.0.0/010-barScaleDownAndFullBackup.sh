@@ -81,23 +81,28 @@ LOG_FILE="$BACKUP_ROOT_DIRECTORY_FULL/ScaleDownAndFullBackup_$DATETIMESTR.log"
 logInfo "Details will be logged to $LOG_FILE."
 echo
 
-echo -e "\x1B[1mThis script prepares namespace ${cp4baProjectName} for backup and performs a full backup of it. It will scale down and backup all CP4BA components in the given namespace. \n \x1B[0m"
+echo -e "\x1B[1mThis script prepares namespace ${cp4baProjectName} for backup and performs a full backup of it. It will scale down and backup all CP4BA components in the given namespace. \x1B[0m"
 
-printf "Do you want to continue? (Yes/No, default: No): "
-read -rp "" ans
-case "$ans" in
-"y"|"Y"|"yes"|"Yes"|"YES")
-   echo
-   logInfo "Ok, scaling down and backing up the CP4BA deployment in namespace ${cp4baProjectName}..."
-   echo
-   ;;
-*)
-   echo
-   logInfo "Exiting..."
-   echo
-   exit 0
-   ;;
-esac
+if $suppressConfirmations; then
+  echo
+else
+  echo
+  printf "Do you want to continue? (Yes/No, default: No): "
+  read -rp "" ans
+  case "$ans" in
+  "y"|"Y"|"yes"|"Yes"|"YES")
+    echo
+    logInfo "Ok, scaling down and backing up the CP4BA deployment in namespace ${cp4baProjectName}..."
+    echo
+    ;;
+  *)
+    echo
+    logInfo "Exiting..."
+    echo
+    exit 0
+    ;;
+  esac
+fi
 
 ##### Preparation ##############################################################
 ## Verify OCP Connection

@@ -57,6 +57,7 @@ echo
 
 echo -e "\x1B[1mThis script deletes the CP4BA deployment in namespace ${cp4baProjectName} including the project. This is the first step when you want to restore a previously taken backup. \n \x1B[0m"
 
+# Before deleting, do never suppress to ask once more
 printf "Do you want to continue DELETING the CP4BA deployment in namespace ${cp4baProjectName}? (Yes/No, default: No): "
 read -rp "" ans
 case "$ans" in
