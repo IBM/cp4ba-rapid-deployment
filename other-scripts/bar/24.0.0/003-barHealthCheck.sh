@@ -689,10 +689,13 @@ fi
 ##### Workflow Pattern #########################################################
 if [[ $CP4BA_COMPONENTS =~ "workflow" ]]; then
   if [[ $CP4BA_OPTIONAL_COMPONENTS =~ "baw_authoring" ]]; then
-    logInfo "Checking Business Automation Workflow Authoring..."
-    CP4BA_BAW_AUTHORING_SERVICE=$(oc get ICP4ACluster $CP4BA_NAME -o 'jsonpath={.status.components.workflow-authoring.service}')
-    checkResult $CP4BA_BAW_AUTHORING_SERVICE "Ready" "CP4BA Business Automation Workflow Authoring service status"
-    echo
+    CP4BA_BAW_AUTHORING=$(oc get ICP4ACluster $CP4BA_NAME -o 'jsonpath={.status.components.workflow-authoring}')
+    if [[ $CP4BA_BAW_AUTHORING != "" ]]; then
+      logInfo "Checking Business Automation Workflow Authoring..."
+      CP4BA_BAW_AUTHORING_SERVICE=$(oc get ICP4ACluster $CP4BA_NAME -o 'jsonpath={.status.components.workflow-authoring.service}')
+      checkResult $CP4BA_BAW_AUTHORING_SERVICE "Ready" "CP4BA Business Automation Workflow Authoring service status"
+      echo
+    fi
   else
     logInfo "Checking Business Automation Workflow Runtime..."
     # BAW may have 1 or more instances.
