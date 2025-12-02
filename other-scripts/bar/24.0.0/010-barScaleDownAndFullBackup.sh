@@ -218,9 +218,11 @@ logInfo $(oc scale deploy ibm-iam-operator --replicas=0)
 logInfo $(oc scale deploy ibm-commonui-operator --replicas=0)
 logInfo $(oc scale deploy ibm-common-service-operator --replicas=0)
 logInfo $(oc scale deploy ibm-odm-operator --replicas=0)
-logInfo $(oc scale deploy ibm-elasticsearch-operator-ibm-es-controller-manager --replicas=0)
-
-# not always deployed
+# Not always deployed - This is for BAI and PFS
+if oc get deployment ibm-elasticsearch-operator-ibm-es-controller-manager > /dev/null 2>&1; then
+  logInfo $(oc scale deploy ibm-elasticsearch-operator-ibm-es-controller-manager --replicas=0)
+fi
+# Not always deployed - This is for BAI KAFKA Events
 if oc get deployment iaf-system-entity-operator > /dev/null 2>&1; then
   logInfo $(oc scale deploy iaf-system-entity-operator --replicas=0)
 fi
@@ -234,7 +236,7 @@ if [[ "$eventsOperatorDeployment" != "" ]]; then
 fi
 postgresqlOperatorDeployment=$(oc get deployment -l=app.kubernetes.io/name=cloud-native-postgresql -o 'custom-columns=NAME:.metadata.name' --no-headers --ignore-not-found | awk '{print $1}')
 #logInfo $(oc scale deploy $postgresqlOperatorDeployment --replicas=0)
-#sleep 20
+sleep 20
 echo
 
 # Scale down bastudio, navigator, baw, cpe and navigator related pods

@@ -147,10 +147,12 @@ logInfo $(oc scale deploy ibm-iam-operator --replicas=1)
 logInfo $(oc scale deploy ibm-commonui-operator --replicas=1)
 logInfo $(oc scale deploy ibm-common-service-operator --replicas=1)
 logInfo $(oc scale deploy ibm-odm-operator --replicas=1)
-logInfo $(oc scale deploy ibm-elasticsearch-operator-ibm-es-controller-manager --replicas=1)
+# Not always deployed - This is for BAI and PFS
+if oc get deployment ibm-elasticsearch-operator-ibm-es-controller-manager > /dev/null 2>&1; then
+  logInfo $(oc scale deploy ibm-elasticsearch-operator-ibm-es-controller-manager --replicas=1)
+fi
 logInfo $(oc scale deploy operand-deployment-lifecycle-manager --replicas=1)
 logInfo $(oc scale deploy ibm-bts-operator-controller-manager --replicas=1)
-
 # Not always deployed - This is for BAI KAFKA Events
 if oc get deployment iaf-system-entity-operator > /dev/null 2>&1; then
   logInfo $(oc scale deploy iaf-system-entity-operator --replicas=1)
