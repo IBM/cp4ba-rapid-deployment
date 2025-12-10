@@ -227,9 +227,6 @@ function zen-restore() {
   logInfo "Determining Postgres Cluster Health..."
   local zen_edb_health=$(oc get cluster $zen_edb_cluster_name -o 'jsonpath={.status.phase}')
 
-  ## Need to add this line at the top of backup_zendb.sql, this is to terminate all connections to db before restoring the data
-  ## "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'zen' AND pid <> pg_backend_pid();"
-  
   if [[ $zen_edb_health != "Cluster in healthy state" ]]; then
     logError "Zen Metastore EDB Cluster unhealthy: $zen_edb_health"
   else
@@ -238,6 +235,10 @@ function zen-restore() {
     local zenPrimary=$(oc get cluster $zen_edb_cluster_name -o jsonpath={.status.targetPrimary})
     logInfo "Primary Postgres Pod is currently: $zenPrimary"
     echo
+    
+    ## Need to add this line at the top of backup_zendb.sql, this is to terminate all connections to db before restoring the data
+    ## "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'zen' AND pid <> pg_backend_pid();"   
+    sed -i "1i SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'zen' AND pid <> pg_backend_pid();" ${BACKUP_DIR}/postgresql/backup_zendb.sql
 
     logInfo "Copying Backup into Postgres Pod..."
     oc cp $BACKUP_DIR/postgresql/backup_zendb.sql $zenPrimary:/var/lib/postgresql/data/backup_zendb.sql -c postgres
@@ -256,9 +257,6 @@ function cs-restore() {
   logInfo "Determining Postgres Cluster Health..."
   local cs_health=$(oc get cluster $cs_cluster_name -o 'jsonpath={.status.phase}')
 
-  ## Need to add this line at the top of backup_csimdb.sql, this is to terminate all connections to db before restoring the data
-  ## "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'im' AND pid <> pg_backend_pid();"
-
   if [[ $cs_health != "Cluster in healthy state" ]]; then
     logError "Common Service DB Cluster unhealthy: $cs_health"
   else
@@ -267,6 +265,10 @@ function cs-restore() {
     local csPrimary=$(oc get cluster $cs_cluster_name -o jsonpath={.status.targetPrimary})
     logInfo "Primary Postgres Pod is currently: $csPrimary"
     echo
+    
+    ## Need to add this line at the top of backup_csimdb.sql, this is to terminate all connections to db before restoring the data
+    ## "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'im' AND pid <> pg_backend_pid();"
+    sed -i "1i SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'im' AND pid <> pg_backend_pid();" ${BACKUP_DIR}/postgresql/backup_csimdb.sql
 
     logInfo "Copying Backup into Postgres Pod..."
     oc cp $BACKUP_DIR/postgresql/backup_csimdb.sql $csPrimary:/var/lib/postgresql/data/backup_csimdb.sql -c postgres
