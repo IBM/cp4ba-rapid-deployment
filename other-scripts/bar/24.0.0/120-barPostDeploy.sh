@@ -310,10 +310,9 @@ while [[ $postDeployTerminating == "No" ]]; do
   echo 
   echo ========================================================
   echo "Select Post Deploy task to execute:"
-  echo "   1: Common Service DB Postgres Database restore"
-  echo "   2: Zen Metastore EDB Postgres Database restore"
-  echo "   3: BTS Cloud Native Postgres Database restore"
-  echo "   4: Restart Common Services (Mandatory)"
+  echo "   1: Zen Metastore EDB Postgres Database restore"
+  echo "   2: BTS Cloud Native Postgres Database restore"
+  echo "   3: Restart Common Services (Mandatory)"
   echo
   echo "  99: Terminate Post Deploy Script"
   echo 
@@ -321,10 +320,9 @@ while [[ $postDeployTerminating == "No" ]]; do
   echo
 
   case "$choice" in
-    1)  cs-restore ;;
-    2)  zen-restore ;;
-    3)  bts-cnpg ;;
-    4)  restart-common-services ;;
+    1)  zen-restore ;;
+    2)  bts-cnpg ;;
+    3)  restart-common-services ;;
     99) postDeployTerminating=Yes ;;
   esac
 done
