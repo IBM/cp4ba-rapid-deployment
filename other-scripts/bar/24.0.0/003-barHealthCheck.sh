@@ -439,7 +439,7 @@ if [[ $CP4BA_COMPONENTS =~ "foundation" ]] || [[ $CP4BA_COMPONENTS =~ "workflow"
   
   # BTS CNPG
   logInfo "Checking BTS Cloud Native PostgreSQL Status..."
-  CP4BA_CNPG_STATUS=$(oc get Cluster ibm-bts-cnpg-${cp4baProjectName}-cp4ba-bts -o 'jsonpath={.status.conditions}'|jq -r '.[] |select(.type == "Ready") | .status')
+  CP4BA_CNPG_STATUS=$(oc get cluster.postgresql ibm-bts-cnpg-${cp4baProjectName}-cp4ba-bts -o 'jsonpath={.status.conditions}'|jq -r '.[] |select(.type == "Ready") | .status')
   checkResult $CP4BA_CNPG_STATUS "True" "CP4BA Cloud Native PostgreSQL cluster ready"
   echo
 
@@ -1008,7 +1008,8 @@ else
       echo
       
     fi
-    
+  fi
+  if $isBAAInstalled; then
     # BAA
     logInfo "Trying to connect to Application Engine using the Zen route..."
     #TODO: May have more than one instance
