@@ -215,7 +215,7 @@ function bts-cnpg() {
         logInfo "BTS Service Status: $btsServicesStatus -- waiting up to 60 seconds for an update..."
 	oc wait --for=jsonpath={.status.serviceStatus}=ready businessteamsservices/cp4ba-bts --timeout=60s >> $LOG_FILE 2>&1
       else
-	logInfo "BTS Service did not reach ready state, at least not yet"
+	      logInfo "BTS Service did not reach ready state, at least not yet"
       fi
     fi
   done
@@ -238,15 +238,16 @@ function zen-restore() {
     
     ## Need to add this line at the top of backup_zendb.sql, this is to terminate all connections to db before restoring the data
     ## "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'zen' AND pid <> pg_backend_pid();"   
-    sed -i "1i SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'zen' AND pid <> pg_backend_pid();" ${BACKUP_DIR}/postgresql/backup_zendb.sql
+    sed -i "18i SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'zen' AND pid <> pg_backend_pid();" ${BACKUP_DIR}/postgresql/backup_zendb.sql
 
     logInfo "Copying Backup into Postgres Pod..."
     oc cp $BACKUP_DIR/postgresql/backup_zendb.sql $zenPrimary:/var/lib/postgresql/data/backup_zendb.sql -c postgres
-
+    
     logInfo "Restoring Database Backup..."
     oc exec $zenPrimary -c postgres -- psql -U postgres -f /var/lib/postgresql/data/backup_zendb.sql -L /var/lib/postgresql/data/restore_zendb.log -a >> $LOG_FILE 2>&1
     logInfo $(oc cp $zenPrimary:/var/lib/postgresql/data/restore_zendb.log $BACKUP_DIR/restore_zendb.log -c postgres)
     oc exec $zenPrimary -c postgres -- rm -f /var/lib/postgresql/data/restore_zendb.log /var/lib/postgresql/data/backup_zendb.sql
+
   fi
 
 }
@@ -268,7 +269,7 @@ function cs-restore() {
     
     ## Need to add this line at the top of backup_csimdb.sql, this is to terminate all connections to db before restoring the data
     ## "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'im' AND pid <> pg_backend_pid();"
-    sed -i "1i SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'im' AND pid <> pg_backend_pid();" ${BACKUP_DIR}/postgresql/backup_csimdb.sql
+    sed -i "18i SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'im' AND pid <> pg_backend_pid();" ${BACKUP_DIR}/postgresql/backup_csimdb.sql
 
     logInfo "Copying Backup into Postgres Pod..."
     oc cp $BACKUP_DIR/postgresql/backup_csimdb.sql $csPrimary:/var/lib/postgresql/data/backup_csimdb.sql -c postgres
@@ -281,6 +282,27 @@ function cs-restore() {
 
 }
 
+function restart-common-services() {
+    logInfo "Restarting the Platform Auth Service pods"
+    logInfo $(oc delete pod -l app=platform-auth-service -n $cp4baProjectName)
+    logInfo "Restarting the Platform Identity Management pods"
+    logInfo $(oc delete pod -l app=platform-identity-management -n $cp4baProjectName)
+    logInfo "Restarting the Platform Identity Provider pods"
+    logInfo $(oc delete pod -l app=platform-identity-provider -n $cp4baProjectName)
+    logInfo "Restarting user management pods"
+    logInfo $(oc delete pod -l component=usermgmt -n $cp4baProjectName)
+    logInfo "Restarting common-web-ui pods"
+    logInfo $(oc delete pod -l app.kubernetes.io/name=common-web-ui -n $cp4baProjectName)
+    logInfo "Restarting zen core api pods"
+    logInfo $(oc delete pod -l component=zen-core-api -n $cp4baProjectName)
+    logInfo "Restarting zen core pods"
+    logInfo $(oc delete pod -l component=zen-core -n $cp4baProjectName)
+    logInfo "Restarting zen audit pods"
+    logInfo $(oc delete pod -l component=zen-audit -n $cp4baProjectName)
+    logInfo "Restarting nginx pods"
+    logInfo $(oc delete pod -l component=ibm-nginx -n $cp4baProjectName)
+}
+
 postDeployTerminating=No
 
 while [[ $postDeployTerminating == "No" ]]; do
@@ -291,6 +313,7 @@ while [[ $postDeployTerminating == "No" ]]; do
   echo "   1: Common Service DB Postgres Database restore"
   echo "   2: Zen Metastore EDB Postgres Database restore"
   echo "   3: BTS Cloud Native Postgres Database restore"
+  echo "   4: Restart Common Services (Mandatory)"
   echo
   echo "  99: Terminate Post Deploy Script"
   echo 
@@ -301,6 +324,7 @@ while [[ $postDeployTerminating == "No" ]]; do
     1)  cs-restore ;;
     2)  zen-restore ;;
     3)  bts-cnpg ;;
+    4)  restart-common-services ;;
     99) postDeployTerminating=Yes ;;
   esac
 done
