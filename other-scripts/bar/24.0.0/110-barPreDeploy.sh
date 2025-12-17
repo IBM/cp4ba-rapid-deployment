@@ -111,6 +111,7 @@ function restore_this_pvc() {
   if [[ $pvcname == cmis-cfgstore ]]; then return 0; fi
   if [[ $pvcname == icn-asperastore ]]; then return 0; fi
 
+
   pattern="CRNAME-.*-baw-file-storage-pvc"
   if [[ $pvcname =~ $pattern   ]]; then return 0; fi
   pattern="CRNAME-.*-baw-jms-data-vc-CRNAME-.*-baw-jms-0"
@@ -121,6 +122,12 @@ function restore_this_pvc() {
   if [[ $pvcname == CRNAME-dba-rr-pvc ]]; then return 0; fi
   if [[ $pvcname == cp4a-shared-log-pvc ]]; then return 0; fi
   
+  if [[ $pvcname == user-home-pvc ]]; then return 0; fi
+  pattern="data-opensearch-.*"
+  if [[ $pvcname =~ $pattern  ]]; then return 0; fi
+  pattern="opensearch-.*-es-server-snap"
+  if [[ $pvcname =~ $pattern  ]]; then return 0; fi
+
   pattern="data-iaf-system-elasticsearch-es-data-.*"
   if [[ $pvcname =~ $pattern  ]]; then return 0; fi
   if [[ $pvcname == iaf-system-elasticsearch-es-snap-main-pvc ]]; then return 0; fi
