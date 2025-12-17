@@ -310,6 +310,7 @@ function restart-common-services() {
         sleep 30
         # Wait for new pods matching the pattern to be ready
         logInfo "Waiting for new $pod_pattern pods to be ready..."
+        logInfo $(oc get pods -n $cp4baProjectName --no-headers | grep -i "$pod_pattern")
         new_pods=$(oc get pods -n $cp4baProjectName --no-headers | awk -v pattern="$pod_pattern" '$1 ~ pattern {print $1}')
         if [ -n "$new_pods" ]; then
           all_pods_ready=true
