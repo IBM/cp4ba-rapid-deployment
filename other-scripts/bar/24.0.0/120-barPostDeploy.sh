@@ -301,6 +301,37 @@ function restart-common-services() {
     logInfo $(oc delete pod -l component=zen-audit -n $cp4baProjectName)
     logInfo "Restarting nginx pods"
     logInfo $(oc delete pod -l component=ibm-nginx -n $cp4baProjectName)
+    # Restart CPE & Navigator Pods
+    for pod_pattern in "cpe-deploy" "cpe-watcher" "navigator-deploy" "navigator-watcher"; do
+      pods=$(oc get pods -n $cp4baProjectName --no-headers | awk -v pattern="$pod_pattern" '$1 ~ pattern {print $1}')
+      if [ -n "$pods" ]; then
+        logInfo "Restarting $pod_pattern pods: $pods"
+        logInfo $(oc delete pod -n $cp4baProjectName $pods)
+        sleep 30
+        # Wait for new pods matching the pattern to be ready
+        logInfo "Waiting for new $pod_pattern pods to be ready..."
+        new_pods=$(oc get pods -n $cp4baProjectName --no-headers | awk -v pattern="$pod_pattern" '$1 ~ pattern {print $1}')
+        if [ -n "$new_pods" ]; then
+          all_pods_ready=true
+          for pod in $new_pods; do
+            if oc wait pod/$pod -n $cp4baProjectName --for=condition=Ready --timeout=180s 2>&1; then
+              logInfo "Pod $pod is ready"
+            else
+              logError "Pod $pod failed to become ready or timed out"
+              all_pods_ready=false
+            fi
+          done
+          
+          if [ "$all_pods_ready" = true ]; then
+            logInfo "$pod_pattern pods are ready"
+          else
+            logError "$pod_pattern pods - some pods failed to become ready"
+          fi
+        fi
+      else
+        logInfo "No $pod_pattern pods found — nothing to restart"
+      fi
+    done
 }
 
 postDeployTerminating=No
