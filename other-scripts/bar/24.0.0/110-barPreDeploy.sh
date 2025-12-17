@@ -189,7 +189,7 @@ function restore_this_secret() {
 
   if [[ $secretname == playback-server-admin-secret  ]]; then return 0; fi
   if [[ $secretname == CRNAME-wfps-admin-secret  ]]; then return 0; fi
-  
+
   if [[ $secretname == cs-ca-certificate-secret ]]; then return 0; fi
   if [[ $secretname == iaf-system-automationui-aui-zen-cert ]]; then return 0; fi
   if [[ $secretname == iaf-system-elasticsearch-es-client-cert-kp ]]; then return 0; fi
@@ -215,7 +215,20 @@ function restore_this_secret() {
   if [[ $secretname == platform-identity-management ]]; then return 0; fi
   if [[ $secretname == route-tls-secret ]]; then return 0; fi
   if [[ $secretname == admin.registrykey ]]; then return 0; fi
-  
+
+  # Secrets for BAI, Opensearch and Flink Jobs
+  if [[ $secretname == CRNAME-insights-engine-cockpit-cert  ]]; then return 0; fi
+  if [[ $secretname == CRNAME-insights-engine-cockpit-secret ]]; then return 0; fi
+  if [[ $secretname == CRNAME-insights-engine-flink-admin-user  ]]; then return 0; fi
+  if [[ $secretname == CRNAME-insights-engine-flink-cert  ]]; then return 0; fi
+  if [[ $secretname == CRNAME-insights-engine-management-auth  ]]; then return 0; fi
+  if [[ $secretname == CRNAME-insights-engine-management-cert  ]]; then return 0; fi
+  if [[ $secretname == CRNAME-insights-engine-secret-internal  ]]; then return 0; fi
+  if [[ $secretname == opensearch-ibm-elasticsearch-cred-secret  ]]; then return 0; fi
+  if [[ $secretname == opensearch-ibm-elasticsearch-haproxy-config  ]]; then return 0; fi
+  if [[ $secretname == opensearch-ibm-elasticsearch-tls-secret  ]]; then return 0; fi
+  if [[ $secretname == opensearch-tls-secret-route  ]]; then return 0; fi
+
   if [[ $secretname == iaf-insights-engine-management-cert ]]; then return 0; fi
   if [[ $secretname == iaf-insights-engine-cockpit-cert ]]; then return 0; fi
   if [[ $secretname == foundation-iaf-apicurio-ap-apicurio-cert ]]; then return 0; fi
