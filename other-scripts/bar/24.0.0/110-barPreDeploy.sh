@@ -1258,7 +1258,7 @@ logInfo "  - the content of the PVs (for example by running the just generated s
 logInfo "  - the databases"
 logInfo "  - the binary document data of CPE"
 echo
-logInfo "Next, if needed, downgrade the catalog sources."
+
 logInfo "Then, install the CP4BA operator through the OCP Web console."
 logInfo "Finally, apply the generated CR (see details above) and run the post deployment steps."
 logInfo "For more details on the above steps, please also have a look into the documentation."
