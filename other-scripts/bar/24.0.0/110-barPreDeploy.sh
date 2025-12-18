@@ -228,7 +228,10 @@ function restore_this_secret() {
   if [[ $secretname == CRNAME-insights-engine-flink-admin-user  ]]; then return 0; fi
   if [[ $secretname == CRNAME-insights-engine-flink-cert  ]]; then return 0; fi
   if [[ $secretname == CRNAME-insights-engine-management-cert  ]]; then return 0; fi
-
+  if [[ $secretname == opensearch-ibm-elasticsearch-haproxy-config  ]]; then return 0; fi
+  if [[ $secretname == opensearch-ibm-elasticsearch-tls-secret  ]]; then return 0; fi
+  if [[ $secretname == opensearch-tls-secret-route  ]]; then return 0; fi
+  
   if [[ $secretname == iaf-insights-engine-management-cert ]]; then return 0; fi
   if [[ $secretname == iaf-insights-engine-cockpit-cert ]]; then return 0; fi
   if [[ $secretname == foundation-iaf-apicurio-ap-apicurio-cert ]]; then return 0; fi
