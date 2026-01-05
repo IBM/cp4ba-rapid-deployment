@@ -4,7 +4,7 @@
 #
 # Licensed Materials - Property of IBM
 #
-# (C) Copyright IBM Corp. 2025. All Rights Reserved.
+# (C) Copyright IBM Corp. 2025-2026. All Rights Reserved.
 #
 # US Government Users Restricted Rights - Use, duplication or
 # disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
@@ -14,9 +14,10 @@
 # This script is for preparing the Backup And Restore (BAR) process, performing a health check on all supported CP4BA components in the given namespace.
 #    Only tested with CP4BA version: 24.0.0 IF005, dedicated common services set-up
 
-# TODO: We also should check the subscritions, that they are set to manual approval. This is recommended if there are multiple CP deployments. If set to automatic approval, we might want to issue a warning, that user should set them to manual if multiple CPs are installed on this cluster.
+# TODO: We also should check the subscritions, that they are set to manual approval if global catalog source is used. This is recommended if there are multiple CP deployments. If set to automatic approval, we might want to issue a warning, that user should set them to manual if multiple CPs are installed on this cluster. We also might issue a warning if global catalog sources are used. Of when just one common service instance is used.
 
-# TODO: At the end of the script, we atm only give the number of errors found. We should extend that to list once more all warnings and errors found.
+bold=$(tput bold)
+normal=$(tput sgr0)
 
 # Check if jq is installed
 type jq > /dev/null 2>&1
@@ -1061,7 +1062,7 @@ if [[ $podsincrashloopbackoff != "" ]]; then
 fi
 
 # Failed pods
-podsinfailed=$(oc get pod -o 'custom-columns=NAME:.metadata.name,PHASE:.status.phase' --no-headers --ignore-not-found | grep 'Error' | awk '{print $1}')
+podsinfailed=$(oc get pod -o 'custom-columns=NAME:.metadata.name,PHASE:.status.phase' --no-headers --ignore-not-found | grep -e 'Failed' -e 'Error' | awk '{print $1}')
 if [[ $podsinfailed != "" ]]; then
   logWarning "Failed pods found:" $podsinfailed
 fi
@@ -1084,15 +1085,20 @@ echo
 ##### Final Summary ###############################################################
 WARNING_COUNT=$(grep WARNING $LOG_FILE | wc -l)
 if [ $WARNING_COUNT -ne 0 ]; then
-  logWarning "Found $WARNING_COUNT warning(s), please check the log for details."
+  echo $(grep WARNING $LOG_FILE)
+  logInfo "${bold}Found $WARNING_COUNT warning(s)!${normal}"
 else
   logInfo "No warnings found."
 fi
+echo
 
 ERROR_COUNT=$(grep ERROR $LOG_FILE | wc -l)
 if [ $ERROR_COUNT -ne 0 ]; then
-  logError "Found $ERROR_COUNT error(s), please check the log for details !!"
+  echo $(grep ERROR $LOG_FILE)
+  logInfo "${bold}Found $ERROR_COUNT error(s)!${normal}"
 else
   logInfo "No errors found."
+  echo
+  logInfo "CP4BA deployment ${bold}$CP4BA_NAME${normal} in project ${bold}$cp4baProjectName${normal} is healthy."
 fi
 echo
