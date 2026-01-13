@@ -129,6 +129,18 @@ fi
 
 backupDeploymentName=$(yq eval '.metadata.name' $CR_SPEC)
 
+# Check for Properties file
+propertiesfile=$BACKUP_ROOT_DIRECTORY_FULL/properties.sh
+if [[ -f $propertiesfile ]]; then
+  logInfo "Properties file $propertiesfile found. Using it to scale up."
+  . $propertiesfile
+  logInfo "Done!"
+else
+  logError "Properties file $propertiesfile NOT found. It is required to properly scale up the CP4BA deployment. It got created when you scaled down the deployment. Please restore it before you can proceed."
+  echo
+  exit 1
+fi
+echo
 
 function bts-cnpg() {
   local bts_deployment_name=ibm-bts-cp4ba-bts-316-deployment
@@ -282,6 +294,11 @@ function cs-restore() {
 
 }
 
+function patch-iaf-kafka() {
+    logInfo "Patching IAF Kafka replica size"
+    logInfo $(oc patch kafka iaf-system -n $cp4baProjectName --type='merge' -p '{"spec":{"kafka":{"replicas":'$cp4baKafkaReplicaSize'}}}')
+}
+
 function restart-common-services() {
     logInfo "Restarting the Platform Auth Service pods"
     logInfo $(oc delete pod -l app=platform-auth-service -n $cp4baProjectName)
@@ -344,7 +361,8 @@ while [[ $postDeployTerminating == "No" ]]; do
   echo "Select Post Deploy task to execute:"
   echo "   1: Zen Metastore EDB Postgres Database restore"
   echo "   2: BTS Cloud Native Postgres Database restore"
-  echo "   3: Restart Common Services (Mandatory)"
+  echo "   3: Patch IAF Kafka Replicas"
+  echo "   4: Restart Common Services (Mandatory)"
   echo
   echo "  99: Terminate Post Deploy Script"
   echo 
@@ -354,7 +372,8 @@ while [[ $postDeployTerminating == "No" ]]; do
   case "$choice" in
     1)  zen-restore ;;
     2)  bts-cnpg ;;
-    3)  restart-common-services ;;
+    3)  patch-iaf-kafka ;;
+    4)  restart-common-services ;;
     99) postDeployTerminating=Yes ;;
   esac
 done

@@ -150,6 +150,11 @@ commonWebUiReplicas=$(oc get pod -l=app.kubernetes.io/name=common-web-ui -o 'cus
 sed -i.bak "s|§cp4baCommonWebUiReplicaSize|$commonWebUiReplicas|g" $propertiesfile
 echo
 
+#Persist Kafka Replica Size
+kafkaReplicas=$(oc get kafka iaf-system -n $cp4baProjectName -o jsonpath='{.spec.kafka.replicas}')
+sed -i.bak "s|§cp4baKafkaReplicaSize|$kafkaReplicas|g" $propertiesfile
+echo
+
 ## Get CP4BA deployment name
 CP4BA_NAME=$(oc get ICP4ACluster -o name |cut -d "/" -f 2)
 logInfo "CP4BA deployment name: $CP4BA_NAME"
