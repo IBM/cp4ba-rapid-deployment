@@ -318,6 +318,8 @@ function restart-common-services() {
     logInfo $(oc delete pod -l component=zen-audit -n $cp4baProjectName)
     logInfo "Restarting nginx pods"
     logInfo $(oc delete pod -l component=ibm-nginx -n $cp4baProjectName)
+    logInfo "Restarting the Kafka-0 pod"
+    logInfo $(oc delete pod iaf-system-kafka-0 -n $cp4baProjectName)
     # Restart CPE & Navigator Pods
     for pod_pattern in "cpe-deploy" "cpe-watcher" "navigator-deploy" "navigator-watcher"; do
       pods=$(oc get pods -n $cp4baProjectName --no-headers | awk -v pattern="$pod_pattern" '$1 ~ pattern {print $1}')

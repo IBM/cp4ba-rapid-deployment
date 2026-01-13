@@ -601,8 +601,8 @@ if [[ "$MANAGEMENT_POD" != "" ]]; then
 fi
 
 # Scale down all postgresql db zen-metastore-edb, common-service-db
-logInfo $(oc annotate cluster zen-metastore-edb --overwrite k8s.enterprisedb.io/hibernation=on)
-logInfo $(oc annotate cluster common-service-db --overwrite k8s.enterprisedb.io/hibernation=on)
+logInfo $(oc annotate cluster.postgresql.k8s.enterprisedb.io zen-metastore-edb --overwrite k8s.enterprisedb.io/hibernation=on)
+logInfo $(oc annotate cluster.postgresql.k8s.enterprisedb.io common-service-db --overwrite k8s.enterprisedb.io/hibernation=on)
 sleep 60
 echo
 
