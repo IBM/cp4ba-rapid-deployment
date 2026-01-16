@@ -129,19 +129,6 @@ fi
 
 backupDeploymentName=$(yq eval '.metadata.name' $CR_SPEC)
 
-# Check for Properties file
-propertiesfile=$BACKUP_ROOT_DIRECTORY_FULL/properties.sh
-if [[ -f $propertiesfile ]]; then
-  logInfo "Properties file $propertiesfile found. Using it to scale up."
-  . $propertiesfile
-  logInfo "Done!"
-else
-  logError "Properties file $propertiesfile NOT found. It is required to properly scale up the CP4BA deployment. It got created when you scaled down the deployment. Please restore it before you can proceed."
-  echo
-  exit 1
-fi
-echo
-
 function bts-cnpg() {
   local bts_deployment_name=ibm-bts-cp4ba-bts-316-deployment
   local cnpg_cluster_name=ibm-bts-cnpg-${cp4baProjectName}-cp4ba-bts
@@ -296,7 +283,9 @@ function cs-restore() {
 
 function patch-iaf-kafka() {
     logInfo "Patching IAF Kafka replica size"
-    logInfo $(oc patch kafka iaf-system -n $cp4baProjectName --type='merge' -p '{"spec":{"kafka":{"replicas":'$cp4baKafkaReplicaSize'}}}')
+    KAFKA_REPLICAS=$(grep -A 20 "^  kafka:" $BACKUP_DIR/kafka.ibmevents.ibm.com/iaf-system.yaml | grep "replicas:" | head -1 | awk '{print $2}')
+    logInfo $(echo "Kafka Replicas: $KAFKA_REPLICAS")
+    logInfo $(oc patch kafka iaf-system -n $cp4baProjectName --type='merge' -p '{"spec":{"kafka":{"replicas":'$KAFKA_REPLICAS'}}}')
 }
 
 function restart-common-services() {

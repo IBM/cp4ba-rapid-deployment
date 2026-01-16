@@ -32,11 +32,5 @@ cp4baCommonWebUiReplicaSize=§cp4baCommonWebUiReplicaSize
 
 cp4baInsightsEngineFlinkTaskmanagerReplicaSize=§cp4baInsightsEngineFlinkTaskmanagerReplicaSize
 
-cp4baKafkaReplicaSize=§cp4baKafkaReplicaSize
-
-
 
 # --- end of file ---
-
-
-
