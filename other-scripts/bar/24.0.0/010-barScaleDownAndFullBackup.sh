@@ -671,12 +671,12 @@ done
 echo
 
 # Take backup of catalog sources before deleting catalog source pods
-logInfo "Take backup of catalog sources before deleting catalog source pods"
+logInfo "Taking backup of catalog sources before deleting catalog source pods..."
 # This will be used during ScaleUp.
 oc get catalogsource -o yaml > $BACKUP_ROOT_DIRECTORY_FULL/catalogsource.yaml
 # This will be stored inside Backup Folder and will be used during Restoration.
 oc get catalogsource -o yaml > $BACKUP_DIR/catalogsource.yaml
-logInfo "Delete Catalog sources"
+logInfo "Deleting Catalog sources..."
 logInfo $(oc delete catalogsource -n ${cp4baProjectName} --all)
 echo
 
@@ -791,6 +791,7 @@ EOF
         chmod +x $BACKUP_DIR/025-backup-pvs-${storageclass}.sh
       fi
     done
+    logInfoValue "PV Backup Script Generated:" $BACKUP_DIR/025-backup-pvs-${storageclass}.sh
   fi
 done
 echo

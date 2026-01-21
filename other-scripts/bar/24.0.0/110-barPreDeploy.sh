@@ -1163,7 +1163,7 @@ EOF
                       fi
         	  fi
 	      done
-        logInfoValue "PV Restore Script Generated:" 111-restore-pvs-${storageclass}.sh        
+        logInfoValue "PV Restore Script Generated:" $BACKUP_DIR/111-restore-pvs-${storageclass}.sh
     fi
 done
 
@@ -1252,17 +1252,14 @@ logInfo $(oc create configmap cp4ba-backup-and-restore \
 echo
 
 # ScaleUp Catalog Sources
-logInfo "Scale Up all Catalog Source Pods"
-logInfo "Removing kubectl.kubernetes.io/last-applied-configuration annotation from catalogsource.yaml"
+logInfo "Scaling Up all Catalog Source Pods..."
 # Create a temporary file with the annotation removed
 TEMP_CATALOG_FILE=$(mktemp)
 yq eval 'del(.items[].metadata.annotations."kubectl.kubernetes.io/last-applied-configuration")' $BACKUP_DIR/catalogsource.yaml > $TEMP_CATALOG_FILE
-logInfo "Applying cleaned catalogsource.yaml"
 logInfo $(oc create -f $TEMP_CATALOG_FILE)
 # Clean up temporary file
 rm -f $TEMP_CATALOG_FILE
 echo
-
 
 logInfo "Pre deploy is complete. Next, restore:"
 logInfo "  - the content of the PVs (for example by running the just generated script using the root account, see details above)"
