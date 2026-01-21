@@ -197,11 +197,11 @@ function bts-cnpg() {
   
   logInfo "Scaling up BTS Operator again"
   logInfo $(oc scale deploy ibm-bts-operator-controller-manager --replicas=1)
-
+  
   echo
   logInfo "Waiting up to 60 seconds for BTS Operator to come up and update service status"
   logInfo $(oc wait --for=jsonpath={.status.serviceStatus}=unready businessteamsservices/cp4ba-bts --timeout=60s)
-
+  
   waitServiceReady=10
   while [ $waitServiceReady -gt 0 ]; do
     btsServicesStatus=$(oc get businessteamsservices cp4ba-bts -o jsonpath={.status.serviceStatus})
@@ -214,7 +214,7 @@ function bts-cnpg() {
         logInfo "BTS Service Status: $btsServicesStatus -- waiting up to 60 seconds for an update..."
 	oc wait --for=jsonpath={.status.serviceStatus}=ready businessteamsservices/cp4ba-bts --timeout=60s >> $LOG_FILE 2>&1
       else
-	      logInfo "BTS Service did not reach ready state, at least not yet"
+	logInfo "BTS Service did not reach ready state, at least not yet"
       fi
     fi
   done
@@ -343,31 +343,43 @@ function restart-common-services() {
     done
 }
 
-postDeployTerminating=No
-
-while [[ $postDeployTerminating == "No" ]]; do
-
-  echo 
-  echo ========================================================
-  echo "Select Post Deploy task to execute:"
-  echo "   1: Zen Metastore EDB Postgres Database restore"
-  echo "   2: BTS Cloud Native Postgres Database restore"
-  echo "   3: Patch IAF Kafka Replicas"
-  echo "   4: Restart Common Services (Mandatory)"
+if $suppressConfirmations; then
   echo
-  echo "  99: Terminate Post Deploy Script"
-  echo 
-  read -p "Please provide selection: " choice
+  zen-restore
   echo
-
-  case "$choice" in
-    1)  zen-restore ;;
-    2)  bts-cnpg ;;
-    3)  patch-iaf-kafka ;;
-    4)  restart-common-services ;;
-    99) postDeployTerminating=Yes ;;
-  esac
-done
+  bts-cnpg
+  echo
+  patch-iaf-kafka
+  echo
+  restart-common-services
+  echo
+else
+  postDeployTerminating=No
+  
+  while [[ $postDeployTerminating == "No" ]]; do
+    
+    echo 
+    echo ========================================================
+    echo "Select Post Deploy task to execute:"
+    echo "   1: Zen Metastore EDB Postgres Database restore"
+    echo "   2: BTS Cloud Native Postgres Database restore"
+    echo "   3: Patch IAF Kafka Replicas"
+    echo "   4: Restart Common Services (Mandatory)"
+    echo
+    echo "  99: Terminate Post Deploy Script"
+    echo 
+    read -p "Please provide selection: " choice
+    echo
+    
+    case "$choice" in
+      1)  zen-restore ;;
+      2)  bts-cnpg ;;
+      3)  patch-iaf-kafka ;;
+      4)  restart-common-services ;;
+      99) postDeployTerminating=Yes ;;
+    esac
+  done
+fi
 
 logInfo "Have a nice day"
 echo

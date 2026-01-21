@@ -424,7 +424,6 @@ if [[ "$WHOAMI" == "" ]]; then
   echo
   exit 1
 fi
-echo
 
 if oc get project $backupNamespace  > /dev/null 2>&1; then
   logError "Backup Namespace is already existing on the cluster. Please run the delete deployment script before. Exiting..."
@@ -432,10 +431,15 @@ if oc get project $backupNamespace  > /dev/null 2>&1; then
   exit 1
 else
   if [[ "$(oc auth can-i create project 2>/dev/null)" == "yes" ]]; then
-    logInfo "Project $backupNamespace is not yet existing, but needs to be created."
-    echo
-    read -p "Press Return to continue, CTRL-C to abort" choice
-    echo
+    if $suppressConfirmations; then
+      echo
+    else
+      echo
+      logInfo "Project $backupNamespace is not yet existing, but needs to be created."
+      echo
+      read -p "Press Return to continue, CTRL-C to abort" choice
+      echo
+    fi
     logInfoValue "Running command" oc new-project $backupNamespace
     oc new-project $backupNamespace >> $LOG_FILE
   else
@@ -500,34 +504,39 @@ for yaml in $BACKUP_DIR/secret/*.yaml; do
     fi
   fi
 done
-echo
 
 if [[ "$countYamlFiles" == "0" ]]; then
+  echo
   logInfo "All secrets have already been applied"
 else
-  logInfo "The script will try to apply following secrets:"
-
-  for file in "${yamlFiles[@]}"; do
-    secretName=$(yq eval '.metadata.name' $file)
-    logInfo "   Secret $secretName (File: $(basename $file))"
-  done
-  echo
-  
-  printf "OK to apply these secret definitions? (Yes/No, default Yes): "
-  read -rp "" ans
-  case "$ans" in
-  "n"|"N"|"no"|"No"|"NO")
-     echo
-     logInfo "Exiting..."
-     echo
-     exit 0
-     ;;
-  *)
-     echo
-     logInfo "OK..."
-     echo
-     ;;
-  esac
+  if $suppressConfirmations; then
+    echo
+  else
+    echo
+    logInfo "The script will try to apply following secrets:"
+    
+    for file in "${yamlFiles[@]}"; do
+      secretName=$(yq eval '.metadata.name' $file)
+      logInfo "   Secret $secretName (File: $(basename $file))"
+    done
+    echo
+    
+    printf "OK to apply these secret definitions? (Yes/No, default Yes): "
+    read -rp "" ans
+    case "$ans" in
+    "n"|"N"|"no"|"No"|"NO")
+       echo
+       logInfo "Exiting..."
+       echo
+       exit 0
+       ;;
+    *)
+       echo
+       logInfo "OK..."
+       echo
+       ;;
+    esac
+  fi
   
   for file in "${yamlFiles[@]}"; do
     secretName=$(yq eval '.metadata.name' $file)
@@ -578,35 +587,40 @@ for yaml in $BACKUP_DIR/configmap/*.yaml; do
     fi
   fi
 done
-echo
 
 if [[ "$countYamlFiles" == "0" ]]; then
+  echo
   logInfo "All Configmaps have already been applied"
 else
-  logInfo "The script will try to apply following Configmaps:"
-
-  for file in "${yamlFiles[@]}"; do
-    configmapName=$(yq eval '.metadata.name' $file)
-    logInfo "   Configmap $configmapName (File: $(basename $file))"
-  done
-  echo
+  if $suppressConfirmations; then
+    echo
+  else
+    echo
+    logInfo "The script will try to apply following Configmaps:"
+    
+    for file in "${yamlFiles[@]}"; do
+      configmapName=$(yq eval '.metadata.name' $file)
+      logInfo "   Configmap $configmapName (File: $(basename $file))"
+    done
+    echo
+    
+    printf "OK to apply these Configmap definitions? (Yes/No, default Yes): "
+    read -rp "" ans
+    case "$ans" in
+    "n"|"N"|"no"|"No"|"NO")
+       echo
+       logInfo "Exiting..."
+       echo
+       exit 0
+       ;;
+    *)
+       echo
+       logInfo "OK..."
+       echo
+       ;;
+    esac
+  fi
   
-  printf "OK to apply these Configmap definitions? (Yes/No, default Yes): "
-  read -rp "" ans
-  case "$ans" in
-  "n"|"N"|"no"|"No"|"NO")
-     echo
-     logInfo "Exiting..."
-     echo
-     exit 0
-     ;;
-  *)
-     echo
-     logInfo "OK..."
-     echo
-     ;;
-  esac
-
   for file in "${yamlFiles[@]}"; do
     configmapName=$(yq eval '.metadata.name' $file)
     logInfoValue "Defining Configmap" ${configmapName}
@@ -657,35 +671,40 @@ for yaml in $BACKUP_DIR/certificate.cert-manager.io/*.yaml; do
     fi
   fi
 done
-echo
 
 if [[ "$countYamlFiles" == "0" ]]; then
+  echo
   logInfo "All Cert-ManagerIO Certificates have already been applied"
 else
-  logInfo "The script will try to apply following Cert-ManagerIO Certificates:"
+  if $suppressConfirmations; then
+    echo
+  else
+    echo
+    logInfo "The script will try to apply following Cert-ManagerIO Certificates:"
+    
+    for file in "${yamlFiles[@]}"; do
+      certmanageriocertificateName=$(yq eval '.metadata.name' $file)
+      logInfo "   Cert-ManagerIO Certificate $certmanageriocertificateName (File: $(basename $file))"
+    done
+    echo
+    
+    printf "OK to apply these Cert-ManagerIO Certificate definitions? (Yes/No, default Yes): "
+    read -rp "" ans
+    case "$ans" in
+    "n"|"N"|"no"|"No"|"NO")
+       echo
+       logInfo "Exiting..."
+       echo
+       exit 0
+       ;;
+    *)
+       echo
+       logInfo "OK..."
+       echo
+       ;;
+    esac
+  fi
   
-  for file in "${yamlFiles[@]}"; do
-    certmanageriocertificateName=$(yq eval '.metadata.name' $file)
-    logInfo "   Cert-ManagerIO Certificate $certmanageriocertificateName (File: $(basename $file))"
-  done
-  echo
-  
-  printf "OK to apply these Cert-ManagerIO Certificate definitions? (Yes/No, default Yes): "
-  read -rp "" ans
-  case "$ans" in
-  "n"|"N"|"no"|"No"|"NO")
-     echo
-     logInfo "Exiting..."
-     echo
-     exit 0
-     ;;
-  *)
-     echo
-     logInfo "OK..."
-     echo
-     ;;
-  esac
-
   for file in "${yamlFiles[@]}"; do
     certmanageriocertificateName=$(yq eval '.metadata.name' $file)
     certmanageriosecret=$(yq eval '.spec.secretName' $file)
@@ -738,35 +757,40 @@ for yaml in $BACKUP_DIR/certificate.certmanager.k8s.io/*.yaml; do
     fi
   fi
 done
-echo
 
 if [[ "$countYamlFiles" == "0" ]]; then
+  echo
   logInfo "All CertManagerK8S Certificates have already been applied"
 else
-  logInfo "The script will try to apply following CertManagerK8S Certificates:"
+  if $suppressConfirmations; then
+    echo
+  else
+    echo
+    logInfo "The script will try to apply following CertManagerK8S Certificates:"
+    
+    for file in "${yamlFiles[@]}"; do
+      certmanagerk8scertificateName=$(yq eval '.metadata.name' $file)
+      logInfo "   CertManagerK8S Certificate $certmanagerk8scertificateName (File: $(basename $file))"
+    done
+    echo
+    
+    printf "OK to apply these CertManagerK8S Certificate definitions? (Yes/No, default Yes): "
+    read -rp "" ans
+    case "$ans" in
+    "n"|"N"|"no"|"No"|"NO")
+       echo
+       logInfo "Exiting..."
+       echo
+       exit 0
+       ;;
+    *)
+       echo
+       logInfo "OK..."
+       echo
+       ;;
+    esac
+  fi
   
-  for file in "${yamlFiles[@]}"; do
-    certmanagerk8scertificateName=$(yq eval '.metadata.name' $file)
-    logInfo "   CertManagerK8S Certificate $certmanagerk8scertificateName (File: $(basename $file))"
-  done
-  echo
-  
-  printf "OK to apply these CertManagerK8S Certificate definitions? (Yes/No, default Yes): "
-  read -rp "" ans
-  case "$ans" in
-  "n"|"N"|"no"|"No"|"NO")
-     echo
-     logInfo "Exiting..."
-     echo
-     exit 0
-     ;;
-  *)
-     echo
-     logInfo "OK..."
-     echo
-     ;;
-  esac
-
   for file in "${yamlFiles[@]}"; do
     certmanagerk8scertificateName=$(yq eval '.metadata.name' $file)
     certmanagerk8ssecret=$(yq eval '.spec.secretName' $file)
@@ -819,35 +843,40 @@ for yaml in $BACKUP_DIR/issuer.cert-manager.io/*.yaml; do
     fi
   fi
 done
-echo
 
 if [[ "$countYamlFiles" == "0" ]]; then
+  echo
   logInfo "All Issuers have already been applied"
 else
-  logInfo "The script will try to apply following Issuers:"
+  if $suppressConfirmations; then
+    echo
+  else
+    echo
+    logInfo "The script will try to apply following Issuers:"
+    
+    for file in "${yamlFiles[@]}"; do
+      issuerName=$(yq eval '.metadata.name' $file)
+      logInfo "   Issuer $issuerName (File: $(basename $file))"
+    done
+    echo
+    
+    printf "OK to apply these Issuer definitions? (Yes/No, default Yes): "
+    read -rp "" ans
+    case "$ans" in
+    "n"|"N"|"no"|"No"|"NO")
+       echo
+       logInfo "Exiting..."
+       echo
+       exit 0
+       ;;
+    *)
+       echo
+       logInfo "OK..."
+       echo
+       ;;
+    esac
+  fi
   
-  for file in "${yamlFiles[@]}"; do
-    issuerName=$(yq eval '.metadata.name' $file)
-    logInfo "   Issuer $issuerName (File: $(basename $file))"
-  done
-  echo
-  
-  printf "OK to apply these Issuer definitions? (Yes/No, default Yes): "
-  read -rp "" ans
-  case "$ans" in
-  "n"|"N"|"no"|"No"|"NO")
-     echo
-     logInfo "Exiting..."
-     echo
-     exit 0
-     ;;
-  *)
-     echo
-     logInfo "OK..."
-     echo
-     ;;
-  esac
-
   for file in "${yamlFiles[@]}"; do
     issuerName=$(yq eval '.metadata.name' $file)
     issuersecret=$(yq eval '.spec.ca.secretName' $file)
@@ -900,20 +929,71 @@ for yaml in $BACKUP_DIR/issuer.certmanager.k8s.io/*.yaml; do
     fi
   fi
 done
-echo
 
 if [[ "$countYamlFiles" == "0" ]]; then
+  echo
   logInfo "All k8s Issuers have already been applied"
 else
-  logInfo "The script will try to apply following k8s Issuers:"
+  if $suppressConfirmations; then
+    echo
+  else
+    echo
+    logInfo "The script will try to apply following k8s Issuers:"
+    
+    for file in "${yamlFiles[@]}"; do
+      issuerName=$(yq eval '.metadata.name' $file)
+      logInfo "   K8s Issuer $issuerName (File: $(basename $file))"
+    done
+    echo
+    
+    printf "OK to apply these k8s Issuer definitions? (Yes/No, default Yes): "
+    read -rp "" ans
+    case "$ans" in
+    "n"|"N"|"no"|"No"|"NO")
+       echo
+       logInfo "Exiting..."
+       echo
+       exit 0
+       ;;
+    *)
+       echo
+       logInfo "OK..."
+       echo
+       ;;
+    esac
+  fi
   
   for file in "${yamlFiles[@]}"; do
     issuerName=$(yq eval '.metadata.name' $file)
-    logInfo "   K8s Issuer $issuerName (File: $(basename $file))"
+    issuersecret=$(yq eval '.spec.ca.secretName' $file)
+    restore_secret $issuersecret $BACKUP_DIR/secret/$issuersecret.yaml $backupNamespace
+    logInfoValue "Defining k8s Issuer" ${issuerName}
+    logInfo $(yq eval 'del(.metadata.annotations, .metadata.creationTimestamp, .metadata.resourceVersion, .metadata.uid, .metadata.ownerReferences)' $file | oc apply -f - -n $backupNamespace)
+  done
+fi
+
+
+
+############ Restore Misc Resources ##########
+yamlFiles=()
+yamlFiles+=($BACKUP_DIR/commonservice.operator.ibm.com/common-service.yaml)
+yamlFiles+=($BACKUP_DIR/zenservice.zen.cpd.ibm.com/iaf-zen-cpdservice.yaml)
+yamlFiles+=($BACKUP_DIR/cluster.postgresql.k8s.enterprisedb.io/zen-metastore-edb.yaml)
+
+if $suppressConfirmations; then
+  echo
+else
+  echo
+  logInfo "The script will try to apply following additional resources:"
+  
+  for file in "${yamlFiles[@]}"; do
+    rName=$(yq eval '.metadata.name' $file)
+    rKind=$(yq eval '.kind' $file)
+    logInfo "   Resource $rKind $rName (File: $(basename $file))"
   done
   echo
   
-  printf "OK to apply these k8s Issuer definitions? (Yes/No, default Yes): "
+  printf "OK to apply these resource definitions? (Yes/No, default Yes): "
   read -rp "" ans
   case "$ans" in
   "n"|"N"|"no"|"No"|"NO")
@@ -928,49 +1008,7 @@ else
      echo
      ;;
   esac
-
-  for file in "${yamlFiles[@]}"; do
-    issuerName=$(yq eval '.metadata.name' $file)
-    issuersecret=$(yq eval '.spec.ca.secretName' $file)
-    restore_secret $issuersecret $BACKUP_DIR/secret/$issuersecret.yaml $backupNamespace
-    logInfoValue "Defining k8s Issuer" ${issuerName}
-    logInfo $(yq eval 'del(.metadata.annotations, .metadata.creationTimestamp, .metadata.resourceVersion, .metadata.uid, .metadata.ownerReferences)' $file | oc apply -f - -n $backupNamespace)
-  done
 fi
-echo
-
-
-
-############ Restore Misc Resources ##########
-yamlFiles=()
-yamlFiles+=($BACKUP_DIR/commonservice.operator.ibm.com/common-service.yaml)
-yamlFiles+=($BACKUP_DIR/zenservice.zen.cpd.ibm.com/iaf-zen-cpdservice.yaml)
-yamlFiles+=($BACKUP_DIR/cluster.postgresql.k8s.enterprisedb.io/zen-metastore-edb.yaml)
-
-logInfo "The script will try to apply following additional resources:"
-
-for file in "${yamlFiles[@]}"; do
-  rName=$(yq eval '.metadata.name' $file)
-  rKind=$(yq eval '.kind' $file)
-  logInfo "   Resource $rKind $rName (File: $(basename $file))"
-done
-echo
-
-printf "OK to apply these resource definitions? (Yes/No, default Yes): "
-read -rp "" ans
-case "$ans" in
-"n"|"N"|"no"|"No"|"NO")
-   echo
-   logInfo "Exiting..."
-   echo
-   exit 0
-   ;;
-*)
-   echo
-   logInfo "OK..."
-   echo
-   ;;
-esac
 
 for file in "${yamlFiles[@]}"; do
   rName=$(yq eval '.metadata.name' $file)
@@ -1031,34 +1069,39 @@ for yaml in $BACKUP_DIR/persistentvolumeclaim/*.yaml; do
     fi
   fi
 done
-echo
 
 if [[ "$countYamlFiles" == "0" ]]; then
+  echo
   logInfo "All Persistent Volume Claims have already been applied"
 else
-  logInfo "The script will try to apply following Persistent Volume Claims (PVCs):"
-
-  for file in "${yamlFiles[@]}"; do
-    pvcName=$(yq eval '.metadata.name' $file)
-    logInfo "   PVC $pvcName (File: $(basename $file))"
-  done
-  echo
-  
-  printf "OK to apply these PVC definitions? (Yes/No, default Yes): "
-  read -rp "" ans
-  case "$ans" in
-  "n"|"N"|"no"|"No"|"NO")
-     echo
-     logInfo "Exiting..."
-     echo
-     exit 0
-     ;;
-  *)
-     echo
-     logInfo "OK..."
-     echo
-     ;;
-  esac
+  if $suppressConfirmations; then
+    echo
+  else
+    echo
+    logInfo "The script will try to apply following Persistent Volume Claims (PVCs):"
+    
+    for file in "${yamlFiles[@]}"; do
+      pvcName=$(yq eval '.metadata.name' $file)
+      logInfo "   PVC $pvcName (File: $(basename $file))"
+    done
+    echo
+    
+    printf "OK to apply these PVC definitions? (Yes/No, default Yes): "
+    read -rp "" ans
+    case "$ans" in
+    "n"|"N"|"no"|"No"|"NO")
+       echo
+       logInfo "Exiting..."
+       echo
+       exit 0
+       ;;
+    *)
+       echo
+       logInfo "OK..."
+       echo
+       ;;
+    esac
+  fi
   
   for file in "${yamlFiles[@]}"; do
     pvcName=$(yq eval '.metadata.name' $file)
@@ -1169,9 +1212,14 @@ done
 
 echo
 logInfo "Run the generated PV Restore Script on the storage server with the root user."
-echo
-read -p "Press Return to continue, CTRL-C to abort" choice
-echo
+
+if $suppressConfirmations; then
+  echo
+else
+  echo
+  read -p "Press Return to continue, CTRL-C to abort" choice
+  echo
+fi
 
 CP4BASubscription=$BACKUP_DIR/subscription.operators.coreos.com/ibm-cp4a-operator.yaml
 
