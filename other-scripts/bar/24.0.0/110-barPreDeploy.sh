@@ -1258,7 +1258,7 @@ logInfo "Removing kubectl.kubernetes.io/last-applied-configuration annotation fr
 TEMP_CATALOG_FILE=$(mktemp)
 yq eval 'del(.items[].metadata.annotations."kubectl.kubernetes.io/last-applied-configuration")' $BACKUP_DIR/catalogsource.yaml > $TEMP_CATALOG_FILE
 logInfo "Applying cleaned catalogsource.yaml"
-logInfo $(oc apply -f $TEMP_CATALOG_FILE)
+logInfo $(oc create -f $TEMP_CATALOG_FILE)
 # Clean up temporary file
 rm -f $TEMP_CATALOG_FILE
 echo
