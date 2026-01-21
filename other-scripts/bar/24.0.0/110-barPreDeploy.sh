@@ -280,6 +280,7 @@ function restore_this_configmap() {
   if [[ $configmapname == registration-json  ]]; then return 0; fi
   if [[ $configmapname == platform-auth-idp ]]; then return 0; fi
   if [[ $configmapname == ibm-zen-metastore-edb-cm ]]; then return 0; fi
+  if [[ $configmapname == ibm-cp4ba-common-config ]]; then return 0; fi
   
   # If the name appears in the CR, then it is also part of what is needed.
   if grep $configmapname $CR_SPEC > /dev/null 2>/dev/null; then return 0; fi
@@ -1252,7 +1253,14 @@ echo
 
 # ScaleUp Catalog Sources
 logInfo "Scale Up all Catalog Source Pods"
-logInfo $(oc apply -f $BACKUP_ROOT_DIRECTORY_FULL/catalogsource.yaml)
+logInfo "Removing kubectl.kubernetes.io/last-applied-configuration annotation from catalogsource.yaml"
+# Create a temporary file with the annotation removed
+TEMP_CATALOG_FILE=$(mktemp)
+yq eval 'del(.items[].metadata.annotations."kubectl.kubernetes.io/last-applied-configuration")' $BACKUP_DIR/catalogsource.yaml > $TEMP_CATALOG_FILE
+logInfo "Applying cleaned catalogsource.yaml"
+logInfo $(oc apply -f $TEMP_CATALOG_FILE)
+# Clean up temporary file
+rm -f $TEMP_CATALOG_FILE
 echo
 
 

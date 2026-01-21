@@ -595,17 +595,6 @@ if [[ "$MANAGEMENT_POD" != "" ]]; then
   echo
 fi
 
-# Scale down all postgresql db zen-metastore-edb, common-service-db
-logInfo $(oc annotate cluster.postgresql.k8s.enterprisedb.io zen-metastore-edb --overwrite k8s.enterprisedb.io/hibernation=on)
-logInfo $(oc annotate cluster.postgresql.k8s.enterprisedb.io common-service-db --overwrite k8s.enterprisedb.io/hibernation=on)
-sleep 60
-echo
-
-# Scale down postgres-operator
-logInfo $(oc scale deploy $postgresqlOperatorDeployment --replicas=0)
-sleep 20
-echo
-
 # Scale down all deployments
 # TODO: We want to be more specific here, scale down only the deployments we are aware of, not all.
 logInfo "Scaling down deployments..."
@@ -659,6 +648,18 @@ do
 done
 echo
 
+
+# Scale down all postgresql db zen-metastore-edb, common-service-db
+logInfo $(oc annotate cluster.postgresql.k8s.enterprisedb.io zen-metastore-edb --overwrite k8s.enterprisedb.io/hibernation=on)
+logInfo $(oc annotate cluster.postgresql.k8s.enterprisedb.io common-service-db --overwrite k8s.enterprisedb.io/hibernation=on)
+sleep 60
+echo
+
+# Scale down postgres-operator
+logInfo $(oc scale deploy $postgresqlOperatorDeployment --replicas=0)
+sleep 20
+echo
+
 # Delete all completed pods
 logInfo "Deleting completed pods..."
 completedpods=$(oc get pod -o 'custom-columns=NAME:.metadata.name,PHASE:.status.phase' --no-headers --ignore-not-found | grep 'Succeeded' | awk '{print $1}')
@@ -671,7 +672,10 @@ echo
 
 # Take backup of catalog sources before deleting catalog source pods
 logInfo "Take backup of catalog sources before deleting catalog source pods"
+# This will be used during ScaleUp.
 oc get catalogsource -o yaml > $BACKUP_ROOT_DIRECTORY_FULL/catalogsource.yaml
+# This will be stored inside Backup Folder and will be used during Restoration.
+oc get catalogsource -o yaml > $BACKUP_DIR/catalogsource.yaml
 logInfo "Delete Catalog sources"
 logInfo $(oc delete catalogsource -n ${cp4baProjectName} --all)
 echo
