@@ -637,7 +637,7 @@ do
 done
 sleep 10
 
-btscnpgpods=$(oc get pod -l=k8s.enterprisedb.io/cluster=ibm-bts-cnpg-ibm-cp4ba-dev-cp4ba-bts --no-headers --ignore-not-found | awk '{print $1}')
+btscnpgpods=$(oc get pod -l=k8s.enterprisedb.io/cluster=ibm-bts-cnpg-$cp4baProjectName-cp4ba-bts --no-headers --ignore-not-found | awk '{print $1}')
 for pod in ${btscnpgpods[*]}
 do
   logInfo $(oc delete pod $pod)
