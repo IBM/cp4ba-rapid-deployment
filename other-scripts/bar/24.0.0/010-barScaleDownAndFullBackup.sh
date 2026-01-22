@@ -606,6 +606,7 @@ for i in $deployments; do
 done
 echo
 
+sleep 20
 
 # Scale down all stateful sets
 # TODO: We want to be more specific here, scale down only the stateful sets we are aware of, not all.
@@ -617,6 +618,8 @@ for s in $statefulSets; do
   logInfo $(oc scale $s --replicas=0)
 done
 echo
+
+sleep 20
 
 # Delete all remaing running pods that we know
 logInfo "Deleting all remaing running CP4BA pods..."
@@ -634,8 +637,22 @@ do
 done
 sleep 10
 
-btscnpgpods=$(oc get pod -l=app.kubernetes.io/name=ibm-bts-cp4ba-bts --no-headers --ignore-not-found | awk '{print $1}')
+btscnpgpods=$(oc get pod -l=k8s.enterprisedb.io/cluster=ibm-bts-cnpg-ibm-cp4ba-dev-cp4ba-bts --no-headers --ignore-not-found | awk '{print $1}')
 for pod in ${btscnpgpods[*]}
+do
+  logInfo $(oc delete pod $pod)
+done
+sleep 10
+
+zenmetastoreedbpods=$(oc get pod -l=k8s.enterprisedb.io/cluster=zen-metastore-edb --no-headers --ignore-not-found | awk '{print $1}')
+for pod in ${zenmetastoreedbpods[*]}
+do
+  logInfo $(oc delete pod $pod)
+done
+sleep 10
+
+commonservicedbpods=$(oc get pod -l=k8s.enterprisedb.io/cluster=common-service-db --no-headers --ignore-not-found | awk '{print $1}')
+for pod in ${commonservicedbpods[*]}
 do
   logInfo $(oc delete pod $pod)
 done
@@ -646,18 +663,6 @@ for pod in ${rrpods[*]}
 do
    logInfo $(oc delete pod $pod)
 done
-echo
-
-
-# Scale down all postgresql db zen-metastore-edb, common-service-db
-logInfo $(oc annotate cluster.postgresql.k8s.enterprisedb.io zen-metastore-edb --overwrite k8s.enterprisedb.io/hibernation=on)
-logInfo $(oc annotate cluster.postgresql.k8s.enterprisedb.io common-service-db --overwrite k8s.enterprisedb.io/hibernation=on)
-sleep 60
-echo
-
-# Scale down postgres-operator
-logInfo $(oc scale deploy $postgresqlOperatorDeployment --replicas=0)
-sleep 20
 echo
 
 # Delete all completed pods
