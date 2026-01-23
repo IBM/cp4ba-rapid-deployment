@@ -18,7 +18,7 @@
 
 # DBs to restore: GCDDB2, AEDB2, BAWTOS2, ICNDB2, BAWDB2, BAWDOCS2, BAWDOS2
 
-DATETIMESTR=20251216_071632
+DATETIMESTR=20260122_050718
 
 function perform_db_restore() {
   DBName=$1
@@ -34,17 +34,17 @@ function perform_db_restore() {
 echo
 echo "Restoring DBs 4 ibm-cp4ba-test Environment..."
 echo
-perform_db_restore GCDDB2 20251216071636
+perform_db_restore GCDDB2 20260122050722
 echo
-perform_db_restore AEDB2 20251216071644
+perform_db_restore AEDB2 20260122050728
 echo
-perform_db_restore BAWTOS2 20251216071652
+perform_db_restore BAWTOS2 20260122050735
 echo
-perform_db_restore ICNDB2 20251216071703
+perform_db_restore ICNDB2 20260122050745
 echo
-perform_db_restore BAWDB2 20251216071710
+perform_db_restore BAWDB2 20260122050751
 echo
-perform_db_restore BAWDOCS2 20251216071731
+perform_db_restore BAWDOCS2 20260122050806
 echo
-perform_db_restore BAWDOS2 20251216071739
+perform_db_restore BAWDOS2 20260122050814
 echo
