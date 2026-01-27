@@ -490,10 +490,16 @@ echo
 
 # iaf-insights-engine-management needs to be up and running
 if [[ $CP4BA_VERSION =~ "21.0.3" ]]; then
-  MANAGEMENT_POD=$(oc get pod --no-headers --ignore-not-found -l component=iaf-insights-engine-management |awk {'print $1'})
+  MANAGEMENT_PODS=$(oc get pod --no-headers --ignore-not-found -l component=iaf-insights-engine-management |awk {'print $1'})
 else
-  MANAGEMENT_POD=$(oc get pod --no-headers --ignore-not-found -l component=${CP4BA_NAME}-insights-engine-management |awk {'print $1'})
+  MANAGEMENT_PODS=$(oc get pod --no-headers --ignore-not-found -l component=${CP4BA_NAME}-insights-engine-management |awk {'print $1'})
 fi
+
+for pod in ${MANAGEMENT_PODS[*]}
+do
+  MANAGEMENT_POD=${pod}
+  break
+done
 
 # not always deployed
 if [[ "$MANAGEMENT_POD" != "" ]]; then
@@ -532,8 +538,6 @@ if [[ "$MANAGEMENT_POD" != "" ]]; then
   else
     FLINK_SAVEPOINT_COUNT=$(echo $FLINK_SAVEPOINT_RESULTS | jq 'length')
   fi
-  # give some extra time to finish writing the savepoints, otherwise the copy could fail
-  sleep 30
   
   for ((i=0; i<$FLINK_SAVEPOINT_COUNT; i++)); do
     FLINK_SAVEPOINT_NAME=$(echo $FLINK_SAVEPOINT_RESULTS | jq -r ".[$i].name")
