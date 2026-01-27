@@ -543,6 +543,10 @@ if [[ "$MANAGEMENT_POD" != "" ]]; then
     logInfo "  Flink savepoint: $FLINK_SAVEPOINT_NAME, JID: $FLINK_SAVEPOINT_JID, STATE: $FLINK_SAVEPOINT_STATE, Location: $FLINK_SAVEPOINT_LOCATION"
     logInfo "  Copying the savepoint to ${BACKUP_DIR}/flink${FLINK_SAVEPOINT_LOCATION}..."
     logInfo $(oc cp --container management ${MANAGEMENT_POD}:${FLINK_SAVEPOINT_LOCATION} ${BACKUP_DIR}/flink${FLINK_SAVEPOINT_LOCATION})
+    
+    # finally delete the savepoint from the PVC to avoid storage full issues
+    sleep 5
+    oc exec --container management ${MANAGEMENT_POD} -it -- bash -c "rm -rf ${FLINK_SAVEPOINT_LOCATION}"
   done
   echo
 fi
@@ -582,7 +586,7 @@ if $isOpenSearchInstalled; then
   SNAPSHOT_STATE=$(echo $SNAPSHOT_RESULT | jq -r ".snapshot.state")
   checkResult $SNAPSHOT_STATE "SUCCESS" "Snapshot state"
   
-  # Snapshots are incremental, we therefore leave it on the snapshot PVC without copying it onto the bastion host. It will get backed up when the PVCs are backed up.
+  # Snapshots are incremental, we therefore leave it on the snapshot PVC without copying it onto the bastion host/deleting it from the PVC. It will get backed up when the PVCs are backed up.
   echo
 fi
 
