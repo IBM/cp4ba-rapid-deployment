@@ -532,6 +532,8 @@ if [[ "$MANAGEMENT_POD" != "" ]]; then
   else
     FLINK_SAVEPOINT_COUNT=$(echo $FLINK_SAVEPOINT_RESULTS | jq 'length')
   fi
+  # give some extra time to finish writing the savepoints, otherwise the copy could fail
+  sleep 30
   
   for ((i=0; i<$FLINK_SAVEPOINT_COUNT; i++)); do
     FLINK_SAVEPOINT_NAME=$(echo $FLINK_SAVEPOINT_RESULTS | jq -r ".[$i].name")
@@ -809,7 +811,7 @@ rm $propertiesfile.bak
 
 ##### Finally... ###########################################
 logInfo "Environment is scaled down, all resources are backed up. Next, please back up:"
-logInfo "  - the content of the PVs (For exmaple, if storage class is nfs-client, use the generated the just generated script(s) $BACKUP_DIR/025-backup-pvs-<storageclass>.sh on the storage server using the root account)"
+logInfo "  - the content of the PVs (For exmaple, if storage class is nfs-client, use the just generated script(s) $BACKUP_DIR/025-backup-pvs-<storageclass>.sh on the storage server using the root account)"
 logInfo "  - the databases"
 logInfo "  - the binary document data of CPE"
 echo
