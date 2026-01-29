@@ -512,8 +512,6 @@ logInfo "Scaling down deployments..."
 deployments=$(oc get deploy -o name)
 logInfo "deployments =" $deployments
 for i in $deployments; do
-  logInfo $i
-  logInfo $postgresqlOperatorDeployment
   if [[ "$i" == "deployment.apps/$postgresqlOperatorDeployment" ]]; then
     logInfo "Skipping scaling down postgresql operator..."
   else
@@ -817,7 +815,7 @@ rm $propertiesfile.bak
 
 ##### Finally... ###########################################
 logInfo "Environment is scaled down, all resources are backed up. Next, please back up:"
-logInfo "  - the content of the PVs (For exmaple, if storage class is nfs-client, use the just generated script(s) $BACKUP_DIR/025-backup-pvs-<storageclass>.sh on the storage server using the root account)"
+logInfo "  - the content of the PVs (For example, if storage class is nfs-client, use the just generated script(s) $BACKUP_DIR/025-backup-pvs-<storageclass>.sh on the storage server using the root account)"
 logInfo "  - the databases"
 logInfo "  - the binary document data of CPE"
 echo
