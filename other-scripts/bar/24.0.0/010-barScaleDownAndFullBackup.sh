@@ -235,7 +235,6 @@ if [[ "$eventsOperatorDeployment" != "" ]]; then
   logInfo $(oc scale deploy $eventsOperatorDeployment --replicas=0)
 fi
 postgresqlOperatorDeployment=$(oc get deployment -l=app.kubernetes.io/name=cloud-native-postgresql -o 'custom-columns=NAME:.metadata.name' --no-headers --ignore-not-found | awk '{print $1}')
-#logInfo $(oc scale deploy $postgresqlOperatorDeployment --replicas=0)
 sleep 20
 echo
 
@@ -387,104 +386,6 @@ logInfo "Namespace $cp4baProjectName uid: $NAMESPACE_UID"
 echo $NAMESPACE_UID > ${BACKUP_DIR}/namespace_uid
 echo
 
-##### CPfs backup #####################################################################
-if [[ $CP4BA_VERSION =~ "24.0.0" ]]; then
-
-  ##### Backup CommonService-IM PostgreSQL Database ###########################################
-  csimpods=$(oc get pod -l=postgresql=common-service-db --no-headers --ignore-not-found | awk '{print $1}' | sort)
-  for pod in ${csimpods[*]}
-  do
-    logInfo "Backing up CommonService-IM PostgreSQL Database using pod ${pod}..."
-    oc exec --container postgres $pod -it -- bash -c "pg_dump -d im -U postgres -Fp -c -C --if-exists  -f /var/lib/postgresql/data/backup_csimdb.sql"
-    logInfo $(oc cp --container postgres ${pod}:/var/lib/postgresql/data/backup_csimdb.sql ${BACKUP_DIR}/postgresql/backup_csimdb.sql)
-    break
-  done
-
-  # check if backup was taken successfully
-  if [ -e "${BACKUP_DIR}/postgresql/backup_csimdb.sql" ]; then
-    logInfo "CommonService-IM PostgreSQL Database backup completed successfully."
-    # clean up pod storage
-    oc exec --container postgres $pod -it -- bash -c "rm -f /var/lib/postgresql/data/backup_csimdb.sql"
-  else
-    logError "CommonService-IM PostgreSQL Database backup failed, check logs!"
-    echo
-    exit 1
-  fi
-  echo
-
-  ##### Backup Zen Metastore PostgreSQL Database ###########################################
-  zendbpgpods=$(oc get pod -l=postgresql=zen-metastore-edb --no-headers --ignore-not-found | awk '{print $1}' | sort)
-  for pod in ${zendbpgpods[*]}
-  do
-    logInfo "Backing up Zen Metastore DB PostgreSQL Database using pod ${pod}..."
-    oc exec --container postgres $pod -it -- bash -c "pg_dump -d zen -U postgres -Fp -c -C --if-exists  -f /var/lib/postgresql/data/backup_zendb.sql"
-    logInfo $(oc cp --container postgres ${pod}:/var/lib/postgresql/data/backup_zendb.sql ${BACKUP_DIR}/postgresql/backup_zendb.sql)
-    break
-  done
-
-  # check if backup was taken successfully
-  if [ -e "${BACKUP_DIR}/postgresql/backup_zendb.sql" ]; then
-    logInfo "Zen Metastore PostgreSQL Database backup completed successfully."
-    # clean up pod storage
-    oc exec --container postgres $pod -it -- bash -c "rm -f /var/lib/postgresql/data/backup_zendb.sql"
-  else
-    logError "Zen Metastore PostgreSQL Database backup failed, check logs!"
-    echo
-    exit 1
-  fi
-  echo
-
-  # ##### Backup Keycloak PostgreSQL Database (Not always installed)###########################################
-  # kcedbpods=$(oc get pod -l=postgresql=keycloak-edb-cluster --no-headers --ignore-not-found | awk '{print $1}' | sort)
-  # for pod in ${kcedbpods[*]}
-  # do
-  #   logInfo "Backing up Keycloak PostgreSQL Database using pod ${pod}..."
-  #   oc exec --container postgres $pod -it -- bash -c "pg_dump -d keycloak -U postgres -Fp -c -C --if-exists  -f /var/lib/postgresql/data/backup_kcedb.sql"
-  #   logInfo $(oc cp --container postgres ${pod}:/var/lib/postgresql/data/backup_kcedb.sql ${BACKUP_DIR}/postgresql/backup_kcedb.sql)
-  #   break
-  # done
-
-  # # check if backup was taken successfully
-  # if [ -e "${BACKUP_DIR}/postgresql/backup_kcedb.sql" ]; then
-  #   logInfo "Keycloak PostgreSQL Database backup completed successfully."
-  #   # clean up pod storage
-  #   oc exec --container postgres $pod -it -- bash -c "rm -f /var/lib/postgresql/data/backup_kcedb.sql"
-  # else
-  #   logError "Keycloak PostgreSQL Database backup failed, check logs!"
-  #   echo
-  #   exit 1
-  # fi
-  # echo
-
-else
-  # Backup implementation of CPfs for CP4BA versions 24.0.1, 25 is not developed yet. 
-  logError "Do not know how to take backup of CPFS services for this Cloud Pak version $CP4BA_VERSION"
-  echo
-  exit 1
-fi
-
-##### Backup BTS PostgreSQL Database ###########################################
-btscnpgpods=$(oc get pod -l=app.kubernetes.io/name=ibm-bts-cp4ba-bts --no-headers --ignore-not-found | awk '{print $1}' | sort)
-for pod in ${btscnpgpods[*]}
-do
-  logInfo "Backing up BTS PostgreSQL Database using pod ${pod}..."
-  oc exec --container postgres $pod -it -- bash -c "pg_dump -d BTSDB -U postgres -Fp -c -C --if-exists  -f /var/lib/postgresql/data/backup_btsdb.sql"
-  logInfo $(oc cp --container postgres ${pod}:/var/lib/postgresql/data/backup_btsdb.sql ${BACKUP_DIR}/postgresql/backup_btsdb.sql)
-  break
-done
-
-# check if backup was taken successfully
-if [ -e "${BACKUP_DIR}/postgresql/backup_btsdb.sql" ]; then
-  logInfo "BTS PostgreSQL Database backup completed successfully."
-  # clean up pod storage
-  oc exec --container postgres $pod -it -- bash -c "rm -f /var/lib/postgresql/data/backup_btsdb.sql"
-else
-  logError "BTS PostgreSQL Database backup failed, check logs!"
-  echo
-  exit 1
-fi
-echo
-
 ##### BAI ######################################################################
 # Take Opensearch snapshot
 
@@ -611,8 +512,14 @@ logInfo "Scaling down deployments..."
 deployments=$(oc get deploy -o name)
 logInfo "deployments =" $deployments
 for i in $deployments; do
-   logInfo "scaling deployment =" $i
-   logInfo $(oc scale $i --replicas=0)
+  logInfo $i
+  logInfo $postgresqlOperatorDeployment
+  if [[ "$i" == "deployment.apps/$postgresqlOperatorDeployment" ]]; then
+    logInfo "Skipping scaling down postgresql operator..."
+  else
+    logInfo "scaling deployment =" $i
+    logInfo $(oc scale $i --replicas=0)
+  fi
 done
 echo
 
@@ -647,32 +554,123 @@ do
 done
 sleep 10
 
-btscnpgpods=$(oc get pod -l=k8s.enterprisedb.io/cluster=ibm-bts-cnpg-$cp4baProjectName-cp4ba-bts --no-headers --ignore-not-found | awk '{print $1}')
-for pod in ${btscnpgpods[*]}
-do
-  logInfo $(oc delete pod $pod)
-done
-sleep 10
-
-zenmetastoreedbpods=$(oc get pod -l=k8s.enterprisedb.io/cluster=zen-metastore-edb --no-headers --ignore-not-found | awk '{print $1}')
-for pod in ${zenmetastoreedbpods[*]}
-do
-  logInfo $(oc delete pod $pod)
-done
-sleep 10
-
-commonservicedbpods=$(oc get pod -l=k8s.enterprisedb.io/cluster=common-service-db --no-headers --ignore-not-found | awk '{print $1}')
-for pod in ${commonservicedbpods[*]}
-do
-  logInfo $(oc delete pod $pod)
-done
-sleep 10
-
 rrpods=$(oc get pod -l=app.kubernetes.io/name=resource-registry --no-headers --ignore-not-found | awk '{print $1}')
 for pod in ${rrpods[*]}
 do
    logInfo $(oc delete pod $pod)
 done
+echo
+
+# Take backup of postgresql dbs
+##### CPfs backup #####################################################################
+if [[ $CP4BA_VERSION =~ "24.0.0" ]]; then
+
+  ##### Backup CommonService-IM PostgreSQL Database ###########################################
+  csimpods=$(oc get pod -l=postgresql=common-service-db --no-headers --ignore-not-found | awk '{print $1}' | sort)
+  for pod in ${csimpods[*]}
+  do
+    logInfo "Backing up CommonService-IM PostgreSQL Database using pod ${pod}..."
+    oc exec --container postgres $pod -it -- bash -c "pg_dump -d im -U postgres -Fp -c -C --if-exists  -f /var/lib/postgresql/data/backup_csimdb.sql"
+    logInfo $(oc cp --container postgres ${pod}:/var/lib/postgresql/data/backup_csimdb.sql ${BACKUP_DIR}/postgresql/backup_csimdb.sql)
+    break
+  done
+
+  # check if backup was taken successfully
+  if [ -e "${BACKUP_DIR}/postgresql/backup_csimdb.sql" ]; then
+    logInfo "CommonService-IM PostgreSQL Database backup completed successfully."
+    # clean up pod storage
+    oc exec --container postgres $pod -it -- bash -c "rm -f /var/lib/postgresql/data/backup_csimdb.sql"
+  else
+    logError "CommonService-IM PostgreSQL Database backup failed, check logs!"
+    echo
+    exit 1
+  fi
+  echo
+
+  ##### Backup Zen Metastore PostgreSQL Database ###########################################
+  zendbpgpods=$(oc get pod -l=postgresql=zen-metastore-edb --no-headers --ignore-not-found | awk '{print $1}' | sort)
+  for pod in ${zendbpgpods[*]}
+  do
+    logInfo "Backing up Zen Metastore DB PostgreSQL Database using pod ${pod}..."
+    oc exec --container postgres $pod -it -- bash -c "pg_dump -d zen -U postgres -Fp -c -C --if-exists  -f /var/lib/postgresql/data/backup_zendb.sql"
+    logInfo $(oc cp --container postgres ${pod}:/var/lib/postgresql/data/backup_zendb.sql ${BACKUP_DIR}/postgresql/backup_zendb.sql)
+    break
+  done
+
+  # check if backup was taken successfully
+  if [ -e "${BACKUP_DIR}/postgresql/backup_zendb.sql" ]; then
+    logInfo "Zen Metastore PostgreSQL Database backup completed successfully."
+    # clean up pod storage
+    oc exec --container postgres $pod -it -- bash -c "rm -f /var/lib/postgresql/data/backup_zendb.sql"
+  else
+    logError "Zen Metastore PostgreSQL Database backup failed, check logs!"
+    echo
+    exit 1
+  fi
+  echo
+
+  # ##### Backup Keycloak PostgreSQL Database (Not always installed)###########################################
+  # kcedbpods=$(oc get pod -l=postgresql=keycloak-edb-cluster --no-headers --ignore-not-found | awk '{print $1}' | sort)
+  # for pod in ${kcedbpods[*]}
+  # do
+  #   logInfo "Backing up Keycloak PostgreSQL Database using pod ${pod}..."
+  #   oc exec --container postgres $pod -it -- bash -c "pg_dump -d keycloak -U postgres -Fp -c -C --if-exists  -f /var/lib/postgresql/data/backup_kcedb.sql"
+  #   logInfo $(oc cp --container postgres ${pod}:/var/lib/postgresql/data/backup_kcedb.sql ${BACKUP_DIR}/postgresql/backup_kcedb.sql)
+  #   break
+  # done
+
+  # # check if backup was taken successfully
+  # if [ -e "${BACKUP_DIR}/postgresql/backup_kcedb.sql" ]; then
+  #   logInfo "Keycloak PostgreSQL Database backup completed successfully."
+  #   # clean up pod storage
+  #   oc exec --container postgres $pod -it -- bash -c "rm -f /var/lib/postgresql/data/backup_kcedb.sql"
+  # else
+  #   logError "Keycloak PostgreSQL Database backup failed, check logs!"
+  #   echo
+  #   exit 1
+  # fi
+  # echo
+
+else
+  # Backup implementation of CPfs for CP4BA versions 24.0.1, 25 is not developed yet. 
+  logError "Do not know how to take backup of CPFS services for this Cloud Pak version $CP4BA_VERSION"
+  echo
+  exit 1
+fi
+
+##### Backup BTS PostgreSQL Database ###########################################
+btscnpgpods=$(oc get pod -l=app.kubernetes.io/name=ibm-bts-cp4ba-bts --no-headers --ignore-not-found | awk '{print $1}' | sort)
+for pod in ${btscnpgpods[*]}
+do
+  logInfo "Backing up BTS PostgreSQL Database using pod ${pod}..."
+  oc exec --container postgres $pod -it -- bash -c "pg_dump -d BTSDB -U postgres -Fp -c -C --if-exists  -f /var/lib/postgresql/data/backup_btsdb.sql"
+  logInfo $(oc cp --container postgres ${pod}:/var/lib/postgresql/data/backup_btsdb.sql ${BACKUP_DIR}/postgresql/backup_btsdb.sql)
+  break
+done
+
+# check if backup was taken successfully
+if [ -e "${BACKUP_DIR}/postgresql/backup_btsdb.sql" ]; then
+  logInfo "BTS PostgreSQL Database backup completed successfully."
+  # clean up pod storage
+  oc exec --container postgres $pod -it -- bash -c "rm -f /var/lib/postgresql/data/backup_btsdb.sql"
+else
+  logError "BTS PostgreSQL Database backup failed, check logs!"
+  echo
+  exit 1
+fi
+echo
+
+# Hibernate the postgresql dbs last, then shut down the operator
+logInfo "Hibernating postgresql clusters..."
+logInfo $(oc annotate cluster.postgresql.k8s.enterprisedb.io zen-metastore-edb --overwrite k8s.enterprisedb.io/hibernation=on)
+logInfo $(oc annotate cluster.postgresql.k8s.enterprisedb.io common-service-db --overwrite k8s.enterprisedb.io/hibernation=on)
+logInfo $(oc annotate cluster.postgresql.k8s.enterprisedb.io ibm-bts-cnpg-${cp4baProjectName}-cp4ba-bts --overwrite k8s.enterprisedb.io/hibernation=on)
+echo
+sleep 60
+
+# Scale down postgresql operator
+logInfo "Scaling down postgresql operator..."
+logInfo $(oc scale deploy $postgresqlOperatorDeployment --replicas=0)
 echo
 
 # Delete all completed pods

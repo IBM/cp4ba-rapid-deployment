@@ -176,7 +176,7 @@ sleep 30
 # Scale up all PostgresDB pods
 logInfo $(oc annotate cluster.postgresql.k8s.enterprisedb.io zen-metastore-edb --overwrite k8s.enterprisedb.io/hibernation=off)
 logInfo $(oc annotate cluster.postgresql.k8s.enterprisedb.io common-service-db --overwrite k8s.enterprisedb.io/hibernation=off)
-logInfo $(oc annotate cluster.postgresql.k8s.enterprisedb.io ibm-bts-cnpg-$cp4baProjectNamespace-cp4ba-bts --overwrite k8s.enterprisedb.io/hibernation=off)
+logInfo $(oc annotate cluster.postgresql.k8s.enterprisedb.io ibm-bts-cnpg-${cp4baProjectName}-cp4ba-bts --overwrite k8s.enterprisedb.io/hibernation=off)
 echo
 sleep 60
 
