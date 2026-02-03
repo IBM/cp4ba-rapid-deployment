@@ -105,16 +105,6 @@ oc patch MachineConfigPool worker --type merge --patch '{"spec":{"paused":false}
 sleep 15
 echo
 
-# Next, update the image pull secret
-echo "Updating secret ibm-entitlement-key in project $cp4baProjectName..."
-oc delete secret ibm-entitlement-key
-EK="eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJJQk0gTWFya2V0cGxhY2UiLCJpYXQiOjE2MDIxNTU3NTcsImp0aSI6ImYzODkwNWVlNGRjMTQwNTlhNTg2ZGUwOGMxNWNmNmU4In0.mbKUOiqSWcXf-Wr0-uekSYa-7wvwfBBa-7Z9mbgQ9oY"
-EMAIL="me@here.com"
-DOCKER_REG_SERVER="cp.icr.io"
-DOCKER_REG_USER="cp"
-oc create secret docker-registry ibm-entitlement-key --docker-server=${DOCKER_REG_SERVER} --docker-username=${DOCKER_REG_USER} --docker-password=${EK} --docker-email=${EMAIL} --namespace=$cp4baProjectName
-echo
-
 
 
 # Third, start the pods of the CP4BA deployment that got scaled down before
