@@ -118,17 +118,18 @@ else
 fi
 echo
 
-# ScaleUp Catalog Sources
-logInfo "Scaling Up all Catalog Source Pods..."
-# Create a temporary file with the annotation removed
-TEMP_CATALOG_FILE=$(mktemp)
-yq eval 'del(.items[].status, .items[].metadata.creationTimestamp, .items[].metadata.generation, .items[].metadata.managedFields, .items[].metadata.resourceVersion, .items[].metadata.uid, .items[].metadata.annotations."kubectl.kubernetes.io/last-applied-configuration")' $BACKUP_ROOT_DIRECTORY_FULL/catalogsource.yaml > $TEMP_CATALOG_FILE
-logInfo $(oc apply -f $TEMP_CATALOG_FILE)
-# Clean up temporary file
-rm -f $TEMP_CATALOG_FILE
-echo
-
-sleep 10
+## Fix for catalog source issue -> Commenting out the following section. Catalog sources should not be deleted/re-created while backup. Here we can assume they are still there, their pods are still up and running.
+## ScaleUp Catalog Sources
+#logInfo "Scaling Up all Catalog Source Pods..."
+## Create a temporary file with the annotation removed
+#TEMP_CATALOG_FILE=$(mktemp)
+#yq eval 'del(.items[].status, .items[].metadata.creationTimestamp, .items[].metadata.generation, .items[].metadata.managedFields, .items[].metadata.resourceVersion, .items[].metadata.uid, .items[].metadata.annotations."kubectl.kubernetes.io/last-applied-configuration")' $BACKUP_ROOT_DIRECTORY_FULL/catalogsource.yaml > $TEMP_CATALOG_FILE
+#logInfo $(oc apply -f $TEMP_CATALOG_FILE)
+## Clean up temporary file
+#rm -f $TEMP_CATALOG_FILE
+#echo
+#
+#sleep 10
 
 
 # Scale up all operators

@@ -681,38 +681,95 @@ for i in $completedpods; do
 done
 echo
 
-# Take backup of catalog sources before deleting catalog source pods
-logInfo "Taking backup of catalog sources before deleting catalog source pods..."
-# This will be used during ScaleUp.
-oc get catalogsource -o yaml > $BACKUP_ROOT_DIRECTORY_FULL/catalogsource.yaml
+## Fix for catalog source issue -> Commenting out the following section. Catalog sources should not be deleted/re-created while backup. Here we don't need to back them up into the project folder and don't need to delete them.
+## Take backup of catalog sources before deleting catalog source pods
+#logInfo "Taking backup of catalog sources before deleting catalog source pods..."
+## This will be used during ScaleUp.
+#oc get catalogsource -o yaml > $BACKUP_ROOT_DIRECTORY_FULL/catalogsource.yaml
+## This will be stored inside Backup Folder and will be used during Restoration.
+#oc get catalogsource -o yaml > $BACKUP_DIR/catalogsource.yaml
+#logInfo "Deleting Catalog sources..."
+#logInfo $(oc delete catalogsource -n ${cp4baProjectName} --all)
+#echo
+
+## To avoid to adapt the restore part for above fix, we only backup the catalog sources into the backup folder as before
+# Take backup of catalog sources
+logInfo "Taking backup of catalog sources..."
 # This will be stored inside Backup Folder and will be used during Restoration.
 oc get catalogsource -o yaml > $BACKUP_DIR/catalogsource.yaml
-logInfo "Deleting Catalog sources..."
-logInfo $(oc delete catalogsource -n ${cp4baProjectName} --all)
 echo
 
-# Wait till all pods are gone
-allpods=$(oc get pod --no-headers --ignore-not-found)
-if [[ $allpods != "" ]]; then
-  logInfo "Waiting till all pods in project $cp4baProjectName are gone before taking full backup. This would run forever, so please manually check the remaining pods and get them removed manually if needed!"
-  echo
-  logInfo "Currently there are the following pods remaining:"
-  logInfo $allpods
-  GONE=false
-  echo -n "  Waiting..."
-  while [[ $GONE == false ]]
-  do
-    if [[ $allpods != "" ]]; then
-      echo -n "."
-      sleep 10
-      allpods=$(oc get pod --no-headers --ignore-not-found)
-    else
+
+
+## Fix for catalog source issue -> Commenting out the following section for future reference. Catalog sources should not be deleted/re-created while backup. Here we check that no more pods are in the project which no longer applies.
+## Wait till all pods are gone
+#allpods=$(oc get pod --no-headers --ignore-not-found)
+#if [[ $allpods != "" ]]; then
+#  logInfo "Waiting till all pods in project $cp4baProjectName are gone before taking full backup. This would run forever, so please manually check the remaining pods and get them removed manually if needed!"
+#  echo
+#  logInfo "Currently there are the following pods remaining:"
+#  logInfo $allpods
+#  GONE=false
+#  echo -n "  Waiting..."
+#  while [[ $GONE == false ]]
+#  do
+#    if [[ $allpods != "" ]]; then
+#      echo -n "."
+#      sleep 10
+#      allpods=$(oc get pod --no-headers --ignore-not-found)
+#    else
+#      GONE=true
+#      echo
+#      logInfo "All pods are gone. Continuing with full backup."
+#    fi
+#  done
+#fi
+#echo
+
+## Fix for catalog source issue -> Catalog sources should not be deleted/re-created while backup. Here we check that no more pods except catalog source pods are in the project.
+# Wait till all pods except catalog source pods are gone
+allpods=$(oc get pod --no-headers --ignore-not-found -o 'custom-columns=NAME:.metadata.name')
+logInfo "Waiting till all pods except catalog source pods in project $cp4baProjectName are gone before taking full backup. This would run forever, so please manually check the remaining pods and get them removed manually if needed and no catalog source pod!"
+echo
+logInfo "Currently there are the following pods remaining:"
+logInfo $allpods
+GONE=false
+echo -n "  Waiting..."
+while [[ $GONE == false ]]
+do
+  if [[ $allpods != "" ]]; then
+    # Check if remaining list of pods is for catalog sources only
+    onlyCatalogSourcePodsRemaining=true
+    
+    for i in $allpods; do
+      ownerKinds=$(oc get pod $i --no-headers --ignore-not-found -o=jsonpath='{.metadata.ownerReferences[*].kind}')
+      isCatalogSource=false
+      for j in $ownerKinds; do
+        if [[ $j == "CatalogSource" ]]; then
+          isCatalogSource=true
+        fi
+      done
+      
+      if [[ $isCatalogSource == false ]]; then
+        onlyCatalogSourcePodsRemaining=false
+      fi
+    done
+    
+    if [[ $onlyCatalogSourcePodsRemaining == true ]]; then
       GONE=true
       echo
-      logInfo "All pods are gone. Continuing with full backup."
+      logInfo "All pods except catalog source pods are gone. Continuing with full backup."
+    else
+      echo -n "."
+      sleep 10
+      allpods=$(oc get pod --no-headers --ignore-not-found -o 'custom-columns=NAME:.metadata.name')
     fi
-  done
-fi
+  else
+    GONE=true
+    echo
+    logInfo "All pods are gone. Continuing with full backup."
+  fi
+done
 echo
 
 
